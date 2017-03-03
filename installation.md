@@ -24,12 +24,7 @@ $ make
 
 # To install
 $ make install
-
-# To run tests (needs running Postgres server with preloaded extension)
-$ make installcheck
 ```
-<!-- TODO Take out 'make installcheck'? -->
-<!-- TODO info on assuring user 'postgres' exists -->
 
 ### Option 2: Build and run in Docker
 
@@ -58,9 +53,9 @@ You have two options for setting up your initial database:
 1. *Empty Database* - To set up a new, empty database, please follow the instructions below.
 
 2. *Database with pre-loaded sample data* - To help you quickly get started, we have also created some sample datasets. See
-[Using our Sample Datasets][datasets] for further instructions. (Includes installing our extension.)
+[Sample Datasets][datasets] for further instructions. (Includes installing our extension.)
 
-[datasets]: http://docs.iobeam.com/other-sample-datasets
+[datasets]: http://docs.timescale.com/other-sample-datasets
 
 ### Option 1. Setting up an empty database
 
@@ -73,22 +68,14 @@ $ psql
 
 ```sql
 -- Install the extension
-=# CREATE database tutorial;
--- CREATE DATABASE
+CREATE database tutorial;
 
-=# \c tutorial
--- You are now connected to database "tutorial" as user "admin".
+\c tutorial
 
-tutorial=# CREATE EXTENSION IF NOT EXISTS iobeamdb CASCADE;
--- INFO:  iobeamdb loaded
--- CREATE EXTENSION
+CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 
 -- Run initialization function
-tutorial=# select setup_single_node();
--- setup_single_node
--- -------------------
-
--- (1 row)
+select setup_single_node();
 ```
 
 For convenience, this can also be done in one step by running a script from
