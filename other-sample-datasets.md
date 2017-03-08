@@ -1,36 +1,34 @@
 # Other Sample Datasets
 
-## Using our Sample Datasets
-
 ### Available samples
 
-We have created several sample datasets (using `pg_dump`) to help you get
-started using iobeamdb. These datasets vary in database size, number of time
+We have created several sample datasets (using [`pg_dump`][pg_dump]) to help you get
+started using TimescaleDB. These datasets vary in database size, number of time
 intervals, and number of values for the partition field.
 
 (Note that these dataset backups already include our time-series
   database, so you won't need to manually install our extension,
   nor run the setup scripts, etc.)
 
+[pg_dump]: https://www.postgresql.org/docs/current/static/app-pgdump.html
+
 **Device ops**: These datasets are designed to represent metrics (e.g. CPU,
 memory, network) collected from mobile devices.
 
-1. [`devices_small`](https://iobeamdata.blob.core.windows.net/datasets/devices_small.bak.tar.gz) - 1,000 devices recorded over 1,000 time intervals
-1. [`devices_med`](https://iobeamdata.blob.core.windows.net/datasets/devices_med.bak.tar.gz) - 5,000 devices recorded over 2,000 time intervals
-1. [`devices_big`](https://iobeamdata.blob.core.windows.net/datasets/devices_big.bak.tar.gz) - 3,000 devices recorded over 10,000 time intervals
+1. [`devices_small`](https://timescaledata.blob.core.windows.net/datasets/devices_small.bak.tar.gz) - 1,000 devices recorded over 1,000 time intervals
+1. [`devices_med`](https://timescaledata.blob.core.windows.net/datasets/devices_med.bak.tar.gz) - 5,000 devices recorded over 2,000 time intervals
+1. [`devices_big`](https://timescaledata.blob.core.windows.net/datasets/devices_big.bak.tar.gz) - 3,000 devices recorded over 10,000 time intervals
 
-For more details and example usage, see
-[In-depth: Device ops datasets](#in-depth-devices).
+For more details and example usage, see [In-depth: Device ops datasets](#in-depth-devices).
 
 **Weather**: These datasets are designed to represent temperature and
 humidity data from a variety of locations.
 
-1. [`weather_small`](https://iobeamdata.blob.core.windows.net/datasets/weather_small.bak.tar.gz) - 1,000 locations over 1,000 two-minute intervals
-1. [`weather_med`](https://iobeamdata.blob.core.windows.net/datasets/weather_med.bak.tar.gz) - 1,000 locations over 15,000 two-minute intervals
-1. [`weather_big`](https://iobeamdata.blob.core.windows.net/datasets/weather_big.bak.tar.gz) - 2,000 locations over 20,000 two-minute intervals
+1. [`weather_small`](https://timescaledata.blob.core.windows.net/datasets/weather_small.bak.tar.gz) - 1,000 locations over 1,000 two-minute intervals
+1. [`weather_med`](https://timescaledata.blob.core.windows.net/datasets/weather_med.bak.tar.gz) - 1,000 locations over 15,000 two-minute intervals
+1. [`weather_big`](https://timescaledata.blob.core.windows.net/datasets/weather_big.bak.tar.gz) - 2,000 locations over 20,000 two-minute intervals
 
-For more details and example usage, see
-[In-depth: Weather datasets](#in-depth-weather).
+For more details and example usage, see [In-depth: Weather datasets](#in-depth-weather).
 
 
 ### Importing
@@ -46,8 +44,10 @@ dataset `devices_small`, the commands are:
 ```bash
 # (1) unzip the archive
 tar -xvzf devices_small.bak.tar.gz
+
 # (2) create a database with the same name
 psql -U postgres -h localhost -c 'CREATE DATABASE devices_small;'
+
 # (3) import data
 psql -U postgres -d devices_small -h localhost < devices_small.bak
 ```
@@ -59,7 +59,7 @@ The data is now ready for you to use.
 psql -U postgres -h localhost -d devices_small
 ```
 
-### In-depth: Device ops datasets <a name="in-depth-devices"></a>
+### In-depth: Device ops datasets <a id="in-depth-devices"></a>
 After importing one of these datasets (`devices_small`, `devices_med`,
 `devices_big`), you will find a plain Postgres table called `device_info`
 and a hypertable called `readings`. The `device_info` table has (static)
@@ -72,7 +72,7 @@ tables (see Example Queries below).
 #### Schemas
 ```sql
 Table "public.device_info"
- Column      | Type | Modifiers
+Column       | Type | Modifiers
 -------------+------+-----------
 device_id    | text |
 api_version  | text |
@@ -174,9 +174,9 @@ hour                   | min_battery_level | max_battery_level
 (12 rows)
 ```
 
-**
+---
 
-### In-depth: Weather datasets <a name="in-depth-weather"></a>
+### In-depth: Weather datasets <a id="in-depth-weather"></a>
 After importing one of these datasets (`weather_small`, `weather_med`,
 `weather_big`), you will find a plain Postgres table called `locations` and
 a hypertable called `conditions`. The `locations` table has metadata about

@@ -6,7 +6,7 @@ across multiple servers; unlike NoSQL databases, TimescaleDB natively
 supports all of SQL. TimescaleDB is managed by XYZ, and is distributed
 under the XYZ license.
 
-For more information, please check the Frequently Asked Questions[LINK].
+For more information, please check the [Frequently Asked Questions][FAQ].
 
 ## Key Features
 - **Transparent time/space partitioning** for horizontal scale-out
@@ -34,7 +34,10 @@ CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 SELECT setup_single_node();
 ```
 
-More information in our Getting Started section[LINK].
+More information in our [Getting Started][] section.
+
+[Getting Started]: http://www.timescaledb.com/installation
+[FAQ]: http://www.timescaledb.com/faq
 
 ## Key Concepts
 
