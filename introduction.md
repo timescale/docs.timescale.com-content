@@ -31,13 +31,13 @@ an existing PostgreSQL node only requires two simple SQL commands:
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 
 -- Run initialization function
-SELECT setup_single_node();
+select setup_db();
 ```
 
 More information in our [Getting Started][] section.
 
-[Getting Started]: http://www.timescaledb.com/installation
-[FAQ]: http://www.timescaledb.com/faq
+[Getting Started]: http://docs.timescaledb.com/getting-started
+[FAQ]: http://docs.timescaledb.com/faq
 
 ## Key Concepts
 
@@ -86,4 +86,4 @@ achieved via standard `SELECT`, `INSERT`, `UPDATE`, etc., SQL commands.
 ## Support
 
 For help with topics not covered in this documentation, feel free to
-reach out at hello@timescaledb.com[LINK], or join the Google Group[LINK].
+reach out at <hello@timescaledb.com>.<!-- or join the Google Group[LINK].-->

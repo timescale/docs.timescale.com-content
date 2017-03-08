@@ -77,7 +77,7 @@ CREATE database tutorial;
 CREATE EXTENSION IF NOT EXISTS iobeamdb CASCADE;
 
 -- Run initialization function
-select setup_single_node();
+select setup_db();
 ```
 
 For convenience, this can also be done in one step by running a script from
