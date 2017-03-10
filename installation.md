@@ -20,30 +20,31 @@ There are two ways to install Timescale, each with different requirements:
 
 ```bash
 # To build the extension
-$ make
+make
 
 # To install
-$ make install
+make install
 ```
 
 ### Option 2: Build and run in Docker
 
 ```bash
 # To build a Docker image
-$ make -f docker.mk build-image
+make -f docker.mk build-image
 
 # To run a container
-$ make -f docker.mk run
+make -f docker.mk run
 
 # To run tests
-$ make -f docker.mk test
+make -f docker.mk test
 ```
 ---
 You should now have Postgres running locally, accessible with
 the following command:
 
 ```bash
-$ psql
+# Connect to Postgres as a superuser named 'postgres'
+psql -U postgres -h localhost
 ```
 
 Next, we'll install our extension and create an initial database.
@@ -62,8 +63,8 @@ You have two options for setting up your initial database:
 When creating a new database, it is necessary to install the extension and then run an initialization function.  Here we will create a new database named "tutorial".
 
 ```bash
-# Connect to Postgres on localhost
-$ psql
+# Connect to Postgres as a superuser named 'postgres'
+psql -U postgres -h localhost
 ```
 
 ```sql
@@ -75,13 +76,13 @@ CREATE database tutorial;
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 
 -- Run initialization function
-select setup_single_node();
+select setup_db();
 ```
 
 For convenience, this can also be done in one step by running a script from
 the command-line:
 ```bash
-$ DB_NAME=tutorial ./scripts/setup-db.sh
+DB_NAME=tutorial ./scripts/setup-db.sh
 ```
 
 You should now have a brand new time-series database running in Postgres.
