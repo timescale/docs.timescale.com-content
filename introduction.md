@@ -3,8 +3,8 @@ TimescaleDB is an open source time-series database engineered up from
 PostgreSQL, optimized for fast ingest and complex queries. Unlike
 traditional RDBMS, TimescaleDB transparently scales-out horizontally
 across multiple servers; unlike NoSQL databases, TimescaleDB natively
-supports all of SQL. TimescaleDB is distributed under the XYZ
-license[LINK].
+supports all of SQL. TimescaleDB is distributed under the [Apache 2
+license][https://github.com/timescaledb/timescaledb/blob/master/LICENSE].
 
 For more information, please check the [Frequently Asked Questions][FAQ].
 
@@ -40,8 +40,6 @@ More information in our [Getting Started][] section.
 [FAQ]: http://docs.timescaledb.com/faq
 
 ## Key Concepts
-
-[TBD: IMAGE?]
 
 ### Hypertables
 The primary point of interaction with your data is a hypertable,
