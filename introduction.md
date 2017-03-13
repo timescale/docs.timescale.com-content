@@ -3,8 +3,8 @@ TimescaleDB is an open source time-series database engineered up from
 PostgreSQL, optimized for fast ingest and complex queries. Unlike
 traditional RDBMS, TimescaleDB transparently scales-out horizontally
 across multiple servers; unlike NoSQL databases, TimescaleDB natively
-supports all of SQL. TimescaleDB is managed by XYZ, and is distributed
-under the XYZ license.
+supports all of SQL. TimescaleDB is distributed under the [Apache 2
+license](https://github.com/timescaledb/timescaledb/blob/master/LICENSE).
 
 For more information, please check the [Frequently Asked Questions][FAQ].
 
@@ -41,16 +41,16 @@ More information in our [Getting Started][] section.
 
 ## Key Concepts
 
-[TBD: IMAGE?]
-
 ### Hypertables
-A hypertable, the primary point of interaction with your data, is
+The primary point of interaction with your data is a **hypertable**,
 the abstraction of a single continuous table across all
 space and time
-intervals, such that one can query it via vanilla SQL. A hypertable is
+intervals, such that one can query it via vanilla SQL.
+
+A hypertable is
 defined by a standard schema with column names and types, with at
-least one column specifying a time value, and (in clustered
-deployments) one column specifying a “partitioning key” over which the
+least one column specifying a time value, and one (optional) column specifying
+a “partitioning key” over which the
 dataset can be additionally partitioned.
 
 A single TimescaleDB deployment can store multiple hypertables, each
@@ -62,16 +62,19 @@ Creating a hypertable in TimescaleDB is two SQL commands: `CREATE TABLE`
 ### Chunks
 
 Internally, TimescaleDB automatically splits each
-hypertable into chunks, where a chunk corresponds to a “two-dimensional”
-split according to a specific time interval and a region of
-the partition key’s space (e.g., using hashing). Each chunk is
+hypertable into **chunks**, where a chunk corresponds to a
+“two-dimensional” split according to a specific time interval and a region of the partition key’s space (e.g., using hashing).
+
+Each chunk is
 implemented using a standard database table that is automatically placed
 on one of the database nodes (or replicated between multiple nodes),
 although this detail is largely hidden from users.
 
 Chunks are right-sized, ensuring that all of the B-trees for a table’s
 indexes can reside in memory during inserts to avoid thrashing while
-modifying arbitrary locations in those trees. Further, by avoiding
+modifying arbitrary locations in those trees.
+
+Further, by avoiding
 overly large chunks, we can avoid expensive “vacuuming” operations when
 removing deleted data according to automated retention policies, as the
 runtime can perform such operations by simply dropping chunks (internal
