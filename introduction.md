@@ -4,7 +4,7 @@ PostgreSQL, optimized for fast ingest and complex queries. Unlike
 traditional RDBMS, TimescaleDB transparently scales-out horizontally
 across multiple servers; unlike NoSQL databases, TimescaleDB natively
 supports all of SQL. TimescaleDB is distributed under the [Apache 2
-license][https://github.com/timescaledb/timescaledb/blob/master/LICENSE].
+license](https://github.com/timescaledb/timescaledb/blob/master/LICENSE).
 
 For more information, please check the [Frequently Asked Questions][FAQ].
 
@@ -36,13 +36,13 @@ select setup_db();
 
 More information in our [Getting Started][] section.
 
-[Getting Started]: http://docs.timescaledb.com/getting-started
-[FAQ]: http://docs.timescaledb.com/faq
+[Getting Started]: /getting-started
+[FAQ]: /faq
 
 ## Key Concepts
 
 ### Hypertables
-The primary point of interaction with your data is a hypertable,
+The primary point of interaction with your data is a **hypertable**,
 the abstraction of a single continuous table across all
 space and time
 intervals, such that one can query it via vanilla SQL.
@@ -61,9 +61,8 @@ Creating a hypertable in TimescaleDB is two SQL commands: `CREATE TABLE`
 ### Chunks
 
 Internally, TimescaleDB automatically splits each
-hypertable into chunks, where a chunk corresponds to a “two-dimensional”
-split according to a specific time interval and a region of
-the partition key’s space (e.g., using hashing).
+hypertable into **chunks**, where a chunk corresponds to a
+“two-dimensional” split according to a specific time interval and a region of the partition key’s space (e.g., using hashing).
 
 Each chunk is
 implemented using a standard database table that is automatically placed
