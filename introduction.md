@@ -36,8 +36,8 @@ select setup_db();
 
 More information in our [Getting Started][] section.
 
-[Getting Started]: http://docs.timescaledb.com/getting-started
-[FAQ]: http://docs.timescaledb.com/faq
+[Getting Started]: /getting-started
+[FAQ]: /faq
 
 ## Key Concepts
 
