@@ -25,7 +25,7 @@ and space (on your machine), we'll only grab data for the month of January 2016.
 
 Note that this dataset is a dump of a full database, meaning
 that it includes any relevant hypertables and other table schemas.
-(But you will need to have to pre-installed [TimescaleDB](/installation)).
+(But you will need to have pre-installed [TimescaleDB](installation)).
 
 First, download the file [`nyc_data.bak`](https://timescaledata.blob.core.windows.net/datasets/nyc_data.bak.tar.gz).
 
@@ -51,7 +51,7 @@ psql -U postgres -h localhost -d nyc_data
 
 ## 2. Run some queries
 
-```bash
+```sql
 -- See how much data we have
 SELECT COUNT(*) FROM rides;
 
@@ -61,7 +61,7 @@ count
 (1 row)
 ```
 
-```bash
+```sql
 -- Look at the data by day
 SELECT DATE_TRUNC('day', pickup_datetime) as day, COUNT(*)
 FROM rides
@@ -107,7 +107,7 @@ GROUP BY day ORDER BY day;
 
 Let's see what else is going on in the dataset.
 
-```bash
+```sql
 -- Analyze rides by rate type
 SELECT rate_code, COUNT(vendor_id) as num_trips
 FROM rides
@@ -135,7 +135,7 @@ fortunately for us, TimescaleDB supports JOINs between tables:
 *(In other words: with TimescaleDB you won't need to denormalize
 your data.)*
 
-```bash
+```sql
 -- Join rides with rates to get more information on rate_code
 SELECT rates.description, COUNT(vendor_id) as num_trips
 FROM rides JOIN rates on rides.rate_code = rates.rate_code
@@ -157,7 +157,7 @@ these rate types
 correspond to local airports (JFK, Newark). Let's take a closer look
 those two:
 
-```bash
+```sql
 -- Detailed comparison between JFK, Newark airports
 SELECT rates.description, COUNT(vendor_id) as num_trips,
   AVG(dropoff_datetime - pickup_datetime) as avg_trip_duration,
@@ -210,7 +210,7 @@ Let's peek behind the curtain at our last query
 using the native PostgreSQL `EXPLAIN` command,
 and see TimescaleDB at work:
 
-```bash
+```sql
 EXPLAIN SELECT rates.description, COUNT(vendor_id) as num_trips,
   AVG(dropoff_datetime - pickup_datetime) as avg_trip_duration,
   AVG(total_amount) as avg_total, AVG(tip_amount) as avg_tip,
@@ -250,7 +250,7 @@ two chunks, resulting in four chunks total (`_hyper_1_1_0_1_data`,
 We can even query one of these chunks directly, accessing them via the
 private schema `_timescaledb_internal._hyper_1_2_0_2_data`:
 
-```bash
+```sql
 SELECT COUNT(*) FROM _timescaledb_internal._hyper_1_2_0_2_data;
 
 count
@@ -265,7 +265,7 @@ behind the curtain and see all of its guts.
 
 (To see all internal schemas, use command `\dn`.)
 
-```bash
+```sql
 \dn
          List of schemas
          Name          |  Owner
@@ -285,5 +285,5 @@ behind the curtain and see all of its guts.
 Up for learning more? Here are a few suggestions:
 
 - [Try Other Sample Datasets](/other-sample-datasets)
-- [Migrate your own Data](/migrate-from-postgres)
-- [Read the Technical Paper](www.timescaledb.com/papers/timescaledb.pdf)
+- [Migrate your own Data](migrate-from-postgres)
+- [Read the Technical Paper](http://www.timescaledb.com/papers/timescaledb.pdf)
