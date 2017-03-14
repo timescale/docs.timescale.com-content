@@ -11,14 +11,14 @@ derive from your data.
 
 For this tutorial, we've put together a sample data set from real-life
 New York City taxicab data ([courtesy of the NYC Taxi and Limousine
-Commission](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml).
+Commission](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)).
 
 *(Note: For simplicity we'll assume that TimescaleDB is Installed
 on a PostgreSQL server at `localhost` on the default port,
 and that a user `postgres` exists with full superuser access. If your
 setup is different, please modify the examples accordingly.)*
 
-## 1. Download and load data
+### 1. Download and load data
 
 Let's start by downloading the dataset. In the interest of (downloading) time
 and space (on your machine), we'll only grab data for the month of January 2016.
@@ -49,7 +49,7 @@ The data is now ready for you to use.
 psql -U postgres -h localhost -d nyc_data
 ```
 
-## 2. Run some queries
+### 2. Run some queries
 
 ```sql
 -- See how much data we have
@@ -103,7 +103,7 @@ GROUP BY day ORDER BY day;
 (31 rows)
 ```
 
-## 3. Run some fancier queries
+### 3. Run some fancier queries
 
 Let's see what else is going on in the dataset.
 
@@ -191,7 +191,7 @@ and don't mind paying a little extra
 (e.g., if you are splitting the fare), then you may want to consider
 flying out of Newark over JFK.
 
-## 4. What's happening behind the scenes
+### 4. What's happening behind the scenes
 
 What's nice about TimescaleDB is that it lets you run these types of queries
 on large datasets without having to worry about partitioning / chunking, etc.
@@ -280,7 +280,7 @@ behind the curtain and see all of its guts.
 (7 rows)
 ```
 
-## 5. Next steps
+### 5. Next steps
 
 Up for learning more? Here are a few suggestions:
 
