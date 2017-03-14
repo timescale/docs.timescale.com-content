@@ -49,8 +49,7 @@ intervals, such that one can query it via vanilla SQL.
 
 A hypertable is
 defined by a standard schema with column names and types, with at
-least one column specifying a time value, and one (optional) column specifying
-a “partitioning key” over which the
+least one column specifying a time value, and one (optional) column specifying a “partitioning key” over which the
 dataset can be additionally partitioned.
 
 A single TimescaleDB deployment can store multiple hypertables, each
