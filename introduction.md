@@ -8,6 +8,9 @@ license](https://github.com/timescaledb/timescaledb/blob/master/LICENSE).
 
 For more information, please check the [Frequently Asked Questions][FAQ].
 
+For the source, please
+check [our Github](https://github.com/timescaledb/timescaledb).
+
 ## Key Features
 - **Transparent time/space partitioning** for horizontal scale-out
 - **Full SQL interface** that can process all SQL natively supported by
