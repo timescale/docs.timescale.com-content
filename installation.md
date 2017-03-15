@@ -53,10 +53,10 @@ Next, we'll install our extension and create an initial database.
 You have two options for setting up your initial database:
 1. *Empty Database* - To set up a new, empty database, please follow the instructions below.
 
-2. *Database with pre-loaded sample data* - To help you quickly get started, we have also created some sample datasets. See
-[Sample Datasets][datasets] for further instructions. (Includes installing our extension.)
+2. *Database with pre-loaded sample data* - To help you quickly get started, we have also created some sample datasets.
+See [Sample Datasets][datasets] for further instructions. (Includes installing our extension.)
 
-[datasets]: http://docs.timescale.com/other-sample-datasets
+[datasets]: /other-sample-datasets
 
 ### Option 1. Setting up an empty database
 

@@ -6,7 +6,7 @@ To migrate your database from Postgres to TimescaleDB, you should have
 the following:
 
 1. Your current Postgres database
-1. A new database with TimescaleDB installed ([instructions](/installation))
+1. A new database with TimescaleDB installed ([instructions](/getting-started/installation))
 1. `pg_dump` for exporting your schema and data and the Postgres client `psql`
 for importing into your TimescaleDB database
 
@@ -23,7 +23,7 @@ For this example we'll assume you have a database called `old_db` that
 contains a single table called `foo` that you want to convert into
 a hypertable in a new database called `new_db`.
 
-### 1) Copying schema & setting up hypertables
+### 1. Copying schema & setting up hypertables
 
 Copying over one's database schema is easily done with `pg_dump`:
 ```bash
@@ -54,7 +54,7 @@ SELECT create_hypertable('foo', 'time');
 
 Your new database is now ready for data.
 
-### 2) Backing up data to CSV
+### 2. Backing up data to CSV
 
 To backup your data to CSV, run a `COPY`:
 ```bash
@@ -63,7 +63,7 @@ psql -d old_db -c '\COPY "foo" TO old_db.csv CSV'
 
 Your data is now stored in a file called `old_db.csv`.
 
-### 3) Import data into TimescaleDB
+### 3. Import data into TimescaleDB
 
 To get the most out of TimescaleDB, data needs to be imported in batches so
 that chunks do not become overfull (a limitation we are currently addressing).
