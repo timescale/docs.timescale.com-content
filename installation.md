@@ -1,22 +1,40 @@
 # Installation
 
-Timescale is engineered up from PostgreSQL and is packaged as a PostgreSQL extension and set of scripts.
+TimescaleDB is packaged as a PostgreSQL extension and set of scripts.
 
-#### Prerequisites
-- You will need the [Postgres][] client (psql).
-<!-- TODO specify check for version -->
-<!-- TODO specify that postgres client is not postgres full version?-->
+There are two ways to install TimescaleDB: (1) Docker and (2) Postgres.
 
-There are two ways to install Timescale, each with different requirements:
-1. Using a standard PostgreSQL installation with development environment (header files).
+## Installation (from source)
 
-2. Building in a container using [Docker][].
----
+_NOTE: Currently, upgrading to new versions requires a fresh install._
 
-[Postgres]: https://wiki.postgresql.org/wiki/Detailed_installation_guides
-[Docker]: https://docs.docker.com/engine/installation/
+### Installation Options
 
-### Option 1. Build and install with local PostgreSQL
+#### Option 1 - Docker (recommended)
+
+**Prerequisites**
+
+- [Postgres client](https://wiki.postgresql.org/wiki/Detailed_installation_guides) (psql)
+
+- [Docker](https://docs.docker.com/engine/installation/)
+
+**Build and run in Docker**
+
+```bash
+# To build a Docker image
+make -f docker.mk build-image
+
+# To run a container
+make -f docker.mk run
+```
+
+#### Option 2 - Postgres
+
+**Prerequisites**
+
+- A standard **PostgreSQL 9.6** installation with development environment (header files) (e.g., [Postgres.app for MacOS](https://postgresapp.com/))
+
+**Build and install with local PostgreSQL**
 
 ```bash
 # To build the extension
@@ -26,28 +44,16 @@ make
 make install
 ```
 
-### Option 2: Build and run in Docker
+**Update `postgresql.conf`**
 
+Also, you will need to edit your `postgresql.conf` file to include
+necessary libraries, and then restart PostgreSQL:
 ```bash
-# To build a Docker image
-make -f docker.mk build-image
+# Modify postgresql.conf to add required libraries. For example,
+shared_preload_libraries = 'dblink,timescaledb'
 
-# To run a container
-make -f docker.mk run
-
-# To run tests
-make -f docker.mk test
+# Then, restart PostgreSQL
 ```
----
-You should now have Postgres running locally, accessible with
-the following command:
-
-```bash
-# Connect to Postgres as a superuser named 'postgres'
-psql -U postgres -h localhost
-```
-
-Next, we'll install our extension and create an initial database.
 
 ## Setting up your initial database
 You have two options for setting up your initial database:
