@@ -6,17 +6,17 @@ There are two ways to install TimescaleDB: (1) Docker and (2) Postgres.
 
 ## Installation (from source)
 
-_NOTE: Currently, upgrading to new versions requires a fresh install._
+_NOTE: Currently, upgrading to new versions of TimescaleDB requires a fresh install._
 
-### Installation Options
+Clone the repository from our [Github site][Github] and navigate to the repo base directory.
 
-#### Option 1 - Docker (recommended)
+### Option 1. Docker (recommended)
 
 **Prerequisites**
 
-- [Postgres client](https://wiki.postgresql.org/wiki/Detailed_installation_guides) (psql)
+- [Postgres client][Postgres-client] (psql)
 
-- [Docker](https://docs.docker.com/engine/installation/)
+- [Docker][]
 
 **Build and run in Docker**
 
@@ -28,11 +28,11 @@ make -f docker.mk build-image
 make -f docker.mk run
 ```
 
-#### Option 2 - Postgres
+### Option 2. Local Postgres
 
 **Prerequisites**
 
-- A standard **PostgreSQL 9.6** installation with development environment (header files) (e.g., [Postgres.app for MacOS](https://postgresapp.com/))
+- A standard **PostgreSQL 9.6** installation with development environment (header files) (e.g., [Postgres.app for MacOS][Postgres-app])
 
 **Build and install with local PostgreSQL**
 
@@ -64,7 +64,7 @@ See [Sample Datasets][datasets] for further instructions. (Includes installing o
 
 [datasets]: /other-sample-datasets
 
-### Option 1. Setting up an empty database
+### Setting up an empty database
 
 When creating a new database, it is necessary to install the extension and then run an initialization function.  Here we will create a new database named "tutorial".
 
@@ -186,3 +186,10 @@ searching for missing data). For example,
 CREATE INDEX ON conditions (time DESC, humidity) WHERE humidity IS NOT NULL;
 ```
 this creates a more compact, and thus efficient, index.
+
+[Github]: https://www.github.com/timescaledb/timescaledb
+
+<!-- Prerequisites -->
+[Postgres-client]: https://wiki.postgresql.org/wiki/Detailed_installation_guides
+[Docker]: https://docs.docker.com/engine/installation/
+[Postgres-app]:  https://postgresapp.com/
