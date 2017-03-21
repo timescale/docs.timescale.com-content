@@ -1,6 +1,6 @@
-# Other Sample Datasets
+# Sample Datasets
 
-### Available samples
+## Available samples
 
 We have created several sample datasets (using [`pg_dump`][pg_dump]) to help you get
 started using TimescaleDB. These datasets vary in database size, number of time
@@ -15,23 +15,32 @@ intervals, and number of values for the partition field.
 **Device ops**: These datasets are designed to represent metrics (e.g. CPU,
 memory, network) collected from mobile devices.
 
-1. [`devices_small`](https://timescaledata.blob.core.windows.net/datasets/devices_small.bak.tar.gz) - 1,000 devices recorded over 1,000 time intervals
-1. [`devices_med`](https://timescaledata.blob.core.windows.net/datasets/devices_med.bak.tar.gz) - 5,000 devices recorded over 2,000 time intervals
-1. [`devices_big`](https://timescaledata.blob.core.windows.net/datasets/devices_big.bak.tar.gz) - 3,000 devices recorded over 10,000 time intervals
+1. [`devices_small`][devices-small] - 1,000 devices recorded over 1,000 time intervals
+1. [`devices_med`][devices-medium] - 5,000 devices recorded over 2,000 time intervals
+1. [`devices_big`][devices-big] - 3,000 devices recorded over 10,000 time intervals
 
 For more details and example usage, see [In-depth: Device ops datasets](#in-depth-devices).
 
 **Weather**: These datasets are designed to represent temperature and
 humidity data from a variety of locations.
 
-1. [`weather_small`](https://timescaledata.blob.core.windows.net/datasets/weather_small.bak.tar.gz) - 1,000 locations over 1,000 two-minute intervals
-1. [`weather_med`](https://timescaledata.blob.core.windows.net/datasets/weather_med.bak.tar.gz) - 1,000 locations over 15,000 two-minute intervals
-1. [`weather_big`](https://timescaledata.blob.core.windows.net/datasets/weather_big.bak.tar.gz) - 2,000 locations over 20,000 two-minute intervals
+1. [`weather_small`][weather-small] - 1,000 locations over 1,000 two-minute intervals
+1. [`weather_med`][weather-medium] - 1,000 locations over 15,000 two-minute intervals
+1. [`weather_big`][weather-big] - 2,000 locations over 20,000 two-minute intervals
 
 For more details and example usage, see [In-depth: Weather datasets](#in-depth-weather).
 
+<!-- datasets -->
+[devices-small]:https://timescaledata.blob.core.windows.net/datasets/devices_small.bak.tar.gz
+[devices-medium]:https://timescaledata.blob.core.windows.net/datasets/devices_med.bak.tar.gz
+[devices-big]:https://timescaledata.blob.core.windows.net/datasets/devices_big.bak.tar.gz
 
-### Importing
+[weather-small]:https://timescaledata.blob.core.windows.net/datasets/weather_small.bak.tar.gz
+[weather-medium]:https://timescaledata.blob.core.windows.net/datasets/weather_med.bak.tar.gz
+[weather-big]:https://timescaledata.blob.core.windows.net/datasets/weather_big.bak.tar.gz
+
+
+## Importing
 Data is easily imported using the standard way of restoring `pg_dump` backups.
 
 Briefly the steps are:
@@ -59,7 +68,7 @@ The data is now ready for you to use.
 psql -U postgres -h localhost -d devices_small
 ```
 
-### In-depth: Device ops datasets <a id="in-depth-devices"></a>
+## In-depth: Device ops datasets <a id="in-depth-devices"></a>
 After importing one of these datasets (`devices_small`, `devices_med`,
 `devices_big`), you will find a plain Postgres table called `device_info`
 and a hypertable called `readings`. The `device_info` table has (static)
@@ -176,7 +185,7 @@ hour                   | min_battery_level | max_battery_level
 
 ---
 
-### In-depth: Weather datasets <a id="in-depth-weather"></a>
+## In-depth: Weather datasets <a id="in-depth-weather"></a>
 After importing one of these datasets (`weather_small`, `weather_med`,
 `weather_big`), you will find a plain Postgres table called `locations` and
 a hypertable called `conditions`. The `locations` table has metadata about
