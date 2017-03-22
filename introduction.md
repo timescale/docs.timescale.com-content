@@ -34,7 +34,7 @@ an existing PostgreSQL node only requires two simple SQL commands:
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 
 -- Run initialization function
-select setup_db();
+select setup_timescaledb();
 ```
 
 More information in our [Getting Started][] section.
