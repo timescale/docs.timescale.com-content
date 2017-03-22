@@ -13,7 +13,8 @@ intervals, and number of values for the partition field.
 [pg_dump]: https://www.postgresql.org/docs/current/static/app-pgdump.html
 
 **Device ops**: These datasets are designed to represent metrics (e.g. CPU,
-memory, network) collected from mobile devices.
+memory, network) collected from mobile devices. (Click on the name to
+download.)
 
 1. [`devices_small`][devices-small] - 1,000 devices recorded over 1,000 time intervals
 1. [`devices_med`][devices-medium] - 5,000 devices recorded over 2,000 time intervals
@@ -22,7 +23,8 @@ memory, network) collected from mobile devices.
 For more details and example usage, see [In-depth: Device ops datasets](#in-depth-devices).
 
 **Weather**: These datasets are designed to represent temperature and
-humidity data from a variety of locations.
+humidity data from a variety of locations. (Click on the name to
+download.)
 
 1. [`weather_small`][weather-small] - 1,000 locations over 1,000 two-minute intervals
 1. [`weather_med`][weather-medium] - 1,000 locations over 15,000 two-minute intervals
