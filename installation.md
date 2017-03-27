@@ -13,8 +13,6 @@ _NOTE: Currently, upgrading to new versions of TimescaleDB requires a fresh inst
 
 - The [Postgres client][Postgres-client] (psql) is required for all of the following installation methods.
 
-Clone the repository from our [Github site][Github] and navigate to the repo base directory.
-
 ### Option 1 - Homebrew
 
 This will install PostgreSQL 9.6 via Homebrew as well. If you have
@@ -73,6 +71,8 @@ Docker image on Docker Hub (see above).
 - A standard **PostgreSQL 9.6** installation with development environment (header files) (e.g., [Postgres.app for MacOS][Postgres-app])
 
 **Build and install with local PostgreSQL**
+
+Clone the repository from our [Github site][Github] and navigate to the repo base directory.
 
 ```bash
 # To build the extension
