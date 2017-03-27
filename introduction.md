@@ -4,12 +4,12 @@ PostgreSQL, optimized for fast ingest and complex queries. Unlike
 traditional RDBMS, TimescaleDB transparently scales-out horizontally
 across multiple servers; unlike NoSQL databases, TimescaleDB natively
 supports all of SQL. TimescaleDB is distributed under the [Apache 2
-license](https://github.com/timescaledb/timescaledb/blob/master/LICENSE).
+license](https://github.com/timescale/timescaledb/blob/master/LICENSE).
 
 For more information, please check the [Frequently Asked Questions][FAQ].
 
 For the source, please
-check [our Github](https://github.com/timescaledb/timescaledb).
+check [our Github](https://github.com/timescale/timescaledb).
 
 ## Key Features
 - **Transparent time/space partitioning** for horizontal scale-out

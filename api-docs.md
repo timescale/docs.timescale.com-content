@@ -1,4 +1,4 @@
-## TimescaleDB API Reference
+# TimescaleDB API Reference
 
 ### `create_hypertable()`
 
