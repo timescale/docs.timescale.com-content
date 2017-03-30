@@ -220,22 +220,22 @@ FROM rides JOIN rates on rides.rate_code = rates.rate_code
 WHERE rates.description in (‘JFK’, ‘Newark’)
 GROUP BY rates.description order by rates.description;
 
-QUERY PLAN                                 
+QUERY PLAN
 -------------------------------------------------------------------------------------------------------
-Sort  (cost=397889.93..397889.96 rows=13 width=248)
+Sort  (cost=397929.47..397929.50 rows=13 width=248)
 Sort Key: rates.description
-->  HashAggregate  (cost=397889.40..397889.69 rows=13 width=248)
+->  HashAggregate  (cost=397928.93..397929.23 rows=13 width=248)
 Group Key: rates.description
-->  Hash Join  (cost=26.04..380154.70 rows=709388 width=71)
+->  Hash Join  (cost=26.04..380190.23 rows=709548 width=71)
 Hash Cond: (_hyper_1_0_replica.rate_code = rates.rate_code)
-->  Append  (cost=0.00..332108.56 rows=10913659 width=43)
+->  Append  (cost=0.00..332133.24 rows=10916127 width=43)
 ->  Seq Scan on _hyper_1_0_replica  (cost=0.00..0.00 rows=1 width=180)
 ->  Seq Scan on _hyper_1_1_0_partition  (cost=0.00..0.00 rows=1 width=180)
 ->  Seq Scan on _hyper_1_2_0_partition  (cost=0.00..0.00 rows=1 width=180)
-->  Seq Scan on _hyper_1_1_0_1_data  (cost=0.00..138906.06 rows=4575606 width=43)
-->  Seq Scan on _hyper_1_1_0_3_data  (cost=0.00..15134.52 rows=498152 width=44)
-->  Seq Scan on _hyper_1_2_0_2_data  (cost=0.00..160902.95 rows=5277395 width=43)
-->  Seq Scan on _hyper_1_2_0_4_data  (cost=0.00..17165.03 rows=562503 width=43)
+->  Seq Scan on _hyper_1_1_0_1_data  (cost=0.00..138933.17 rows=4578417 width=43)
+->  Seq Scan on _hyper_1_1_0_3_data  (cost=0.00..15133.52 rows=498152 width=43)
+->  Seq Scan on _hyper_1_2_0_2_data  (cost=0.00..160902.95 rows=5277095 width=43)
+->  Seq Scan on _hyper_1_2_0_4_data  (cost=0.00..17163.60 rows=562460 width=44)
 ->  Hash  (cost=25.88..25.88 rows=13 width=36)
 ->  Seq Scan on rates  (cost=0.00..25.88 rows=13 width=36)
 Filter: (description = ANY ('{JFK,Newark}'::text[]))
