@@ -5,7 +5,7 @@ TimescaleDB is packaged as a PostgreSQL extension and set of scripts.
 There are several ways to install TimescaleDB: (1) Homebrew (for MacOS),
 (2) Docker, or (3) from source.
 
-## Installation (from source)
+## Installation
 
 _NOTE: Currently, upgrading to new versions of TimescaleDB requires a fresh install._
 
