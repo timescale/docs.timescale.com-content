@@ -16,7 +16,7 @@ _NOTE: Currently, upgrading to new versions of TimescaleDB requires a fresh inst
 ### Option 1 - Homebrew
 
 This will install PostgreSQL 9.6 via Homebrew as well. If you have
-another installation (such as Postgres.app), this will cause problems. We
+PostgreSQL installed outside of Homebrew (such as with Postgres.app), this will cause problems. We
 recommend removing other installations before using this method.
 
 **Prerequisites**
@@ -35,15 +35,18 @@ brew install timescaledb
 
 **Update `postgresql.conf`**
 
-Also, you will need to edit your `postgresql.conf` file to include
-necessary libraries:
+You will need to edit your `postgresql.conf` file to include
+the `timescaledb` library:
 ```bash
+# locate your postgresql.conf file
+psql -c "SHOW config_file;"
+
 # Modify postgresql.conf to uncomment this line and add required libraries.
 # For example:
-shared_preload_libraries = 'dblink,timescaledb'
+shared_preload_libraries = 'timescaledb'
 ```
 
-To get started you'll now need to restart PostgreSQL and add a
+To get started, restart PostgreSQL and add a
 `postgres` superuser (used in the rest of the docs):
 ```bash
 # Restart PostgreSQL
@@ -82,13 +85,15 @@ make
 make install
 ```
 
-**Update `postgresql.conf`**
+**Update `postgresql.conf` file to include
+the timescaledb library, and then restart PostgreSQL:**
 
-Also, you will need to edit your `postgresql.conf` file to include
-necessary libraries, and then restart PostgreSQL:
 ```bash
-# Modify postgresql.conf to add required libraries. For example,
-shared_preload_libraries = 'dblink,timescaledb'
+# locate your postgresql.conf file
+psql -c "SHOW config_file;"
+
+# Modify postgresql.conf to add the timescaledb library. For example,
+shared_preload_libraries = 'timescaledb'
 
 # Then, restart PostgreSQL
 ```
