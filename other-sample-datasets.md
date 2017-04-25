@@ -2,15 +2,16 @@
 
 ## Available samples
 
-We have created several sample datasets (using [`pg_dump`][pg_dump]) to help you get
-started using TimescaleDB. These datasets vary in database size, number of time
+We have created several sample datasets to help you get started using
+TimescaleDB. These datasets vary in database size, number of time
 intervals, and number of values for the partition field.
 
-(Note that these dataset backups already include our time-series
-  database, so you won't need to manually install our extension,
-  nor run the setup scripts, etc.)
+Each gzip archive contains a single `.sql` file that creates the necessary
+database (hyper)tables, and several `.csv` files that contain the
+data to be copied into those tables. These files presume the database
+you are importing them to has already been [set up with the TimescaleDB extension][installation].
 
-[pg_dump]: https://www.postgresql.org/docs/current/static/app-pgdump.html
+[installation]: /getting-started/installation
 
 **Device ops**: These datasets are designed to represent metrics (e.g. CPU,
 memory, network) collected from mobile devices. (Click on the name to
@@ -43,24 +44,34 @@ For more details and example usage, see [In-depth: Weather datasets](#in-depth-w
 
 
 ## Importing
-Data is easily imported using the standard way of restoring `pg_dump` backups.
+Briefly, the import steps are:
+1. Setup a database with TimescaleDB
+1. Unzip the archive
+1. Import the `.sql` file to create the (hyper)tables via `psql`
+1. Import the data from `.csv` files via `psql`
 
-Briefly the steps are:
-1. Unzip the archive,
-1. Create a database for the data (using the same name as the dataset)
-1. Import the data via `psql`
+Each dataset is named `[dataset]_[size].tar.gz`, e.g.
+`devices_small.tar.gz` is dataset `devices` and size `small`.
+Each dataset contains one `.sql` file named `[dataset].sql`
+and a few CSV files named in the format `[dataset]_[size]_[table].csv`.
 
-Each of our archives is named `[dataset_name].bak.tar.gz`, so if you are using
-dataset `devices_small`, the commands are:
+As an example, if you wanted to import the `devices_small` dataset
+above, it creates two tables (`device_info` and a hypertable named
+ `readings`) from `devices.sql`. Therefore, there are two CSV files:
+ `devices_small_readings.csv` and `devices_small_device_info.csv`.
+So, to import this dataset into a TimescaleDB database named
+ `devices_small`:
+
 ```bash
 # (1) unzip the archive
-tar -xvzf devices_small.bak.tar.gz
+tar -xvzf devices_small.tar.gz
 
-# (2) create a database with the same name
-psql -U postgres -h localhost -c 'CREATE DATABASE devices_small;'
+# (2) import the .sql file to the database
+psql -U postgres -d devices_small < devices.sql
 
-# (3) import data
-psql -U postgres -d devices_small -h localhost < devices_small.bak
+# (3) import data from .csv files to the database
+psql -U postgres -d devices_small -c "\COPY readings FROM devices_small_readings.csv CSV"
+psql -U postgres -d devices_small -c "\COPY device_info FROM devices_small_device_info.csv CSV"
 ```
 
 The data is now ready for you to use.
