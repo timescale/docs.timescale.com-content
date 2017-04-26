@@ -34,13 +34,13 @@ download.)
 For more details and example usage, see [In-depth: Weather datasets](#in-depth-weather).
 
 <!-- datasets -->
-[devices-small]:https://timescaledata.blob.core.windows.net/datasets/devices_small.bak.tar.gz
-[devices-medium]:https://timescaledata.blob.core.windows.net/datasets/devices_med.bak.tar.gz
-[devices-big]:https://timescaledata.blob.core.windows.net/datasets/devices_big.bak.tar.gz
+[devices-small]:https://timescaledata.blob.core.windows.net/datasets/devices_small.tar.gz
+[devices-medium]:https://timescaledata.blob.core.windows.net/datasets/devices_med.tar.gz
+[devices-big]:https://timescaledata.blob.core.windows.net/datasets/devices_big.tar.gz
 
-[weather-small]:https://timescaledata.blob.core.windows.net/datasets/weather_small.bak.tar.gz
-[weather-medium]:https://timescaledata.blob.core.windows.net/datasets/weather_med.bak.tar.gz
-[weather-big]:https://timescaledata.blob.core.windows.net/datasets/weather_big.bak.tar.gz
+[weather-small]:https://timescaledata.blob.core.windows.net/datasets/weather_small.tar.gz
+[weather-medium]:https://timescaledata.blob.core.windows.net/datasets/weather_med.tar.gz
+[weather-big]:https://timescaledata.blob.core.windows.net/datasets/weather_big.tar.gz
 
 
 ## Importing
