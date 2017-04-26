@@ -39,7 +39,7 @@ You will need to edit your `postgresql.conf` file to include
 the `timescaledb` library:
 ```bash
 # locate your postgresql.conf file
-psql -c "SHOW config_file;"
+psql -d postgres -c "SHOW config_file;"
 
 # Modify postgresql.conf to uncomment this line and add required libraries.
 # For example:
@@ -90,7 +90,7 @@ the timescaledb library, and then restart PostgreSQL:**
 
 ```bash
 # locate your postgresql.conf file
-psql -c "SHOW config_file;"
+psql -d postgres -c "SHOW config_file;"
 
 # Modify postgresql.conf to add the timescaledb library. For example,
 shared_preload_libraries = 'timescaledb'
