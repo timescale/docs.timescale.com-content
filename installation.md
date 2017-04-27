@@ -106,7 +106,7 @@ You have two options for setting up your initial database:
 2. *Database with pre-loaded sample data* - To help you quickly get started, we have also created some sample datasets.
 See [Sample Datasets][datasets] for further instructions. (Includes installing our extension.)
 
-[datasets]: /other-sample-datasets
+[datasets]: /getting-started/other-sample-datasets
 
 ### Setting up an empty database
 
