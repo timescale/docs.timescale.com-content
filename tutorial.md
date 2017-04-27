@@ -1,4 +1,4 @@
-# Hello NYC
+# Tutorial: Hello NYC
 
 Prerequisites: [Installed TimescaleDB](installation)
 
