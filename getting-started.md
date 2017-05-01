@@ -10,4 +10,4 @@ If you want to play around with some sample data, we have several [datasets][sam
 
 [Installation]: /introduction
 [API reference]: /api-docs
-[sample datasets]: /getting-started/other-sample-datasets
+[sample_datasets]: /getting-started/other-sample-datasets
