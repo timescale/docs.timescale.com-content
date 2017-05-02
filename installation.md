@@ -9,24 +9,23 @@ For a more detailed description of our architecture, [please read
 the technical
 paper](http://www.timescaledb.com/papers/timescaledb.pdf)
 
-There are several ways to install TimescaleDB: (1) Homebrew (for MacOS),
-(2) Docker, or (3) from source.
+There are several ways to install TimescaleDB:
+1. [Homebrew](#homebrew) (for MacOS),
+1. [Docker](#docker), or
+1. From [source][].
+
+### Supported platforms
+
+Currently TimescaleDB supports MacOS/OSX and Unix for all [platforms supported by PostgreSQL][platforms].  Windows is not directly supported, but may work indirectly using the Docker installation method (see below).
 
 ## Installation
 
 _NOTE: Currently, upgrading to new versions requires a fresh install._
 
-**Prerequisite**
+### Option 1 - Homebrew <a id="homebrew"></a>
 
-- The [Postgres client][Postgres-client] (psql) is required for all of the following installation methods.
-
-[Postgres-client]: https://wiki.postgresql.org/wiki/Detailed_installation_guides
-
-### Option 1 - Homebrew
-
-This will install PostgreSQL 9.6 via Homebrew as well. If you have
-another installation (such as Postgres.app), this will cause problems. We
-recommend removing other installations before using this method.
+This will install both TimescaleDB *AND* PostgreSQL 9.6 via Homebrew. If you have another PostgreSQL installation (such as through Postgres.app), this will cause problems. If you wish to maintain your current version of PostgreSQL outside of Homebrew we
+recommend [installing from source][source].  Otherwise please be sure to remove non-Homebrew installations before using this method.
 
 **Prerequisites**
 
@@ -62,7 +61,7 @@ brew services restart postgresql
 createuser postgres -s
 ```
 
-### Option 2 - Docker Hub
+### Option 2 - Docker Hub <a id="docker"></a>
 
 You can pull our Docker images from [Docker Hub](https://hub.docker.com/r/timescale/timescaledb/).
 
@@ -90,7 +89,7 @@ our [docker-run.sh][] in the `scripts/` of our github repo, which saves
 the data to `$PWD/data`. There you can also see additional `-c` flags
 we recommend for memory settings, etc.
 
-### Option 3 - From source
+### Option 3 - From source <a id="source"></a>
 We have only tested our build process on **MacOS and Linux**. We do
 not support building on Windows yet. Windows may be able to use our
 Docker image on Docker Hub (see above).
@@ -168,100 +167,17 @@ You should now have a brand new time-series database running in Postgres.
 psql -U postgres -h localhost -d tutorial
 ```
 
-Next let's load some data.
+Next let's learn some of the [Basic operations][] available to TimescaleDB.
 
-## Working with time-series data
 
-One of the core ideas of our time-series database are time-series optimized data tables, called **hypertables**.
 
-### Creating a (hyper)table
-To create a hypertable, you start with a regular SQL table, and then convert
-it into a hypertable via the function
-`create_hypertable()`([API reference][]).
+### Caveats
+Below are a few issues with the database that we are working on as we move out of beta:
 
-The following example creates a hypertable for tracking
-temperature and humidity across a collection of devices over time.
-
-```sql
--- We start by creating a regular SQL table
-CREATE TABLE conditions (
-  time        TIMESTAMPTZ       NOT NULL,
-  location    TEXT              NOT NULL,
-  temperature DOUBLE PRECISION  NULL,
-  humidity    DOUBLE PRECISION  NULL
-);
-```
-
-Next, transform it into a hypertable using the provided function
-`create_hypertable()`:
-
-```sql
--- This creates a hypertable that is partitioned by time
---   using the values in the `time` column.
-SELECT create_hypertable('conditions', 'time');
-
--- OR you can additionally partition the data on another dimension
---   (what we call 'space') such as `location`.
--- For example, to partition `location` into 2 partitions:
-SELECT create_hypertable('conditions', 'time', 'location', 2);
-```
-
-### Inserting and querying
-Inserting data into the hypertable is done via normal SQL `INSERT` commands,
-e.g. using millisecond timestamps:
-```sql
-INSERT INTO conditions(time, location, temperature, humidity)
-VALUES(NOW(), 'office', 70.0, 50.0);
-```
-
-Similarly, querying data is done via normal SQL `SELECT` commands.
-SQL `UPDATE` and `DELETE` commands also work as expected.
-
-### Indexing data
-
-Data is indexed using normal SQL `CREATE INDEX` commands. For instance,
-```sql
-CREATE INDEX ON conditions (location, time DESC);
-```
-This can be done before or after converting the table to a hypertable.
-
-**Indexing suggestions:**
-
-Our experience has shown that different types of indexes are most-useful for
-time-series data, depending on your data.
-
-For indexing columns with discrete (limited-cardinality) values (e.g., where you are most likely
-  to use an "equals" or "not equals" comparator) we suggest using an index like this (using our hypertable `conditions` for the example):
-```sql
-CREATE INDEX ON conditions (location, time DESC);
-```
-For all other types of columns, i.e., columns with continuous values (e.g., where you are most likely to use a
-"less than" or "greater than" comparator) the index should be in the form:
-```sql
-CREATE INDEX ON conditions (time DESC, temperature);
-```
-Having a `time DESC` column specification in the index allows for efficient queries by column-value and time. For example, the index defined above would optimize the following query:
-```sql
-SELECT * FROM conditions WHERE location = 'garage' ORDER BY time DESC LIMIT 10
-```
-
-For sparse data where a column is often NULL, we suggest adding a
-`WHERE column IS NOT NULL` clause to the index (unless you are often
-searching for missing data). For example,
-
-```sql
-CREATE INDEX ON conditions (time DESC, humidity) WHERE humidity IS NOT NULL;
-```
-this creates a more compact, and thus efficient, index.
-
-### Current limitations
-Below are a few current limitations of our database, which we are
-actively working to resolve:
-
-- Any user has full read/write access to the metadata tables for hypertables.
+- All users have full read/write access to the metadata tables for hypertables.
 - Permission changes on hypertables are not correctly propagated.
-- `create_hypertable()` can only be run on an empty table
-- Custom user-created triggers on hypertables currently not allowed
+- `create_hypertable()` can only be run on an empty table.
+- Custom user-created triggers on hypertables currently not allowed.
 - `drop_chunks()` (see our [API Reference][]) is currently only
 supported for hypertables that are not partitioned by space.
 
@@ -269,6 +185,10 @@ supported for hypertables that are not partitioned by space.
 For more information on TimescaleDB's APIs, check out our
 [API Reference][].
 
+
+[platforms]: https://www.postgresql.org/docs/9.5/static/supported-platforms.html
+[source]: /getting-started/installation#source
 [datasets]: /getting-started/other-sample-datasets
 [docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh
 [API Reference]: /api-docs
+[Basic operations]: /getting-started/basic-operations

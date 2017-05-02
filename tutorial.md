@@ -292,6 +292,6 @@ behind the curtain and see all of its guts.
 
 Up for learning more? Here are a few suggestions:
 
-- [Try Other Sample Datasets](/other-sample-datasets)
-- [Migrate your own Data](migrate-from-postgres)
+- [Try Other Sample Datasets](/getting-started/other-sample-datasets)
+- [Migrate your own Data](/best-practices/migrating-data)
 - [Read the Technical Paper](http://www.timescaledb.com/papers/timescaledb.pdf)
