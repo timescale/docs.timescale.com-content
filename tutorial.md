@@ -13,7 +13,7 @@ For this tutorial, we've put together a sample data set from real-life
 New York City taxicab data ([courtesy of the NYC Taxi and Limousine
 Commission](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)).
 
-*(Note: For simplicity we'll assume that TimescaleDB is Installed
+*(Note: For simplicity we'll assume that [TimescaleDB is installed](installation)
 on a PostgreSQL server at `localhost` on the default port,
 and that a user `postgres` exists with full superuser access. If your
 setup is different, please modify the examples accordingly.)*
@@ -23,23 +23,31 @@ setup is different, please modify the examples accordingly.)*
 Let's start by downloading the dataset. In the interest of (downloading) time
 and space (on your machine), we'll only grab data for the month of January 2016.
 
-Note that this dataset is a dump of a full database, meaning
-that it includes any relevant hypertables and other table schemas.
-(But you will need to have pre-installed [TimescaleDB](installation)).
+This dataset contains two files:
+1. `nyc_data.sql` - A SQL file that will set up the necessary tables
+1. `nyc_data_rides.csv` - A CSV file with the ride data
 
-First, download the file [`nyc_data.bak`](https://timescaledata.blob.core.windows.net/datasets/nyc_data.bak.tar.gz).
+First, create a database, e.g., `nyc_data` with the extension:
+```sql
+CREATE DATABASE nyc_data;
+\c nyc_data
+CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
+SELECT setup_timescaledb();
+```
+
+Now, download the file [`nyc_data.tar.gz`](https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz).
 
 Then, follow these steps:
 
 ```bash
 # (1) unzip the archive
-tar -xvzf nyc_data.bak.tar.gz
+tar -xvzf nyc_data.tar.gz
 
-# (2) create a database with the same name
-psql -U postgres -h localhost -c 'CREATE DATABASE nyc_data;'
+# (2) import the table schemas
+psql -U postgres -d nyc_data -h localhost < nyc_data.sql
 
 # (3) import data
-psql -U postgres -d nyc_data -h localhost < nyc_data.bak
+psql -U postgres -d nyc_data -h localhost -c "\COPY rides FROM nyc_data_rides.csv CSV"
 ```
 
 The data is now ready for you to use.
@@ -217,25 +225,25 @@ EXPLAIN SELECT rates.description, COUNT(vendor_id) as num_trips,
   MIN(trip_distance) as min_distance, AVG(trip_distance) as avg_distance,
   MAX(trip_distance) as max_distance, AVG(passenger_count) as avg_passengers
 FROM rides JOIN rates on rides.rate_code = rates.rate_code
-WHERE rates.description in (‘JFK’, ‘Newark’)
+WHERE rates.description in ('JFK', 'Newark')
 GROUP BY rates.description order by rates.description;
 
 QUERY PLAN
 -------------------------------------------------------------------------------------------------------
-Sort  (cost=397929.47..397929.50 rows=13 width=248)
+Sort  (cost=397779.22..397779.26 rows=13 width=248)
 Sort Key: rates.description
-->  HashAggregate  (cost=397928.93..397929.23 rows=13 width=248)
+->  HashAggregate  (cost=397778.69..397778.98 rows=13 width=248)
 Group Key: rates.description
-->  Hash Join  (cost=26.04..380190.23 rows=709548 width=71)
+->  Hash Join  (cost=26.04..380054.91 rows=708951 width=71)
 Hash Cond: (_hyper_1_0_replica.rate_code = rates.rate_code)
-->  Append  (cost=0.00..332133.24 rows=10916127 width=43)
+->  Append  (cost=0.00..332038.35 rows=10906938 width=43)
 ->  Seq Scan on _hyper_1_0_replica  (cost=0.00..0.00 rows=1 width=180)
 ->  Seq Scan on _hyper_1_1_0_partition  (cost=0.00..0.00 rows=1 width=180)
 ->  Seq Scan on _hyper_1_2_0_partition  (cost=0.00..0.00 rows=1 width=180)
-->  Seq Scan on _hyper_1_1_0_1_data  (cost=0.00..138933.17 rows=4578417 width=43)
-->  Seq Scan on _hyper_1_1_0_3_data  (cost=0.00..15133.52 rows=498152 width=43)
-->  Seq Scan on _hyper_1_2_0_2_data  (cost=0.00..160902.95 rows=5277095 width=43)
-->  Seq Scan on _hyper_1_2_0_4_data  (cost=0.00..17163.60 rows=562460 width=44)
+->  Seq Scan on _hyper_1_1_0_1_data  (cost=0.00..140858.35 rows=4638335 width=43)
+->  Seq Scan on _hyper_1_1_0_2_data  (cost=0.00..13154.56 rows=432956 width=43)
+->  Seq Scan on _hyper_1_2_0_3_data  (cost=0.00..162961.55 rows=5342055 width=43)
+->  Seq Scan on _hyper_1_2_0_4_data  (cost=0.00..15063.89 rows=493589 width=44)
 ->  Hash  (cost=25.88..25.88 rows=13 width=36)
 ->  Seq Scan on rates  (cost=0.00..25.88 rows=13 width=36)
 Filter: (description = ANY ('{JFK,Newark}'::text[]))
@@ -245,17 +253,17 @@ Filter: (description = ANY ('{JFK,Newark}'::text[]))
 This shows that the hypertable `rides` is split across two partitions
 (`_hyper_1_1_0_partition` and `_hyper_1_2_0_partition`), each of which has
 two chunks, resulting in four chunks total (`_hyper_1_1_0_1_data`,
-`_hyper_1_1_0_3_data`, `_hyper_1_2_0_2_data`, `_hyper_1_2_0_4_data`).
+`_hyper_1_1_0_2_data`, `_hyper_1_2_0_3_data`, `_hyper_1_2_0_4_data`).
 
 We can even query one of these chunks directly, accessing them via the
-private schema `_timescaledb_internal._hyper_1_2_0_2_data`:
+private schema `_timescaledb_internal._hyper_1_2_0_3_data`:
 
 ```sql
-SELECT COUNT(*) FROM _timescaledb_internal._hyper_1_2_0_2_data;
+SELECT COUNT(*) FROM _timescaledb_internal._hyper_1_2_0_3_data;
 
 count
---------
-5272969
+---------
+5341840
 (1 row)
 ```
 
