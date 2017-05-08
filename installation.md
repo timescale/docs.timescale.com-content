@@ -90,5 +90,5 @@ For more information on TimescaleDB's APIs, check out our
 [source]: /getting-started/installation#source
 [datasets]: /getting-started/other-sample-datasets
 [docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh
-[API Reference]: /api-docs
+[API Reference]: /timescaledb-api
 [Basic operations]: /getting-started/basic-operations

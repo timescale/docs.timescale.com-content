@@ -9,5 +9,5 @@ If you use PostgreSQL already, out of the gate you know a lot about what Timesca
 If you want to play around with some sample data, we have several [datasets][sample_datasets] to try out.
 
 [Installation]: /introduction
-[API reference]: /api-docs
+[API reference]: /timescaledb-api
 [sample_datasets]: /getting-started/other-sample-datasets

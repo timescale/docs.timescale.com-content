@@ -88,6 +88,6 @@ this creates a more compact, and thus efficient, index.
 If you would like to see what you can do with a full data set, you can check out our [tutorial][] or play around on your own with our [sample datasets][]
 
 [installed]: /getting-started/installation
-[API Reference]: /api-docs
+[API Reference]: /timescaledb-api
 [tutorial]: /getting-started/tutorial
 [sample datasets]: /getting-started/other-sample-datasets
