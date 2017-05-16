@@ -16,6 +16,7 @@ temperature and humidity across a collection of devices over time.
 
 ```sql
 -- We start by creating a regular SQL table
+
 CREATE TABLE conditions (
   time        TIMESTAMPTZ       NOT NULL,
   location    TEXT              NOT NULL,
@@ -29,11 +30,13 @@ Next, transform it into a hypertable with `create_hypertable()`:
 ```sql
 -- This creates a hypertable that is partitioned by time
 --   using the values in the `time` column.
+
 SELECT create_hypertable('conditions', 'time');
 
 -- OR you can additionally partition the data on another dimension
 --   (what we call 'space') such as `location`.
 -- For example, to partition `location` into 2 partitions:
+
 SELECT create_hypertable('conditions', 'time', 'location', 2);
 ```
 
@@ -85,9 +88,9 @@ CREATE INDEX ON conditions (time DESC, humidity) WHERE humidity IS NOT NULL;
 ```
 this creates a more compact, and thus efficient, index.
 
-If you would like to see what you can do with a full data set, you can check out our [tutorial][] or play around on your own with our [sample datasets][]
+If you would like to see what you can do with a full data set, you can check out our [basic tutorial][] or play around on your own with our [sample datasets][]
 
 [installed]: /getting-started/installation
 [API Reference]: /timescaledb-api
-[tutorial]: /getting-started/tutorial
+[basic tutorial]: /tutorials/tutorial-hello-nyc
 [sample datasets]: /getting-started/other-sample-datasets

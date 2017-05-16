@@ -1,6 +1,6 @@
 # TimescaleDB API Reference
 
-### `create_hypertable()`
+### `create_hypertable()` <a id="create_hypertable"></a>
 
 Creates a TimescaleDB hypertable from a Postgres table (replacing the
 latter), partitioned on time and optionally another column.
@@ -37,7 +37,7 @@ SELECT create_hypertable('foo', 'ts', 'bar', 2);
 
 ---
 
-### `drop_chunks()`
+### `drop_chunks()` <a id="drop_chunks"></a>
 _**NOTE: Currently only supported on single-partition deployments**_
 
 Removes data chunks that are older than a given time interval across all
@@ -74,7 +74,7 @@ SELECT drop_chunks(interval '3 months', 'foo');
 
 ---
 
-### `setup_timescaledb()`
+### `setup_timescaledb()` <a id="setup_timescaledb"></a>
 
 Initializes a Postgres database to fully use TimescaleDB.
 
@@ -84,7 +84,7 @@ Initializes a Postgres database to fully use TimescaleDB.
 SELECT setup_timescaledb();
 ```
 
-### `time_bucket()`
+### `time_bucket()` <a id="time_bucket"></a>
 
 This is a more powerful version of the standard postgres `date_trunc` function.
 It allows for arbitrary time intervals instead of the second, minute, hour, etc.
@@ -176,7 +176,7 @@ ORDER BY five_min
 Note that the above cast to TIMESTAMP converts the time to local time according
 to the server's timezone setting.
 
-### `last()` and `first()`
+### `last()` and `first()` <a id="first-last"></a>
 
 The `last()` and `first()` aggregates allow you to get the value of one column as ordered by another. For example, `last(temperature, time)` will return the latest temperature value based on time within an aggregate group.
 
