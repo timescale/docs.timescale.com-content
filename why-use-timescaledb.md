@@ -1,1 +1,1 @@
-# Why use TimescaleDB?
+# *** Why use TimescaleDB?
