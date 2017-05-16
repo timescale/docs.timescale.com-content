@@ -10,4 +10,4 @@
 
 ## Advanced query commands
 
-## [TimescaleDB commands](/api/api-timescale)
+## [TimescaleDB commands](/api/api-timescaledb)
