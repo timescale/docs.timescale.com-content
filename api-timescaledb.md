@@ -175,3 +175,23 @@ ORDER BY five_min
 ```
 Note that the above cast to TIMESTAMP converts the time to local time according
 to the server's timezone setting.
+
+### `last()` and `first()`
+
+The `last()` and `first()` aggregates allow you to get the value of one column as ordered by another. For example, `last(temperature, time)` will return the latest temperature value based on time within an aggregate group.
+
+**Required arguments**
+
+|Name|Description|
+|---|---|
+| `value` | The value to return (anyelement) |
+| `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
+
+**Examples**
+
+Get the latest temperature by device_id
+```sql
+SELECT device_id, last(temp, time)
+FROM metrics
+GROUP BY device_id;
+```

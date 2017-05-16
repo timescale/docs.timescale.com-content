@@ -1,29 +1,3 @@
-TimescaleDB is an open-source database designed to make SQL scalable for
-time-series data. It is engineered up from PostgreSQL, providing automatic
-partitioning across time and space (partitioning key), as well as full
-SQL support.
-
-TimescaleDB is packaged as a PostgreSQL extension and set of scripts.
-
-For a more detailed description of our architecture, [please read
-the technical
-paper](http://www.timescaledb.com/papers/timescaledb.pdf)
-
-There are several ways to install TimescaleDB:
-1. [Homebrew](#homebrew) (for MacOS),
-1. [Docker](#docker), or
-1. From [source][].
-
-### Supported platforms
-
-Currently TimescaleDB supports MacOS/OSX and Unix for all [platforms supported by PostgreSQL][platforms].  Windows is not directly supported, but may work indirectly using the Docker installation method (see below).
-
-## Installation
-
-_NOTE: Currently, upgrading to new versions requires a fresh install._
-
-*** Choose your own adventure goes here
-
 ### Setting up your initial database
 Now, we'll install our extension and create an initial database. Below
 you'll find instructions for creating a new, empty database.

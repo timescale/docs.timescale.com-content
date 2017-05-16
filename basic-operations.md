@@ -1,4 +1,4 @@
-# Basic operations
+# *** Basic operations
 
 Ok, you have [installed][] TimescaleDB, and now you are ready to work with some data.  There are a couple of basic operations that you will be using frequently with TimescaleDB, *creating hypertables*, *inserting data*, *querying data*, and possibly *indexing data*.
 
