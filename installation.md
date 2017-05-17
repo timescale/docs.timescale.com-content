@@ -5,15 +5,14 @@ you'll find instructions for creating a new, empty database.
 To help you quickly get started, we have also created some sample
 datasets. Once you complete the initial setup below you can then
 easily import this data to play around with TimescaleDB functionality.
-See [our Sample Datasets][datasets]
-for further instructions.
+See [our Sample Datasets][datasets] for further instructions.
 
 #### Setting up an empty database
 
 When creating a new database, it is necessary to install the extension and then run an initialization function.
 
 ```bash
-# Connect to Postgres, using a superuser named 'postgres'
+# Connect to PostgreSQL, using a superuser named 'postgres'
 psql -U postgres -h localhost
 ```
 
@@ -34,16 +33,16 @@ DB_NAME=tutorial ./scripts/setup-db.sh
 ```
 
 #### Accessing your new database
-You should now have a brand new time-series database running in Postgres.
+You should now have a brand new time-series database running in your PostgreSQL instance.
 
 ```bash
 # To access your new database
 psql -U postgres -h localhost -d tutorial
 ```
 
-Next let's learn some of the [Basic operations][] available to TimescaleDB.
+**Next let's learn how to create and work with a [Hypertable][], the primary point of interaction for TimescaleDB.**
 
-
+---
 
 ### Caveats
 Below are a few issues with the database that we are working on as we move out of beta:
@@ -56,13 +55,12 @@ Below are a few issues with the database that we are working on as we move out o
 supported for hypertables that are not partitioned by space.
 
 ### More APIs
-For more information on TimescaleDB's APIs, check out our
-[API Reference][].
+For more information on TimescaleDB's APIs, check out our [API Reference][].
 
 
 [platforms]: https://www.postgresql.org/docs/9.5/static/supported-platforms.html
 [source]: /getting-started/installation#source
 [datasets]: /getting-started/other-sample-datasets
 [docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh
-[API Reference]: /timescaledb-api
-[Basic operations]: /getting-started/basic-operations
+[API Reference]: /api/api-timescaledb
+[Hypertable]: /getting-started/basic-operations

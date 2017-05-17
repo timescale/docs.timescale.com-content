@@ -12,8 +12,8 @@
 - [How does TimescaleDB scale?](#how-scaling)
 - [What are Hypertables and chunks?](#hypertable-chunks)
 - [How are Hypertable chunks determined across the space dimension (partition keys)?](#partitions)
-- [Why would I use TimescaleDB over vanilla PostgreSQL?](#vs-postgres)
-- [How compatible is TimescaleDB with PostgreSQL?](#postgres-compatibility)
+- [Why would I use TimescaleDB over vanilla PostgreSQL?](#vs-postgresql)
+- [How compatible is TimescaleDB with PostgreSQL?](#postgresql-compatibility)
 - [How does TimescaleDB handle geospatial data?](#geo-spatial)
 - [What can I use TimescaleDB for?](#what-for)
 - [When is TimescaleDB a good choice?](#when-good)
@@ -73,19 +73,19 @@ TimescaleDB’s architecture leverages two key properties of time-series data:
 ### **How are Hypertable chunks determined across the space dimension (partition keys)?** <a id="partitions"></a>
   The partition key is chosen by the user when creating a hypertable, typically something like a device id, customer id, or other unique id. [[Top]](#top)
 
-### **Why would I use TimescaleDB over vanilla PostgreSQL?** <a id="vs-postgres"></a>
+### **Why would I use TimescaleDB over vanilla PostgreSQL?** <a id="vs-postgresql"></a>
   * Scale, performance, and features. While vanilla PostgreSQL is suitable for time-series data at low volumes, it does not scale well to the volume of data that most time-series applications produce, especially when running on a single server. TimescaleDB performs better for time-series single-node deployments, and allows scaling out in ways that Vanilla PostgreSQL does not support.
   * In particular, vanilla PostgreSQL has poor write performance for large tables, and this problem only becomes worse over time as data volume grows linearly in time. These problems emerge when table indexes can no longer fit in memory, as each insert will translate to many disk fetches to swap in portions of the indexes’ B-Trees. Further, any data deletion (to save space or to implement data retention policies) will require expensive “vacuuming” operations to defragment the disk storage associated with such tables.
   * TimescaleDB also includes time-series specific features not included in vanilla PostgreSQL (e.g., [data retention](https://github.com/timescale/timescaledb/blob/master/docs/API.md)), with more to come.
   [[Top]](#top)
 
-### **How compatible is TimescaleDB with PostgreSQL?** <a id="postgres-compatibility"></a>
+### **How compatible is TimescaleDB with PostgreSQL?** <a id="postgresql-compatibility"></a>
   TimescaleDB is implemented as an extension to PostgreSQL that introduces transparent scalability and performance optimizations, as well as time-series specific features (e.g., data retention policies).
   TimescaleDB connects with any and all third party tools that communicate with standard PostgreSQL connectors.
   TimescaleDB supports the same extensions, tools and drivers that PostgreSQL supports. You can continue to run your existing databases. [[Top]](#top)
 
 ### **How does TimescaleDB handle geospatial data?** <a id="geo-spatial"></a>
-  As an extension of Postgres, TimescaleDB will have full support for PostGIS.  
+  As an extension of PostgreSQL, TimescaleDB will have full support for PostGIS.  
   Therefore one will have the capability to set the partition key as a geospatial field. [[Top]](#top)
 
 ### **What can I use TimescaleDB for?** <a id="what-for"></a>

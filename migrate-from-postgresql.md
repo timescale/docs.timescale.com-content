@@ -2,12 +2,13 @@
 
 ## Prerequisites
 
-To migrate your database from Postgres to TimescaleDB, you should have
+To migrate your database from PostgreSQL to TimescaleDB, you should have
 the following:
 
-1. Your current Postgres database
-1. A new database with TimescaleDB installed ([instructions](/getting-started/installation))
-1. `pg_dump` for exporting your schema and data and the Postgres client `psql`
+1. An up and running PostgreSQL instance with
+1. your current database and
+1. a new database with TimescaleDB installed. ([instructions](/getting-started/installation))
+1. `pg_dump` for exporting your schema and data and the PostgreSQL client `psql`
 for importing into your TimescaleDB database
 
 ## Migration
