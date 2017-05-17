@@ -26,6 +26,6 @@ necessary libraries, and then restart PostgreSQL:
 # For example:
 shared_preload_libraries = 'timescaledb'
 
-# Then, restart PostgreSQL
+# Then, restart the PostgreSQL instance
 ```
 *Note*: The `shared_preload_libraries` line is commented out by default.  Make sure to uncomment it when adding our library.

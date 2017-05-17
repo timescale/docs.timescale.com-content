@@ -24,4 +24,5 @@ PostgreSQL list of
 ## Visualization tools <a id="visualization-tools"></a>
 
 - [SQLPad](https://rickbergfalk.github.io/sqlpad/)
+
 An easy to use and powerful open source javascript viz tool that uses D3 to render graphs.  Requires nodejs installation.

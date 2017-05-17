@@ -12,7 +12,7 @@ See [our Sample Datasets][datasets] for further instructions.
 When creating a new database, it is necessary to install the extension and then run an initialization function.
 
 ```bash
-# Connect to Postgres, using a superuser named 'postgres'
+# Connect to PostgreSQL, using a superuser named 'postgres'
 psql -U postgres -h localhost
 ```
 
@@ -33,7 +33,7 @@ DB_NAME=tutorial ./scripts/setup-db.sh
 ```
 
 #### Accessing your new database
-You should now have a brand new time-series database running in Postgres.
+You should now have a brand new time-series database running in your PostgreSQL instance.
 
 ```bash
 # To access your new database

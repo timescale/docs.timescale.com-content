@@ -2,7 +2,7 @@
 
 ### `create_hypertable()` <a id="create_hypertable"></a>
 
-Creates a TimescaleDB hypertable from a Postgres table (replacing the
+Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
 latter), partitioned on time and optionally another column.
 Target table must be empty. All actions, such as `ALTER TABLE`, `SELECT`,
 etc., still work on the resulting hypertable.
@@ -76,7 +76,7 @@ SELECT drop_chunks(interval '3 months', 'foo');
 
 ### `setup_timescaledb()` <a id="setup_timescaledb"></a>
 
-Initializes a Postgres database to fully use TimescaleDB.
+Initializes a PostgreSQL database to fully use TimescaleDB.
 
 **Sample usage**
 
@@ -86,7 +86,7 @@ SELECT setup_timescaledb();
 
 ### `time_bucket()` <a id="time_bucket"></a>
 
-This is a more powerful version of the standard postgres `date_trunc` function.
+This is a more powerful version of the standard PostgreSQL `date_trunc` function.
 It allows for arbitrary time intervals instead of the second, minute, hour, etc.
 provided by `date_trunc`. The return value is the bucket's start time.
 
@@ -109,7 +109,7 @@ or 1 hour.
 
 |Name|Description|
 |---|---|
-| `bucket_width` | A postgres time interval for how long each bucket is (interval) |
+| `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
 | `time` | The timestamp to bucket (timestamp/timestamptz)|
 
 **Optional arguments**

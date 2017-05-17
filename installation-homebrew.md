@@ -30,7 +30,7 @@ shared_preload_libraries = 'timescaledb'
 To get started you'll now need to restart PostgreSQL and add a
 `postgres` superuser (used in the rest of the docs):
 ```bash
-# Restart PostgreSQL
+# Restart PostgreSQL instance
 brew services restart postgresql
 
 # Add a superuser postgres:
