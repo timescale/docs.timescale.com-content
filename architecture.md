@@ -1,34 +1,54 @@
 # Architecture and concepts
 
+TimescaleDB is implemented as an extension on PostgreSQL, which provides hooks
+deep into Postgres's query planner, data model, and execution engine.  This
+allows TimescaleDB to expose what look like regular tables, but this is
+actually only an abstraction or a virtual view of many individual tables
+comprising the actual data.
+
+This single-table view, which we call a **hypertable**, is thus comprised of
+many **chunks**.  Chunks are created by partitioning the hypertable's data in
+either one or two dimensions:
+by a time interval, and by an (optional) "partition key" such as
+device ID, location, user id, etc.  We sometimes refer to this as
+partitioning across "time and space".
+
 ## Terminology
 
 ### Hypertables
-The primary point of interaction with your data is a **hypertable**,
+The primary point of interaction with your data is a hypertable,
 the abstraction of a single continuous table across all
-space and time
-intervals, such that one can query it via vanilla SQL.
+space and time intervals, such that one can query it via vanilla SQL.
 
-A hypertable is
-defined by a standard schema with column names and types, with at
-least one column specifying a time value, and one (optional) column specifying a “partitioning key” over which the
-dataset can be additionally partitioned.
+A hypertable is defined by a standard schema with column names and
+types, with at least one column specifying a time value, and
+one (optional) column specifying and additional partitioning key.
+See [data model](/data-model) for a further discussion of various ways to
+organize data, depending on your use cases;
+the simplest and most natural is in a "wide row" like many
+relational databases.
 
 A single TimescaleDB deployment can store multiple hypertables, each
 with different schemas.
 
-Creating a hypertable in TimescaleDB is two SQL commands: `CREATE TABLE`
-(with standard SQL syntax), followed by `SELECT create_hypertable()`.
+Creating a hypertable in TimescaleDB is two simple SQL commands: `CREATE TABLE`
+(with standard SQL syntax), followed by `SELECT create_hypertable()`.  
+
+Indexes on time and the partitioning key are automatically created on hypertables, although additional indexes can also be created (and TimescaleDB support the full range of PostgreSQL index types).
+
+Virtually all of your interactions with TimescaleDB are with hypertables,
+not its underlying chunks:  creating tables and indexes, altering tables, inserting data, selecting data, etc. can (and should) all be executed on the hypertable.  [[Jump to basic SQL operations](/basic-operations)]
 
 ### Chunks
 
 Internally, TimescaleDB automatically splits each
-hypertable into **chunks**, where a chunk corresponds to a
-“two-dimensional” split according to a specific time interval and a region of the partition key’s space (e.g., using hashing).
+hypertable into **chunks**, with each chunk corresponding to a specific time
+interval and a region of the partition key’s space (using hashing).  
+These partitions are disjoint (non-overlapping), which helps the query planner
+to minimize the set of chunks it must touch to resolve a query.
 
-Each chunk is
-implemented using a standard database table that is automatically placed
-on one of the database nodes (or replicated between multiple nodes),
-although this detail is largely hidden from users.
+Each chunk is implemented using a standard database table.  (In PostgreSQL
+internals, the chunk is actually a a "child table" of the "parent" hypertable.)
 
 Chunks are right-sized, ensuring that all of the B-trees for a table’s
 indexes can reside in memory during inserts to avoid thrashing while
@@ -40,34 +60,44 @@ removing deleted data according to automated retention policies, as the
 runtime can perform such operations by simply dropping chunks (internal
 tables), rather than deleting individual rows.
 
-<!-- Illustration of reading/writing goes here -->
 
 ## Single node vs. clustering
 
-## Motivation behind architecture choices
 
-### Storing data on disk vs. in memory
+TimescaleDB performs this extensive partitioning both on **single-node**
+deployments as well as **clustered** deployments (in development).  While
+partitioning is traditionally only used for scaling out across multiple
+machines, it also allows us to scale up to high write rates (and improved
+parallelized queries) even on single machines.
 
-A common problem with scaling database performance on a single machine is the significant cost/performance trade-off between memory and disk. While memory is faster than disk, it is much more expensive: about 20x costlier than solid-state storage like Flash, 100x more expensive than hard drives. Eventually, our entire dataset will not fit in memory, which is why we’ll need to write our data and indexes to disk.
+The current open-source release of TimescaleDB only supports single-node
+deployments. This single-node version of TimescaleDB has been benchmarked to
+over 10-billion-row hypertables on commodity machines without a loss in insert
+performance.
 
-This is an old, common problem for relational databases. In most cases, a table is stored as a collection of fixed-size pages of data (e.g., 8KB pages in PostgreSQL), on top of which the system builds data structures (such as B-trees) to index the data. With an index, a query can quickly find a row with a specified ID (e.g., bank account number) without scanning the entire table or “walking” the table in some sorted order.
+## Benefits of single-node partitioning
 
-Now, if the working set of data and indexes is small, we can keep it in memory.
-But if the data is sufficiently large that we can’t fit all (similarly fixed-size) pages of our B-tree in memory, then updating a random part of the tree can involve significant disk I/O as we read pages from disk into memory, modify in memory, and then write back out to disk (when evicted to make room for other B-tree pages). And a relational database like PostgreSQL keeps a B-tree (or other data structure) for each table index, in order for values in that index to be found efficiently. So, the problem compounds as you index more columns.
+A common problem with scaling database performance on a single machine
+is the significant cost/performance trade-off between memory and disk.
+Eventually, our entire dataset will not fit in memory, and we’ll need
+to write our data and indexes to disk.
 
-In fact, because the database only accesses the disk in page-sized boundaries, even seemingly small updates can cause these swaps to occur: To change one cell, the database may need to swap out an existing 8KB page and write it back to disk, then read in the new page before modifying it.
+Once the data is sufficiently large that we can’t fit all pages of our indexes
+(e.g., B-trees) in memory, then updating a random part of the tree can involve
+swapping in data from disk.  And databases like PostgreSQL keep a B-tree (or
+other data structure) for each table index, in order for values in that
+index to be found efficiently. So, the problem compounds as you index more
+columns.
 
-Time-series data is treated very differently from standard online transaction processing (OLTP) data.
+But because each of the chunks created by TimescaleDB are stored as a separate
+database table itself, all of its indexes are built only across these much
+smaller tables (chunks), rather than a single table representing the entire
+dataset. So if we size these chunks properly, we can fit the latest tables
+(and their B-trees) completely in memory, and avoid this swap-to-disk problem,
+while maintaining support for multiple indexes.
 
-#### OLTP Writes
-- Primarily UPDATES
-- Randomly distributed (over the set of primary keys)
-- Often transactions across multiple primary keys
+For more on the motivation and design of TimescaleDB's chunking, [please see
+our technical blog post on its adaptive space/time
+chunking](https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362).
 
-#### Time-series Writes
-- Primarily INSERTs
-- Primarily to a recent time interval
-- Primarily associated with both a timestamp and a separate primary key (e.g., server ID, device ID, security/account ID, vehicle/asset ID, etc.)
-
-Each of the _chunks_ created by TimescaleDB is stored as a database table itself, and the DB query planner is aware of every chunk’s ranges (in time and keyspace). The query planner can now immediately tell to which chunk(s) an operation’s data belongs. (This applies both for inserting rows, as well as for pruning the set of chunks that need to be touched when executing queries.)
-The key benefit of this approach is that now all of our indexes are built only across these much smaller chunks (tables), rather than a single table representing the entire dataset. So if we size these chunks properly, we can fit the latest tables (and their B-trees) completely in memory, and avoid this swap-to-disk problem, while maintaining support for multiple indexes.
+<!--- Picture of blog post -->
