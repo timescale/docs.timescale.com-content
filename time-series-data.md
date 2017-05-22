@@ -4,7 +4,7 @@ What is this "time-series data" that we keep talking about, and how and why is i
 
 Many applications or databases actually take an (overly) narrow view, and equate time-series data with something like server metrics of a specific form:
 
-```
+```bash
 Name:  CPU
 
 Tags:  Host=MyServer, Region=West
@@ -22,7 +22,7 @@ the price of a stock, the status of a machine, or the number of logins
 to an app -- that are paired with a timestamp such that the data
 represents a real world context and are valuable to analyze over time.
 
-[[Jump ahead to the various time-seres data models](/data-model)]
+[Jump ahead to the various time-seres data models](/introduction/data-model)
 
 ## Characteristics of time-series data
 

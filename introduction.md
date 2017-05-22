@@ -21,8 +21,7 @@
 ## ⇒ Easy to Use
 
 - **Full SQL interface** for all SQL natively supported by
-    PostgreSQL (including secondary indexes, non-time based aggregates, sub-queries,
-    JOINs, window functions)
+    PostgreSQL (including secondary indexes, non-time based aggregates, sub-queries, JOINs, window functions)
 
 - **Connects** to any client or tool that speaks PostgreSQL, no changes needed
 
@@ -54,4 +53,4 @@ ecosystem and tooling)
 
 This section describes the design and motivation around TimescaleDb's architecture, including why time-series data is different, and how we leverage its characteristics when building TimescaleDB.
 
-**Next:**  So in part to understand TimescaleDB's design choices: [What is time-series data?](/introduction/time-series)
+**Next:**  So in part to understand TimescaleDB's design choices: [What is time-series data?](/introduction/time-series-data)

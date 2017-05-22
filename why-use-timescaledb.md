@@ -22,6 +22,6 @@ You should consider using TimescaleDB if:
 
 - **Rich indexing**: Secondary indexes, various types of indexes (B-tree, hash, range, BRIN, GiST, GIN), geo-spatial indexing (PostGIS)
 
-- **Mostly structured** data, either in a wide or narrow format [[more on data model](/data-model)]
+- **Mostly structured** data, either in a wide or narrow format [[more on data model](/introduction/data-model)]
 
 - **Ecosystem**: Desire reliability, tooling, integrations of Postgres
