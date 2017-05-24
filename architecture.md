@@ -22,22 +22,20 @@ space and time intervals, such that one can query it via vanilla SQL.
 
 A hypertable is defined by a standard schema with column names and
 types, with at least one column specifying a time value, and
-one (optional) column specifying and additional partitioning key.
-See [data model](/data-model) for a further discussion of various ways to
-organize data, depending on your use cases;
+one (optional) column specifying an additional partitioning key.
+See [data model](/introduction/data-model) for a further discussion of various ways to organize data, depending on your use cases;
 the simplest and most natural is in a "wide row" like many
 relational databases.
 
 A single TimescaleDB deployment can store multiple hypertables, each
 with different schemas.
 
-Creating a hypertable in TimescaleDB is two simple SQL commands: `CREATE TABLE`
-(with standard SQL syntax), followed by `SELECT create_hypertable()`.  
+Creating a hypertable in TimescaleDB takes two simple SQL commands: `CREATE TABLE` (with standard SQL syntax), followed by `SELECT create_hypertable()`.  
 
-Indexes on time and the partitioning key are automatically created on hypertables, although additional indexes can also be created (and TimescaleDB support the full range of PostgreSQL index types).
+Indexes on time and the partitioning key are automatically created on hypertables, although additional indexes can also be created (and TimescaleDB supports the full range of PostgreSQL index types).
 
 Virtually all of your interactions with TimescaleDB are with hypertables,
-not its underlying chunks:  creating tables and indexes, altering tables, inserting data, selecting data, etc. can (and should) all be executed on the hypertable.  [[Jump to basic SQL operations](/basic-operations)]
+not its underlying chunks:  creating tables and indexes, altering tables, inserting data, selecting data, etc. can (and should) all be executed on the hypertable.  [[Jump to basic SQL operations](/getting-started/basic-operations)]
 
 ### Chunks
 
