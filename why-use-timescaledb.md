@@ -10,7 +10,7 @@ While TimescaleDB couples the power of SQL with the scale of NoSQL databases, it
 
 You might consider an alternative if:
 
-- **Simple reads requirements**: If you simply want fast key-value lookups or single column rollups, an in-memory or column-oriented database might be more appropriate.  The former clearly does not scale to the same data volumes, however, while the latter's performance significantly underperforms for more complex queries.
+- **Simple read requirements**: If you simply want fast key-value lookups or single column rollups, an in-memory or column-oriented database might be more appropriate.  The former clearly does not scale to the same data volumes, however, while the latter's performance significantly underperforms for more complex queries.
 
 - **Heavy compression** is a priority.  Benchmarks show TimescaleDB running on ZFS getting around 4x compression, but compression-optimized column stores might be more appropriate for higher compression rates.
 

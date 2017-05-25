@@ -34,8 +34,8 @@ Creating a hypertable in TimescaleDB takes two simple SQL commands: `CREATE TABL
 
 Indexes on time and the partitioning key are automatically created on hypertables, although additional indexes can also be created (and TimescaleDB supports the full range of PostgreSQL index types).
 
-Virtually all of your interactions with TimescaleDB are with hypertables,
-not its underlying chunks:  creating tables and indexes, altering tables, inserting data, selecting data, etc. can (and should) all be executed on the hypertable.  [[Jump to basic SQL operations](/getting-started/basic-operations)]
+One of the core ideas of our time-series database are optimized data tables, called **[hypertables][]**.  Virtually all of your interactions with TimescaleDB are with hypertables, creating tables and indexes, altering tables, inserting data, selecting data, etc. can (and should) all be executed on the hypertable.  [[Jump to basic SQL operations](/getting-started/basic-operations)]
+
 
 ### Chunks
 
@@ -62,16 +62,15 @@ tables), rather than deleting individual rows.
 ## Single node vs. clustering
 
 
-TimescaleDB performs this extensive partitioning both on **single-node**
-deployments as well as **clustered** deployments (in development).  While
+TimescaleDB performs this extensive partitioning both on **single-node** deployments as well as **clustered** deployments (in development).  While
 partitioning is traditionally only used for scaling out across multiple
 machines, it also allows us to scale up to high write rates (and improved
 parallelized queries) even on single machines.
 
 The current open-source release of TimescaleDB only supports single-node
-deployments. This single-node version of TimescaleDB has been benchmarked to
-over 10-billion-row hypertables on commodity machines without a loss in insert
-performance.
+deployments. Of note is that the single-node version of TimescaleDB has been
+benchmarked to over 10-billion-row hypertables on commodity machines without
+a loss in insert performance.
 
 ## Benefits of single-node partitioning
 
@@ -87,15 +86,17 @@ other data structure) for each table index, in order for values in that
 index to be found efficiently. So, the problem compounds as you index more
 columns.
 
-But because each of the chunks created by TimescaleDB are stored as a separate
-database table itself, all of its indexes are built only across these much
-smaller tables (chunks), rather than a single table representing the entire
+But because each of the chunks created by TimescaleDB is itself stored as a separate database table, all of its indexes are built only across these much
+smaller tables rather than a single table representing the entire
 dataset. So if we size these chunks properly, we can fit the latest tables
 (and their B-trees) completely in memory, and avoid this swap-to-disk problem,
 while maintaining support for multiple indexes.
 
-For more on the motivation and design of TimescaleDB's chunking, [please see
-our technical blog post on its adaptive space/time
-chunking](https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362).
+For more on the motivation and design of TimescaleDB's adaptive space/time
+chunking, please see our [technical blog post][chunking].
+
+[hypertables]: /introduction/architecture#hypertables-and-chunks
+[chunking]: https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
+
 
 <!--- Picture of blog post -->

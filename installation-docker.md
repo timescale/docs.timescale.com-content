@@ -1,6 +1,6 @@
 ### Docker Hub <a id="docker"></a>
 
-You can pull our Docker images from [Docker Hub](https://hub.docker.com/r/timescale/timescaledb/).
+You can pull our Docker images from [Docker Hub][].
 
 ```bash
 docker pull timescale/timescaledb:latest
@@ -34,3 +34,6 @@ or you can make a temporary alias like `dock_psql` with:
 ```bash
 alias dock_psql='docker exec -it timescaledb psql -U postgres'
 ```
+
+[Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
+[docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh
