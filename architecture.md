@@ -32,7 +32,9 @@ with different schemas.
 
 Creating a hypertable in TimescaleDB takes two simple SQL commands: `CREATE TABLE` (with standard SQL syntax), followed by `SELECT create_hypertable()`.  
 
-Indexes on time and the partitioning key are automatically created on hypertables, although additional indexes can also be created (and TimescaleDB supports the full range of PostgreSQL index types).
+Indexes on time and the partitioning key are automatically created on hypertables,
+although additional indexes can also be created (and TimescaleDB supports the
+full range of PostgreSQL index types).
 
 One of the core ideas of our time-series database are optimized data tables, called **[hypertables][]**.  Virtually all of your interactions with TimescaleDB are with hypertables, creating tables and indexes, altering tables, inserting data, selecting data, etc. can (and should) all be executed on the hypertable.  [[Jump to basic SQL operations](/getting-started/basic-operations)]
 

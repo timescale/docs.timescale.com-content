@@ -11,23 +11,20 @@ derive from your data.
 
 For this tutorial, we've put together a sample data set from real-life
 New York City taxicab data ([courtesy of the NYC Taxi and Limousine
-Commission](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)).
+Commission][NYCTLC]).
 
-*(Note: For simplicity we'll assume that [TimescaleDB is installed](installation)
-on a PostgreSQL server at `localhost` on the default port,
-and that a user `postgres` exists with full superuser access. If your
-setup is different, please modify the examples accordingly.)*
+*(Note: For simplicity we'll assume that TimescaleDB is installed on a PostgreSQL server at `localhost` on the default port, and that a user `postgres` exists with full superuser access. If your setup is different, please modify the examples accordingly.)*
 
 ### 1. Download and load data
 
-Let's start by downloading the dataset. In the interest of (downloading) time
-and space (on your machine), we'll only grab data for the month of January 2016.
+Let's start by downloading the dataset. In the interest of (downloading) time and space (on your machine), we'll only grab data for the month of January 2016.
 
 This dataset contains two files:
 1. `nyc_data.sql` - A SQL file that will set up the necessary tables
 1. `nyc_data_rides.csv` - A CSV file with the ride data
 
 First, create a database, e.g., `nyc_data` with the extension:
+
 ```sql
 CREATE DATABASE nyc_data;
 \c nyc_data
@@ -35,7 +32,7 @@ CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 SELECT setup_timescaledb();
 ```
 
-Now, download the file [`nyc_data.tar.gz`](https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz).
+Now, download the file [`nyc_data.tar.gz`][nyc_data].
 
 Then, follow these steps:
 
@@ -292,6 +289,9 @@ behind the curtain and see all of its guts.
 
 Up for learning more? Here are a few suggestions:
 
-- [Try Other Sample Datasets](/getting-started/other-sample-datasets)
-- [Migrate your own Data](/best-practices/migrating-data)
+- [Try Other Sample Datasets](/tutorials/other-sample-datasets)
+- [Migrate your own Data](/getting-started/setup)
 - [Read the Technical Paper](http://www.timescaledb.com/papers/timescaledb.pdf)
+
+[NYCTLC]: http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml
+[nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz

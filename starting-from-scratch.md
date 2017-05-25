@@ -37,7 +37,8 @@ SELECT create_hypertable('conditions', 'time');
 SELECT create_hypertable('conditions', 'time', 'location', 2);
 ```
 
-**Next let's learn how to create and work with a [Hypertable][], the primary point of interaction for TimescaleDB.**
+**Next let's learn how to create and work with a [hypertable][], the primary
+point of interaction for TimescaleDB.**
 
-[Hypertable]: /getting-started/basic-operations
+[hypertable]: /getting-started/basic-operations
 [API Reference]: /api/api-timescaledb

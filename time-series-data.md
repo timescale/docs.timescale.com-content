@@ -16,8 +16,8 @@ Data:
 1990-01-01 01:05:00     68
 ```
 
-But time-series data is much **broader** than just this specific form.  
-It's really any data -- whether temperature readings from a sensor,
+But time-series data is much **broader** than just this specific form.  It's
+really any data -- whether temperature readings from a sensor,
 the price of a stock, the status of a machine, or the number of logins
 to an app -- that are paired with a timestamp such that the data
 represents a real world context and are valuable to analyze over time.
