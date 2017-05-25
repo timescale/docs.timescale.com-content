@@ -26,7 +26,9 @@ our [docker-run.sh][] in the `scripts/` of our github repo, which saves
 the data to `$PWD/data`. There you can also see additional `-c` flags
 we recommend for memory settings, etc.
 
-If you have PostgreSQL installed locally, you can access the Timescale docker instance using `psql`.  Otherwise you can connect using the instance's version of `psql` within the container:
+If you have PostgreSQL installed locally, you can access the Timescale docker
+instance using `psql`.  Otherwise you can connect using the instance's version
+of `psql` within the container:
 ```bash
 docker exec -it timescaledb psql -U postgres
 ```

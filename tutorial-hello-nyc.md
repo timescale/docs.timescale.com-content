@@ -13,11 +13,15 @@ For this tutorial, we've put together a sample data set from real-life
 New York City taxicab data ([courtesy of the NYC Taxi and Limousine
 Commission][NYCTLC]).
 
-*(Note: For simplicity we'll assume that TimescaleDB is installed on a PostgreSQL server at `localhost` on the default port, and that a user `postgres` exists with full superuser access. If your setup is different, please modify the examples accordingly.)*
+*(Note: For simplicity we'll assume that TimescaleDB is installed on a
+PostgreSQL server at `localhost` on the default port, and that a user `postgres`
+exists with full superuser access. If your setup is different, please modify the
+examples accordingly.)*
 
 ### 1. Download and load data
 
-Let's start by downloading the dataset. In the interest of (downloading) time and space (on your machine), we'll only grab data for the month of January 2016.
+Let's start by downloading the dataset. In the interest of (downloading) time
+and space (on your machine), we'll only grab data for the month of January 2016.
 
 This dataset contains two files:
 1. `nyc_data.sql` - A SQL file that will set up the necessary tables

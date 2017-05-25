@@ -205,7 +205,8 @@ a hypertable called `conditions`. The `locations` table has metadata about
 each of the locations, such as its name and environmental type. The
 `conditions` hypertable tracks readings of temperature and humidity from
 those locations. Because hypertables are exposed as a single table, you can
-query them and join them with the metadata as you would normal SQL tables (see Example Queries below).
+query them and join them with the metadata as you would normal SQL tables
+(see Example Queries below).
 
 #### Schemas
 ```sql

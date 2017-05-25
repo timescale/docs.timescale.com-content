@@ -1,7 +1,8 @@
 # *** API/Command reference
 
 ## psql commands and metacommands
-Here we list some of the most common `psql` commands and metacommands.  For a complete list, check out the [PostgreSQL psql page][psql].
+Here we list some of the most common `psql` commands and metacommands.  
+For a complete list, check out the [PostgreSQL psql page][psql].
 
 ### Commands
 
@@ -9,7 +10,8 @@ Here we list some of the most common `psql` commands and metacommands.  For a co
 ### `--command=`*command*
 
 Tells `psql` to execute the string *command* without entering the client shell.
-The *command* string xcan be **either** a backslash command or a SQL command, but not a combination.  Multiple `-c` commands can be chained.
+The *command* string xcan be **either** a backslash command or a SQL command,
+but not a combination.  Multiple `-c` commands can be chained.
 
 ### `-d `*name*
 ### `--dbname=`*name*
@@ -39,7 +41,9 @@ Tells `psql` to connect to a PostgreSQL server using the given parameters.
 
 ### Median/percentile
 
-PostgreSQL has inherent methods for determining median values and percentiles namely the function `percentile_cont`[link][percentile_cont].  An example query for the median cpu_usage would be:
+PostgreSQL has inherent methods for determining median values and percentiles
+namely the function `percentile_cont`[link][percentile_cont].  An example query
+for the median cpu_usage would be:
 ```SQL
 SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY cpu_usage)
 FROM cpu

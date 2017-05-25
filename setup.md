@@ -1,6 +1,8 @@
 # Setup
 
-Ok, you have [installed][] TimescaleDB, and now you are ready to work with some data.  The first thing to do is to create a new empty database or convert an existing PostgreSQL database to a TimescaleDB.
+Ok, you have [installed][] TimescaleDB, and now you are ready to work with some
+data.  The first thing to do is to create a new empty database or convert an
+existing PostgreSQL database to a TimescaleDB.
 
 First connect to the PostgreSQL instance:
 

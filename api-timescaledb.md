@@ -18,9 +18,12 @@ etc., still work on the resulting hypertable.
 
 |Name|Description|
 |---|---|
-| `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
-| `number_partitions` | Number of partitions to use when `partitioning_column` is set. Must be > 0.
-| `chunk_time_interval` | Interval in event time (micro seconds for TIMESTAMP and TIMESTAMPTZ) that each chunk covers. Must be > 0. Default is 1 month.
+| `partitioning_column` | Name of an additional column to partition by. If
+provided, `number_partitions` must be set.
+| `number_partitions` | Number of partitions to use when `partitioning_column`
+is set. Must be > 0.
+| `chunk_time_interval` | Interval in event time (micro seconds for TIMESTAMP
+    and TIMESTAMPTZ) that each chunk covers. Must be > 0. Default is 1 month.
 
 **Sample usage**
 
@@ -51,13 +54,15 @@ are before the cut-off point, but only one chunk worth.
 
 |Name|Description|
 |---|---|
-| `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed. |
+| `older_than` | Timestamp of cut-off point for data to be dropped, i.e.,
+anything older than this should be removed. |
 
 **Optional arguments**
 
 |Name|Description|
 |---|---|
-| `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
+| `table_name` | Hypertable name from which to drop chunks. If not supplied,
+all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 
 **Sample usage**
@@ -145,7 +150,8 @@ ORDER BY five_min
 LIMIT 10;
 ```
 
-For rounding, move the alignment so that the middle of the bucket is at the 5 minute mark (and report the middle of the bucket):
+For rounding, move the alignment so that the middle of the bucket is at the
+5 minute mark (and report the middle of the bucket):
 ```sql
 SELECT time_bucket('5 minutes', time, '-2.5 minutes')+'2.5 minutes' five_min,
        avg(cpu)
@@ -168,7 +174,9 @@ to the server's timezone setting.
 
 ### `last()` and `first()` <a id="first-last"></a>
 
-The `last()` and `first()` aggregates allow you to get the value of one column as ordered by another. For example, `last(temperature, time)` will return the latest temperature value based on time within an aggregate group.
+The `last()` and `first()` aggregates allow you to get the value of one column
+as ordered by another. For example, `last(temperature, time)` will return the
+latest temperature value based on time within an aggregate group.
 
 **Required arguments**
 

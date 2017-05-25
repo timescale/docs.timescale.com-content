@@ -2,7 +2,8 @@
 
 ## Working with time-series data
 
-One of the core ideas of our time-series database are time-series optimized data tables, called **hypertables**.
+One of the core ideas of our time-series database are time-series optimized data
+tables, called **hypertables**.
 
 ### Creating a (hyper)table
 To create a hypertable, you start with a regular SQL table, and then convert
