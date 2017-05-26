@@ -1,7 +1,5 @@
 # Starting from scratch
 
-## Working with time-series data
-
 One of the core ideas of our time-series database are time-series optimized data
 tables, called **hypertables**.
 

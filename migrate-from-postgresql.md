@@ -1,9 +1,9 @@
-# Migrate from Postgres
+# Migrate from PostgreSQL
 
-## Your system
+### Your system
 
 Depending on where your data is located, the steps to migrate are slightly
-different.  If you want to setup TimescaleDB on the same database in the same
+different.  If you want to setup TimescaleDB in the same database in the same
 PostgreSQL instance as your migrating data [go here](#same-db).  If you want to
 migrate data from a different database or a different PostgreSQL instance
 altogether [go here](#different-db).
@@ -14,8 +14,8 @@ For this example we'll assume that you have a table named `old_table` that you
 want to migrate to a table named `new_table`.  The steps are:
 
 1. Create a new empty table with schema and other constraints based on the
-old one, using LIKE
-1. Convert that table to a hypertable
+old one, using `LIKE`.
+1. Convert the table to a hypertable and insert data from the older table.
 1. Add any additional indexes needed.
 
 ### 1. Creating the new empty table
@@ -25,9 +25,10 @@ more optimal.
 
 #### Convenient method
 
-This method auto-generates indexes on `new_table` when it is created so that
+This method recreates `old_table` indexes on `new_table` when it is created so that
 when we convert it to a hypertable in the next step, we don't have to make them
-ourselves.  It avoids a step, but is much slower than the optimal method.
+ourselves.  It avoids a step, but slows down the data transfer due to the need to
+update the indexes for each migrated row.
 
 ```sql
 CREATE TABLE new_table (LIKE old_table INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES);
@@ -35,9 +36,9 @@ CREATE TABLE new_table (LIKE old_table INCLUDING DEFAULTS INCLUDING CONSTRAINTS 
 
 #### Optimal method
 
-This method does not generate the indexes while making the table.  This works
-faster than the convenient method, but requires us to add the indexes after the
-hypertable is populated with data.
+This method does not generate the indexes while making the table.  This makes the data
+transfer faster than the convenient method, but requires us to add the indexes as a
+final step.
 
 ```sql
 CREATE TABLE new_table (LIKE old_table INCLUDING DEFAULTS INCLUDING CONSTRAINTS EXCLUDING INDEXES);
@@ -45,7 +46,8 @@ CREATE TABLE new_table (LIKE old_table INCLUDING DEFAULTS INCLUDING CONSTRAINTS 
 
 ### 2. Convert the new table to a hypertable
 
-We use the TimescaleDB function [`create_hypertable`][create_hypertable] to convert `new_table` to a hypertable:
+We use the TimescaleDB function [`create_hypertable`][create_hypertable] to
+convert `new_table` to a hypertable, then simply `INSERT` data from the old table:
 
 ```sql
 -- Assuming 'old_timey' is the time column for the dataset
@@ -56,8 +58,9 @@ INSERT INTO new_table SELECT * FROM old_table;
 ### 3. Add additional indexes
 
 If you used the convenient method, whatever indexes were on `old_table` are now
-on `new_table` so this step is optional. For the optimal `CREATE TABLE` method
-or for adding any indexes not on `old_table`:
+on `new_table` making this step optional. For the optimal `CREATE TABLE` method
+or for adding any indexes not on `old_table`.  For info on the best ways to create
+indexes, check out our [operations][] section:
 
 ```sql
 CREATE INDEX on new_table (column_name, <options>)
@@ -65,19 +68,22 @@ CREATE INDEX on new_table (column_name, <options>)
 
 Tada!  You did it!
 
+[operations]:/getting-started/basic-operations
+[create_hypertable]:/api/api-timescaledb#create_hypertable
+
 ---
 
 ## Migrating from a different database <a id="different-db"></a>
 
-To migrate your database from PostgreSQL to TimescaleDB, you should have
+To migrate your database from PostgreSQL to TimescaleDB, you need
 `pg_dump` for exporting your schema and data.
 
 Migration falls into three main steps:
 
-1. Copying over the database schema and choosing which tables are hypertables
-(i.e., those that currently have time-series data)
-1. Backing up data to CSV
-1. Importing the data into TimescaleDB
+1. Copy over the database schema and choosing which tables will become
+hypertables (i.e., those that currently have time-series data).
+1. Backup data to comma-separated values (CSV).
+1. Import the data into TimescaleDB
 
 For this example we'll assume you have a PostgreSQL instance with a database
 called `old_db` that contains a single table called `foo` that you want to
@@ -134,3 +140,7 @@ psql -d new_db -c "\COPY foo FROM old_db.csv CSV"
 ```
 
 Once finished, your migration is complete!
+
+Now checkout some common [hypertable commands][] for exploring your data.
+
+[hypertable commands]: /getting-started/basic-operations

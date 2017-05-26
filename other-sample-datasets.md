@@ -1,7 +1,5 @@
 # Sample Datasets
 
-## Available samples
-
 We have created several sample datasets to help you get started using
 TimescaleDB. These datasets vary in database size, number of time
 intervals, and number of values for the partition field.

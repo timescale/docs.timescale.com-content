@@ -294,7 +294,7 @@ behind the curtain and see all of its guts.
 Up for learning more? Here are a few suggestions:
 
 - [Try Other Sample Datasets](/tutorials/other-sample-datasets)
-- [Migrate your own Data](/getting-started/setup)
+- [Migrate your own Data](/getting-started/migrate-from-postgresql)
 - [Read the Technical Paper](http://www.timescaledb.com/papers/timescaledb.pdf)
 
 [NYCTLC]: http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml

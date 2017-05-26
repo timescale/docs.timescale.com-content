@@ -16,7 +16,7 @@ SQL `UPDATE` and `DELETE` commands also work as expected.
 
 ### Indexing data
 
-Data is indexed using normal SQL `CREATE INDEX` commands. For instance,
+Data is indexed via the SQL `CREATE INDEX` command. For instance,
 ```sql
 CREATE INDEX ON conditions (location, time DESC);
 ```
@@ -24,8 +24,8 @@ This can be done before or after converting the table to a hypertable.
 
 **Indexing suggestions:**
 
-Our experience has shown that different types of indexes are most-useful for
-time-series data, depending on your data.
+Our experience has shown that for time-series data, the most-useful index type
+varies depending on your data.
 
 For indexing columns with discrete (limited-cardinality) values (e.g., where you
 are most likely to use an "equals" or "not equals" comparator) we suggest using
@@ -56,8 +56,8 @@ CREATE INDEX ON conditions (time DESC, humidity) WHERE humidity IS NOT NULL;
 this creates a more compact, and thus efficient, index.
 
 If you would like to see what you can do with a full data set, you can check out
-our [basic tutorial][] or play around on your own with our [sample datasets][]
+our [basic tutorial][] or play around on your own with our [sample datasets][].
 
 [API Reference]: /timescaledb-api
 [basic tutorial]: /tutorials/tutorial-hello-nyc
-[sample datasets]: /getting-started/other-sample-datasets
+[sample datasets]: /tutorials/other-sample-datasets
