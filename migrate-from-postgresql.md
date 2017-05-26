@@ -50,8 +50,8 @@ We use the TimescaleDB function [`create_hypertable`][create_hypertable] to
 convert `new_table` to a hypertable, then simply `INSERT` data from the old table:
 
 ```sql
--- Assuming 'old_timey' is the time column for the dataset
-SELECT create_hypertable('new_table', 'old_timey');
+-- Assuming 'time' is the time column for the dataset
+SELECT create_hypertable('new_table', 'time');
 INSERT INTO new_table SELECT * FROM old_table;
 ```
 

@@ -1,41 +1,44 @@
 # *** API/Command reference
 
-## psql commands and metacommands
-Here we list some of the most common `psql` commands and metacommands.  
+## psql commands
+Here we list some of the most common `psql` commands.  
 For a complete list, check out the [PostgreSQL psql page][psql].
 
-### Commands
+### `-c <command>`, `--command=<command>`
 
-### `-c `*command*
-### `--command=`*command*
-
-Tells `psql` to execute the string *command* without entering the client shell.
-The *command* string xcan be **either** a backslash command or a SQL command,
+Tells `psql` to execute the string *`<command>`* without entering the client shell.
+The *`<command>`* string can be **either** a backslash command or a SQL command,
 but not a combination.  Multiple `-c` commands can be chained.
 
-### `-d `*name*
-### `--dbname=`*name*
+### `-d <name>`, `--dbname=<name>`
 
-Denotes the *name* of the database to connect to.
+Denotes the *`<name>`* of the database to connect to.
 
-### `-h `*hostname*
-### `--host=`*hostname*
+### `-h <hostname>`, `--host=<hostname>`
 
-Denotes the *hostname* of the machine where the PostgreSQL server is running.
+Denotes the *`<hostname>`* of the machine where the PostgreSQL server is running.
 
 ---
 
-### Metacommands
+### psql shell commands
 
-### `\c`, `\connect` `[[ -reuse-previous=on|off ] [ database_name [ username ] [ host ] [ port ] | connectioninfo ]]`
+### `\c`, `\connect`
 
-Tells `psql` to connect to a PostgreSQL server using the given parameters.
+connect to a PostgreSQL server using the given parameters.
+
+---
 
 ## Schema commands
 
+---
+
 ## INSERT commands
 
+---
+
 ## SELECT commands
+
+---
 
 ## Advanced query commands
 
@@ -65,8 +68,9 @@ GROUP BY host;
 ### First, last
 The Timescale functions for `first` and `last` are [here][first-last]
 
+---
 
-## [TimescaleDB commands](/api/api-timescaledb)
+Next, look at [TimescaleDB commands](/api/api-timescaledb)
 
 [psql]:https://www.postgresql.org/docs/9.6/static/app-psql.html
 [first-last]:/api/api-timescaledb#first-last

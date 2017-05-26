@@ -1,8 +1,8 @@
 # TimescaleDB API Reference
 
-### `create_hypertable()` <a id="create_hypertable"></a>
+### `create_hypertable()`
 
-Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
+Creates a TimescaleDB hypertable from a Postgres table (replacing the
 latter), partitioned on time and optionally another column.
 Target table must be empty. All actions, such as `ALTER TABLE`, `SELECT`,
 etc., still work on the resulting hypertable.
@@ -18,13 +18,9 @@ etc., still work on the resulting hypertable.
 
 |Name|Description|
 |---|---|
-| `partitioning_column` | Name of an additional column to partition by. If
-provided, `number_partitions` must be set.
-| `number_partitions` | Number of partitions to use when `partitioning_column`
-is set. Must be > 0.
-| `chunk_time_interval` | Interval in event time (micro seconds for TIMESTAMP
-    and TIMESTAMPTZ) that each chunk covers. Must be > 0. Default is 1 month.
-
+| `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
+| `number_partitions` | Number of partitions to use when `partitioning_column` is set. Must be > 0.
+| `chunk_time_interval` | Interval in event time (micro seconds for TIMESTAMP and TIMESTAMPTZ) that each chunk covers. Must be > 0. Default is 1 month.
 **Sample usage**
 
 Convert table `foo` to hypertable with just time partitioning on column `ts`:
@@ -38,6 +34,11 @@ space partitioning (2 partitions) on `bar`:
 SELECT create_hypertable('foo', 'ts', 'bar', 2);
 ```
 
+Convert table `foo` to hypertable with just time partitioning on column `ts`,
+but setting `chunk_time_interval` to 24 hours:
+```sql
+SELECT create_hypertable('foo', 'ts', chunk_time_interval => 86400000000);
+```
 ---
 
 ### `drop_chunks()` <a id="drop_chunks"></a>
