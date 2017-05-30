@@ -1,8 +1,10 @@
 # What is time-series data?
 
-What is this "time-series data" that we keep talking about, and how and why is it different?
+What is this "time-series data" that we keep talking about, and how and why is
+it different?
 
-Many applications or databases actually take an (overly) narrow view, and equate time-series data with something like server metrics of a specific form:
+Many applications or databases actually take an (overly) narrow view, and equate
+time-series data with something like server metrics of a specific form:
 
 ```bash
 Name:  CPU
@@ -16,8 +18,8 @@ Data:
 1990-01-01 01:05:00     68
 ```
 
-But time-series data is much **broader** than just this specific form.  
-It's really any data -- whether temperature readings from a sensor,
+But time-series data is much **broader** than just this specific form.  It's
+really any data -- whether temperature readings from a sensor,
 the price of a stock, the status of a machine, or the number of logins
 to an app -- that are paired with a timestamp such that the data
 represents a real world context and are valuable to analyze over time.
@@ -26,7 +28,8 @@ represents a real world context and are valuable to analyze over time.
 
 ## Characteristics of time-series data
 
-But if you look closely at how it’s produced and ingested, there are important characteristics that time-series databases like TimescaleDB typically leverage:
+But if you look closely at how it’s produced and ingested, there are important
+characteristics that time-series databases like TimescaleDB typically leverage:
 
 - **Time-centric**: Data records always have a timestamp
 - **Append only** : Data is almost solely append-only (INSERTs)
@@ -45,9 +48,12 @@ data are inserts, not overwrites**.
 
 ## Time-series data is everywhere
 
-Time-series data is everywhere, but there are environments where it is especially being created in torrents.
+Time-series data is everywhere, but there are environments where it is especially
+being created in torrents.
 
-- **DevOps**: Server or container metrics (CPU, free memory, net/disk IOPs), application metrics (request rates, request latency), server or application logs, error reports, etc.
+- **DevOps**: Server or container metrics (CPU, free memory, net/disk IOPs),
+application metrics (request rates, request latency), server or application logs,
+error reports, etc.
 
 - **Financial data**: Stock prices, payment records, and transaction events.
 
@@ -56,7 +62,9 @@ driven by the ubiquitous connectivity of sensors reporting data with high
 frequency, whether industrial machines, health applications or other wearables,
 transportation and vehicles, consumer devices for smart homes, etc.
 
-- **Event data**: Clickstream data, pageviews, impressions, durations, application and transaction events, outage errors, system status readings, etc., especially in e-commerce and adtech.
+- **Event data**: Clickstream data, pageviews, impressions, durations, application
+and transaction events, outage errors, system status readings, etc., especially
+in e-commerce and adtech.
 
 - **Other data**: In supply-chain and logistics, where schedules and
 itineraries are created, barcodes are scanned, and sensors are deployed for

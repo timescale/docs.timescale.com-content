@@ -16,7 +16,8 @@ The most popular administration tool for PostgreSQL.
 - [SQuirrel SQL](http://www.squirrelsql.org/)
 - [Dbglass](https://github.com/web-pal/DBGlass/)
 
-A tool that avoids the need to know SQL.  Applies filters to data while hiding the relevant SQL queries.
+A tool that avoids the need to know SQL.  Applies filters to data while
+hiding the relevant SQL queries.
 
 PostgreSQL list of
 [Administration tools](https://wiki.postgresql.org/wiki/Community_Guide_to_PostgreSQL_GUI_Tools)
@@ -25,4 +26,5 @@ PostgreSQL list of
 
 - [SQLPad](https://rickbergfalk.github.io/sqlpad/)
 
-An easy to use and powerful open source javascript viz tool that uses D3 to render graphs.  Requires nodejs installation.
+An easy to use and powerful open source javascript viz tool that uses D3 to
+render graphs.  Requires nodejs installation.

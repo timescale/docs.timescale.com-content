@@ -1,8 +1,11 @@
 # Data model
 
-There are several data models common to time-series applications, which we discuss here.  For simplicity, we explain these various choices with the following example.
+There are several data models common to time-series applications, which we
+discuss here.  For simplicity, we explain these various choices with the
+following example.
 
-Consider that an IoT device meant to collect environmental data has various information associated with it that it collects at regular intervals.
+Consider that an IoT device meant to collect environmental data has various
+information associated with it that it collects at regular intervals.
 
 - **Identification:**  device_id, timestamp
 
@@ -23,7 +26,8 @@ if desired.
 
 ## Wide tables
 
-Wide-tables are common in many relational databases, where each piece of metadata or metric is just stored as another column.  Simplifying the above example:
+Wide-tables are common in many relational databases, where each piece of metadata
+or metric is just stored as another column.  Simplifying the above example:
 
 timestamp | device_id | loc | firmware | cpu | battery | temp | humidity
 ---:|---:|---:|---:|---:|---:|---:

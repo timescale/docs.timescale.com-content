@@ -1,7 +1,5 @@
 # Sample Datasets
 
-## Available samples
-
 We have created several sample datasets to help you get started using
 TimescaleDB. These datasets vary in database size, number of time
 intervals, and number of values for the partition field.
@@ -205,7 +203,8 @@ a hypertable called `conditions`. The `locations` table has metadata about
 each of the locations, such as its name and environmental type. The
 `conditions` hypertable tracks readings of temperature and humidity from
 those locations. Because hypertables are exposed as a single table, you can
-query them and join them with the metadata as you would normal SQL tables (see Example Queries below).
+query them and join them with the metadata as you would normal SQL tables
+(see Example Queries below).
 
 #### Schemas
 ```sql

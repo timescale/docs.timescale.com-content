@@ -2,7 +2,8 @@
 
 **Prerequisites**
 
-- A standard **PostgreSQL 9.6** installation with development environment (header files) (e.g., [Postgres.app for MacOS](https://postgresapp.com/))
+- A standard **PostgreSQL 9.6** installation with development environment
+(header files) (e.g., [Postgres.app for MacOS](https://postgresapp.com/))
 
 **Build and install with local PostgreSQL**
 
@@ -28,4 +29,5 @@ shared_preload_libraries = 'timescaledb'
 
 # Then, restart the PostgreSQL instance
 ```
-*Note*: The `shared_preload_libraries` line is commented out by default.  Make sure to uncomment it when adding our library.
+*Note*: The `shared_preload_libraries` line is commented out by default.  
+Make sure to uncomment it when adding our library.

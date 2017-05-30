@@ -21,7 +21,8 @@
 ## ⇒ Easy to Use
 
 - **Full SQL interface** for all SQL natively supported by
-    PostgreSQL (including secondary indexes, non-time based aggregates, sub-queries, JOINs, window functions)
+PostgreSQL (including secondary indexes, non-time based aggregates,
+sub-queries, JOINs, window functions)
 
 - **Connects** to any client or tool that speaks PostgreSQL, no changes needed
 
@@ -32,12 +33,14 @@
 
 ## ⇒ Scalable
 
-- **Transparent time/space partitioning** for both scaling up (single node) and scaling out (forthcoming)
+- **Transparent time/space partitioning** for both scaling up (single node)
+and scaling out (forthcoming)
 
 - **High data write rates** (including batched commits, in-memory
 indexes, transactional support, support for data backfill)
 
-- **Right-sized chunks** (two-dimensional data partitions) on single nodes to ensure fast ingest even at large data sizes
+- **Right-sized chunks** (two-dimensional data partitions) on single nodes to
+ensure fast ingest even at large data sizes
 
 - **Parallelized operations** across chunks and servers
 
@@ -51,6 +54,10 @@ research (including streaming replication, backups)
 - **Flexible management options** (compatible with existing PostgreSQL
 ecosystem and tooling)
 
-This section describes the design and motivation around TimescaleDb's architecture, including why time-series data is different, and how we leverage its characteristics when building TimescaleDB.
 
-**Next:**  So in part to understand TimescaleDB's design choices: [What is time-series data?](/introduction/time-series-data)
+This section describes the design and motivation around TimescaleDb's
+architecture, including why time-series data is different, and how we leverage
+its characteristics when building TimescaleDB.
+
+**Next:**  So in part to understand TimescaleDB's design choices:
+[What is time-series data?](/introduction/time-series-data)

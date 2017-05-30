@@ -1,6 +1,6 @@
 ### Docker Hub <a id="docker"></a>
 
-You can pull our Docker images from [Docker Hub](https://hub.docker.com/r/timescale/timescaledb/).
+You can pull our Docker images from [Docker Hub][].
 
 ```bash
 docker pull timescale/timescaledb:latest
@@ -26,7 +26,9 @@ our [docker-run.sh][] in the `scripts/` of our github repo, which saves
 the data to `$PWD/data`. There you can also see additional `-c` flags
 we recommend for memory settings, etc.
 
-If you have PostgreSQL installed locally, you can access the Timescale docker instance using `psql`.  Otherwise you can connect using the instance's version of `psql` within the container:
+If you have PostgreSQL client tools (e.g. `psql`) installed locally, you can
+use those to access the Timescale docker instance.  Otherwise you can connect 
+using the instance's version of `psql` within the container:
 ```bash
 docker exec -it timescaledb psql -U postgres
 ```
@@ -34,3 +36,6 @@ or you can make a temporary alias like `dock_psql` with:
 ```bash
 alias dock_psql='docker exec -it timescaledb psql -U postgres'
 ```
+
+[Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
+[docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh

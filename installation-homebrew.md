@@ -1,7 +1,10 @@
 ### Homebrew <a id="homebrew"></a>
 
-This will install both TimescaleDB *AND* PostgreSQL 9.6 via Homebrew. If you have another PostgreSQL installation (such as through Postgres.app), this will cause problems. If you wish to maintain your current version of PostgreSQL outside of Homebrew we
-recommend installing from source.  Otherwise please be sure to remove non-Homebrew installations before using this method.
+This will install both TimescaleDB *AND* PostgreSQL 9.6 via Homebrew. If you
+have another PostgreSQL installation (such as through Postgres.app), this will
+cause problems. If you wish to maintain your current version of PostgreSQL
+outside of Homebrew we recommend installing from source.  Otherwise please be
+sure to remove non-Homebrew installations before using this method.
 
 **Prerequisites**
 

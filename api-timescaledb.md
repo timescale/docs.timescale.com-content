@@ -1,8 +1,8 @@
 # TimescaleDB API Reference
 
-### `create_hypertable()` <a id="create_hypertable"></a>
+### `create_hypertable()`
 
-Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
+Creates a TimescaleDB hypertable from a Postgres table (replacing the
 latter), partitioned on time and optionally another column.
 Target table must be empty. All actions, such as `ALTER TABLE`, `SELECT`,
 etc., still work on the resulting hypertable.
@@ -20,8 +20,7 @@ etc., still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
 | `number_partitions` | Number of partitions to use when `partitioning_column` is set. Must be > 0.
-| `chunk_time_interval` | Interval in event time (micro seconds for TIMESTAMP and TIMESTAMPTZ) that each chunk covers. Must be > 0. Default is 1 month.
-
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month ([units][]).
 **Sample usage**
 
 Convert table `foo` to hypertable with just time partitioning on column `ts`:
@@ -35,6 +34,11 @@ space partitioning (2 partitions) on `bar`:
 SELECT create_hypertable('foo', 'ts', 'bar', 2);
 ```
 
+Convert table `foo` to hypertable with just time partitioning on column `ts`,
+but setting `chunk_time_interval` to 24 hours:
+```sql
+SELECT create_hypertable('foo', 'ts', chunk_time_interval => 86400000000);
+```
 ---
 
 ### `drop_chunks()` <a id="drop_chunks"></a>
@@ -51,13 +55,14 @@ are before the cut-off point, but only one chunk worth.
 
 |Name|Description|
 |---|---|
-| `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed. |
+| `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed. ([units][])|
 
 **Optional arguments**
 
 |Name|Description|
 |---|---|
-| `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
+| `table_name` | Hypertable name from which to drop chunks. If not supplied,
+all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 
 **Sample usage**
@@ -73,16 +78,6 @@ SELECT drop_chunks(interval '3 months', 'foo');
 ```
 
 ---
-
-### `setup_timescaledb()` <a id="setup_timescaledb"></a>
-
-Initializes a PostgreSQL database to fully use TimescaleDB.
-
-**Sample usage**
-
-```sql
-SELECT setup_timescaledb();
-```
 
 ### `time_bucket()` <a id="time_bucket"></a>
 
@@ -155,7 +150,8 @@ ORDER BY five_min
 LIMIT 10;
 ```
 
-For rounding, move the alignment so that the middle of the bucket is at the 5 minute mark (and report the middle of the bucket):
+For rounding, move the alignment so that the middle of the bucket is at the
+5 minute mark (and report the middle of the bucket):
 ```sql
 SELECT time_bucket('5 minutes', time, '-2.5 minutes')+'2.5 minutes' five_min,
        avg(cpu)
@@ -178,7 +174,9 @@ to the server's timezone setting.
 
 ### `last()` and `first()` <a id="first-last"></a>
 
-The `last()` and `first()` aggregates allow you to get the value of one column as ordered by another. For example, `last(temperature, time)` will return the latest temperature value based on time within an aggregate group.
+The `last()` and `first()` aggregates allow you to get the value of one column
+as ordered by another. For example, `last(temperature, time)` will return the
+latest temperature value based on time within an aggregate group.
 
 **Required arguments**
 
@@ -195,3 +193,10 @@ SELECT device_id, last(temp, time)
 FROM metrics
 GROUP BY device_id;
 ```
+
+#### Time units <a id="time-units"></a>
+Time units for TimescaleDB functions:
+- Microseconds for TIMESTAMP and TIMESTAMPTZ.
+- Same units as type for integer time types.
+
+[units]: #time-units
