@@ -1,7 +1,7 @@
 # *** Basic operations
 
-There are a couple of basic operations that you will be using frequently with
-TimescaleDB, *inserting data*, *querying data*, and possibly *indexing data*.
+There are a few basic operations that you will be using frequently with hypertables
+within TimescaleDB, *inserting data*, *querying data*, and *indexing data*.  We are assuming here that you have already generated a hypertable by [creating one][] or [migrating your data][]
 
 ### Inserting and querying
 Inserting data into the hypertable is done via normal SQL `INSERT` commands,
@@ -58,6 +58,8 @@ this creates a more compact, and thus efficient, index.
 If you would like to see what you can do with a full data set, you can check out
 our [basic tutorial][] or play around on your own with our [sample datasets][].
 
+[creating one]: /getting-started/setup/starting-from-scratch
+[migrating your data]: /getting-started/setup/migrate-from-postgresql
 [API Reference]: /timescaledb-api
 [basic tutorial]: /tutorials/tutorial-hello-nyc
 [sample datasets]: /tutorials/other-sample-datasets

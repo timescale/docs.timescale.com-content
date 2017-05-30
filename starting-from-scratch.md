@@ -1,4 +1,4 @@
-# Starting from scratch
+# Starting from an empty database
 
 One of the core ideas of our time-series database are time-series optimized data
 tables, called **hypertables**.

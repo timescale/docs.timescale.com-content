@@ -6,16 +6,16 @@ Depending on where your data is located, the steps to migrate are slightly
 different.  If you want to setup TimescaleDB in the same database in the same
 PostgreSQL instance as your migrating data [go here](#same-db).  If you want to
 migrate data from a different database or a different PostgreSQL instance
-altogether [go here](#different-db).
+altogether [go here](#different-db).  We assume that the new database has already been [setup][] with the timescale extension.
 
 ## Migrating from the same database <a id="same-db"></a>
 
 For this example we'll assume that you have a table named `old_table` that you
 want to migrate to a table named `new_table`.  The steps are:
 
-1. Create a new empty table with schema and other constraints based on the
-old one, using `LIKE`.
-1. Convert the table to a hypertable and insert data from the older table.
+1. Create a new empty table with the same table structure and other constraints
+as the old one, using `LIKE`.
+1. Convert the table to a hypertable and insert data from the old table.
 1. Add any additional indexes needed.
 
 ### 1. Creating the new empty table
@@ -133,7 +133,8 @@ Your data is now stored in a file called `old_db.csv`.
 
 ### 3. Import data into TimescaleDB
 
-To put the data into the new table, let's run another `COPY`:
+To put the data into the new table, let's run another `COPY`, this one to copy
+data from the `.csv` into our new db:
 
 ```bash
 psql -d new_db -c "\COPY foo FROM old_db.csv CSV"
@@ -143,4 +144,5 @@ Once finished, your migration is complete!
 
 Now checkout some common [hypertable commands][] for exploring your data.
 
+[setup]: /getting-started/setup
 [hypertable commands]: /getting-started/basic-operations

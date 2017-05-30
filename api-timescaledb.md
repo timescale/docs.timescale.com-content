@@ -20,7 +20,7 @@ etc., still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
 | `number_partitions` | Number of partitions to use when `partitioning_column` is set. Must be > 0.
-| `chunk_time_interval` | Interval in event time (micro seconds for TIMESTAMP and TIMESTAMPTZ) that each chunk covers. Must be > 0. Default is 1 month.
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month ([units][]).
 **Sample usage**
 
 Convert table `foo` to hypertable with just time partitioning on column `ts`:
@@ -55,8 +55,7 @@ are before the cut-off point, but only one chunk worth.
 
 |Name|Description|
 |---|---|
-| `older_than` | Timestamp of cut-off point for data to be dropped, i.e.,
-anything older than this should be removed. |
+| `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed. ([units][])|
 
 **Optional arguments**
 
@@ -194,3 +193,10 @@ SELECT device_id, last(temp, time)
 FROM metrics
 GROUP BY device_id;
 ```
+
+#### Time units <a id="time-units"></a>
+Time units for TimescaleDB functions:
+- Microseconds for TIMESTAMP and TIMESTAMPTZ.
+- Same units as type for integer time types.
+
+[units]: #time-units

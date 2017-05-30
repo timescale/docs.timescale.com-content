@@ -40,7 +40,7 @@ connect to a PostgreSQL server using the given parameters.
 
 ---
 
-## Advanced query commands
+## Advanced queries
 
 ### Median/percentile
 
