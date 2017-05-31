@@ -2,11 +2,11 @@
 
 Compared to general NoSQL databases (e.g., MongoDB, Cassandra) or even
 more specialized time-oriented ones (e.g., InfluxDB, KairosDB),
-TimescaleDB provided both qualitative and quantitative differences:
+TimescaleDB provides both qualitative and quantitative differences:
 
 - **Normal SQL**: If you want to make standard SQL queries on
   time-series data, even at scale.  Most (all?) NoSQL databases
-  required learning either a new query language or using something
+  require learning either a new query language or using something
   that's at best "SQL-ish" (which still breaks compatibility with
   existing tools)
 - **Operational simplicity**:  With TimescaleDB, you only need to manage one
@@ -21,7 +21,7 @@ TimescaleDB provided both qualitative and quantitative differences:
 - **Manage like PostgreSQL** and inherit its support for varied datatypes and
   indexes (B-tree, hash, range, BRIN, GiST, GIN)
 - **Native support for geospatial data**: Data stored in TimescaleDB
-  can leverage PostGIS's geometric datatypes, indexies, and queries.
+  can leverage PostGIS's geometric datatypes, indexes, and queries.
 - **Third-party tools**: TimescaleDB supports anything that speaks
   SQL, including BI tools like Tableau
 
@@ -34,7 +34,7 @@ lookups or single column rollups, an in-memory or column-oriented
 database might be more appropriate.  The former clearly does not scale
 to the same data volumes, however, while the latter's performance
 significantly underperforms for more complex queries.
-- **Very sparse or unstructured data**: While TimescaleDB leverages Postgres'
+- **Very sparse or unstructured data**: While TimescaleDB leverages PostgreSQL
 support for JSON/JSONB formats and handles sparsity quite efficiently (bitmaps
 for NULL values), schema-less architectures may be more appropriate in
 certain scenarios.

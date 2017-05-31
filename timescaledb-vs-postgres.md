@@ -1,15 +1,15 @@
 # Why use TimescaleDB over relational DBs?
 
-TimescaleDB offers three key benefits over vanilla Postgres or other
-traditional RDBMS for storing time-series data: much higher data
-ingest rates, similar to (much) superior query performance, and
+TimescaleDB offers three key benefits over vanilla PostgreSQL or other
+traditional RDBMSs for storing time-series data: much higher data
+ingest rates, similar up to (much) superior query performance, and
 extended time-oriented features.
 
 And because TimescaleDB still allows you to use the full range of
 Postgres features and tools -- e.g., JOINs with relational tables,
 geospatial queries via PostGIS, `pg_backup` and `pg_restore`, any
-connector that speaks Postgres -- there is little reason **not** to
-use TimescaleDB for storing time-series data within a Postgres
+connector that speaks PostgreSQL -- there is little reason **not** to
+use TimescaleDB for storing time-series data within a PostgreSQL
 database.
 
 ## Much higher ingest rates
@@ -22,7 +22,7 @@ can no longer fit in memory.
 
 In particular, whenever a new row is inserted, the database needs to
 update the indexes (e.g., B-trees) for each of the table's indexed
-column, which will involve swapping one or more pages in from disk.
+columns, which will involve swapping one or more pages in from disk.
 Throwing more memory at the problem only delays the inevitable, and
 your throughput in the 10K--100K+ rows per second can crash to
 hundreds of rows per second once your time-series table is in the tens
@@ -39,8 +39,9 @@ PostgreSQL for moderately-sized tables:
 <img src="https://cdn-images-1.medium.com/max/1760/0*JXwRxrXy_iCE5rkv."></img>
 
 We have observed similarly high, consistent throughput --- 100K-200K
-rows per second, or 1M-2M metrics per second --- in TimescaleDb
-databases **over 10+ billion rows**, even when deployed with a single disk. 
+
+rows per second, or 1M-2M metrics per second --- in TimescaleDB
+databases **over 10+ billion rows**, even when deployed with a single disk.
 
 ## Superior or similar query performance
 
@@ -49,7 +50,7 @@ compared to Postgres.
 
 On single disk machines, at least, many simple queries that just
 perform indexed lookups or table scans are similarly performant
-between Postgres and TimescaleDB. 
+between Postgres and TimescaleDB.
 
 For example, the following query on an &sim;80M row table with indexed
 time, hostname, and cpu usage information, will take less than 1ms for
@@ -57,7 +58,7 @@ each database:
 
 ```sql
 SELECT date_trunc('hour', time) AS hour, max(user_usage) as user_usage FROM cpu
-  WHERE hostname = 'host_1234' 
+  WHERE hostname = 'host_1234'
      AND time >= *start* AND time < *stop*
   GROUP BY hour ORDER BY hour
 ```   
@@ -73,7 +74,7 @@ SELECT * FROM cpu
 Other queries that can reason specifically about time ordering can be
 much more performant in TimescaleDB, however.  
 
-TimescaleDB uses a time-optimized "merge append" optimization to
+TimescaleDB uses a time-based "merge append" optimization to
 minimize the number of groups which much be processed to execute the
 following (given its knowledge that time is already ordered).  For a
 test &sim;80M row table, this results in query latency that is **22x**
@@ -109,7 +110,7 @@ following:
     `date_trunc` function, allowing for arbitrary time intervals and
     flexible groupings instead of just second, minute, hour, etc.
 
-- **Last / first**: These optimized aggregation functions allows you
+- **Last / first**: These optimized aggregation functions allow you
     to get the value of one column as ordered by another.  For
     example, `last(temperature, time)` will return the latest
     temperature value based on time within a group (e.g., an hour).
