@@ -71,4 +71,4 @@ itineraries are created, barcodes are scanned, and sensors are deployed for
 tracking shipments and fleet analytics.  Environmental monitoring is used for a
 wide-range of applications, including health and precision agriculture.
 
-## Time-series data is everywhere
+**Next:**  [How is TimescaleDB's architecture different?](/introduction/architecture)

@@ -70,7 +70,9 @@ tables), rather than deleting individual rows.
 ## Single node vs. clustering
 
 
-TimescaleDB performs this extensive partitioning both on **single-node** deployments as well as **clustered** deployments (in development).  While
+TimescaleDB performs this extensive partitioning both on
+**single-node** deployments as well as **clustered** deployments (in
+development).  While
 partitioning is traditionally only used for scaling out across multiple
 machines, it also allows us to scale up to high write rates (and improved
 parallelized queries) even on single machines.
@@ -80,7 +82,7 @@ deployments. Of note is that the single-node version of TimescaleDB has been
 benchmarked to over 10-billion-row hypertables on commodity machines without
 a loss in insert performance.
 
-## Benefits of single-node partitioning
+## Benefits of single-node partitioning <a id="benefits-chunking"></a>
 
 A common problem with scaling database performance on a single machine
 is the significant cost/performance trade-off between memory and disk.
@@ -106,5 +108,7 @@ chunking, please see our [technical blog post][chunking].
 [hypertables]: /introduction/architecture#hypertables-and-chunks
 [chunking]: https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
 
-
 <!--- Picture of blog post -->
+
+**Next:** Benefits of this architecture design? [TimescaleDB vs. PostgreSQL](/introduction/timescaledb-vs-postgres)
+
