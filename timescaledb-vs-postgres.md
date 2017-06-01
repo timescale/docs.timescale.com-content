@@ -2,7 +2,7 @@
 
 TimescaleDB offers three key benefits over vanilla PostgreSQL or other
 traditional RDBMSs for storing time-series data: much higher data
-ingest rates, similar up to (much) superior query performance, and
+ingest rates, equivalent up to (much) superior query performance, and
 extended time-oriented features.
 
 And because TimescaleDB still allows you to use the full range of
@@ -15,9 +15,8 @@ database.
 ## Much higher ingest rates
 
 TimescaleDB achieves a much higher and more stable ingest rate than
-PostgreSQL for time-series data.  As described in our [architectural
-discussion](/introduction/architecture#benefits-chunking), Postgres'
-performance begins to significantly suffer as soon as indexed tables
+PostgreSQL for time-series data.  As described in our [architectural discussion][],
+Postgres' performance begins to significantly suffer as soon as indexed tables
 can no longer fit in memory.
 
 In particular, whenever a new row is inserted, the database needs to
@@ -28,10 +27,10 @@ your throughput in the 10K--100K+ rows per second can crash to
 hundreds of rows per second once your time-series table is in the tens
 of millions of rows.
 
-TimescaleDB solves this through its heavy (and adaptive) use of
+TimescaleDB solves this through its heavy (and adaptive) utilization of
 time-space partitioning, even when running *on a single machine*.  So
-all writes to recent time intervals stay with in tables that remain in
-memory, so updating any secondary indexes similarly remains quick.
+all writes to recent time intervals are only to tables that remain in
+memory, and updating any secondary indexes is also fast as a result.
 
 In short, TimescaleDBs sees throughput more than 15x that of
 PostgreSQL for moderately-sized tables:
@@ -71,8 +70,8 @@ SELECT * FROM cpu
      AND time >= *start* AND time < *stop*
 ```   
 
-Other queries that can reason specifically about time ordering can be
-much more performant in TimescaleDB, however.  
+In contrast, other queries that can reason specifically about time ordering can be
+_much_ more performant in TimescaleDB.  
 
 TimescaleDB uses a time-based "merge append" optimization to
 minimize the number of groups which much be processed to execute the
@@ -119,3 +118,5 @@ For more information about TimescaleDB's current (and growing) list of
 time features, please [see our API](/api/api-timescaledb#time_bucket)
 
 **Next:** How does TimescaleDB compare to NoSQL time-series DBs? [TimescaleDB vs. NoSQL](/introduction/timescaledb-vs-nosql)
+
+[architectural discussion]: /introduction/architecture#benefits-chunking
