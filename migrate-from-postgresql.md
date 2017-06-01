@@ -1,12 +1,17 @@
 # Migrate from PostgreSQL
 
-### Your system
+Depending on where your data to be migrated is currently stored,
+the steps to migrate it to TimescaleDB are slightly different.
 
-Depending on where your data is located, the steps to migrate are slightly
-different.  If you want to setup TimescaleDB in the same database in the same
-PostgreSQL instance as your migrating data [go here](#same-db).  If you want to
-migrate data from a different database or a different PostgreSQL instance
-altogether [go here](#different-db).  We assume that the new database has already been [setup][] with the timescale extension.
+- **Same database**:  If you want to setup TimescaleDB in the
+same database in the same PostgreSQL instance as you're migrating
+data, [follow these instructions](#same-db).
+
+- **Different database**: If you want to migrate data from
+a different database or a different PostgreSQL instance
+altogether, [follow these instructions](#different-db).
+
+We assume that the new database has already been [setup][] with the timescale extension.
 
 ## Migrating from the same database <a id="same-db"></a>
 
@@ -52,7 +57,7 @@ convert `new_table` to a hypertable, then simply `INSERT` data from the old tabl
 ```sql
 -- Assuming 'time' is the time column for the dataset
 SELECT create_hypertable('new_table', 'time');
-INSERT INTO new_table SELECT * FROM old_table;
+  INSERT INTO new_table SELECT * FROM old_table;
 ```
 
 ### 3. Add additional indexes
@@ -125,8 +130,8 @@ Your new database is now ready for data.
 To backup your data to CSV, we can run a `COPY`:
 
 ```bash
+# The following ensures 'foo' outputs to a comma-separated .csv file
 psql -d old_db -c "\COPY foo TO old_db.csv DELIMITER ',' CSV"
-# This insures that foo outputs to a comma separated .csv file
 ```
 
 Your data is now stored in a file called `old_db.csv`.
