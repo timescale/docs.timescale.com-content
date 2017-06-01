@@ -1,10 +1,10 @@
 # Architecture and concepts
 
-TimescaleDB is implemented as an extension on PostgreSQL, which provides hooks
-deep into Postgres's query planner, data model, and execution engine.  This
-allows TimescaleDB to expose what look like regular tables, but this is
-actually only an abstraction or a virtual view of many individual tables
-comprising the actual data.
+TimescaleDB is implemented as an extension on PostgreSQL that provides hooks
+deep into Postgres' query planner, data model, and execution engine.  This
+allows TimescaleDB to expose what look like regular tables, but are actually
+only an abstraction or a virtual view of many individual tables comprising the
+actual data.
 
 This single-table view, which we call a **hypertable**, is thus comprised of
 many **chunks**.  Chunks are created by partitioning the hypertable's data in
@@ -17,10 +17,10 @@ partitioning across "time and space".
 
 ### Hypertables
 The primary point of interaction with your data is a hypertable,
-the abstraction of a single continuous table across all
-space and time intervals, such that one can query it via vanilla SQL.  
+the abstraction of a single continuous table across all space and time intervals,
+such that one can query it via vanilla SQL.  
 
-Virtually all of your interactions with TimescaleDB are with hypertables, creating
+Virtually all user interactions with TimescaleDB are with hypertables. Creating
 tables and indexes, altering tables, inserting data, selecting data, etc. can
 (and should) all be executed on the hypertable.
 [[Jump to basic SQL operations](/getting-started/basic-operations)]
@@ -94,7 +94,8 @@ other data structure) for each table index, in order for values in that
 index to be found efficiently. So, the problem compounds as you index more
 columns.
 
-But because each of the chunks created by TimescaleDB is itself stored as a separate database table, all of its indexes are built only across these much
+But because each of the chunks created by TimescaleDB is itself stored as a
+separate database table, all of its indexes are built only across these much
 smaller tables rather than a single table representing the entire
 dataset. So if we size these chunks properly, we can fit the latest tables
 (and their B-trees) completely in memory, and avoid this swap-to-disk problem,
