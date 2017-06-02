@@ -135,19 +135,17 @@ Simple 5-minute averaging
 
 ```sql
 SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
-FROM metrics
-GROUP BY five_min
-ORDER BY five_min
-LIMIT 10;
+  FROM metrics
+  GROUP BY five_min ORDER BY five_min
+  LIMIT 10;
 ```
 
 To report the middle of the bucket, instead of the left edge:
 ```sql
 SELECT time_bucket('5 minutes', time)+'2.5 minutes' five_min, avg(cpu)
-FROM metrics
-GROUP BY five_min
-ORDER BY five_min
-LIMIT 10;
+  FROM metrics
+  GROUP BY five_min ORDER BY five_min
+  LIMIT 10;
 ```
 
 For rounding, move the alignment so that the middle of the bucket is at the
@@ -155,19 +153,17 @@ For rounding, move the alignment so that the middle of the bucket is at the
 ```sql
 SELECT time_bucket('5 minutes', time, '-2.5 minutes')+'2.5 minutes' five_min,
        avg(cpu)
-FROM metrics
-GROUP BY five_min
-ORDER BY five_min
-LIMIT 10;
+  FROM metrics
+  GROUP BY five_min ORDER BY five_min
+  LIMIT 10;
 ```
 
 Bucketing a TIMESTAMPTZ at local time instead of UTC(see note above):
 ```sql
 SELECT time_bucket('2 hours', timetz::TIMESTAMP) five_min,
        avg(cpu)
-FROM metrics
-GROUP BY five_min
-ORDER BY five_min
+  FROM metrics
+  GROUP BY five_min ORDER BY five_min;
 ```
 Note that the above cast to TIMESTAMP converts the time to local time according
 to the server's timezone setting.
@@ -190,8 +186,8 @@ latest temperature value based on time within an aggregate group.
 Get the latest temperature by device_id
 ```sql
 SELECT device_id, last(temp, time)
-FROM metrics
-GROUP BY device_id;
+  FROM metrics
+  GROUP BY device_id;
 ```
 
 #### Time units <a id="time-units"></a>

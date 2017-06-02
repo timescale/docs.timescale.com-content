@@ -1,14 +1,17 @@
 # *** Basic operations
 
-There are a few basic operations that you will be using frequently with hypertables
-within TimescaleDB, *inserting data*, *querying data*, and *indexing data*.  We are assuming here that you have already generated a hypertable by [creating one][] or [migrating your data][]
+There are a few basic operations that you will be using frequently
+with hypertables within TimescaleDB: *inserting data*, *querying
+data*, and *indexing data*.  We are assuming here that you have
+already generated a hypertable by [creating one][] or [migrating your
+data][].
 
 ### Inserting and querying
 Inserting data into the hypertable is done via normal SQL `INSERT` commands,
 e.g. using millisecond timestamps:
 ```sql
 INSERT INTO conditions(time, location, temperature, humidity)
-VALUES(NOW(), 'office', 70.0, 50.0);
+  VALUES (NOW(), 'office', 70.0, 50.0);
 ```
 
 Similarly, querying data is done via normal SQL `SELECT` commands.
@@ -22,7 +25,7 @@ CREATE INDEX ON conditions (location, time DESC);
 ```
 This can be done before or after converting the table to a hypertable.
 
-**Indexing suggestions:**
+#### Indexing suggestions
 
 Our experience has shown that for time-series data, the most-useful index type
 varies depending on your data.
@@ -43,7 +46,8 @@ Having a `time DESC` column specification in the index allows for efficient
 queries by column-value and time. For example, the index defined above would
 optimize the following query:
 ```sql
-SELECT * FROM conditions WHERE location = 'garage' ORDER BY time DESC LIMIT 10
+SELECT * FROM conditions WHERE location = 'garage'
+  ORDER BY time DESC LIMIT 10
 ```
 
 For sparse data where a column is often NULL, we suggest adding a
@@ -51,15 +55,42 @@ For sparse data where a column is often NULL, we suggest adding a
 searching for missing data). For example,
 
 ```sql
-CREATE INDEX ON conditions (time DESC, humidity) WHERE humidity IS NOT NULL;
+CREATE INDEX ON conditions (time DESC, humidity)
+  WHERE humidity IS NOT NULL;
 ```
 this creates a more compact, and thus efficient, index.
 
-If you would like to see what you can do with a full data set, you can check out
+**Warning**: You can only define a UNIQUE index if the initial columns
+  is the time column and, if it exists, the partitioning column.
+
+#### Default indexes
+
+By default, TimescaleDB automatically creates a time index on your data when a hypertable is created.
+
+```sql
+CREATE INDEX ON conditions (time DESC);
+```
+
+Additionally, if the `create_hypertable` command specifies an optional
+'space partition' in addition to time (say, the `location` column),
+TimescaleDB will automatically create the following index:
+
+```sql
+CREATE INDEX ON conditions (location, time DESC);
+```
+
+This default behavior can be overridden when executing the
+`create_hypertable` command ([see the API docs][create_hypertable]).
+
+
+**Next**:  If you would like to see what you can do with a full data set,
+you can check out
 our [basic tutorial][] or play around on your own with our [sample datasets][].
+
 
 [creating one]: /getting-started/setup/starting-from-scratch
 [migrating your data]: /getting-started/setup/migrate-from-postgresql
 [API Reference]: /timescaledb-api
 [basic tutorial]: /tutorials/tutorial-hello-nyc
 [sample datasets]: /tutorials/other-sample-datasets
+[create_hypertable]:/api/api-timescaledb#create_hypertable
