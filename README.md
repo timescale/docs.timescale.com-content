@@ -35,14 +35,15 @@ Otherwise the code highlighter may be disrupted.
 
 ### Special rules
 There are some custom modifications to the markdown parser to allow for special
-formatting within the docs.
-- Adding 'vv' to the start of every list item in an ordered list will result in
+formatting within the docs.  
+
++ Adding 'vv' to the start of every list item in an ordered list will result in
   a switch to "steps" formatting which is used to denote instructional steps, as
   for a tutorial.
-- Adding 'ttt' to the start of a blockquote (using '>') will create a "tip" callout.
-- Adding 'vvv' to the start of a blockquote (using '>') will create a "warning" callout.
++ Adding 'ttt' to the start of a blockquote (using '>') will create a "tip" callout.
++ Adding 'vvv' to the start of a blockquote (using '>') will create a "warning" callout.
 
-**Warning** adding 'ttt' or 'vvv' to the start of any standard paragraph will
+**Warning**: Adding 'ttt' or 'vvv' to the start of any standard paragraph will
 result in non-optimal html.  The characters will end up on the outside of the
 paragraph tag.  This is due to the way that the markdown parser interprets blockquotes
 with the new modifications.  
