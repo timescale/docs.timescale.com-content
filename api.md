@@ -1,6 +1,6 @@
 # *** API/Command reference
 
-## psql commands
+## psql commands <id="psql">
 Here we list some of the most common `psql` commands.  For a complete list, check out the [PostgreSQL psql docs][psql].
 
 - `-c <command>`, `--command=<command>`
@@ -52,7 +52,7 @@ table, view, or index in more detail.
 
 ---
 
-## Schema commands
+## Schema commands <id="schema">
 
 Commands to create, alter, or delete schemas in TimescaleDB are
 identical to those in PostgreSQL.  Schema commands should be made to
@@ -123,7 +123,7 @@ discussion][indexing].
 
 ---
 
-## INSERT commands
+## INSERT commands <id="insert">
 
 Data can be inserted into a hypertable using the standard INSERT SQL command
 ([Postgres docs][postgres-insert]).
@@ -154,7 +154,7 @@ and will write them accordingly to each chunk in a single transaction.
 
 ---
 
-## SELECT commands
+## SELECT commands <id="select">
 
 TimescaleDB supports **full SQL**.
 
@@ -194,7 +194,7 @@ SELECT COUNT(DISTINCT location) FROM conditions
 
 ---
 
-## Advanced analytic queries
+## Advanced analytic queries  <id="advanced-analytics">
 
 
 TimescaleDB can be used for a variety of analytical queries, both through its
@@ -292,7 +292,7 @@ What analytic functions are we missing?  [Let us know on github][issues].
 [postgres-altertable]:https://www.postgresql.org/docs/9.6/static/sql-altertable.html
 [postgres-insert]:https://www.postgresql.org/docs/9.6/static/sql-insert.html
 [postgres-select]:https://www.postgresql.org/docs/9.6/static/sql-select.html
-[indexing]:/basic-operations#indexing-data
+[indexing]:/getting-started/basic-operations#indexing-data
 [histogram]:https://wiki.postgresql.org/wiki/Aggregate_Histogram
 [first-last]:/api/api-timescaledb#first-last
 [issues]:https://github.com/timescale/timescaledb/issues

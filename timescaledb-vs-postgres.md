@@ -35,10 +35,9 @@ memory, and updating any secondary indexes is also fast as a result.
 In short, TimescaleDBs sees throughput more than 15x that of
 PostgreSQL for moderately-sized tables:
 
-<img src="https://cdn-images-1.medium.com/max/1760/0*JXwRxrXy_iCE5rkv."></img>
+<img width="100%" src="//assets.timescale.com/benchmarks/timescale-vs-postgres-insert.png"></img>
 
 We have observed similarly high, consistent throughput --- 100K-200K
-
 rows per second, or 1M-2M metrics per second --- in TimescaleDB
 databases **over 10+ billion rows**, even when deployed with a single disk.
 
