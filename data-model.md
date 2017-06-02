@@ -101,7 +101,7 @@ location_id to additional metadata for that location. For example:
 
 location_id | name | latitude | longitude | zip_code | region
 ---:|---:|---:|---:|---:
-335 | Grand Central Terminal | 40.7527° N | 73.9772° W | 10017 | NYC
+42 | Grand Central Terminal | 40.7527° N | 73.9772° W | 10017 | NYC
 77 | Lobby 7 | 42.3593° N | 71.0935° W | 02139 | Massachusetts
 
 Then at query time, by joining our two tables, one could ask questions
