@@ -1,6 +1,6 @@
 # *** API/Command reference
 
-## psql commands <id="psql">
+## psql commands <a id="psql"></a>
 Here we list some of the most common `psql` commands.  For a complete list, check out the [PostgreSQL psql docs][psql].
 
 - `-c <command>`, `--command=<command>`
@@ -52,7 +52,7 @@ table, view, or index in more detail.
 
 ---
 
-## Schema commands <id="schema">
+## Schema commands <a id="schema"></a>
 
 Commands to create, alter, or delete schemas in TimescaleDB are
 identical to those in PostgreSQL.  Schema commands should be made to
@@ -123,7 +123,7 @@ discussion][indexing].
 
 ---
 
-## INSERT commands <id="insert">
+## INSERT commands <a id="insert"></a>
 
 Data can be inserted into a hypertable using the standard INSERT SQL command
 ([Postgres docs][postgres-insert]).
@@ -154,7 +154,7 @@ and will write them accordingly to each chunk in a single transaction.
 
 ---
 
-## SELECT commands <id="select">
+## SELECT commands <a id="select"></a>
 
 TimescaleDB supports **full SQL**.
 
@@ -194,7 +194,7 @@ SELECT COUNT(DISTINCT location) FROM conditions
 
 ---
 
-## Advanced analytic queries  <id="advanced-analytics">
+## Advanced analytic queries  <a id="advanced-analytics"></a>
 
 
 TimescaleDB can be used for a variety of analytical queries, both through its
