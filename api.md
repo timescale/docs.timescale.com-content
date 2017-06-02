@@ -262,15 +262,19 @@ TimescaleDB also supports Postgres' PLpgSQL scripting language to define new
 functions.  In the following example, we first created a `histogram` function
 using the [code found here][histogram], which returns a histogram as an `array` type.
 
-After cutting and pasting the code found in that example to the `psql` command
-line, one can ask histogram questions about data:
+After cutting and pasting the code found in that example to the `psql`
+command line, one can ask histogram questions about data.  The
+following example defines a histogram with five buckets defined over
+the range 60..85.
 
 ```sql
 SELECT location, COUNT(*), histogram(temperature, 60.0, 85.0, 5)
    FROM conditions
    WHERE time > NOW() - '7 days'
    GROUP BY location;
-
+```
+This query will output data in the following form:
+```bash
  location   | count |        histogram
 ------------+-------+-------------------------
  office     | 10080 | [0:5]={0,3860,6220,0,0}
