@@ -24,8 +24,6 @@ the price of a stock, the status of a machine, or the number of logins
 to an app &emdash; that are paired with a timestamp such that the data
 represents a real world context and are valuable to analyze over time.
 
-[Jump ahead to the various time-seres data models](/introduction/data-model)
-
 ## Characteristics of time-series data
 
 But if you look closely at how it’s produced and ingested, there are important
@@ -71,4 +69,4 @@ itineraries are created, barcodes are scanned, and sensors are deployed for
 tracking shipments and fleet analytics.  Environmental monitoring is used for a
 wide-range of applications, including health and precision agriculture.
 
-**Next:**  [How is TimescaleDB's architecture different?](/introduction/architecture)
+**Next:**  [TimescaleDB's data model](/introduction/data-model)
