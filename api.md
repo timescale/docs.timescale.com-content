@@ -75,7 +75,7 @@ CREATE TABLE conditions (
 1. Then, execute the TimescaleDB `create_hypertable` command on this
 newly created table ([API docs][create_hypertable]).
 
->vvvYou can only convert a plain Postgres table into a
+>vvv You can only convert a plain Postgres table into a
   hypertable if it is currently empty.  Otherwise, the
   `create_hypertable` command will throw an error.  If you need to
   *migrate* data from an existing table to a hypertable, [follow these
@@ -93,7 +93,7 @@ ALTER TABLE conditions
 TimescaleDB will then automatically propagate these schema changes to
 the chunks that constitute this hypertable.
 
->vvvAltering a table's schema is quite efficient provided that its
+>vvv Altering a table's schema is quite efficient provided that its
 default value is set to NULL.  If its default is a non-null value, TimescaleDB
 will need to fill in this value into all rows (of all chunks) belonging to this
 hypertable.
@@ -145,7 +145,7 @@ INSERT INTO conditions(time, location, temperature, humidity)
    (NOW(), 'garage', 77.0, 65.2);
 ```
 
->tttThe rows that belong to a single batch INSERT command do **not**
+>ttt The rows that belong to a single batch INSERT command do **not**
 need to belong to the same chunk (by time interval or partitioning key).
 Upon receiving an `INSERT` command for multiple rows, the TimescaleDB
 engine will determine which rows (sub-batches) belong to which chunks,

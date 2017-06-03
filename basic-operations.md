@@ -60,7 +60,7 @@ CREATE INDEX ON conditions (time DESC, humidity)
 ```
 this creates a more compact, and thus efficient, index.
 
->vvvYou can only define a UNIQUE index if the initial columns
+>vvv You can only define a UNIQUE index if the initial columns
   is the time column and, if it exists, the partitioning column.
 
 #### Default indexes
