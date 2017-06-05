@@ -37,8 +37,8 @@ PostgreSQL for moderately-sized tables:
 
 <img width="100%" src="//assets.timescale.com/benchmarks/timescale-vs-postgres-insert.png"></img>
 
-We have observed similarly high, consistent throughput --- 100K-200K
-rows per second, or 1M-2M metrics per second --- in TimescaleDB
+We have observed similarly high, consistent throughput -- 100K-200K
+rows per second, or 1M-2M metrics per second -- in TimescaleDB
 databases **over 10+ billion rows**, even when deployed with a single disk.
 
 ## Superior or similar query performance

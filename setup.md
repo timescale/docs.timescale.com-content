@@ -34,6 +34,18 @@ _That's it!_  Connecting to the new database is as simple as:
 psql -U postgres -h localhost -d tutorial
 ```
 
-## *** CYOA goes here (Start from scratch, Migrate from PostgreSQL, migrate from other data source)
+---
+
+From here, you're going to want to create a TimescaleDB hypertable.
+
+1. **[Start from scratch][start-scratch]**: You don't currently have
+any data, and just want to create an empty hypertable for inserting
+data.
+1. **[Migrate from Postgres][migrate-postgres]**: You are currently
+storing time-series data in Postgres, and want to move this data to a
+TimescaleDB hypertable.
 
 [installed]: /getting-started/installation
+[start-scratch]: /getting-started/setup/starting-from-scratch
+[migrate-postgres]: /getting-started/setup/migrate-from-postgresql
+
