@@ -42,6 +42,9 @@ formatting within the docs.
   for a tutorial.
 + Adding '>ttt ' to the start of a blockquote (using '>') will create a "tip" callout.
 + Adding '>vvv ' to the start of a blockquote (using '>') will create a "warning" callout.
++ Adding 'fff ' to the start of a paragraph(line) will format it as a "footer link".
+
+_Make sure to include the space after the formatting command!_
 
 **Warning**: Note the single space required in the special formats before adding
 normal text.Adding 'ttt' or 'vvv' to the start of any standard paragraph will
