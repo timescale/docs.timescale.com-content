@@ -25,8 +25,7 @@ as the old one, using `LIKE`.
 
 ### 1. Creating the new empty table
 
-There are two ways to go about this step, one is more convenient, the other is
-more optimal.
+There are two ways to go about this step: one more convenient, the other faster.
 
 #### Convenient method
 
@@ -39,7 +38,7 @@ update the indexes for each migrated row.
 CREATE TABLE new_table (LIKE old_table INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES);
 ```
 
-#### Optimal method
+#### Faster method
 
 This method does not generate the indexes while making the table.  This makes the data
 transfer faster than the convenient method, but requires us to add the indexes as a
@@ -63,9 +62,9 @@ SELECT create_hypertable('new_table', 'time');
 ### 3. Add additional indexes
 
 If you used the convenient method, whatever indexes were on `old_table` are now
-on `new_table` making this step optional. For the optimal `CREATE TABLE` method
-or for adding any indexes not on `old_table`.  For info on the best ways to create
-indexes, check out our [operations][] section:
+on `new_table` making this step optional. For the faster `CREATE TABLE` method
+or for adding any indexes not on `old_table`, you need to add indexes to 
+this hypertable.  
 
 ```sql
 CREATE INDEX on new_table (column_name, <options>)
@@ -73,8 +72,8 @@ CREATE INDEX on new_table (column_name, <options>)
 
 Tada!  You did it!
 
-[operations]:/getting-started/basic-operations
-[create_hypertable]:/api/api-timescaledb#create_hypertable
+For more info on the best strategies for indexing, check out 
+our [operations][indexing] section.
 
 ---
 
@@ -102,8 +101,8 @@ pg_dump --schema-only -f old_db.bak old_db
 ```
 
 This creates a backup file called `old_db.bak` that contains only the
-SQL commands to recreate all the tables in `old_db`, which in this case is just
-`foo`.
+SQL commands to recreate all the tables in `old_db`, which in this case 
+is just `foo`.
 
 To create those tables in `new_db`:
 ```bash
@@ -117,8 +116,8 @@ psql -d new_db
 ```
 Then use the `create_hypertable()` function on the tables to make hypertables.
 Due to a current limitation, this must be run on a table while it is empty, so
-we do this before importing data. In this case, our hypertable target is
-`foo` (using column `time` as the time partitioning column):
+we do this before importing data. In this case, our hypertable target is `foo` 
+(using column `time` as the time partitioning column):
 ```sql
 SELECT create_hypertable('foo', 'time');
 ```
@@ -151,3 +150,5 @@ Now checkout some common [hypertable commands][] for exploring your data.
 
 [setup]: /getting-started/setup
 [hypertable commands]: /getting-started/basic-operations
+[indexing]: /getting-started/basic-operations#indexing
+[create_hypertable]: /api/api-timescaledb#create_hypertable

@@ -75,7 +75,7 @@ _much_ more performant in TimescaleDB.
 TimescaleDB uses a time-based "merge append" optimization to
 minimize the number of groups which much be processed to execute the
 following (given its knowledge that time is already ordered).  For a
-test &sim;80M row table, this results in query latency that is **22x**
+test &sim;80M row table, this results in query latency that is **22x** 
 lower than Postgres (12ms vs. 2.5s).
 
 ```sql
@@ -104,7 +104,7 @@ improvements for time-oriented queries.
 It also includes *new* types of queries, including some of the
 following:
 
-- **Time bucketing**: A more powerful version of the standard
+- **Time bucketing**: A more powerful version of the standard 
     `date_trunc` function, allowing for arbitrary time intervals and
     flexible groupings instead of just second, minute, hour, etc.
 
@@ -114,7 +114,7 @@ following:
     temperature value based on time within a group (e.g., an hour).
 
 For more information about TimescaleDB's current (and growing) list of
-time features, please [see our API](/api/api-timescaledb#time_bucket)
+time features, please [see our API](/api/api-timescaledb#time_bucket).
 
 **Next:** How does TimescaleDB compare to NoSQL time-series DBs? [TimescaleDB vs. NoSQL](/introduction/timescaledb-vs-nosql)
 

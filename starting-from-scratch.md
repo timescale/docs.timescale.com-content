@@ -5,7 +5,7 @@ tables, called **hypertables**.
 
 ### Creating a (hyper)table
 To create a hypertable, you start with a regular SQL table, and then convert
-it into a hypertable via the function `create_hypertable()`([API reference][]).
+it into a hypertable via the function `create_hypertable()` ([API reference][]).
 
 The following example creates a hypertable for tracking
 temperature and humidity across a collection of devices over time.
