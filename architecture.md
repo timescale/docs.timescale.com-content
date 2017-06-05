@@ -13,9 +13,9 @@ by a time interval, and by an (optional) "partition key" such as
 device ID, location, user id, etc.  We sometimes refer to this as
 partitioning across "time and space".
 
-## Terminology
+## Terminology <a id="terminology"></a>
 
-### Hypertables
+### Hypertables <a id="hypertables"></a>
 The primary point of interaction with your data is a hypertable,
 the abstraction of a single continuous table across all space and time intervals,
 such that one can query it via vanilla SQL.  
@@ -44,7 +44,7 @@ Indexes on time and the partitioning key are automatically created on hypertable
 although additional indexes can also be created (and TimescaleDB supports the
 full range of PostgreSQL index types).
 
-### Chunks
+### Chunks <a id="chunks"></a>
 
 Internally, TimescaleDB automatically splits each
 hypertable into **chunks**, with each chunk corresponding to a specific time
@@ -66,8 +66,7 @@ runtime can perform such operations by simply dropping chunks (internal
 tables), rather than deleting individual rows.
 
 
-## Single node vs. clustering
-
+## Single node vs. clustering <a id="single-node-vs-clustering"></a>
 
 TimescaleDB performs this extensive partitioning both
 on **single-node** deployments as well as **clustered** deployments

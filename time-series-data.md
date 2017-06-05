@@ -19,12 +19,12 @@ Data:
 ```
 
 But time-series data is a much **broader** category.  It's
-really any data &emdash; whether temperature readings from a sensor,
+really any data -- whether temperature readings from a sensor,
 the price of a stock, the status of a machine, or the number of logins
-to an app &emdash; that are paired with a timestamp such that the data
+to an app -- that are paired with a timestamp such that the data
 represents a real world context and are valuable to analyze over time.
 
-## Characteristics of time-series data
+## Characteristics of time-series data <a id="characteristics"></a>
 
 But if you look closely at how it’s produced and ingested, there are important
 characteristics that time-series databases like TimescaleDB typically leverage:
@@ -44,7 +44,7 @@ time-series data (and the databases that support them), compared to other
 data like standard relational "business" data, is that **changes to the
 data are inserts, not overwrites**.
 
-## Time-series data is everywhere
+## Time-series data is everywhere <a id="is-everywhere"></a>
 
 Time-series data is everywhere, but there are environments where it is especially
 being created in torrents.

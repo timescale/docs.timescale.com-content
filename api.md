@@ -1,4 +1,4 @@
-# *** API/Command reference
+# API/Command reference
 
 ## psql commands <a id="psql"></a>
 Here we list some of the most common `psql` commands.  For a complete list, check out the [PostgreSQL psql docs][psql].

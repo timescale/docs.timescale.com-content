@@ -1,4 +1,4 @@
-# *** Basic operations
+# Basic operations
 
 There are a few basic operations that you will be using frequently
 with hypertables within TimescaleDB: *inserting data*, *querying

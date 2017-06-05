@@ -368,6 +368,7 @@ behind the curtain and see all of its guts.
 ```
 
 ### 5. Bonus! Geospatial queries via PostGIS <a id="tutorial-postgis"></a>
+
 Because TimescaleDB is packaged as a PostgreSQL extension, one can install it
 alongside other extensions for additional functionality. One example of that is
 using PostGIS alongside TimescaleDB for geospatial data.

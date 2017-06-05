@@ -1,4 +1,4 @@
-# *** Tutorials
+# Tutorials
 
 - **Welcome**: If you are new to TimescaleDB and even maybe SQL, check
 out the [Hello NYC][] tutorial to get an idea of the capabilities our
