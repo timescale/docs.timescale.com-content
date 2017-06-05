@@ -63,7 +63,7 @@ SELECT create_hypertable('new_table', 'time');
 
 If you used the convenient method, whatever indexes were on `old_table` are now
 on `new_table` making this step optional. For the faster `CREATE TABLE` method
-or for adding any indexes not on `old_table`, you need to add indexes to 
+or for adding any indexes not on `old_table`, you need to add indexes to
 this hypertable.  
 
 ```sql
@@ -116,8 +116,8 @@ psql -d new_db
 ```
 Then use the `create_hypertable()` function on the tables to make hypertables.
 Due to a current limitation, this must be run on a table while it is empty, so
-we do this before importing data. In this case, our hypertable target is `foo` 
-(using column `time` as the time partitioning column):
+we do this before importing data. In this case, our hypertable target is `foo` (using
+column `time` as the time partitioning column):
 ```sql
 SELECT create_hypertable('foo', 'time');
 ```

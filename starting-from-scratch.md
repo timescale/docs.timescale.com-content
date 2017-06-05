@@ -29,9 +29,9 @@ Next, transform it into a hypertable with `create_hypertable()`:
 
 SELECT create_hypertable('conditions', 'time');
 
--- OR you can additionally partition the data on another dimension
---   (what we call 'space') such as `location`.
--- For example, to partition `location` into 2 partitions:
+-- OR you can additionally partition the data on another
+--   another dimension (what we call 'space partitioning').
+-- E.g., to partition `location` into 2 partitions:
 
 SELECT create_hypertable('conditions', 'time', 'location', 2);
 ```

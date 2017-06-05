@@ -54,11 +54,11 @@ Each dataset contains one `.sql` file named `[dataset].sql`
 and a few CSV files named in the format `[dataset]_[size]_[table].csv`.
 
 As an example, if you wanted to import the `devices_small` dataset
-above, it creates two tables (`device_info` and a hypertable named 
-`readings`) from `devices.sql`. Therefore, there are two CSV files: 
-`devices_small_readings.csv` and `devices_small_device_info.csv`.
-So, to import this dataset into a TimescaleDB database named 
-`devices_small`:
+above, it creates two tables (`device_info` and a hypertable
+named `readings`) from `devices.sql`. Therefore, there are two CSV
+files: `devices_small_readings.csv` and `devices_small_device_info.csv`.
+So, to import this dataset into a TimescaleDB database
+named `devices_small`:
 
 ```bash
 # (1) unzip the archive
@@ -80,8 +80,8 @@ psql -U postgres -h localhost -d devices_small
 ```
 
 ## In-depth: Device ops datasets <a id="in-depth-devices"></a>
-After importing one of these datasets (`devices_small`, `devices_med`, 
-`devices_big`), you will find a plain PostgreSQL table called `device_info`
+After importing one of these datasets (`devices_small`, `devices_med`, `devices_big`),
+you will find a plain PostgreSQL table called `device_info`
 and a hypertable called `readings`. The `device_info` table has (static)
 metadata about each device, such as the OS name and manufacturer. The
 `readings` hypertable tracks data sent from each device, e.g. CPU activity,
@@ -197,8 +197,8 @@ hour                   | min_battery_level | max_battery_level
 ---
 
 ## In-depth: Weather datasets <a id="in-depth-weather"></a>
-After importing one of these datasets (`weather_small`, `weather_med`,
-`weather_big`), you will find a plain PostgreSQL table called `locations` and
+After importing one of these datasets (`weather_small`, `weather_med`, `weather_big`), 
+you will find a plain PostgreSQL table called `locations` and
 a hypertable called `conditions`. The `locations` table has metadata about
 each of the locations, such as its name and environmental type. The
 `conditions` hypertable tracks readings of temperature and humidity from

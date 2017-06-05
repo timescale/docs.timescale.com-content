@@ -66,9 +66,9 @@ Creating a hypertable is a two-step process.
 1. Create a standard table ([Postgres docs][postgres-createtable]).
 ```sql
 CREATE TABLE conditions (
-  time        TIMESTAMPTZ       NOT NULL,
-  location    TEXT              NOT NULL,
-  temperature DOUBLE PRECISION  NULL
+    time        TIMESTAMPTZ       NOT NULL,
+    location    TEXT              NOT NULL,
+    temperature DOUBLE PRECISION  NULL
 );
 ```
 
@@ -133,8 +133,8 @@ INSERT INTO conditions(time, location, temperature, humidity)
   VALUES (NOW(), 'office', 70.0, 50.0);
 ```
 
-You can also insert multiple rows into a hypertable using a single `INSERT` 
-call, even thousands at a time. This is typically much more efficient than
+You can also insert multiple rows into a hypertable using a single `INSERT` call,
+even thousands at a time. This is typically much more efficient than
 inserting data row-by-row, and is recommended in environments when possible.
 
 ```sql
@@ -145,8 +145,8 @@ INSERT INTO conditions(time, location, temperature, humidity)
     (NOW(), 'garage', 77.0, 65.2);
 ```
 
->ttt The rows that belong to a single batch INSERT command do **not**
-need to belong to the same chunk (by time interval or partitioning key).
+>ttt The rows that belong to a single batch INSERT command do **not** need
+to belong to the same chunk (by time interval or partitioning key).
 Upon receiving an `INSERT` command for multiple rows, the TimescaleDB
 engine will determine which rows (sub-batches) belong to which chunks,
 and will write them accordingly to each chunk in a single transaction.

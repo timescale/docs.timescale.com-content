@@ -55,9 +55,10 @@ time, hostname, and cpu usage information, will take less than 1ms for
 each database:
 
 ```sql
-SELECT date_trunc('hour', time) AS hour, max(user_usage) as user_usage FROM cpu
+SELECT date_trunc('hour', time) AS hour,
+    MAX(user_usage) AS user_usage FROM cpu
   WHERE hostname = 'host_1234'
-     AND time >= *start* AND time < *stop*
+    AND time >= '2017-01-01' AND time < '2017-01-02'
   GROUP BY hour ORDER BY hour
 ```   
 
@@ -66,7 +67,7 @@ Similar queries which involve a basic scan over an index are also equivalently p
 ```sql
 SELECT * FROM cpu
   WHERE usage_user > 90.0
-     AND time >= *start* AND time < *stop*
+    AND time >= '2017-01-01' AND time < '2017-01-02'
 ```   
 
 In contrast, other queries that can reason specifically about time ordering can be
@@ -75,14 +76,15 @@ _much_ more performant in TimescaleDB.
 TimescaleDB uses a time-based "merge append" optimization to
 minimize the number of groups which much be processed to execute the
 following (given its knowledge that time is already ordered).  For a
-test &sim;80M row table, this results in query latency that is **22x** 
-lower than Postgres (12ms vs. 2.5s).
+test &sim;80M row table, this results in query latency that is **22x** lower
+than Postgres (12ms vs. 2.5s).
 
 ```sql
-SELECT date_trunc('minute', time) AS minute, max(usage_user) FROM cpu
-   WHERE time < *end*
-   GROUP BY minute ORDER BY minite
-   LIMIT 5
+SELECT date_trunc('minute', time) AS minute,
+    MAX(usage_user) FROM cpu
+  WHERE time < '2017-01-01'
+  GROUP BY minute ORDER BY minute
+  LIMIT 5
 ```
 
 We will be publishing more complete benchmarking comparisons between
@@ -104,8 +106,8 @@ improvements for time-oriented queries.
 It also includes *new* types of queries, including some of the
 following:
 
-- **Time bucketing**: A more powerful version of the standard 
-    `date_trunc` function, allowing for arbitrary time intervals and
+- **Time bucketing**: A more powerful version of the standard `date_trunc` function,
+    allowing for arbitrary time intervals and
     flexible groupings instead of just second, minute, hour, etc.
 
 - **Last / first**: These optimized aggregation functions allow you

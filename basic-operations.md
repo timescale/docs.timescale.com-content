@@ -56,8 +56,8 @@ SELECT * FROM conditions WHERE location = 'garage'
   ORDER BY time DESC LIMIT 10
 ```
 
-For sparse data where a column is often NULL, we suggest adding a 
-`WHERE column IS NOT NULL` clause to the index (unless you are often
+For sparse data where a column is often NULL, we suggest adding
+a `WHERE column IS NOT NULL` clause to the index (unless you are often
 searching for missing data). For example,
 
 ```sql
@@ -78,7 +78,7 @@ CREATE INDEX ON conditions (time DESC);
 ```
 
 Additionally, if the `create_hypertable` command specifies an optional
-'space partition' in addition to time (say, the `location` column),
+"space partition" in addition to time (say, the `location` column),
 TimescaleDB will automatically create the following index:
 
 ```sql
@@ -96,9 +96,8 @@ our [basic tutorial][] or play around on your own with our [sample datasets][].
 
 [creating one]: /getting-started/setup/starting-from-scratch
 [migrating your data]: /getting-started/setup/migrate-from-postgresql
-[API Reference]: /timescaledb-api
-[INSERT]: /timescaledb-api#insert
-[SELECT]: /timescaledb-api#select
+[INSERT]: /api#insert
+[SELECT]: /api#select
 [basic tutorial]: /tutorials/tutorial-hello-nyc
 [sample datasets]: /tutorials/other-sample-datasets
 [create_hypertable]:/api/api-timescaledb#create_hypertable
