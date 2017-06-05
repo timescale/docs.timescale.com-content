@@ -36,7 +36,7 @@ relational databases.
 A single TimescaleDB deployment can store multiple hypertables, each
 with different schemas.
 
-Creating a hypertable in TimescaleDB takes two simple SQL commands:
+Creating a hypertable in TimescaleDB takes two simple SQL commands: 
 `CREATE TABLE` (with standard SQL syntax), followed by `SELECT create_hypertable()`.  
 
 Indexes on time and the partitioning key are automatically created on hypertables,
@@ -59,7 +59,7 @@ indexes can reside in memory during inserts to avoid thrashing while
 modifying arbitrary locations in those trees.
 
 Further, by avoiding
-overly large chunks, we can avoid expensive “vacuuming” operations when
+overly large chunks, we can avoid expensive "vacuuming" operations when
 removing deleted data according to automated retention policies, as the
 runtime can perform such operations by simply dropping chunks (internal
 tables), rather than deleting individual rows.
@@ -68,7 +68,7 @@ tables), rather than deleting individual rows.
 ## Single node vs. clustering
 
 
-TimescaleDB performs this extensive partitioning both on
+TimescaleDB performs this extensive partitioning both on 
 **single-node** deployments as well as **clustered** deployments (in
 development).  While
 partitioning is traditionally only used for scaling out across multiple

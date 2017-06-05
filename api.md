@@ -37,18 +37,18 @@ psql -d tutorial -c "\COPY tutorial TO tutorial.csv DELIMITER ',' CSV"
 
 ### psql shell commands
 
-### `\l`
+- `\l`
 
-List available databases
+    List available databases
 
-### `\c`, `\connect`
+- `\c`, `\connect`
 
-Connect to a PostgreSQL database using the given parameters.
+    Connect to a PostgreSQL database using the given parameters.
 
-### `\d`
+- `\d`
 
-List available tables.  If optional argument `NAME` is given, describe
-table, view, or index in more detail.
+    List available tables.  If optional argument `NAME` is given, describe
+    table, view, or index in more detail.
 
 ---
 
@@ -66,9 +66,9 @@ Creating a hypertable is a two-step process.
 1. Create a standard table ([Postgres docs][postgres-createtable]).
 ```sql
 CREATE TABLE conditions (
-    time        TIMESTAMPTZ       NOT NULL,
-    location    TEXT              NOT NULL,
-    temperature DOUBLE PRECISION  NULL
+  time        TIMESTAMPTZ       NOT NULL,
+  location    TEXT              NOT NULL,
+  temperature DOUBLE PRECISION  NULL
 );
 ```
 
@@ -76,7 +76,7 @@ CREATE TABLE conditions (
 newly created table ([API docs][create_hypertable]).
 
 >vvv You can only convert a plain Postgres table into a
-  hypertable if it is currently empty.  Otherwise, the
+  hypertable if it is currently empty.  Otherwise, the 
   `create_hypertable` command will throw an error.  If you need to
   *migrate* data from an existing table to a hypertable, [follow these
   migration instructions instead][migrate-from-postgresql].
@@ -130,19 +130,19 @@ Data can be inserted into a hypertable using the standard INSERT SQL command
 
 ```sql
 INSERT INTO conditions(time, location, temperature, humidity)
-   VALUES (NOW(), 'office', 70.0, 50.0);
+  VALUES (NOW(), 'office', 70.0, 50.0);
 ```
 
-You can also insert multiple rows into a hypertable using a single `INSERT`
+You can also insert multiple rows into a hypertable using a single `INSERT` 
 call, even thousands at a time. This is typically much more efficient than
 inserting data row-by-row, and is recommended in environments when possible.
 
 ```sql
 INSERT INTO conditions(time, location, temperature, humidity)
-   VALUES
-   (NOW(), 'office', 70.0, 50.0),
-   (NOW(), 'basement', 66.5, 60.0),
-   (NOW(), 'garage', 77.0, 65.2);
+  VALUES
+    (NOW(), 'office', 70.0, 50.0),
+    (NOW(), 'basement', 66.5, 60.0),
+    (NOW(), 'garage', 77.0, 65.2);
 ```
 
 >ttt The rows that belong to a single batch INSERT command do **not**
@@ -177,17 +177,19 @@ SELECT COUNT(*) FROM conditions
 -- Information about each 15-min period for each location
 -- over the past 3 hours, ordered by time and temperature
 SELECT time_bucket('15 minutes', time) AS fifteen_min,
-      location, COUNT(*),
-      MAX(temperature) AS max_temp, MAX(humidity) AS max_hum
-    FROM conditions
-    WHERE time = NOW() - interval '3 hours'
-    GROUP BY fifteen_min, location
-    ORDER BY fifteen_min DESC, max_temp DESC;
+    location, COUNT(*),
+    MAX(temperature) AS max_temp, 
+    MAX(humidity) AS max_hum
+  FROM conditions
+  WHERE time = NOW() - interval '3 hours'
+  GROUP BY fifteen_min, location
+  ORDER BY fifteen_min DESC, max_temp DESC;
 
--- How many distinct locations with air conditioning have
--- reported data in the past day
+-- How many distinct locations with air conditioning
+-- have reported data in the past day
 SELECT COUNT(DISTINCT location) FROM conditions
-  JOIN locations ON conditions.location = locations.location
+  JOIN locations 
+    ON conditions.location = locations.location
   WHERE locations.air_conditioning = True
     AND time = NOW() - interval '1 day'
 ```
@@ -195,7 +197,6 @@ SELECT COUNT(DISTINCT location) FROM conditions
 ---
 
 ## Advanced analytic queries  <a id="advanced-analytics"></a>
-
 
 TimescaleDB can be used for a variety of analytical queries, both through its
 native support for Postgres' full range of SQL functionality, as well as
@@ -207,7 +208,7 @@ The following list is just a sample of some of its analytical capabilities.
 ### Median/percentile
 
 PostgreSQL has inherent methods for determining median values and percentiles
-namely the function `percentile_cont`[link][percentile_cont].  An example query
+namely the function `percentile_cont` ([Postgres docs][percentile_cont]).  An example query
 for the median temperature is:
 
 ```sql
@@ -218,8 +219,8 @@ SELECT percentile_cont(0.5)
 
 ### Cumulative sum
 
-One way to determine cumulative sum is using the SQL command
-`sum(sum(column)) OVER(ORDER BY group)`.  For example:
+One way to determine cumulative sum is using the SQL
+command `sum(sum(column)) OVER(ORDER BY group)`.  For example:
 
 ```sql
 SELECT host, sum(sum(temperature)) OVER(ORDER BY location)
@@ -235,8 +236,8 @@ following compute the smoothed temperature of a device by averaging its last
 10 readings together:
 
 ```sql
-SELECT time, AVG(temperature)
-  OVER(ORDER BY time ROWS BETWEEN 9 PRECEDING AND CURRENT ROW)
+SELECT time, AVG(temperature) OVER(ORDER BY time 
+      ROWS BETWEEN 9 PRECEDING AND CURRENT ROW)
     AS smooth_temp
   FROM conditions
   WHERE location = 'garage' and time > now() - '1 day'
@@ -268,10 +269,11 @@ following example defines a histogram with five buckets defined over
 the range 60..85.
 
 ```sql
-SELECT location, COUNT(*), histogram(temperature, 60.0, 85.0, 5)
-   FROM conditions
-   WHERE time > NOW() - '7 days'
-   GROUP BY location;
+SELECT location, COUNT(*), 
+    histogram(temperature, 60.0, 85.0, 5)
+  FROM conditions
+  WHERE time > NOW() - '7 days'
+  GROUP BY location;
 ```
 This query will output data in the following form:
 ```bash
@@ -296,6 +298,7 @@ What analytic functions are we missing?  [Let us know on github][issues].
 [postgres-altertable]:https://www.postgresql.org/docs/9.6/static/sql-altertable.html
 [postgres-insert]:https://www.postgresql.org/docs/9.6/static/sql-insert.html
 [postgres-select]:https://www.postgresql.org/docs/9.6/static/sql-select.html
+[percentile_cont]:https://www.postgresql.org/docs/current/static/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
 [indexing]:/getting-started/basic-operations#indexing-data
 [histogram]:https://wiki.postgresql.org/wiki/Aggregate_Histogram
 [first-last]:/api/api-timescaledb#first-last

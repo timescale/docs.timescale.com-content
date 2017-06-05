@@ -15,9 +15,15 @@ INSERT INTO conditions(time, location, temperature, humidity)
 ```
 
 Similarly, querying data is done via normal SQL `SELECT` commands.
-SQL `UPDATE` and `DELETE` commands also work as expected.
+```sql
+SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
+```
 
-### Indexing data
+SQL `UPDATE` and `DELETE` commands also work as expected. For more 
+examples of using TimescaleDB's standard SQL interface, please see our
+API page ([INSERT][], [SELECT][]).
+
+### Indexing data <a id="indexing"></a>
 
 Data is indexed via the SQL `CREATE INDEX` command. For instance,
 ```sql
@@ -50,7 +56,7 @@ SELECT * FROM conditions WHERE location = 'garage'
   ORDER BY time DESC LIMIT 10
 ```
 
-For sparse data where a column is often NULL, we suggest adding a
+For sparse data where a column is often NULL, we suggest adding a 
 `WHERE column IS NOT NULL` clause to the index (unless you are often
 searching for missing data). For example,
 
@@ -91,6 +97,8 @@ our [basic tutorial][] or play around on your own with our [sample datasets][].
 [creating one]: /getting-started/setup/starting-from-scratch
 [migrating your data]: /getting-started/setup/migrate-from-postgresql
 [API Reference]: /timescaledb-api
+[INSERT]: /timescaledb-api#insert
+[SELECT]: /timescaledb-api#select
 [basic tutorial]: /tutorials/tutorial-hello-nyc
 [sample datasets]: /tutorials/other-sample-datasets
 [create_hypertable]:/api/api-timescaledb#create_hypertable

@@ -48,17 +48,17 @@ Briefly, the import steps are:
 1. Import the `.sql` file to create the (hyper)tables via `psql`
 1. Import the data from `.csv` files via `psql`
 
-Each dataset is named `[dataset]_[size].tar.gz`, e.g.
+Each dataset is named `[dataset]_[size].tar.gz`. For example, 
 `devices_small.tar.gz` is dataset `devices` and size `small`.
 Each dataset contains one `.sql` file named `[dataset].sql`
 and a few CSV files named in the format `[dataset]_[size]_[table].csv`.
 
 As an example, if you wanted to import the `devices_small` dataset
-above, it creates two tables (`device_info` and a hypertable named
- `readings`) from `devices.sql`. Therefore, there are two CSV files:
- `devices_small_readings.csv` and `devices_small_device_info.csv`.
-So, to import this dataset into a TimescaleDB database named
- `devices_small`:
+above, it creates two tables (`device_info` and a hypertable named 
+`readings`) from `devices.sql`. Therefore, there are two CSV files: 
+`devices_small_readings.csv` and `devices_small_device_info.csv`.
+So, to import this dataset into a TimescaleDB database named 
+`devices_small`:
 
 ```bash
 # (1) unzip the archive
@@ -80,7 +80,7 @@ psql -U postgres -h localhost -d devices_small
 ```
 
 ## In-depth: Device ops datasets <a id="in-depth-devices"></a>
-After importing one of these datasets (`devices_small`, `devices_med`,
+After importing one of these datasets (`devices_small`, `devices_med`, 
 `devices_big`), you will find a plain PostgreSQL table called `device_info`
 and a hypertable called `readings`. The `device_info` table has (static)
 metadata about each device, such as the OS name and manufacturer. The
@@ -119,8 +119,8 @@ mem_used            | double precision |
 rssi                | double precision |
 ssid                | text             |
 Indexes:
-"readings_device_id_time_idx" btree (device_id, "time" DESC)
-"readings_time_idx" btree ("time" DESC)
+  "readings_device_id_time_idx" btree (device_id, "time" DESC)
+  "readings_time_idx" btree ("time" DESC)
 ```
 
 #### Example Queries

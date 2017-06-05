@@ -37,7 +37,8 @@ SELECT create_hypertable('foo', 'ts', 'bar', 2);
 Convert table `foo` to hypertable with just time partitioning on column `ts`,
 but setting `chunk_time_interval` to 24 hours:
 ```sql
-SELECT create_hypertable('foo', 'ts', chunk_time_interval => 86400000000);
+SELECT create_hypertable('foo', 'ts', 
+  chunk_time_interval => 86400000000);
 ```
 ---
 
@@ -142,7 +143,8 @@ SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
 
 To report the middle of the bucket, instead of the left edge:
 ```sql
-SELECT time_bucket('5 minutes', time)+'2.5 minutes' five_min, avg(cpu)
+SELECT time_bucket('5 minutes', time) + '2.5 minutes' 
+    AS five_min, avg(cpu)
   FROM metrics
   GROUP BY five_min ORDER BY five_min
   LIMIT 10;
@@ -151,8 +153,8 @@ SELECT time_bucket('5 minutes', time)+'2.5 minutes' five_min, avg(cpu)
 For rounding, move the alignment so that the middle of the bucket is at the
 5 minute mark (and report the middle of the bucket):
 ```sql
-SELECT time_bucket('5 minutes', time, '-2.5 minutes')+'2.5 minutes' five_min,
-       avg(cpu)
+SELECT time_bucket('5 minutes', time, '-2.5 minutes') + '2.5 minutes' 
+    AS five_min, avg(cpu)
   FROM metrics
   GROUP BY five_min ORDER BY five_min
   LIMIT 10;
@@ -161,7 +163,7 @@ SELECT time_bucket('5 minutes', time, '-2.5 minutes')+'2.5 minutes' five_min,
 Bucketing a TIMESTAMPTZ at local time instead of UTC(see note above):
 ```sql
 SELECT time_bucket('2 hours', timetz::TIMESTAMP) five_min,
-       avg(cpu)
+    avg(cpu)
   FROM metrics
   GROUP BY five_min ORDER BY five_min;
 ```
