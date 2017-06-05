@@ -19,7 +19,7 @@
 <div class="test-chooser__cyoa-menu">
 
 <div class="cyoa-button">
-  <div class="test-chooser__cyoa-menu-label">Creating and writing data.</div>
+  <div class="test-chooser__cyoa-menu-label">Creating and writing data</div>
 </div>
 
 <div class="cyoa-button">
