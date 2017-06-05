@@ -13,10 +13,10 @@ For this tutorial, we've put together a sample data set from real-life
 New York City taxicab data ([courtesy of the NYC Taxi and Limousine
 Commission][NYCTLC]).
 
-*(Note: For simplicity we'll assume that TimescaleDB is installed on a
-PostgreSQL server at `localhost` on the default port, and that a user `postgres`
-exists with full superuser access. If your setup is different, please modify the
-examples accordingly.)*
+>ttt For simplicity we'll assume that TimescaleDB is installed on a
+PostgreSQL server at `localhost` on the default port, and that a user `postgres` exists
+with full superuser access. If your setup is different, please modify the
+examples accordingly.
 
 ### 1. Download and load data
 
@@ -59,7 +59,7 @@ psql -U postgres -h localhost -d nyc_data
 
 ### 2. Run some queries
 
-Let's see what tables we have
+Let's see what tables we have:
 
 ```sql
 \dt
@@ -116,10 +116,9 @@ Let's run a query that vanilla PostgreSQL doesn't support:
 -- Number of rides by 5 minute intervals
 --   (using the TimescaleDB "time_bucket" function)
 SELECT time_bucket('5 minute', pickup_datetime) as five_min, count(*)
-   FROM rides
-   WHERE pickup_datetime < '2016-01-01 02:00'
-   GROUP BY five_min ORDER BY five_min;
-
+  FROM rides
+  WHERE pickup_datetime < '2016-01-01 02:00'
+  GROUP BY five_min ORDER BY five_min;
 
       five_min       | count
 ---------------------+-------
@@ -155,9 +154,10 @@ PostgreSQL:
 
 ```sql
 -- Average fare amount of rides with 2+ passengers by day
-SELECT date_trunc('day', pickup_datetime) as day, avg(fare_amount) from rides
-   WHERE passenger_count > 1 and pickup_datetime < '2016-01-08'
-   GROUP BY day ORDER BY day;
+SELECT date_trunc('day', pickup_datetime) as day, avg(fare_amount)
+  FROM rides
+  WHERE passenger_count > 1 AND pickup_datetime < '2016-01-08'
+  GROUP BY day ORDER BY day;
 
         day         |         avg
 ---------------------+---------------------
@@ -177,8 +177,8 @@ on vanilla PostgreSQL. Here's one example:
 ```sql
 -- Total number of rides by day for first 5 days
 SELECT DATE_TRUNC('day', pickup_datetime) as day, COUNT(*) FROM rides
-   GROUP BY day ORDER BY day
-   LIMIT 5;
+  GROUP BY day ORDER BY day
+  LIMIT 5;
 
         day         | count
 ---------------------+--------
@@ -197,8 +197,8 @@ Let's see what else is going on in the dataset.
 ```sql
 -- Analyze rides by rate type
 SELECT rate_code, COUNT(vendor_id) as num_trips FROM rides
-   WHERE pickup_datetime < '2016-01-08'
-   GROUP BY rate_code ORDER BY rate_code;
+  WHERE pickup_datetime < '2016-01-08'
+  GROUP BY rate_code ORDER BY rate_code;
 
  rate_code | num_trips
 -----------+-----------
@@ -238,9 +238,9 @@ SELECT * FROM rates;
 
 -- Join rides with rates to get more information on rate_code
 SELECT rates.description, COUNT(vendor_id) as num_trips FROM rides
-   JOIN rates on rides.rate_code = rates.rate_code
-   WHERE pickup_datetime < '2016-01-08'
-   GROUP BY rates.description ORDER BY rates.description;
+  JOIN rates on rides.rate_code = rates.rate_code
+  WHERE pickup_datetime < '2016-01-08'
+  GROUP BY rates.description ORDER BY rates.description;
 
       description      | num_trips
 -----------------------+-----------
@@ -261,13 +261,13 @@ those two:
 ```sql
 -- Analysis of all JFK and EWR rides in Jan 2016
 SELECT rates.description, COUNT(vendor_id) as num_trips,
-  AVG(dropoff_datetime - pickup_datetime) as avg_trip_duration, AVG(total_amount) as avg_total,
-  AVG(tip_amount) as avg_tip, MIN(trip_distance) as min_distance, AVG(trip_distance) as avg_distance, MAX(trip_distance) as max_distance,
-  AVG(passenger_count) as avg_passengers
-FROM rides
-JOIN rates on rides.rate_code = rates.rate_code
-WHERE rides.rate_code in (2,3) AND pickup_datetime < '2016-02-01'
-GROUP BY rates.description ORDER BY rates.description;
+    AVG(dropoff_datetime - pickup_datetime) as avg_trip_duration, AVG(total_amount) as avg_total,
+    AVG(tip_amount) as avg_tip, MIN(trip_distance) as min_distance, AVG(trip_distance) as avg_distance, MAX(trip_distance) as max_distance,
+    AVG(passenger_count) as avg_passengers
+  FROM rides
+  JOIN rates on rides.rate_code = rates.rate_code
+  WHERE rides.rate_code in (2,3) AND pickup_datetime < '2016-02-01'
+  GROUP BY rates.description ORDER BY rates.description;
 
  description | num_trips | avg_trip_duration |      avg_total      |      avg_tip       | min_distance |    avg_distance     | max_distance |   avg_passengers
 -------------+-----------+-------------------+---------------------+--------------------+--------------+---------------------+--------------+--------------------
@@ -330,8 +330,8 @@ EXPLAIN SELECT * FROM rides;
 
 This shows that the hypertable `rides` is split across two partitions
 (`_hyper_1_1_0_partition` and `_hyper_1_2_0_partition`), each of which has
-two chunks, resulting in four chunks total (`_hyper_1_1_0_1_data`,
-`_hyper_1_1_0_3_data`, `_hyper_1_2_0_2_data`, `_hyper_1_2_0_4_data`).
+two chunks, resulting in four chunks total 
+(`_hyper_1_1_0_1_data`, `_hyper_1_1_0_3_data`, `_hyper_1_2_0_2_data`, `_hyper_1_2_0_4_data`).
 
 We can even query one of these chunks directly, accessing them via the
 private schema `_timescaledb_internal`:
@@ -367,16 +367,14 @@ behind the curtain and see all of its guts.
 (7 rows)
 ```
 
-<a id="tutorial-postgis"></a>
-### 5. Bonus! Geospatial queries via PostGIS
+### 5. Bonus! Geospatial queries via PostGIS <a id="tutorial-postgis"></a>
 Because TimescaleDB is packaged as a PostgreSQL extension, one can install it
 alongside other extensions for additional functionality. One example of that is
 using PostGIS alongside TimescaleDB for geospatial data.
 
 Here's how to do that, using our same NYC TLC dataset.
 
-First, install PostGIS from their website (we recommend installing from source):
-[PostGIS Website][postgis].
+First, install PostGIS from their website (we recommend installing from source): [PostGIS Website][postgis].
 
 Next, let's set up PostGIS in our `nyc_data` database:
 
@@ -404,13 +402,14 @@ UPDATE rides SET dropoff_geom = ST_Transform(ST_SetSRID(ST_MakePoint(dropoff_lon
 Now we can run geospatial queries, like this one:
 
 ```sql
--- Number of rides on New Years Eve originating within 400m of Times Square, by 30 min buckets
+-- Number of rides on New Years Eve originating within
+--   400m of Times Square, by 30 min buckets
 --   Note: Times Square is at (lat, long) (40.7589,-73.9851)
 SELECT time_bucket('30 minutes', pickup_datetime) AS thirty_min, COUNT(*)
-FROM rides
-WHERE ST_Distance(pickup_geom, ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)) < 400
-  AND pickup_datetime < '2016-01-01 14:00'
-GROUP BY thirty_min ORDER BY thirty_min;
+  FROM rides
+  WHERE ST_Distance(pickup_geom, ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)) < 400
+    AND pickup_datetime < '2016-01-01 14:00'
+  GROUP BY thirty_min ORDER BY thirty_min;
 
      thirty_min      | count
 ---------------------+-------
