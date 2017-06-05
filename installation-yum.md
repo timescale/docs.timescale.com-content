@@ -1,7 +1,9 @@
 ### `yum` installation <a id="installation-yum"></a>
 
 This will install both TimescaleDB *AND* PostgreSQL 9.6 via `yum` (or `dnf` on
-Fedora). If you have another PostgreSQL installation not
+Fedora).
+
+>vvv If you have another PostgreSQL installation not
 via `yum`, this will likely cause problems.
 If you wish to maintain your current version of PostgreSQL outside of `yum`,
 we recommend installing from source.  Otherwise please be
