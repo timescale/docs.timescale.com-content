@@ -5,6 +5,7 @@
 </div>
 <div classe="os-button">
   <div class="test-chooser__os-menu-label">Installing TimescaleDB.</div>
+<div>
 <div classe="os-button">
   <div class="test-chooser__os-menu-label">Migrating from PostgreSQL</div>
 </div>
