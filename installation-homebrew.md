@@ -1,7 +1,9 @@
 ### Homebrew <a id="homebrew"></a>
 
-This will install both TimescaleDB *AND* PostgreSQL 9.6 via Homebrew. If you
-have another PostgreSQL installation (such as through Postgres.app), this will
+This will install both TimescaleDB *AND* PostgreSQL 9.6 via Homebrew. 
+
+>vvv If you have another PostgreSQL installation
+(such as through Postgres.app), the following instructions will
 cause problems. If you wish to maintain your current version of PostgreSQL
 outside of Homebrew we recommend installing from source.  Otherwise please be
 sure to remove non-Homebrew installations before using this method.
@@ -30,8 +32,8 @@ necessary libraries:
 shared_preload_libraries = 'timescaledb'
 ```
 
-To get started you'll now need to restart PostgreSQL and add a
-`postgres` superuser (used in the rest of the docs):
+To get started you'll now need to restart PostgreSQL and add
+a `postgres` superuser (used in the rest of the docs):
 ```bash
 # Restart PostgreSQL instance
 brew services restart postgresql

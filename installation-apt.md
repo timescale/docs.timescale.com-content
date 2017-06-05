@@ -3,8 +3,8 @@
 This will install both TimescaleDB *AND* PostgreSQL 9.6 via `apt`.
 If you have another PostgreSQL installation not via `apt`,
 this will likely cause problems.
-If you wish to maintain your current version of PostgreSQL outside of
-`apt`, we recommend installing from source.  Otherwise please be
+If you wish to maintain your current version of PostgreSQL outside
+of `apt`, we recommend installing from source.  Otherwise please be
 sure to remove non-`apt` installations before using this method.
 
 **Prerequisites**
@@ -35,8 +35,8 @@ shared_preload_libraries = 'timescaledb'
 is /etc/postgresql/9.6/main/postgresql.conf but this may vary
 depending on your setup.
 
-To get started you'll now need to restart PostgreSQL and add a
-`postgres` superuser (used in the rest of the docs):
+To get started you'll now need to restart PostgreSQL and add
+a `postgres` superuser (used in the rest of the docs):
 ```bash
 # Restart PostgreSQL instance
 sudo service postgresql restart
