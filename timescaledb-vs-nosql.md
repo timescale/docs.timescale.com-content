@@ -27,7 +27,7 @@ TimescaleDB provides both qualitative and quantitative differences:
 
 ## When *not* to use TimescaleDB?
 
-Then again, if any of the following is true, you might not want to use Timescale:
+Then again, if any of the following is true, you might not want to use TimescaleDB:
 
 - **Simple read requirements**: If you simply want fast key-value
 lookups or single column rollups, an in-memory or column-oriented
