@@ -3,7 +3,7 @@
 What is this "time-series data" that we keep talking about, and how and why is
 it different from other data?
 
-Many applications or databases actually take an (overly) narrow view, and equate
+Many applications or databases actually take an overly narrow view, and equate
 time-series data with something like server metrics of a specific form:
 
 ```bash
@@ -18,10 +18,10 @@ Data:
 1990-01-01 01:05:00     68
 ```
 
-But it belongs in a much **broader** category, whether temperature
-readings from a sensor, the price of a stock, the status of a machine, 
-or even the number of logins to an app. Time-series data is collected as 
-sequential  entries, each paired with a timestamp, which collectively 
+But this type of data belongs in a much **broader** category, whether temperature
+readings from a sensor, the price of a stock, the status of a machine,
+or even the number of logins to an app. Time-series data is collected as
+sequential entries, each paired with a timestamp, which collectively
 represent how a system changes over time.
 
 ## Characteristics of time-series data <a id="characteristics"></a>
@@ -30,7 +30,7 @@ If you look closely at how it’s produced and ingested, there are important
 characteristics that time-series databases like TimescaleDB typically leverage:
 
 - **Time-centric**: Data records always have a timestamp.
-- **Append only** : Data is almost solely append-only (INSERTs).
+- **Append-only** : Data is almost solely append-only (INSERTs).
 - **Recent**: New data is typically about recent time intervals, and we
 more rarely make updates or backfill missing data about old intervals.
 
@@ -50,22 +50,22 @@ Time-series data is everywhere, but there are environments where it is especiall
 being created in torrents.
 
 - **Monitoring computer systems**: VM, server, container metrics (CPU, free memory, net/disk IOPs),
-service and application metrics (request rates, request latency) 
+service and application metrics (request rates, request latency).
 
-- **Financial trading systems**: Classic securities, newer cryptocurrencies, 
-payments, transaction events
+- **Financial trading systems**: Classic securities, newer cryptocurrencies,
+payments, transaction events.
 
 - **Internet of Things**: Data from sensors on industrial machines and equipment,
-wearable devices, vehicles, physical containers, pallets, 
+wearable devices, vehicles, physical containers, pallets,
 consumer devices for smart homes, etc.
 
-- **Eventing applications**: User/customer interaction data like clickstreams, 
+- **Eventing applications**: User/customer interaction data like clickstreams,
 pageviews, logins, signups, etc.
 
-- **Business intelligence**: Tracking key metrics and the overall health of the business
+- **Business intelligence**: Tracking key metrics and the overall health of the business.
 
-- **Environmental monitoring**: Temperature, humidity, pressure, pH, pollen count, 
-air flow, carbon monoxide (CO), nitrogen dioxide (NO2), particulate matter (PM10)
+- **Environmental monitoring**: Temperature, humidity, pressure, pH, pollen count,
+air flow, carbon monoxide (CO), nitrogen dioxide (NO2), particulate matter (PM10).
 
 - (and more)
 

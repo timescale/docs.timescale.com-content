@@ -5,7 +5,7 @@ Fedora).
 
 **Prerequisites**
 
-- Fedora 24 or later
+- Fedora 24 or later or
 - CentOS 7 or later
 
 **Build and install**

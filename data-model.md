@@ -5,15 +5,16 @@ relational databases. This makes Timescale somewhat different than most other ti
 databases, which typically use a "narrow-table" model.
 
 Here we discuss why we chose the wide-table model,
-and how we recommend using it for time-series data, using an IoT example.
+and how we recommend using it for time-series data, using an Internet of Things(IoT)
+ example.
 
 Imagine a distributed group of 1,000 IoT devices designed to collect
 environmental data at various intervals. This data could include:
 
-- **Identifiers:** device_id, timestamp
-- **Metadata:** location_id, device_type, firmware_version, customer_id
-- **Device metrics:** cpu_1m_avg, free_mem, used_mem, net_rssi, net_loss, battery
-- **Sensor metrics:** temperature, humidity, pressure, CO, NO2, PM10
+- **Identifiers:** `device_id`, `timestamp`
+- **Metadata:** `location_id`, `device_type`, `firmware_version`, `customer_id`
+- **Device metrics:** `cpu_1m_avg`, `free_mem`, `used_mem`, `net_rssi`, `net_loss`, `battery`
+- **Sensor metrics:** `temperature`, `humidity`, `pressure`, `CO`, `NO2`, `PM10`
 
 For example, your incoming data may look like this:
 
@@ -31,8 +32,8 @@ Now, let's look at various ways to model this data.
 ## Narrow-table model
 
 Most time-series databases would represent this data in the following way:
-- Represent each metric as a separate entity (e.g., represent cpu_1m_avg
-  and free_mem as two different things)
+- Represent each metric as a separate entity (e.g., represent `cpu_1m_avg`
+  and `free_mem` as two different things)
 - Store a sequence of "time", "value" pairs for that metric
 - Represent the metadata values as a "tag-set" associated with that
 metric/tag-set combination
@@ -59,9 +60,9 @@ independently, with little to no metadata.
 But in general, we believe that this approach is limiting. It loses the
 inherent structure in the data, making it
 harder to ask a variety of useful questions. For example:
-- What was the state of the system when free_mem went to 0?
-- How does cpu_1m_avg correlate with free_mem?
-- What is the average temperature by location_id?
+- What was the state of the system when `free_mem` went to 0?
+- How does `cpu_1m_avg` correlate with `free_mem`?
+- What is the average `temperature` by `location_id`?
 
 We also find this approach cognitively confusing. Are we really collecting
 9 different time-series, or just one collection of data with a variety
@@ -97,7 +98,7 @@ databases: it supports JOINs. Specifically, one can store additional
 metadata in a secondary table, and then utilize that data at query time.
 
 In our example, one could have a separate locations table, mapping
-location_id to additional metadata for that location. For example:
+`location_id` to additional metadata for that location. For example:
 
 location_id | name | latitude | longitude | zip_code | region
 ---:|---:|---:|---:|---:
@@ -105,7 +106,7 @@ location_id | name | latitude | longitude | zip_code | region
 77 | Lobby 7 | 42.3593° N | 71.0935° W | 02139 | Massachusetts
 
 Then at query time, by joining our two tables, one could ask questions
-like: what is the average free_mem of our devices in zip code 10017?
+like: what is the average `free_mem` of our devices in `zip code` 10017?
 
 Without joins, one would need to denormalize their data and store
 all metadata with each measurement row. This creates data bloat,
@@ -115,7 +116,7 @@ With joins, one can store metadata independently, and update mappings
 more easily.
 
 For example, if we wanted
-to update our "region" for location_id 77 (e.g., from "Massachusetts"
+to update our "region" for `location_id` 77 (e.g., from "Massachusetts"
 to "Boston"), we can make this change without having to go back and
 overwrite historical data.
 
