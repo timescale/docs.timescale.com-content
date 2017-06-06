@@ -1,7 +1,7 @@
 # What is time-series data?
 
 What is this "time-series data" that we keep talking about, and how and why is
-it different?
+it different from other data?
 
 Many applications or databases actually take an (overly) narrow view, and equate
 time-series data with something like server metrics of a specific form:
@@ -18,15 +18,15 @@ Data:
 1990-01-01 01:05:00     68
 ```
 
-But time-series data is a much **broader** category.  It's
-really any data -- whether temperature readings from a sensor,
-the price of a stock, the status of a machine, or the number of logins
-to an app -- that are paired with a timestamp such that the data
-represents a real world context and are valuable to analyze over time.
+But it belongs in a much **broader** category, whether temperature
+readings from a sensor, the price of a stock, the status of a machine, 
+or even the number of logins to an app. Time-series data is collected as 
+sequential  entries, each paired with a timestamp, which collectively 
+represent how a system changes over time.
 
 ## Characteristics of time-series data <a id="characteristics"></a>
 
-But if you look closely at how it’s produced and ingested, there are important
+If you look closely at how it’s produced and ingested, there are important
 characteristics that time-series databases like TimescaleDB typically leverage:
 
 - **Time-centric**: Data records always have a timestamp.
@@ -49,24 +49,24 @@ data are inserts, not overwrites**.
 Time-series data is everywhere, but there are environments where it is especially
 being created in torrents.
 
-- **DevOps**: Server or container metrics (CPU, free memory, net/disk IOPs),
-application metrics (request rates, request latency), server or application logs,
-error reports, etc.
+- **Monitoring computer systems**: VM, server, container metrics (CPU, free memory, net/disk IOPs),
+service and application metrics (request rates, request latency) 
 
-- **Finance**: Stock prices, payment records, and transaction events.
+- **Financial trading systems**: Classic securities, newer cryptocurrencies, 
+payments, transaction events
 
-- **Internet of Things**: We’re in the midst of a 3rd industrial revolution,
-driven by the ubiquitous connectivity of sensors reporting data with high
-frequency, whether industrial machines, health applications or other wearables,
-transportation and vehicles, consumer devices for smart homes, etc.
+- **Internet of Things**: Sensor data from industrial machines, health applications 
+or other wearables, vehicles, physical containers, pallets, 
+consumer devices for smart homes, etc.
 
-- **Event logging**: Clickstream data, pageviews, impressions, durations, application
-and transaction events, outage errors, system status readings, etc., especially
-in e-commerce and adtech.
+- **Eventing applications**: User/customer interaction data like clickstreams, 
+pageviews, logins, signups, etc.
 
-- **Other data**: In supply-chain and logistics, where schedules and
-itineraries are created, barcodes are scanned, and sensors are deployed for
-tracking shipments and fleet analytics.  Environmental monitoring is used for a
-wide-range of applications, including health and precision agriculture.
+- **Business intelligence**: Tracking key metrics and the overall health of the business
 
-**Next:**  [TimescaleDB's data model](/introduction/data-model)
+- **Environmental monitoring**: Temperature, humidity, pressure, pH, pollen count, 
+air flow, carbon monoxide (CO), nitrogen dioxide (NO2), particulate matter (PM10)
+
+- (and more)
+
+**Next:** [TimescaleDB's data model](/introduction/data-model)
