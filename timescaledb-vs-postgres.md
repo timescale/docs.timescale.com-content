@@ -2,7 +2,7 @@
 
 TimescaleDB offers three key benefits over vanilla PostgreSQL or other
 traditional RDBMSs for storing time-series data: much higher data
-ingest rates, equivalent up to (much) superior query performance, and
+ingest rates, equivalent to (much) superior query performance, and
 extended time-oriented features.
 
 And because TimescaleDB still allows you to use the full range of
@@ -43,9 +43,6 @@ databases **over 10+ billion rows**, even when deployed with a single disk.
 
 ## Superior or similar query performance
 
-TimescaleDB offers similar to superior performance for queries
-compared to Postgres.  
-
 On single disk machines, at least, many simple queries that just
 perform indexed lookups or table scans are similarly performant
 between Postgres and TimescaleDB.
@@ -70,8 +67,8 @@ SELECT * FROM cpu
     AND time >= '2017-01-01' AND time < '2017-01-02'
 ```   
 
-In contrast, other queries that can reason specifically about time ordering can be
-_much_ more performant in TimescaleDB.  
+In contrast, other queries that can reason specifically about time ordering can 
+be _much_ more performant in TimescaleDB.  
 
 TimescaleDB uses a time-based "merge append" optimization to
 minimize the number of groups which much be processed to execute the
@@ -100,8 +97,8 @@ either **similar or superior performance** to vanilla Postgres.
 
 TimescaleDB also includes a number of time-oriented features that
 aren't found in traditional relational databases.  These include
-special query optimizations that give some of the huge performance
-improvements for time-oriented queries.  
+special query optimizations (like the merge append above) that provide 
+some of the huge performance improvements for time-oriented queries.  
 
 It also includes *new* types of queries, including some of the
 following:
