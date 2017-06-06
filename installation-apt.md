@@ -2,17 +2,17 @@
 
 This will install both TimescaleDB *AND* PostgreSQL 9.6 via `apt`.
 
->vvv If you have another PostgreSQL installation not via `apt`,
-this will likely cause problems.
-If you wish to maintain your current version of PostgreSQL outside
-of `apt`, we recommend installing from source.  Otherwise please be
-sure to remove non-`apt` installations before using this method.
-
 **Prerequisites**
 
 - Ubuntu 16.04 or later
 
 **Build and install**
+
+>vvv If you have another PostgreSQL installation not via `apt`,
+this will likely cause problems.
+If you wish to maintain your current version of PostgreSQL outside
+of `apt`, we recommend installing from source.  Otherwise please be
+sure to remove non-`apt` installations before using this method.
 
 ```bash
 # Add our PPA

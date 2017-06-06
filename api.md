@@ -163,6 +163,11 @@ Data can be queried from a hypertable using the standard SELECT SQL command
 GROUP BY and ORDER BY commands, JOINS, subqueries, window functions,
 user-defined functions (UDFs), HAVING clauses, and so on.
 
+In other words, if you already know SQL -- or use tools that speak SQL
+or Postgres -- you already know how to use TimescaleDB.
+
+From basic queries:
+
 ```sql
 -- Return the last 100 entries written to the database
 SELECT * FROM conditions LIMIT 100;
@@ -173,7 +178,9 @@ SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
 -- Number of data entries written in past 12 hours
 SELECT COUNT(*) FROM conditions
   WHERE time = NOW() - interval '12 hours';
-
+```
+To more advanced SQL queries:
+```sql
 -- Information about each 15-min period for each location
 -- over the past 3 hours, ordered by time and temperature
 SELECT time_bucket('15 minutes', time) AS fifteen_min,
@@ -184,6 +191,7 @@ SELECT time_bucket('15 minutes', time) AS fifteen_min,
   WHERE time = NOW() - interval '3 hours'
   GROUP BY fifteen_min, location
   ORDER BY fifteen_min DESC, max_temp DESC;
+
 
 -- How many distinct locations with air conditioning
 -- have reported data in the past day

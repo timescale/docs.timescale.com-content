@@ -66,8 +66,14 @@ CREATE INDEX ON conditions (time DESC, humidity)
 ```
 this creates a more compact, and thus efficient, index.
 
->vvv You can only define a UNIQUE index if the initial columns
-  is the time column and, if it exists, the partitioning column.
+>ttt To a define an index as UNIQUE, the time column and, if it
+exists, the partitioning column **must** be the first (or first two)
+columns that comprise the index.  That is, using our running
+example, you can define a unique index on just the {time, location} fields,
+or to include a third column (say, temperature), the index
+must be specified as {time, location, temperature}.  That said, we
+find UNIQUE indexes in time-series data to be much less prevalent than
+in traditional relational data models.
 
 #### Default indexes
 
