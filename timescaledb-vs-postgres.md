@@ -7,7 +7,7 @@ extended time-oriented features.
 
 And because TimescaleDB still allows you to use the full range of
 Postgres features and tools -- e.g., JOINs with relational tables,
-geospatial queries via PostGIS, `pg_backup` and `pg_restore`, any
+geospatial queries via PostGIS, `pg_dump` and `pg_restore`, any
 connector that speaks PostgreSQL -- there is little reason **not** to
 use TimescaleDB for storing time-series data within a PostgreSQL
 database.

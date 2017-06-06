@@ -301,14 +301,14 @@ What analytic functions are we missing?  [Let us know on github][issues].
 ## Backup and Restore <a id="backup"></a>
 
 Backing up a TimescaleDB database is identical to Postgres, using the
-native `pg_dump` command ([Postgres docs](pg_dump)).  For a database
+native `pg_dump` command ([Postgres docs][pg_dump]).  For a database
 named _tutorial_, run from the command line:
 
 ```bash
 pg_dump -f tutorial.bak tutorial
 ```
 
-Restoring a TimescaleDB currently requires some additional procedures,
+Restoring a data from a backup currently requires some additional procedures,
 which need to be run from `psql`:
 ```sql
 CREATE DATABASE tutorial;
@@ -317,7 +317,7 @@ ALTER DATABASE tutorial SET timescaledb.restoring='on';
 -- execute the restore (or from a shell)
 \! pg_restore -d tutorial tutorial.bak
 
--- connect to the restored db;
+-- connect to the restored db
 \c tutorial
 SELECT restore_timescaledb();
 ALTER DATABASE tutorial SET timescaledb.restoring='off';
