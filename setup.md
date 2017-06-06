@@ -36,7 +36,8 @@ psql -U postgres -h localhost -d tutorial
 
 ---
 
-From here, you're going to want to create a TimescaleDB hypertable.
+From here, you will create a TimescaleDB hypertable using one of the
+following options:
 
 1. **[Start from scratch][start-scratch]**: You don't currently have
 any data, and just want to create an empty hypertable for inserting
@@ -48,4 +49,3 @@ TimescaleDB hypertable.
 [installed]: /getting-started/installation
 [start-scratch]: /getting-started/setup/starting-from-scratch
 [migrate-postgres]: /getting-started/setup/migrate-from-postgresql
-

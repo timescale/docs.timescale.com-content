@@ -6,9 +6,9 @@ ingest rates, equivalent to (much) superior query performance, and
 extended time-oriented features.
 
 And because TimescaleDB still allows you to use the full range of
-Postgres features and tools -- e.g., JOINs with relational tables,
+Postgres features and tools &mdash; e.g., JOINs with relational tables,
 geospatial queries via PostGIS, `pg_dump` and `pg_restore`, any
-connector that speaks PostgreSQL -- there is little reason **not** to
+connector that speaks PostgreSQL &mdash; there is little reason **not** to
 use TimescaleDB for storing time-series data within a PostgreSQL
 database.
 
@@ -23,7 +23,7 @@ In particular, whenever a new row is inserted, the database needs to
 update the indexes (e.g., B-trees) for each of the table's indexed
 columns, which will involve swapping one or more pages in from disk.
 Throwing more memory at the problem only delays the inevitable, and
-your throughput in the 10K--100K+ rows per second can crash to
+your throughput in the 10K-100K+ rows per second can crash to
 hundreds of rows per second once your time-series table is in the tens
 of millions of rows.
 
@@ -37,8 +37,8 @@ PostgreSQL for moderately-sized tables:
 
 <img width="100%" src="//assets.timescale.com/benchmarks/timescale-vs-postgres-insert.png"></img>
 
-We have observed similarly high, consistent throughput -- 100K-200K
-rows per second, or 1M-2M metrics per second -- in TimescaleDB
+We have observed similarly high, consistent throughput &mdash; 100K-200K
+rows per second, or 1M-2M metrics per second &mdash; in TimescaleDB
 databases **over 10+ billion rows**, even when deployed with a single disk.
 
 ## Superior or similar query performance
@@ -57,7 +57,7 @@ SELECT date_trunc('hour', time) AS hour,
   WHERE hostname = 'host_1234'
     AND time >= '2017-01-01' AND time < '2017-01-02'
   GROUP BY hour ORDER BY hour
-```   
+```
 
 Similar queries which involve a basic scan over an index are also equivalently performant:
 
@@ -65,10 +65,10 @@ Similar queries which involve a basic scan over an index are also equivalently p
 SELECT * FROM cpu
   WHERE usage_user > 90.0
     AND time >= '2017-01-01' AND time < '2017-01-02'
-```   
+```
 
 In contrast, other queries that can reason specifically about time ordering can 
-be _much_ more performant in TimescaleDB.  
+be _much_ more performant in TimescaleDB.
 
 TimescaleDB uses a time-based "merge append" optimization to
 minimize the number of groups which much be processed to execute the
@@ -88,8 +88,8 @@ We will be publishing more complete benchmarking comparisons between
 Postgres and TimescaleDB soon, as well as the software to replicate
 our benchmarks.
 
-One high-level, intuitive bit has stood out in our benchmarking,
-however.  For **every query** that we have tried, TimescaleDB achieves
+The high-level result that most stands out in our query benchmarking is that
+for **every query** that we have tried, TimescaleDB achieves
 either **similar or superior performance** to vanilla Postgres.
 
 
@@ -98,7 +98,7 @@ either **similar or superior performance** to vanilla Postgres.
 TimescaleDB also includes a number of time-oriented features that
 aren't found in traditional relational databases.  These include
 special query optimizations (like the merge append above) that provide 
-some of the huge performance improvements for time-oriented queries.  
+some of the huge performance improvements for time-oriented queries.
 
 It also includes *new* types of queries, including some of the
 following:

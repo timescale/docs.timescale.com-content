@@ -24,7 +24,7 @@ sudo apt install timescaledb
 
 **Update `postgresql.conf`**
 
-Also, you will need to edit your `postgresql.conf` file to include
+You will need to edit your `postgresql.conf` file to include
 necessary libraries:
 ```bash
 # Modify postgresql.conf to uncomment this line and add required libraries.

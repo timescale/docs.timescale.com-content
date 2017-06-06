@@ -1,7 +1,7 @@
 # Starting from an empty database
 
-One of the core ideas of our time-series database are time-series optimized data
-tables, called **hypertables**.
+One of the core ideas of our time-series database is the time-series optimized data
+table we call a **hypertable**.
 
 ### Creating a (hyper)table
 To create a hypertable, you start with a regular SQL table, and then convert
@@ -30,7 +30,7 @@ Next, transform it into a hypertable with `create_hypertable()`:
 SELECT create_hypertable('conditions', 'time');
 
 -- OR you can additionally partition the data on another
---   another dimension (what we call 'space partitioning').
+--   dimension (what we call 'space partitioning').
 -- E.g., to partition `location` into 2 partitions:
 
 SELECT create_hypertable('conditions', 'time', 'location', 2);

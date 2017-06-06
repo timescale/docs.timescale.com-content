@@ -19,7 +19,7 @@ Similarly, querying data is done via normal SQL `SELECT` commands.
 SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
 ```
 
-SQL `UPDATE` and `DELETE` commands also work as expected. For more 
+SQL `UPDATE` and `DELETE` commands also work as expected. For more
 examples of using TimescaleDB's standard SQL interface, please see our
 API page ([INSERT][], [SELECT][]).
 
@@ -75,6 +75,7 @@ must be specified as {time, location, temperature}.  That said, we
 find UNIQUE indexes in time-series data to be much less prevalent than
 in traditional relational data models.
 
+
 #### Default indexes
 
 By default, TimescaleDB automatically creates a time index on your data when a hypertable is created.
@@ -91,8 +92,8 @@ TimescaleDB will automatically create the following index:
 CREATE INDEX ON conditions (location, time DESC);
 ```
 
-This default behavior can be overridden when executing the
-`create_hypertable` command ([see the API docs][create_hypertable]).
+This default behavior can be overridden when executing the `create_hypertable` command
+([see the API docs][create_hypertable]).
 
 
 **Next**:  If you would like to see what you can do with a full data set,
@@ -106,4 +107,4 @@ our [basic tutorial][] or play around on your own with our [sample datasets][].
 [SELECT]: /api#select
 [basic tutorial]: /tutorials/tutorial-hello-nyc
 [sample datasets]: /tutorials/other-sample-datasets
-[create_hypertable]:/api/api-timescaledb#create_hypertable
+[create_hypertable]: /api/api-timescaledb#create_hypertable

@@ -5,7 +5,7 @@ relational databases. This makes Timescale somewhat different than most other ti
 databases, which typically use a "narrow-table" model.
 
 Here we discuss why we chose the wide-table model,
-and how we recommend using it for time-series data, using an Internet of Things(IoT)
+and how we recommend using it for time-series data, using an Internet of Things (IoT)
  example.
 
 Imagine a distributed group of 1,000 IoT devices designed to collect
@@ -42,15 +42,15 @@ In this model, each metric/tag-set combination is considered an individual
 "time-series" containing a sequence of time/value pairs.
 
 Using our example above, this approach would result in 9 different "time-series":
-1. {name: cpu_1m_avg, device_id: abc123, location_id: 335, device_type: field}
-1. {name: cpu_1m_avg, device_id: def456, location_id: 335, device_type: roof}
-1. {name: cpu_1m_avg, device_id: ghi789, location_id: 77, device_type: roof}
-1. {name: free_mem, device_id: abc123, location_id: 335, device_type: field}
-1. {name: free_mem, device_id: def456, location_id: 335, device_type: roof}
-1. {name: free_mem, device_id: ghi789, location_id: 77, device_type: roof}
-1. {name: temperature, device_id: abc123, location_id: 335, device_type: field}
-1. {name: temperature, device_id: def456, location_id: 335, device_type: roof}
-1. {name: temperature, device_id: ghi789, location_id: 77, device_type: roof}
+1. {*name*: cpu_1m_avg, *device_id*: abc123, *location_id*: 335, *device_type*: field}
+1. {*name*: cpu_1m_avg, *device_id*: def456, *location_id*: 335, *device_type*: roof}
+1. {*name*: cpu_1m_avg, *device_id*: ghi789, *location_id*: 77, *device_type*: roof}
+1. {*name*: free_mem, *device_id*: abc123, *location_id*: 335, *device_type*: field}
+1. {*name*: free_mem, *device_id*: def456, *location_id*: 335, *device_type*: roof}
+1. {*name*: free_mem, *device_id*: ghi789, *location_id*: 77, *device_type*: roof}
+1. {*name*: temperature, *device_id*: abc123, *location_id*: 335, *device_type*: field}
+1. {*name*: temperature, *device_id*: def456, *location_id*: 335, *device_type*: roof}
+1. {*name*: temperature, *device_id*: ghi789, *location_id*: 77, *device_type*: roof}
 
 Each with its own set of time/value sequences.
 

@@ -22,7 +22,7 @@ your operating system and architecture and install it:
 # Download PGDG, e.g. for Fedora 24:
 sudo yum install -y https://download.postgresql.org/pub/repos/yum/9.6/fedora/fedora-24-x86_64/pgdg-fedora96-9.6-3.noarch.rpm
 
-## Follow the initial setup instructions found here:
+## Follow the initial setup instructions found below:
 ```
 
 Further setup instructions [are found here][yuminstall].
@@ -41,7 +41,7 @@ sudo yum install timescaledb
 
 **Update `postgresql.conf`**
 
-Also, you will need to edit your `postgresql.conf` file to include
+You will need to edit your `postgresql.conf` file to include
 necessary libraries:
 ```bash
 # Modify postgresql.conf to uncomment this line and add required libraries.
