@@ -84,13 +84,14 @@ SELECT drop_chunks(interval '3 months', 'foo');
 
 This is a more powerful version of the standard PostgreSQL `date_trunc` function.
 It allows for arbitrary time intervals instead of the second, minute, hour, etc.
-provided by `date_trunc`. The return value is the bucket's start time.
+provided by `date_trunc`. The return value is the bucket's start time. 
+Below is necessary information for using it effectively.
 
-#### For TIMESTAMP/TIMESTAMPTZ time inputs
+### For TIMESTAMP/TIMESTAMPTZ time inputs
 
-**Notes about TIMESTAMPTZ inputs:**
-TIMESTAMPTZ arguments are bucketed by the time at UTC. So the alignment of
-buckets is on UTC time. One consequence of this is that daily buckets are
+**Notes about TIMESTAMPTZ inputs:** TIMESTAMPTZ arguments are 
+bucketed by the time at UTC. So the alignment of buckets is 
+on UTC time. One consequence of this is that daily buckets are
 aligned to midnight UTC, not local time.
 
 If the user wants buckets aligned by local time, the TIMESTAMPTZ input should be
