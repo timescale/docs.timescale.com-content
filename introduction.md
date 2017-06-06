@@ -38,8 +38,8 @@ research (including streaming replication, backups).
 ecosystem and tooling).
 
 
-This section describes the design and motivation around the TimescaleDB
+The rest of this section describes the design and motivation around the TimescaleDB
 architecture, including why time-series data is different, and how we leverage
-its characteristics when building TimescaleDB.
+its characteristics when building TimescaleDB. 
 
-**Next:**  So in part to understand TimescaleDB's design choices: [What is time-series data?](/introduction/time-series-data)
+**Next:** In part to understand TimescaleDB's design choices, let us ask: [What is time-series data?](/introduction/time-series-data)
