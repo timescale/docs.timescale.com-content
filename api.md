@@ -76,7 +76,7 @@ CREATE TABLE conditions (
 newly created table ([API docs][create_hypertable]).
 
 >vvv You can only convert a plain Postgres table into a
-  hypertable if it is currently empty.  Otherwise, the 
+  hypertable if it is currently empty.  Otherwise, the
   `create_hypertable` command will throw an error.  If you need to
   *migrate* data from an existing table to a hypertable, [follow these
   migration instructions instead][migrate-from-postgresql].
@@ -185,7 +185,7 @@ To more advanced SQL queries:
 -- over the past 3 hours, ordered by time and temperature
 SELECT time_bucket('15 minutes', time) AS fifteen_min,
     location, COUNT(*),
-    MAX(temperature) AS max_temp, 
+    MAX(temperature) AS max_temp,
     MAX(humidity) AS max_hum
   FROM conditions
   WHERE time = NOW() - interval '3 hours'
@@ -196,7 +196,7 @@ SELECT time_bucket('15 minutes', time) AS fifteen_min,
 -- How many distinct locations with air conditioning
 -- have reported data in the past day
 SELECT COUNT(DISTINCT location) FROM conditions
-  JOIN locations 
+  JOIN locations
     ON conditions.location = locations.location
   WHERE locations.air_conditioning = True
     AND time = NOW() - interval '1 day'
@@ -244,7 +244,7 @@ following compute the smoothed temperature of a device by averaging its last
 10 readings together:
 
 ```sql
-SELECT time, AVG(temperature) OVER(ORDER BY time 
+SELECT time, AVG(temperature) OVER(ORDER BY time
       ROWS BETWEEN 9 PRECEDING AND CURRENT ROW)
     AS smooth_temp
   FROM conditions
@@ -277,7 +277,7 @@ following example defines a histogram with five buckets defined over
 the range 60..85.
 
 ```sql
-SELECT location, COUNT(*), 
+SELECT location, COUNT(*),
     histogram(temperature, 60.0, 85.0, 5)
   FROM conditions
   WHERE time > NOW() - '7 days'
@@ -294,9 +294,36 @@ This query will output data in the following form:
 
 (We plan to add native histogram support in the future.)
 
----
-
 What analytic functions are we missing?  [Let us know on github][issues].
+
+----
+
+## Backup and Restore <a id="backup"></a>
+
+Backing up a TimescaleDB database is identical to Postgres, using the
+native `pg_dump` command ([Postgres docs](pg_dump)).  For a database
+named _tutorial_, run from the command line:
+
+```bash
+pg_dump -f tutorial.bak tutorial
+```
+
+Restoring a TimescaleDB currently requires some additional procedures,
+which need to be run from `psql`:
+```sql
+CREATE DATABASE tutorial;
+ALTER DATABASE tutorial SET timescaledb.restoring='on';
+
+-- execute the restore (or from a shell)
+\! pg_restore -d tutorial tutorial.bak
+
+-- connect to the restored db;
+\c tutorial
+SELECT restore_timescaledb();
+ALTER DATABASE tutorial SET timescaledb.restoring='off';
+```
+
+>vvv You must use `pg_dump` and `pg_restore` versions 9.6.2 and above.
 
 [migrate-from-postgresql]:/setup/migrate-from-postgresql
 [psql]:https://www.postgresql.org/docs/9.6/static/app-psql.html
@@ -311,3 +338,4 @@ What analytic functions are we missing?  [Let us know on github][issues].
 [histogram]:https://wiki.postgresql.org/wiki/Aggregate_Histogram
 [first-last]:/api/api-timescaledb#first-last
 [issues]:https://github.com/timescale/timescaledb/issues
+[pg_dump]:https://www.postgresql.org/docs/9.6/static/app-pgdump.html
