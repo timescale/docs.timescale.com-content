@@ -55,8 +55,8 @@ service and application metrics (request rates, request latency)
 - **Financial trading systems**: Classic securities, newer cryptocurrencies, 
 payments, transaction events
 
-- **Internet of Things**: Sensor data from industrial machines, health applications 
-or other wearables, vehicles, physical containers, pallets, 
+- **Internet of Things**: Data from sensors on industrial machines and equipment,
+wearable devices, vehicles, physical containers, pallets, 
 consumer devices for smart homes, etc.
 
 - **Eventing applications**: User/customer interaction data like clickstreams, 
