@@ -97,8 +97,8 @@ TimescaleDB's data model also has another similarity with relational
 databases: it supports JOINs. Specifically, one can store additional
 metadata in a secondary table, and then utilize that data at query time.
 
-In our example, one could have a separate locations table, mapping
-`location_id` to additional metadata for that location. For example:
+In our example, one could have a separate locations table, 
+mapping `location_id` to additional metadata for that location. For example:
 
 location_id | name | latitude | longitude | zip_code | region
 ---:|---:|---:|---:|---:
@@ -106,7 +106,7 @@ location_id | name | latitude | longitude | zip_code | region
 77 | Lobby 7 | 42.3593° N | 71.0935° W | 02139 | Massachusetts
 
 Then at query time, by joining our two tables, one could ask questions
-like: what is the average `free_mem` of our devices in `zip code` 10017?
+like: what is the average `free_mem` of our devices in `zip_code` 10017?
 
 Without joins, one would need to denormalize their data and store
 all metadata with each measurement row. This creates data bloat,
