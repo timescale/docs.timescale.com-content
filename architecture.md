@@ -28,9 +28,10 @@ tables and indexes, altering tables, inserting data, selecting data, etc. can
 A hypertable is defined by a standard schema with column names and
 types, with at least one column specifying a time value, and
 one (optional) column specifying an additional partitioning key.
-See [data model](/introduction/data-model) for a further discussion of various
+
+>ttt See our [data model](/introduction/data-model) for a further discussion of various
 ways to organize data, depending on your use cases;
-the simplest and most natural is in a "wide row" like many
+the simplest and most natural is in a "wide-table" like many
 relational databases.
 
 A single TimescaleDB deployment can store multiple hypertables, each
@@ -53,16 +54,15 @@ These partitions are disjoint (non-overlapping), which helps the query planner
 to minimize the set of chunks it must touch to resolve a query.
 
 Each chunk is implemented using a standard database table.  (In PostgreSQL
-internals, the chunk is actually a a "child table" of the "parent" hypertable.)
+internals, the chunk is actually a "child table" of the "parent" hypertable.)
 
 Chunks are right-sized, ensuring that all of the B-trees for a table’s
-indexes can reside in memory during inserts to avoid thrashing while
+indexes can reside in memory during inserts.  This avoids thrashing when
 modifying arbitrary locations in those trees.
 
-Further, by avoiding
-overly large chunks, we can avoid expensive "vacuuming" operations when
-removing deleted data according to automated retention policies, as the
-runtime can perform such operations by simply dropping chunks (internal
+Further, by avoiding overly large chunks, we can avoid expensive "vacuuming"
+operations when removing deleted data according to automated retention policies.
+The runtime can perform such operations by simply dropping chunks (internal
 tables), rather than deleting individual rows.
 
 

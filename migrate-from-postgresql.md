@@ -1,10 +1,10 @@
 # Migrate from PostgreSQL
 
-Depending on where your data to be migrated is currently stored,
+Depending on where your data is currently stored,
 the steps to migrate it to TimescaleDB are slightly different.
 
 - **Same database**:  If you want to setup TimescaleDB in the
-same database in the same PostgreSQL instance as you're migrating
+same database in the same PostgreSQL instance as your stored
 data, [follow these instructions](#same-db).
 
 - **Different database**: If you want to migrate data from

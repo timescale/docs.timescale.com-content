@@ -38,7 +38,7 @@ significantly underperforms for more complex queries.
 support for JSON/JSONB formats and handles sparsity quite efficiently (bitmaps
 for NULL values), schema-less architectures may be more appropriate in
 certain scenarios.
-- **Heavy compression** is a priority.  Benchmarks show TimescaleDB running on
+- **Heavy compression is a priority**:  Benchmarks show TimescaleDB running on
 ZFS getting around 4x compression, but compression-optimized column stores might
 be more appropriate for higher compression rates.
 - **Infrequent or offline analysis**: If slow response times are

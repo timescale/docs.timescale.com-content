@@ -330,7 +330,7 @@ EXPLAIN SELECT * FROM rides;
 
 This shows that the hypertable `rides` is split across two partitions
 (`_hyper_1_1_0_partition` and `_hyper_1_2_0_partition`), each of which has
-two chunks, resulting in four chunks total 
+two chunks, resulting in four chunks total
 (`_hyper_1_1_0_1_data`, `_hyper_1_1_0_3_data`, `_hyper_1_2_0_2_data`, `_hyper_1_2_0_4_data`).
 
 We can even query one of these chunks directly, accessing them via the
@@ -465,7 +465,7 @@ Up for learning more? Here are a few suggestions:
 
 - [Try Other Sample Datasets](/tutorials/other-sample-datasets)
 - [Migrate your own Data](/getting-started/migrate-from-postgresql)
-- [Read the Technical Paper](http://www.timescaledb.com/papers/timescaledb.pdf)
+- [Read the Technical Paper](http://www.timescale.com/papers/timescaledb.pdf)
 
 [NYCTLC]: http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml
 [nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
