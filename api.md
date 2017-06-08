@@ -62,8 +62,8 @@ belonging to that hypertable.
 ### Create a hypertable
 
 Creating a hypertable is a two-step process.
-
-1. Create a standard table ([Postgres docs][postgres-createtable]).
+<!-- add steps format?-->
+1. Create a standard table ([PostgreSQL docs][postgres-createtable]).
 ```sql
 CREATE TABLE conditions (
     time        TIMESTAMPTZ       NOT NULL,
@@ -76,14 +76,14 @@ CREATE TABLE conditions (
 newly created table ([API docs][create_hypertable]).
 
 >vvv You can only convert a plain Postgres table into a
-  hypertable if it is currently empty.  Otherwise, the
-  `create_hypertable` command will throw an error.  If you need to
-  *migrate* data from an existing table to a hypertable, [follow these
+  hypertable if it is currently empty.  Otherwise,
+  the `create_hypertable` command will throw an error.  If you need
+  to *migrate* data from an existing table to a hypertable, [follow these
   migration instructions instead][migrate-from-postgresql].
 
 ### Alter a hypertable
 
-You can execute standard `ALTER TABLE` commands against the hypertable ([Postgres docs][postgres-createtable]).
+You can execute standard `ALTER TABLE` commands against the hypertable ([PostgreSQL docs][postgres-createtable]).
 
 ```sql
 ALTER TABLE conditions
@@ -109,7 +109,7 @@ DROP TABLE conditions;
 ### Creating indexes
 
 TimescaleDB supports the range of Postgres index types, and creating, altering,
-or dropping an index on the hypertable ([Postgres docs][postgres-createindex])
+or dropping an index on the hypertable ([PostgreSQL docs][postgres-createindex])
 will similarly be propagated to all its constituent chunks.
 
 ```sql
@@ -126,7 +126,7 @@ discussion][indexing].
 ## INSERT commands <a id="insert"></a>
 
 Data can be inserted into a hypertable using the standard INSERT SQL command
-([Postgres docs][postgres-insert]).
+([PostgreSQL docs][postgres-insert]).
 
 ```sql
 INSERT INTO conditions(time, location, temperature, humidity)
@@ -151,7 +151,6 @@ Upon receiving an `INSERT` command for multiple rows, the TimescaleDB
 engine will determine which rows (sub-batches) belong to which chunks,
 and will write them accordingly to each chunk in a single transaction.
 
-
 ---
 
 ## SELECT commands <a id="select"></a>
@@ -159,12 +158,12 @@ and will write them accordingly to each chunk in a single transaction.
 TimescaleDB supports **full SQL**.
 
 Data can be queried from a hypertable using the standard SELECT SQL command
-([Postgres docs][postgres-select]), including with arbitrary WHERE clauses,
+([PostgreSQL docs][postgres-select]), including with arbitrary WHERE clauses,
 GROUP BY and ORDER BY commands, JOINS, subqueries, window functions,
 user-defined functions (UDFs), HAVING clauses, and so on.
 
-In other words, if you already know SQL -- or use tools that speak SQL
-or Postgres -- you already know how to use TimescaleDB.
+In other words, if you already know SQL&mdash;or use tools that speak SQL
+or PostgreSQL&mdash;you already know how to use TimescaleDB.
 
 From basic queries:
 
@@ -207,7 +206,7 @@ SELECT COUNT(DISTINCT location) FROM conditions
 ## Advanced analytic queries  <a id="advanced-analytics"></a>
 
 TimescaleDB can be used for a variety of analytical queries, both through its
-native support for Postgres' full range of SQL functionality, as well as
+native support for PostgreSQL's full range of SQL functionality, as well as
 additional functions added to TimescaleDB (both for ease-of-use and for better
 query optimization).
 
@@ -216,7 +215,7 @@ The following list is just a sample of some of its analytical capabilities.
 ### Median/percentile
 
 PostgreSQL has inherent methods for determining median values and percentiles
-namely the function `percentile_cont` ([Postgres docs][percentile_cont]).  An example query
+namely the function `percentile_cont` ([PostgreSQL docs][percentile_cont]).  An example query
 for the median temperature is:
 
 ```sql
@@ -238,9 +237,9 @@ SELECT host, sum(sum(temperature)) OVER(ORDER BY location)
 
 ### Moving average
 
-For a simple moving average, you can use the `OVER` window ing function over
-some number of rows, then compute an aggregation function over them. The
-following compute the smoothed temperature of a device by averaging its last
+For a simple moving average, you can use the `OVER` windowing function over
+some number of rows, then compute an aggregation function over those rows. The
+following computes the smoothed temperature of a device by averaging its last
 10 readings together:
 
 ```sql
@@ -267,8 +266,8 @@ See our [API docs][first-last] for more details.
 
 ### Histogram
 
-TimescaleDB also supports Postgres' PLpgSQL scripting language to define new
-functions.  In the following example, we first created a `histogram` function
+TimescaleDB also supports PostgreSQL's PLpgSQL scripting language to define new
+functions.  For the following example, we first created a `histogram` function
 using the [code found here][histogram], which returns a histogram as an `array` type.
 
 After cutting and pasting the code found in that example to the `psql`
@@ -296,19 +295,19 @@ This query will output data in the following form:
 
 What analytic functions are we missing?  [Let us know on github][issues].
 
-----
+---
 
 ## Backup and Restore <a id="backup"></a>
 
-Backing up a TimescaleDB database is identical to Postgres, using the
-native `pg_dump` command ([Postgres docs][pg_dump]).  For a database
+Backing up a TimescaleDB database is identical to PostgreSQL, using the
+native `pg_dump` command ([PostgreSQL docs][pg_dump]).  For a database
 named _tutorial_, run from the command line:
 
 ```bash
 pg_dump -f tutorial.bak tutorial
 ```
 
-Restoring a data from a backup currently requires some additional procedures,
+Restoring data from a backup currently requires some additional procedures,
 which need to be run from `psql`:
 ```sql
 CREATE DATABASE tutorial;
@@ -325,17 +324,17 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
 
 >vvv You must use `pg_dump` and `pg_restore` versions 9.6.2 and above.
 
-[migrate-from-postgresql]:/setup/migrate-from-postgresql
+[migrate-from-postgresql]: /setup/migrate-from-postgresql
 [psql]:https://www.postgresql.org/docs/9.6/static/app-psql.html
-[create_hypertable]:/api/api-timescaledb#create_hypertable
+[create_hypertable]: /api/api-timescaledb#create_hypertable
 [postgres-createtable]:https://www.postgresql.org/docs/9.6/static/sql-createtable.html
 [postgres-createindex]:https://www.postgresql.org/docs/9.6/static/sql-createindex.html
 [postgres-altertable]:https://www.postgresql.org/docs/9.6/static/sql-altertable.html
 [postgres-insert]:https://www.postgresql.org/docs/9.6/static/sql-insert.html
 [postgres-select]:https://www.postgresql.org/docs/9.6/static/sql-select.html
 [percentile_cont]:https://www.postgresql.org/docs/current/static/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
-[indexing]:/getting-started/basic-operations#indexing-data
+[indexing]: /getting-started/basic-operations#indexing-data
 [histogram]:https://wiki.postgresql.org/wiki/Aggregate_Histogram
-[first-last]:/api/api-timescaledb#first-last
+[first-last]: /api/api-timescaledb#first-last
 [issues]:https://github.com/timescale/timescaledb/issues
 [pg_dump]:https://www.postgresql.org/docs/9.6/static/app-pgdump.html

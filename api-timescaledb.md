@@ -44,14 +44,12 @@ SELECT create_hypertable('foo', 'ts',
 ---
 
 ### `drop_chunks()` <a id="drop_chunks"></a>
-_**NOTE: Currently only supported on single-partition deployments**_
+>vvv Currently only supported on single-partition deployments
 
 Removes data chunks that are older than a given time interval across all
-hypertables or a specific one. Chunks are removed only if all their data is
+hypertables or a specific one. Chunks are removed only if _all_ of their data is
 beyond the cut-off point, so the remaining data may contain timestamps that
-are before the cut-off point, but only one chunk worth.
-
-
+are before the cut-off point, but only one chunk's worth.
 
 **Required arguments**
 
@@ -63,8 +61,7 @@ are before the cut-off point, but only one chunk worth.
 
 |Name|Description|
 |---|---|
-| `table_name` | Hypertable name from which to drop chunks. If not supplied,
-all hypertables are affected.
+| `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 
 **Sample usage**
@@ -88,14 +85,12 @@ It allows for arbitrary time intervals instead of the second, minute, hour, etc.
 provided by `date_trunc`. The return value is the bucket's start time. 
 Below is necessary information for using it effectively.
 
-### For TIMESTAMP/TIMESTAMPTZ time inputs
-
-**Notes about TIMESTAMPTZ inputs:** TIMESTAMPTZ arguments are 
+>ttt TIMESTAMPTZ arguments are
 bucketed by the time at UTC. So the alignment of buckets is 
 on UTC time. One consequence of this is that daily buckets are
 aligned to midnight UTC, not local time.
 
-If the user wants buckets aligned by local time, the TIMESTAMPTZ input should be
+>If the user wants buckets aligned by local time, the TIMESTAMPTZ input should be
 cast to TIMESTAMP (such a cast converts the value to local time) before being
 passed to time_bucket (see example below).  Note that along daylight savings
 time boundaries the amount of data aggregated into a bucket after such a cast is
@@ -134,7 +129,7 @@ or 1 hour.
 
 **Sample usage**
 
-Simple 5-minute averaging
+Simple 5-minute averaging:
 
 ```sql
 SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
@@ -169,8 +164,11 @@ SELECT time_bucket('2 hours', timetz::TIMESTAMP) five_min,
   FROM metrics
   GROUP BY five_min ORDER BY five_min;
 ```
+
 Note that the above cast to TIMESTAMP converts the time to local time according
 to the server's timezone setting.
+
+---
 
 ### `last()` and `first()` <a id="first-last"></a>
 
@@ -187,12 +185,14 @@ latest temperature value based on time within an aggregate group.
 
 **Examples**
 
-Get the latest temperature by device_id
+Get the latest temperature by device_id:
 ```sql
 SELECT device_id, last(temp, time)
   FROM metrics
   GROUP BY device_id;
 ```
+
+---
 
 #### Time units <a id="time-units"></a>
 Time units for TimescaleDB functions:
