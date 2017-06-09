@@ -58,7 +58,7 @@ formatting within the docs.
 _Make sure to include the space after the formatting command!_
 
 **Warning**: Note the single space required in the special formats before adding
-normal text.Adding 'ttt' or 'vvv' to the start of any standard paragraph will
+normal text. Adding 'ttt' or 'vvv' to the start of any standard paragraph will
 result in non-optimal html.  The characters will end up on the outside of the
 paragraph tag.  This is due to the way that the markdown parser interprets
 blockquotes with the new modifications.  

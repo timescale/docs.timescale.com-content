@@ -74,9 +74,8 @@ queries were only limited by your imagination, not by the query language. [[Top]
 ### **What SQL features are supported?** <a id="sql-features"></a>
 We support all of SQL, including secondary indices, complex predicates, JOINs,
 window functions, etc. We optimize many SQL queries that are often useful in 
-time-based analysis as well as introduce 
-[entirely new SQL queries that are unique to TimescaleDB](/api-timescaledb). 
-[[Top]](#top)
+time-based analysis as well as
+introduce [entirely new SQL queries that are unique to TimescaleDB](/api-timescaledb). [[Top]](#top)
 
 ### **How do I write data?** <a id="write"></a>
 Via normal SQL. [[Top]](#top)
@@ -106,15 +105,14 @@ as writes (inserts) to the latest time intervals, not as updates to existing rec
 TimescaleDB leverages these properties by automatically partitioning data into
 two-dimensional chunks, performing parallelized operations and optimized query 
 planning across all chunks, and exposing a single table interface to this 
-data (a “hypertable”). For more information, see this blog post: 
-[Time-series data: Why (and how) to use a relational database instead of NoSQL][rdbms > nosql].
-[[Top]](#top)
+data (a “hypertable”). For more information, see this blog
+post: [Time-series data: Why (and how) to use a relational database instead of NoSQL][rdbms > nosql]. [[Top]](#top)
 
 [rdbms > nosql]: //blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c
 
 ### **What are hypertables and chunks?** <a id="hypertable-chunks"></a>
-[Our technical paper goes into these design elements](http://www.timescaledb.com/papers/timescaledb.pdf)
-as does [our documentation](http://docs.timescale.com/introduction/architecture). [[Top]](#top)
+[Our technical paper goes into these design elements](http://www.timescaledb.com/papers/timescaledb.pdf) as
+does [our documentation](http://docs.timescale.com/introduction/architecture). [[Top]](#top)
 
 ### **How are hypertable chunks determined across the space dimension (partition keys)?** <a id="partitions"></a>
 All hypertable chunks are partitioned automatically across time, which is necessary for 
@@ -142,7 +140,7 @@ specifically about time ordering can be _much_ more performant in TimescaleDB.
 On single disk machines, at least, many simple queries that just perform indexed 
 lookups or table scans are similarly performant between Postgres and TimescaleDB. 
 * Extended time-oriented features: TimescaleDB includes time-series specific features 
-not included in vanilla PostgreSQL and entirely unique to TimescaleDB (e.g., [`time\_bucket`][api],[`first/last`][api]),
+not included in vanilla PostgreSQL and entirely unique to TimescaleDB (e.g., [`time_bucket`][api],[`first` and `last`][api]),
 with more to come. In addition, vanilla Postgres data deletion (to save space or to 
 implement data retention policies) will require expensive “vacuuming” operations to defragment 
 the disk storage associated with such tables. Through its adaptive-chunking architecture, 
@@ -204,8 +202,7 @@ anything that speaks SQL, including BI tools like Tableau.
 * If you already use and like PostgreSQL, and don’t want to have to “give it up” and move to a 
 NoSQL system in order to scale to larger volumes of data.
 * If you already chose to abandon PostgreSQL or another relational database for a Hadoop/NoSQL
-system due to scaling concerns or issues. We will provide support for the migration back. 
-[[Top]](#top)
+system due to scaling concerns or issues. We will provide support for the migration back. [[Top]](#top)
 
 ### **When is TimescaleDB _not_ a good choice?**  <a id="when-less-good"></a>
 TimescaleDB would not be a good choice if you have:
@@ -226,11 +223,11 @@ applications/users to access that data concurrently, you might avoid using a dat
 and instead just store data in a distributed file system. [[Top]](#top)
 
 ### **What is the TimescaleDB open-source license?** <a id="license"></a>
-Apache 2.0 [[Top]](#top)
+Apache 2.0. [[Top]](#top)
 ### **Is there a TimescaleDB community or group I can join?** <a id="community"></a>
 Yes. We suggest reporting issues first to [GitHub](https://github.com/timescale/timescaledb/issues) (or by emailing us at 
-support@timescale.com) and joining our Slack group. See 
-[slack-login.timescale.com](https://slack-login.timescale.com/) to sign up. [[Top]](#top)
+support@timescale.com) and joining our Slack group.
+See [slack-login.timescale.com](https://slack-login.timescale.com/) to sign up. [[Top]](#top)
 ### **Can I get support or a commercial license?** <a id="license-commercial"></a>
 Yes. Please contact us for more information. [[Top]](#top)
 ### **Where can I get TimescaleDB source code?** <a id="where"></a>
