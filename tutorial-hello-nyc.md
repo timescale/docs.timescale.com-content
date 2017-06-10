@@ -2,8 +2,8 @@
 
 Prerequisites: [Installed TimescaleDB](installation)
 
-By now you should already have installed TimescaleDB, and have experienced
-creating hypertables, as well as inserting and querying data (i.e., it's
+By now you should already have: installed TimescaleDB, experienced
+creating hypertables, and tried inserting and querying data (i.e., it's
 just SQL).
 
 But a database is only as interesting as the insights it allows you to
@@ -73,7 +73,7 @@ Let's see what tables we have:
 (3 rows)
 ```
 
-Most of our data is in the "rides" table. Let's take a closer look.
+Most of our data is in the "rides" table. Let's take a closer look:
 
 ```sql
 \d rides
@@ -110,7 +110,48 @@ Triggers:
     _timescaledb_modify_trigger BEFORE DELETE OR UPDATE ON rides FOR EACH STATEMENT EXECUTE PROCEDURE _timescaledb_internal.on_unsupported_main_table()
 ```
 
-Let's run a query that vanilla PostgreSQL doesn't support:
+Let's run a query that TimescaleDB handles better than vanilla
+PostgreSQL:
+
+```sql
+-- Average fare amount of rides with 2+ passengers by day
+SELECT date_trunc('day', pickup_datetime) as day, avg(fare_amount)
+  FROM rides
+  WHERE passenger_count > 1 AND pickup_datetime < '2016-01-08'
+  GROUP BY day ORDER BY day;
+
+        day         |         avg
+---------------------+---------------------
+2016-01-01 00:00:00 | 13.3990821679715529
+2016-01-02 00:00:00 | 13.0224687415181399
+2016-01-03 00:00:00 | 13.5382068607068607
+2016-01-04 00:00:00 | 12.9618895561740149
+2016-01-05 00:00:00 | 12.6614611935518309
+2016-01-06 00:00:00 | 12.5775245695086098
+2016-01-07 00:00:00 | 12.5868802584437019
+(7 rows)
+```
+
+Some queries will execute _**over 20x**_ faster on TimescaleDB than
+on vanilla PostgreSQL. Here's one example:
+
+```sql
+-- Total number of rides by day for first 5 days
+SELECT date_trunc('day', pickup_datetime) as day, COUNT(*) FROM rides
+  GROUP BY day ORDER BY day
+  LIMIT 5;
+
+        day         | count
+---------------------+--------
+2016-01-01 00:00:00 | 345037
+2016-01-02 00:00:00 | 312831
+2016-01-03 00:00:00 | 302878
+2016-01-04 00:00:00 | 316171
+2016-01-05 00:00:00 | 343251
+(5 rows)
+```
+
+Now let's run a query _beyond_ what vanilla PostgreSQL supports:
 
 ```sql
 -- Number of rides by 5 minute intervals
@@ -147,47 +188,6 @@ SELECT time_bucket('5 minute', pickup_datetime) as five_min, count(*)
  2016-01-01 01:50:00 |  2316
  2016-01-01 01:55:00 |  2250
 (24 rows)
-```
-
-Now, let's run a query that TimescaleDB handles better than vanilla
-PostgreSQL:
-
-```sql
--- Average fare amount of rides with 2+ passengers by day
-SELECT date_trunc('day', pickup_datetime) as day, avg(fare_amount)
-  FROM rides
-  WHERE passenger_count > 1 AND pickup_datetime < '2016-01-08'
-  GROUP BY day ORDER BY day;
-
-        day         |         avg
----------------------+---------------------
-2016-01-01 00:00:00 | 13.3990821679715529
-2016-01-02 00:00:00 | 13.0224687415181399
-2016-01-03 00:00:00 | 13.5382068607068607
-2016-01-04 00:00:00 | 12.9618895561740149
-2016-01-05 00:00:00 | 12.6614611935518309
-2016-01-06 00:00:00 | 12.5775245695086098
-2016-01-07 00:00:00 | 12.5868802584437019
-(7 rows)
-```
-
-Some queries will execute over 20x faster on TimescaleDB than
-on vanilla PostgreSQL. Here's one example:
-
-```sql
--- Total number of rides by day for first 5 days
-SELECT DATE_TRUNC('day', pickup_datetime) as day, COUNT(*) FROM rides
-  GROUP BY day ORDER BY day
-  LIMIT 5;
-
-        day         | count
----------------------+--------
-2016-01-01 00:00:00 | 345037
-2016-01-02 00:00:00 | 312831
-2016-01-03 00:00:00 | 302878
-2016-01-04 00:00:00 | 316171
-2016-01-05 00:00:00 | 343251
-(5 rows)
 ```
 
 ### 3. Run some fancier queries
@@ -255,7 +255,7 @@ SELECT rates.description, COUNT(vendor_id) as num_trips FROM rides
 
 Now we have something that is human readable. In particular, two of
 these rate types
-correspond to local airports (JFK, Newark). Let's take a closer look
+correspond to local airports (JFK, Newark). Let's take a closer look at
 those two:
 
 ```sql
@@ -277,15 +277,15 @@ SELECT rates.description, COUNT(vendor_id) as num_trips,
 ```
 
 Now this is interesting:
-- JFK is over 10x more popular than Newark
-(assuming both airports have a similar number of flights per day)
-- JFK is about 25% cheaper (most likely because of NJ tunnel and highway tolls)
-- Newark trips however are 22% (10 min) shorter
-- Each airport is about 17 miles on average from the trip origination point
+- JFK is more than 10x more popular than Newark
+(assuming both airports have a similar number of flights per day).
+- JFK is about 25% cheaper (most likely because of NJ tunnel and highway tolls).
+- Newark trips however are 22% (10 min) shorter.
+- Each airport is about 17 miles on average from the trip origination point.
 - Each have on average ~1.74 passengers/trip,
-indicating some homogeneity between the two rate types
+indicating some homogeneity between the two rate types.
 
-Here's an interesting lesson:
+Here's an interesting insight:
 
 If you need to book a flight out of NYC, think you will be in a rush,
 and don't mind paying a little extra
@@ -345,9 +345,9 @@ SELECT COUNT(*) FROM _timescaledb_internal._hyper_1_2_0_2_data;
 (1 row)
 ```
 
-Feel free to play some more with the internal TimescaleDB tables. One of the
+Feel free to play with the internal TimescaleDB tables. One of the
 advantages of TimescaleDB is that it is fully transparent: you can always peek
-behind the curtain and see all of its guts.
+behind the curtain and see what's going on backstage.
 
 (To see all internal schemas, use command `\dn`.)
 
@@ -369,7 +369,7 @@ behind the curtain and see all of its guts.
 
 ### 5. Bonus! Geospatial queries via PostGIS <a id="tutorial-postgis"></a>
 
-Because TimescaleDB is packaged as a PostgreSQL extension, one can install it
+TimescaleDB is packaged as a PostgreSQL extension, meaning one can install it
 alongside other extensions for additional functionality. One example of that is
 using PostGIS alongside TimescaleDB for geospatial data.
 
@@ -406,42 +406,42 @@ Now we can run geospatial queries, like this one:
 -- Number of rides on New Years Eve originating within
 --   400m of Times Square, by 30 min buckets
 --   Note: Times Square is at (lat, long) (40.7589,-73.9851)
-SELECT time_bucket('30 minutes', pickup_datetime) AS thirty_min, COUNT(*)
+SELECT time_bucket('30 minutes', pickup_datetime) AS thirty_min, COUNT(*) AS near_times_sq
   FROM rides
   WHERE ST_Distance(pickup_geom, ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)) < 400
     AND pickup_datetime < '2016-01-01 14:00'
   GROUP BY thirty_min ORDER BY thirty_min;
 
-     thirty_min      | count
----------------------+-------
- 2016-01-01 00:00:00 |    74
- 2016-01-01 00:30:00 |   102
- 2016-01-01 01:00:00 |   120
- 2016-01-01 01:30:00 |    98
- 2016-01-01 02:00:00 |   112
- 2016-01-01 02:30:00 |   109
- 2016-01-01 03:00:00 |   163
- 2016-01-01 03:30:00 |   181
- 2016-01-01 04:00:00 |   214
- 2016-01-01 04:30:00 |   185
- 2016-01-01 05:00:00 |   158
- 2016-01-01 05:30:00 |   113
- 2016-01-01 06:00:00 |   102
- 2016-01-01 06:30:00 |    91
- 2016-01-01 07:00:00 |    88
- 2016-01-01 07:30:00 |    58
- 2016-01-01 08:00:00 |    72
- 2016-01-01 08:30:00 |    94
- 2016-01-01 09:00:00 |   115
- 2016-01-01 09:30:00 |   118
- 2016-01-01 10:00:00 |   135
- 2016-01-01 10:30:00 |   160
- 2016-01-01 11:00:00 |   212
- 2016-01-01 11:30:00 |   229
- 2016-01-01 12:00:00 |   244
- 2016-01-01 12:30:00 |   230
- 2016-01-01 13:00:00 |   235
- 2016-01-01 13:30:00 |   238
+     thirty_min      | near_times_sq
+---------------------+--------------
+ 2016-01-01 00:00:00 |      74
+ 2016-01-01 00:30:00 |     102
+ 2016-01-01 01:00:00 |     120
+ 2016-01-01 01:30:00 |      98
+ 2016-01-01 02:00:00 |     112
+ 2016-01-01 02:30:00 |     109
+ 2016-01-01 03:00:00 |     163
+ 2016-01-01 03:30:00 |     181
+ 2016-01-01 04:00:00 |     214
+ 2016-01-01 04:30:00 |     185
+ 2016-01-01 05:00:00 |     158
+ 2016-01-01 05:30:00 |     113
+ 2016-01-01 06:00:00 |     102
+ 2016-01-01 06:30:00 |      91
+ 2016-01-01 07:00:00 |      88
+ 2016-01-01 07:30:00 |      58
+ 2016-01-01 08:00:00 |      72
+ 2016-01-01 08:30:00 |      94
+ 2016-01-01 09:00:00 |     115
+ 2016-01-01 09:30:00 |     118
+ 2016-01-01 10:00:00 |     135
+ 2016-01-01 10:30:00 |     160
+ 2016-01-01 11:00:00 |     212
+ 2016-01-01 11:30:00 |     229
+ 2016-01-01 12:00:00 |     244
+ 2016-01-01 12:30:00 |     230
+ 2016-01-01 13:00:00 |     235
+ 2016-01-01 13:30:00 |     238
 ```
 
 What this query asks: how many taxis pick up rides within 400m of Times

@@ -4,8 +4,8 @@ We have created several sample datasets to help you get started using
 TimescaleDB. These datasets vary in database size, number of time
 intervals, and number of values for the partition field.
 
-Each gzip archive contains a single `.sql` file that creates the necessary
-database (hyper)tables, and several `.csv` files that contain the
+Each gzip archive contains a single `.sql` file to create the necessary
+(hyper)tables within the database, and several `.csv` files that contain the
 data to be copied into those tables. These files presume the database
 you are importing them to has already been [set up with the TimescaleDB extension][installation].
 
@@ -42,16 +42,17 @@ For more details and example usage, see [In-depth: Weather datasets](#in-depth-w
 
 
 ## Importing
+<!-- Add steps format-->
 Briefly, the import steps are:
-1. Setup a database with TimescaleDB
-1. Unzip the archive
-1. Import the `.sql` file to create the (hyper)tables via `psql`
-1. Import the data from `.csv` files via `psql`
+1. Setup a database with TimescaleDB.
+1. Unzip the archive.
+1. Import the `.sql` file to create the (hyper)tables via `psql`.
+1. Import the data from `.csv` files via `psql`.
 
-Each dataset is named `[dataset]_[size].tar.gz`. For example, 
-`devices_small.tar.gz` is dataset `devices` and size `small`.
-Each dataset contains one `.sql` file named `[dataset].sql`
-and a few CSV files named in the format `[dataset]_[size]_[table].csv`.
+Each dataset is named `[dataset]_[size].tar.gz`.
+For example, `devices_small.tar.gz` is dataset `devices` and size `small`.
+Each dataset contains one `.sql` file named `[dataset].sql` and a few
+CSV files named in the format `[dataset]_[size]_[table].csv`.
 
 As an example, if you wanted to import the `devices_small` dataset
 above, it creates two tables (`device_info` and a hypertable
@@ -83,8 +84,8 @@ psql -U postgres -h localhost -d devices_small
 After importing one of these datasets (`devices_small`, `devices_med`, `devices_big`),
 you will find a plain PostgreSQL table called `device_info`
 and a hypertable called `readings`. The `device_info` table has (static)
-metadata about each device, such as the OS name and manufacturer. The
-`readings` hypertable tracks data sent from each device, e.g. CPU activity,
+metadata about each device, such as the OS name and manufacturer.
+The `readings` hypertable tracks data sent from each device, e.g. CPU activity,
 memory levels, etc. Because hypertables are exposed as a single table, you
 can query them and join them with the metadata as you would normal SQL
 tables (see Example Queries below).
@@ -145,10 +146,10 @@ time                   | device_id  | battery_temperature
 2016-11-15 23:39:30-05 | demo004760 |                99.1
 2016-11-15 23:39:30-05 | demo004731 |                97.9
 2016-11-15 23:39:30-05 | demo004729 |                99.6
-(10 rows)```
+(10 rows)
+```
 
-**Busiest devices (1 min avg) whose battery level is below 33% and
-is not charging**
+**Busiest devices (1 min avg) whose battery level is below 33% and is not charging**
 ```sql
 SELECT time, readings.device_id, cpu_avg_1min,
 battery_level, battery_status, device_info.model
@@ -200,8 +201,8 @@ hour                   | min_battery_level | max_battery_level
 After importing one of these datasets (`weather_small`, `weather_med`, `weather_big`), 
 you will find a plain PostgreSQL table called `locations` and
 a hypertable called `conditions`. The `locations` table has metadata about
-each of the locations, such as its name and environmental type. The
-`conditions` hypertable tracks readings of temperature and humidity from
+each of the locations, such as its name and environmental type.
+The `conditions` hypertable tracks readings of temperature and humidity from
 those locations. Because hypertables are exposed as a single table, you can
 query them and join them with the metadata as you would normal SQL tables
 (see Example Queries below).
@@ -215,6 +216,7 @@ device_id   | text |
 location    | text |
 environment | text |
 ```
+
 ```sql
 Table "public.conditions"
 Column      |           Type           | Modifiers
@@ -249,6 +251,7 @@ time                   |     device_id      |    temperature     |      humidity
 2016-12-06 02:58:00-05 | weather-pro-000009 | 61.000000000000014 | 49.399999999999906
 (10 rows)
 ```
+
 **Last 10 readings from 'outside' locations**
 ```sql
 SELECT time, c.device_id, location,
