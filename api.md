@@ -75,7 +75,7 @@ CREATE TABLE conditions (
 1. Then, execute the TimescaleDB `create_hypertable` command on this
 newly created table ([API docs][create_hypertable]).
 
->vvv You can only convert a plain Postgres table into a
+>vvv You can only convert a plain PostgreSQL table into a
   hypertable if it is currently empty.  Otherwise,
   the `create_hypertable` command will throw an error.  If you need
   to *migrate* data from an existing table to a hypertable, [follow these
@@ -108,7 +108,7 @@ DROP TABLE conditions;
 
 ### Creating indexes
 
-TimescaleDB supports the range of Postgres index types, and creating, altering,
+TimescaleDB supports the range of PostgreSQL index types, and creating, altering,
 or dropping an index on the hypertable ([PostgreSQL docs][postgres-createindex])
 will similarly be propagated to all its constituent chunks.
 

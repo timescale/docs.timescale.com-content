@@ -2,7 +2,7 @@
 
 ### `create_hypertable()`
 
-Creates a TimescaleDB hypertable from a Postgres table (replacing the
+Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
 latter), partitioned on time and with the option to partition 
 on one other column (i.e., space). Target table must be empty. 
 All actions, such as `ALTER TABLE`, `SELECT`, etc., 
