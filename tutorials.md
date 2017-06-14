@@ -7,9 +7,9 @@ database has to offer.
 - **[Advanced][postgis]**: If you want to delve into the further potential of
 TimescaleDB, we have guidance for more advanced topics
 like PostGIS integration.
-- **[Data sets][data sets]**: And if you want to explore on your own
+- **[Data Sets][data sets]**: And if you want to explore on your own
 with some sample data, we have some ready-made data sets for you to explore.
 
 [Hello NYC]: /tutorials/tutorial-hello-nyc
-[postgis]: /tutorials/tutorial-hello-nyc#tutorial-postgis
-[data sets]: /tutorials/other-sample-datasets
+[PostGIS]: /tutorials/tutorial-hello-nyc#tutorial-postgis
+[Data Sets]: /tutorials/other-sample-datasets

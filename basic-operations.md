@@ -1,4 +1,4 @@
-# Basic operations
+# Basic Operations
 
 There are a few basic operations that you will be using frequently
 with hypertables within TimescaleDB: *inserting data*, *querying
@@ -6,7 +6,7 @@ data*, and *indexing data*.  We are assuming here that you have
 already generated a hypertable by [creating one][] or [migrating your
 data][].
 
-### Inserting and querying
+### Inserting & Querying
 Inserting data into the hypertable is done via normal SQL `INSERT` commands,
 e.g. using millisecond timestamps:
 ```sql
@@ -23,7 +23,7 @@ SQL `UPDATE` and `DELETE` commands also work as expected. For more
 examples of using TimescaleDB's standard SQL interface, please see our
 API page ([INSERT][], [SELECT][]).
 
-### Indexing data <a id="indexing"></a>
+### Indexing Data <a id="indexing"></a>
 
 Data is indexed via the SQL `CREATE INDEX` command. For instance,
 ```sql
@@ -31,7 +31,7 @@ CREATE INDEX ON conditions (location, time DESC);
 ```
 This can be done before or after converting the table to a hypertable.
 
-#### Indexing suggestions
+#### Indexing Suggestions
 
 Our experience has shown that for time-series data, the most-useful index type
 varies depending on your data.
@@ -76,7 +76,7 @@ find UNIQUE indexes in time-series data to be much less prevalent than
 in traditional relational data models.
 
 
-#### Default indexes
+#### Default Indexes
 
 By default, TimescaleDB automatically creates a time index on your data when a hypertable is created.
 

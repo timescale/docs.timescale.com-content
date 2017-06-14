@@ -1,4 +1,4 @@
-# Architecture and concepts
+# Architecture & Concepts
 
 TimescaleDB is implemented as an extension on PostgreSQL that provides hooks
 deep into Postgres' query planner, data model, and execution engine.  This
@@ -66,7 +66,7 @@ The runtime can perform such operations by simply dropping chunks (internal
 tables), rather than deleting individual rows.
 
 
-## Single node vs. clustering <a id="single-node-vs-clustering"></a>
+## Single Node vs. Clustering <a id="single-node-vs-clustering"></a>
 
 TimescaleDB performs this extensive partitioning both
 on **single-node** deployments as well as **clustered** deployments
@@ -80,7 +80,7 @@ deployments. Of note is that the single-node version of TimescaleDB has been
 benchmarked to over 10-billion-row hypertables on commodity machines without
 a loss in insert performance.
 
-## Benefits of single-node partitioning <a id="benefits-chunking"></a>
+## Benefits of Single-node Partitioning <a id="benefits-chunking"></a>
 
 A common problem with scaling database performance on a single machine
 is the significant cost/performance trade-off between memory and disk.

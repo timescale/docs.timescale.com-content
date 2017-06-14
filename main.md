@@ -1,4 +1,4 @@
-<h1>TimescaleDB documentation</h1>
+<h1>TimescaleDB Documentation</h1>
 
 <div class="test-chooser__cyoa-menu">
   <a href="/introduction">

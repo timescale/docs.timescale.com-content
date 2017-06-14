@@ -3,7 +3,7 @@ by migrating data from another source**
 
 ---
 
-### Caveats
+## Caveats
 Below are a few issues with the database that we are working on as we move out of beta:
 
 - All users have full read/write access to the metadata tables for hypertables.
@@ -13,7 +13,7 @@ Below are a few issues with the database that we are working on as we move out o
 - `drop_chunks()` (see our [API Reference][]) is currently only
 supported for hypertables that are not partitioned by space.
 
-### More APIs
+## More APIs
 For more information on TimescaleDB's APIs, check out our [API Reference][].
 
 [setup]: /getting-started/setup

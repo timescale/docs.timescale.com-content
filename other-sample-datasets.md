@@ -11,7 +11,7 @@ you are importing them to has already been [set up with the TimescaleDB extensio
 
 [installation]: /getting-started/installation
 
-**Device ops**: These datasets are designed to represent metrics (e.g. CPU,
+**Device Ops**: These datasets are designed to represent metrics (e.g. CPU,
 memory, network) collected from mobile devices. (Click on the name to
 download.)
 
@@ -80,7 +80,7 @@ The data is now ready for you to use.
 psql -U postgres -h localhost -d devices_small
 ```
 
-## In-depth: Device ops datasets <a id="in-depth-devices"></a>
+## In-depth: Device Ops Datasets <a id="in-depth-devices"></a>
 After importing one of these datasets (`devices_small`, `devices_med`, `devices_big`),
 you will find a plain PostgreSQL table called `device_info`
 and a hypertable called `readings`. The `device_info` table has (static)
@@ -197,8 +197,8 @@ hour                   | min_battery_level | max_battery_level
 
 ---
 
-## In-depth: Weather datasets <a id="in-depth-weather"></a>
-After importing one of these datasets (`weather_small`, `weather_med`, `weather_big`), 
+## In-depth: Weather Datasets <a id="in-depth-weather"></a>
+After importing one of these datasets (`weather_small`, `weather_med`, `weather_big`),
 you will find a plain PostgreSQL table called `locations` and
 a hypertable called `conditions`. The `locations` table has metadata about
 each of the locations, such as its name and environmental type.

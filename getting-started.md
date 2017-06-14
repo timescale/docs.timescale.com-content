@@ -1,4 +1,4 @@
-# Getting started
+# Getting Started
 
 Something something Timescale has all the awesomeness of PostgreSQL with
 enhancements to handle time-series data, both in terms of faster reads and writes,

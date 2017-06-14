@@ -1,9 +1,9 @@
-# Starting from an empty database
+# Starting from an Empty Database
 
 One of the core ideas of our time-series database is the time-series optimized data
 table we call a **hypertable**.
 
-### Creating a (hyper)table
+### Creating a (Hyper)table
 To create a hypertable, you start with a regular SQL table, and then convert
 it into a hypertable via the function `create_hypertable()` ([API reference][]).
 

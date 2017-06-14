@@ -1,1 +1,1 @@
-# *** Migrating from a column store
+# *** Migrating from a Column Store

@@ -1,6 +1,6 @@
-# API/Command reference
+# API/Command Reference
 
-## psql commands <a id="psql"></a>
+## Psql Commands <a id="psql"></a>
 Here we list some of the most common `psql` commands.  For a complete list, check out the [PostgreSQL psql docs][psql].
 
 - `-c <command>`, `--command=<command>`
@@ -35,7 +35,7 @@ psql -d tutorial -c "\COPY tutorial TO tutorial.csv DELIMITER ',' CSV"
 
 ---
 
-### psql shell commands
+### Psql Shell Commands
 
 - `\l`
 
@@ -52,14 +52,14 @@ psql -d tutorial -c "\COPY tutorial TO tutorial.csv DELIMITER ',' CSV"
 
 ---
 
-## Schema commands <a id="schema"></a>
+## Schema Commands <a id="schema"></a>
 
 Commands to create, alter, or delete schemas in TimescaleDB are
 identical to those in PostgreSQL.  Schema commands should be made to
 the hypertable name, and any changes are propagated to all chunks
 belonging to that hypertable.
 
-### Create a hypertable
+### Create a Hypertable
 
 Creating a hypertable is a two-step process.
 <!-- add steps format?-->
@@ -81,7 +81,7 @@ newly created table ([API docs][create_hypertable]).
   to *migrate* data from an existing table to a hypertable, [follow these
   migration instructions instead][migrate-from-postgresql].
 
-### Alter a hypertable
+### Alter a Hypertable
 
 You can execute standard `ALTER TABLE` commands against the hypertable ([PostgreSQL docs][postgres-createtable]).
 
@@ -98,7 +98,7 @@ default value is set to NULL.  If its default is a non-null value, TimescaleDB
 will need to fill in this value into all rows (of all chunks) belonging to this
 hypertable.
 
-### Deleting a hypertable
+### Deleting a Hypertable
 
 It's just the standard `DROP TABLE` command, where TimescaleDB will
 correspondingly delete all chunks belonging to the hypertable.
@@ -106,7 +106,7 @@ correspondingly delete all chunks belonging to the hypertable.
 DROP TABLE conditions;
 ```
 
-### Creating indexes
+### Creating Indexes
 
 TimescaleDB supports the range of PostgreSQL index types, and creating, altering,
 or dropping an index on the hypertable ([PostgreSQL docs][postgres-createindex])
@@ -123,7 +123,7 @@ discussion][indexing].
 
 ---
 
-## INSERT commands <a id="insert"></a>
+## INSERT Commands <a id="insert"></a>
 
 Data can be inserted into a hypertable using the standard INSERT SQL command
 ([PostgreSQL docs][postgres-insert]).
@@ -153,7 +153,7 @@ and will write them accordingly to each chunk in a single transaction.
 
 ---
 
-## SELECT commands <a id="select"></a>
+## SELECT Commands <a id="select"></a>
 
 TimescaleDB supports **full SQL**.
 
@@ -203,7 +203,7 @@ SELECT COUNT(DISTINCT location) FROM conditions
 
 ---
 
-## Advanced analytic queries  <a id="advanced-analytics"></a>
+## Advanced Analytic Queries  <a id="advanced-analytics"></a>
 
 TimescaleDB can be used for a variety of analytical queries, both through its
 native support for PostgreSQL's full range of SQL functionality, as well as
@@ -212,7 +212,7 @@ query optimization).
 
 The following list is just a sample of some of its analytical capabilities.
 
-### Median/percentile
+### Median/Percentile
 
 PostgreSQL has inherent methods for determining median values and percentiles
 namely the function `percentile_cont` ([PostgreSQL docs][percentile_cont]).  An example query
@@ -224,7 +224,7 @@ SELECT percentile_cont(0.5)
   FROM conditions;
 ```
 
-### Cumulative sum
+### Cumulative Sum
 
 One way to determine cumulative sum is using the SQL
 command `sum(sum(column)) OVER(ORDER BY group)`.  For example:
@@ -235,7 +235,7 @@ SELECT host, sum(sum(temperature)) OVER(ORDER BY location)
   GROUP BY location;
 ```
 
-### Moving average
+### Moving Average
 
 For a simple moving average, you can use the `OVER` windowing function over
 some number of rows, then compute an aggregation function over those rows. The
@@ -252,7 +252,7 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
 ```
 
 
-### First, last
+### First, Last
 
 TimescaleDB defines functions for `first` and `last`,
 which allow you to get the value of one column as ordered by another.
@@ -297,7 +297,7 @@ What analytic functions are we missing?  [Let us know on github][issues].
 
 ---
 
-## Backup and Restore <a id="backup"></a>
+## Backup & Restore <a id="backup"></a>
 
 Backing up a TimescaleDB database is identical to PostgreSQL, using the
 native `pg_dump` command ([PostgreSQL docs][pg_dump]).  For a database
