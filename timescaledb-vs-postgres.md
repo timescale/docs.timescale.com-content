@@ -6,7 +6,7 @@ ingest rates, equivalent to (much) superior query performance, and
 extended time-oriented features.
 
 And because TimescaleDB still allows you to use the full range of
-Postgres features and tools &mdash; e.g., JOINs with relational tables,
+PostgreSQL features and tools &mdash; e.g., JOINs with relational tables,
 geospatial queries via PostGIS, `pg_dump` and `pg_restore`, any
 connector that speaks PostgreSQL &mdash; there is little reason **not** to
 use TimescaleDB for storing time-series data within a PostgreSQL
@@ -45,7 +45,7 @@ databases **over 10+ billion rows**, even when deployed with a single disk.
 
 On single disk machines, at least, many simple queries that just
 perform indexed lookups or table scans are similarly performant
-between Postgres and TimescaleDB.
+between PostgreSQL and TimescaleDB.
 
 For example, the following query on an &sim;80M row table with indexed
 time, hostname, and cpu usage information, will take less than 1ms for
@@ -74,7 +74,7 @@ TimescaleDB uses a time-based "merge append" optimization to
 minimize the number of groups which much be processed to execute the
 following (given its knowledge that time is already ordered).  For a
 test &sim;80M row table, this results in query latency that is **22x** lower
-than Postgres (12ms vs. 2.5s).
+than PostgreSQL (12ms vs. 2.5s).
 
 ```sql
 SELECT date_trunc('minute', time) AS minute,
@@ -85,7 +85,7 @@ SELECT date_trunc('minute', time) AS minute,
 ```
 
 We will be publishing more complete benchmarking comparisons between
-Postgres and TimescaleDB soon, as well as the software to replicate
+PostgreSQL and TimescaleDB soon, as well as the software to replicate
 our benchmarks.
 
 The high-level result that most stands out in our query benchmarking is that
