@@ -13,7 +13,7 @@ altogether, [follow these instructions](#different-db).
 
 We assume that the new database has already been [setup][] with the timescale extension.
 
-## Migrating from the same database <a id="same-db"></a>
+## Migrating from the Same Database <a id="same-db"></a>
 
 For this example we'll assume that you have a table named `old_table` that you
 want to migrate to a table named `new_table`.  The steps are:
@@ -23,11 +23,11 @@ as the old one, using `LIKE`.
 1. Convert the table to a hypertable and insert data from the old table.
 1. Add any additional indexes needed.
 
-### 1. Creating the new empty table
+### 1. Creating the New Empty Table
 
 There are two ways to go about this step: one more convenient, the other faster.
 
-#### Convenient method
+#### Convenient Method
 
 This method recreates `old_table` indexes on `new_table` when it is created so that
 when we convert it to a hypertable in the next step, we don't have to make them
@@ -38,7 +38,7 @@ update the indexes for each migrated row.
 CREATE TABLE new_table (LIKE old_table INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES);
 ```
 
-#### Faster method
+#### Faster Method
 
 This method does not generate the indexes while making the table.  This makes the data
 transfer faster than the convenient method, but requires us to add the indexes as a
@@ -48,7 +48,7 @@ final step.
 CREATE TABLE new_table (LIKE old_table INCLUDING DEFAULTS INCLUDING CONSTRAINTS EXCLUDING INDEXES);
 ```
 
-### 2. Convert the new table to a hypertable
+### 2. Convert the New Table to a Hypertable
 
 We use the TimescaleDB function [`create_hypertable`][create_hypertable] to
 convert `new_table` to a hypertable, then simply `INSERT` data from the old table:
@@ -59,7 +59,7 @@ SELECT create_hypertable('new_table', 'time');
   INSERT INTO new_table SELECT * FROM old_table;
 ```
 
-### 3. Add additional indexes
+### 3. Add Additional Indexes
 
 If you used the convenient method, whatever indexes were on `old_table` are now
 on `new_table` making this step optional. For the faster `CREATE TABLE` method
@@ -72,12 +72,12 @@ CREATE INDEX on new_table (column_name, <options>)
 
 Tada!  You did it!
 
-For more info on the best strategies for indexing, check out 
+For more info on the best strategies for indexing, check out
 our [operations][indexing] section.
 
 ---
 
-## Migrating from a different database <a id="different-db"></a>
+## Migrating from a Different Database <a id="different-db"></a>
 
 To migrate your database from PostgreSQL to TimescaleDB, you need
 `pg_dump` for exporting your schema and data.
@@ -93,7 +93,7 @@ For this example we'll assume you have a PostgreSQL instance with a database
 called `old_db` that contains a single table called `foo` that you want to
 convert into a hypertable in a new database called `new_db`.  
 
-### 1. Copying schema & setting up hypertables
+### 1. Copying Schema & Setting up Hypertables
 
 Copying over your database schema is easily done with `pg_dump`:
 ```bash
@@ -101,7 +101,7 @@ pg_dump --schema-only -f old_db.bak old_db
 ```
 
 This creates a backup file called `old_db.bak` that contains only the
-SQL commands to recreate all the tables in `old_db`, which in this case 
+SQL commands to recreate all the tables in `old_db`, which in this case
 is just `foo`.
 
 To create those tables in `new_db`:
@@ -124,7 +124,7 @@ SELECT create_hypertable('foo', 'time');
 
 Your new database is now ready for data.
 
-### 2. Backing up data to CSV
+### 2. Backing up Data to CSV
 
 To backup your data to CSV, we can run a `COPY`:
 
@@ -135,7 +135,7 @@ psql -d old_db -c "\COPY foo TO old_db.csv DELIMITER ',' CSV"
 
 Your data is now stored in a file called `old_db.csv`.
 
-### 3. Import data into TimescaleDB
+### 3. Import Data into TimescaleDB
 
 To put the data into the new table, let's run another `COPY`, this one to copy
 data from the `.csv` into our new db:

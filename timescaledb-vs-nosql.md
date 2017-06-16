@@ -1,4 +1,4 @@
-# Why use TimescaleDB over NoSQL?
+# Why Use TimescaleDB over NoSQL?
 
 Compared to general NoSQL databases (e.g., MongoDB, Cassandra) or even
 more specialized time-oriented ones (e.g., InfluxDB, KairosDB),
@@ -25,7 +25,7 @@ TimescaleDB provides both qualitative and quantitative differences:
 - **Third-party tools**: TimescaleDB supports anything that speaks
   SQL, including BI tools like Tableau.
 
-## When *not* to use TimescaleDB?
+## When *Not* to Use TimescaleDB?
 
 Then again, if any of the following is true, you might not want to use TimescaleDB:
 

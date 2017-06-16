@@ -18,7 +18,7 @@ PostgreSQL server at `localhost` on the default port, and that a user `postgres`
 with full superuser access. If your setup is different, please modify the
 examples accordingly.
 
-### 1. Download and load data
+### 1. Download and Load Data
 
 Let's start by downloading the dataset. In the interest of (downloading) time
 and space (on your machine), we'll only grab data for the month of January 2016.
@@ -57,7 +57,7 @@ The data is now ready for you to use.
 psql -U postgres -h localhost -d nyc_data
 ```
 
-### 2. Run some queries
+### 2. Run Some Queries
 
 Let's see what tables we have:
 
@@ -190,7 +190,7 @@ SELECT time_bucket('5 minute', pickup_datetime) as five_min, count(*)
 (24 rows)
 ```
 
-### 3. Run some fancier queries
+### 3. Run Some Fancier Queries
 
 Let's see what else is going on in the dataset.
 
@@ -292,7 +292,7 @@ and don't mind paying a little extra
 (e.g., if you are splitting the fare), then you may want to consider
 flying out of Newark over JFK.
 
-### 4. What's happening behind the scenes
+### 4. What's Happening Behind the Scenes
 
 What's nice about TimescaleDB is that it lets you run these types of queries
 on large datasets without having to worry about partitioning / chunking, etc.
@@ -367,7 +367,7 @@ behind the curtain and see what's going on backstage.
 (7 rows)
 ```
 
-### 5. Bonus! Geospatial queries via PostGIS <a id="tutorial-postgis"></a>
+### 5. Bonus! Geospatial Queries via PostGIS <a id="tutorial-postgis"></a>
 
 TimescaleDB is packaged as a PostgreSQL extension, meaning one can install it
 alongside other extensions for additional functionality. One example of that is
@@ -460,7 +460,7 @@ And it shows the power of running other PostgreSQL extensions with
 TimescaleDB.
 
 
-### 6. Next steps
+### 6. Next Steps
 Up for learning more? Here are a few suggestions:
 
 - [Try Other Sample Datasets](/tutorials/other-sample-datasets)

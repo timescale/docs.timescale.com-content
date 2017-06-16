@@ -1,4 +1,4 @@
-# *** Best practices
+# *** Best Practices
 
 Something something in the course of creating TimescaleDB, we have developed
 methods for optimizing your workflow.  Whether it is data migration, inserts,

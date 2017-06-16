@@ -1,4 +1,4 @@
-# Why use TimescaleDB over relational DBs?
+# Why Use TimescaleDB over Relational DBs?
 
 TimescaleDB offers three key benefits over vanilla PostgreSQL or other
 traditional RDBMSs for storing time-series data: much higher data
@@ -12,7 +12,7 @@ connector that speaks PostgreSQL &mdash; there is little reason **not** to
 use TimescaleDB for storing time-series data within a PostgreSQL
 database.
 
-## Much higher ingest rates
+## Much Higher Ingest Rates
 
 TimescaleDB achieves a much higher and more stable ingest rate than
 PostgreSQL for time-series data.  As described in our [architectural discussion][],
@@ -41,7 +41,7 @@ We have observed similarly high, consistent throughput &mdash; 100K-200K
 rows per second, or 1M-2M metrics per second &mdash; in TimescaleDB
 databases **over 10+ billion rows**, even when deployed with a single disk.
 
-## Superior or similar query performance
+## Superior or Similar Query Performance
 
 On single disk machines, at least, many simple queries that just
 perform indexed lookups or table scans are similarly performant
@@ -67,7 +67,7 @@ SELECT * FROM cpu
     AND time >= '2017-01-01' AND time < '2017-01-02'
 ```
 
-In contrast, other queries that can reason specifically about time ordering can 
+In contrast, other queries that can reason specifically about time ordering can
 be _much_ more performant in TimescaleDB.
 
 TimescaleDB uses a time-based "merge append" optimization to
@@ -93,11 +93,11 @@ for **every query** that we have tried, TimescaleDB achieves
 either **similar or superior performance** to vanilla Postgres.
 
 
-## Extended time-oriented features
+## Extended Time-oriented Features
 
 TimescaleDB also includes a number of time-oriented features that
 aren't found in traditional relational databases.  These include
-special query optimizations (like the merge append above) that provide 
+special query optimizations (like the merge append above) that provide
 some of the huge performance improvements for time-oriented queries.
 
 It also includes *new* types of queries, including some of the

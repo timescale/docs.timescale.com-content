@@ -1,4 +1,4 @@
-# Data model
+# Data Model
 
 TimescaleDB utilizes a "wide-table" data model, which is quite common in the world of
 relational databases. This makes Timescale somewhat different than most other time-series
@@ -29,7 +29,7 @@ timestamp | device_id | cpu_1m_avg | free_mem | temperature | location_id | devi
 
 Now, let's look at various ways to model this data.
 
-## Narrow-table model
+## Narrow-table Model
 
 Most time-series databases would represent this data in the following way:
 - Represent each metric as a separate entity (e.g., represent `cpu_1m_avg`
@@ -68,7 +68,7 @@ We also find this approach cognitively confusing. Are we really collecting
 9 different time-series, or just one collection of data with a variety
 of metadata and metrics readings?
 
-## Wide-table model
+## Wide-table Model
 
 In contrast, TimescaleDB uses a wide-table model, which reflects the inherent
 structure in the data.
@@ -91,13 +91,13 @@ ask more questions than before.
 Of course, this not a new format: it's what one would commonly find within
 a relational database. Which is also why we find this format more intuitive.
 
-## JOINs with relational data
+## JOINs with Relational Data
 
 TimescaleDB's data model also has another similarity with relational
 databases: it supports JOINs. Specifically, one can store additional
 metadata in a secondary table, and then utilize that data at query time.
 
-In our example, one could have a separate locations table, 
+In our example, one could have a separate locations table,
 mapping `location_id` to additional metadata for that location. For example:
 
 location_id | name | latitude | longitude | zip_code | region

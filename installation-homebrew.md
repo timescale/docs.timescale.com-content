@@ -1,12 +1,12 @@
-### Homebrew <a id="homebrew"></a>
+## Homebrew <a id="homebrew"></a>
 
-This will install both TimescaleDB *AND* PostgreSQL 9.6 via Homebrew. 
+This will install both TimescaleDB *AND* PostgreSQL 9.6 via Homebrew.
 
-**Prerequisites**
+#### Prerequisites
 
 - [Homebrew](https://brew.sh/)
 
-**Build and install**
+#### Build & Install
 
 >vvv If you have another PostgreSQL installation
 (such as through Postgres.app), the following instructions will
@@ -22,7 +22,7 @@ brew tap timescale/tap
 brew install timescaledb
 ```
 
-**Update `postgresql.conf`**
+#### Update Postgresql.conf
 
 Also, you will need to edit your `postgresql.conf` file to include
 necessary libraries:

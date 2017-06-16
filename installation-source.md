@@ -1,12 +1,12 @@
-### From source <a id="installation-source"></a>
+## From Source <a id="installation-source"></a>
 
-**Prerequisites**
+#### Prerequisites
 
 - A standard **PostgreSQL 9.6** installation with development environment
 (header files) (e.g., postgresql-server-dev-9.6 package for
 Linux, [Postgres.app](https://postgresapp.com/) for MacOS)
 
-**Build and install with local PostgreSQL**
+#### Build & Install with Local PostgreSQL
 
 ```bash
 # To build the extension
@@ -16,7 +16,7 @@ make
 make install
 ```
 
-**Update `postgresql.conf`**
+**Update 'postgresql.conf'**
 
 Also, you will need to edit your `postgresql.conf` file to include
 necessary libraries, and then restart PostgreSQL:

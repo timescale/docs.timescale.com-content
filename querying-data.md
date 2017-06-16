@@ -1,4 +1,4 @@
-# *** Querying data
+# *** Querying Data
 
 Something something just like PostgreSQL for most cases.  TimescaleDB's
 architecture natively enhances the speed of typical queries of time-series

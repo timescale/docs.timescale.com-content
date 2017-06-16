@@ -1,4 +1,4 @@
-### Docker Hub <a id="docker"></a>
+## Docker Hub <a id="docker"></a>
 
 You can pull our Docker images from [Docker Hub][].
 

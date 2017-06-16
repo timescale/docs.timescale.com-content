@@ -1,4 +1,4 @@
-# What is time-series data?
+# What Is Time-series Data?
 
 What is this "time-series data" that we keep talking about, and how and why is
 it different from other data?
@@ -24,7 +24,7 @@ or even the number of logins to an app. Time-series data is collected as
 sequential entries, each paired with a timestamp, which collectively
 represent how a system changes over time.
 
-## Characteristics of time-series data <a id="characteristics"></a>
+## Characteristics of Time-series Data <a id="characteristics"></a>
 
 If you look closely at how it’s produced and ingested, there are important
 characteristics that time-series databases like TimescaleDB typically leverage:
@@ -44,7 +44,7 @@ time-series data (and the databases that support them), compared to other
 data like standard relational "business" data, is that **changes to the
 data are inserts, not overwrites**.
 
-## Time-series data is everywhere <a id="is-everywhere"></a>
+## Time-series Data Is Everywhere <a id="is-everywhere"></a>
 
 Time-series data is everywhere, but there are environments where it is especially
 being created in torrents.
