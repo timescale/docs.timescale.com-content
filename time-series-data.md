@@ -7,22 +7,45 @@ Many applications or databases actually take an overly narrow view, and equate
 time-series data with something like server metrics of a specific form:
 
 ```bash
-Name:  CPU
+Name:    CPU
 
-Tags:  Host=MyServer, Region=West
+Tags:    Host=MyServer, Region=West
 
 Data:
-1990-01-01 01:02:00     70
- 1990-01-01 01:03:00     71
-1990-01-01 01:04:00     72
-1990-01-01 01:05:00     68
+2017-01-01 01:02:00    70
+2017-01-01 01:03:00    71
+2017-01-01 01:04:00    72
+2017-01-01 01:05:01    68
 ```
 
-But this type of data belongs in a much **broader** category, whether temperature
+But in fact, in many monitoring applications, different metrics are often
+collected together (e.g., CPU, memory, network statistics, battery life). So, it
+does not always make sense to think of each metric separately.  Consider this
+alternative "wider" data model that maintains the correlation between metrics
+collected at the same time.
+
+```bash
+Metrics: CPU, free_mem, net_rssi, battery
+
+Tags:    Host=MyServer, Region=West
+
+Data:
+2017-01-01 01:02:00    70    500    -40    80
+2017-01-01 01:03:00    71    400    -42    80
+2017-01-01 01:04:00    72    367    -41    80
+2017-01-01 01:05:01    68    750    -54    79
+```
+
+
+This type of data belongs in a much **broader** category,
+whether temperature
 readings from a sensor, the price of a stock, the status of a machine,
-or even the number of logins to an app. Time-series data is collected as
-sequential entries, each paired with a timestamp, which collectively
-represent how a system changes over time.
+or even the number of logins to an app.
+
+**Time-series data is data that
+collectively represents how a system, process, or behavior changes
+over time.**
+
 
 ## Characteristics of Time-series Data <a id="characteristics"></a>
 
