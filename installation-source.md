@@ -16,7 +16,7 @@ make
 make install
 ```
 
-**Update 'postgresql.conf'**
+#### Update `postgresql.conf`
 
 Also, you will need to edit your `postgresql.conf` file to include
 necessary libraries, and then restart PostgreSQL:

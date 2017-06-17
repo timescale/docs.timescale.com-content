@@ -1,4 +1,4 @@
-## Apt Installation <a id="installation-apt"></a>
+## apt Installation <a id="installation-apt"></a>
 
 This will install both TimescaleDB *AND* PostgreSQL 9.6 via `apt`.
 
@@ -22,7 +22,7 @@ sudo apt-get update
 sudo apt install timescaledb
 ```
 
-#### Update Postgresql.conf
+#### Update `postgresql.conf`
 
 You will need to edit your `postgresql.conf` file to include
 necessary libraries:

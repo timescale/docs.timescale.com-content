@@ -39,7 +39,7 @@ sudo yum install timescaledb
 [pgdg]: https://yum.postgresql.org/repopackages.php
 [yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation
 
-**Update `postgresql.conf`**
+#### Update `postgresql.conf`
 
 You will need to edit your `postgresql.conf` file to include
 necessary libraries:
