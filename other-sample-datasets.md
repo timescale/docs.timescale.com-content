@@ -15,9 +15,9 @@ you are importing them to has already been [set up with the TimescaleDB extensio
 memory, network) collected from mobile devices. (Click on the name to
 download.)
 
-1. [`devices_small`][devices-small] - 1,000 devices recorded over 1,000 time intervals
-1. [`devices_med`][devices-medium] - 5,000 devices recorded over 2,000 time intervals
-1. [`devices_big`][devices-big] - 3,000 devices recorded over 10,000 time intervals
+1. [ddd `devices_small`][devices-small] - 1,000 devices recorded over 1,000 time intervals
+1. [ddd `devices_med`][devices-medium] - 5,000 devices recorded over 2,000 time intervals
+1. [ddd `devices_big`][devices-big] - 3,000 devices recorded over 10,000 time intervals
 
 For more details and example usage, see [In-depth: Device ops datasets](#in-depth-devices).
 
@@ -25,9 +25,9 @@ For more details and example usage, see [In-depth: Device ops datasets](#in-dept
 humidity data from a variety of locations. (Click on the name to
 download.)
 
-1. [`weather_small`][weather-small] - 1,000 locations over 1,000 two-minute intervals
-1. [`weather_med`][weather-medium] - 1,000 locations over 15,000 two-minute intervals
-1. [`weather_big`][weather-big] - 2,000 locations over 20,000 two-minute intervals
+1. [ddd `weather_small`][weather-small] - 1,000 locations over 1,000 two-minute intervals
+1. [ddd `weather_med`][weather-medium] - 1,000 locations over 15,000 two-minute intervals
+1. [ddd `weather_big`][weather-big] - 2,000 locations over 20,000 two-minute intervals
 
 For more details and example usage, see [In-depth: Weather datasets](#in-depth-weather).
 
