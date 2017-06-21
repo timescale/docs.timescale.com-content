@@ -1,4 +1,4 @@
-## Yum Installation <a id="installation-yum"></a>
+## yum Installation <a id="installation-yum"></a>
 
 This will install both TimescaleDB *AND* PostgreSQL 9.6 via `yum` (or `dnf` on
 Fedora).
