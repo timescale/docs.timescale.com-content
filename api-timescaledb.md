@@ -22,6 +22,12 @@ still work on the resulting hypertable.
 | `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
 | `number_partitions` | Number of partitions to use when `partitioning_column` is set. Must be > 0.
 | `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month ([units][]).
+
+>vvv The time column currently only supports values with a data type of
+ integer (SMALLINT, INT, BIGINT) or timestamp (TIMESTAMP,
+ TIMESTAMPTZ).  Additionally, if the time column is of type SMALLINT or INT,
+ the `chunk_time_interval` **must** be set explicitly.
+
 #### Sample Usage
 
 Convert table `foo` to hypertable with just time partitioning on column `ts`:
