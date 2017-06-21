@@ -4,9 +4,11 @@
 
 - A standard **PostgreSQL 9.6** installation with development environment
 (header files) (e.g., postgresql-server-dev-9.6 package for
-Linux, [Postgres.app](https://postgresapp.com/) for MacOS)
+Linux, [Postgres.app][] for MacOS)
 
 #### Build & Install with Local PostgreSQL
+
+Clone the repository from [Github][github-timescale].
 
 ```bash
 # To build the extension
@@ -32,3 +34,6 @@ shared_preload_libraries = 'timescaledb'
 ```
 *Note*: The `shared_preload_libraries` line is commented out by default.  
 Make sure to uncomment it when adding our library.
+
+[Postgres.app]: https://postgresapp.com
+[github-timescale]: https://github.com/timescale/timescaledb
