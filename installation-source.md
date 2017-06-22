@@ -21,19 +21,22 @@ make install
 #### Update `postgresql.conf`
 
 Also, you will need to edit your `postgresql.conf` file to include
-necessary libraries, and then restart PostgreSQL:
+necessary libraries, and then restart PostgreSQL.
+
 ```bash
-# locate your postgresql.conf file
--psql -d postgres -c "SHOW config_file;"
-
-# Modify postgresql.conf to add required libraries.
-# For example:
-shared_preload_libraries = 'timescaledb'
-
-# Then, restart the PostgreSQL instance
+# First, locate your postgresql.conf file
+psql -d postgres -c "SHOW config_file;"
 ```
-*Note*: The `shared_preload_libraries` line is commented out by default.  
+
+Then modify `postgresql.conf` to add required libraries.  Note that
+the `shared_preload_libraries` line is commented out by default.
 Make sure to uncomment it when adding our library.
+
+```bash
+shared_preload_libraries = 'timescaledb'
+```
+
+Then, restart the PostgreSQL instance.
 
 [Postgres.app]: https://postgresapp.com
 [github-timescale]: https://github.com/timescale/timescaledb
