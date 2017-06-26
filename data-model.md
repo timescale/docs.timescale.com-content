@@ -5,27 +5,28 @@ relational databases. This makes Timescale somewhat different than most other ti
 databases, which typically use a "narrow-table" model.
 
 Here we discuss why we chose the wide-table model,
-and how we recommend using it for time-series data, using an Internet of Things (IoT)
- example.
+and how we recommend using it for time-series data, using an Internet 
+of Things (IoT) example.
 
 Imagine a distributed group of 1,000 IoT devices designed to collect
 environmental data at various intervals. This data could include:
 
 - **Identifiers:** `device_id`, `timestamp`
-- **Metadata:** `location_id`, `device_type`, `firmware_version`, `customer_id`
+- **Metadata:** `location_id`, `dev_type`, `firmware_version`, `customer_id`
 - **Device metrics:** `cpu_1m_avg`, `free_mem`, `used_mem`, `net_rssi`, `net_loss`, `battery`
 - **Sensor metrics:** `temperature`, `humidity`, `pressure`, `CO`, `NO2`, `PM10`
 
 For example, your incoming data may look like this:
 
-timestamp | device_id | cpu_1m_avg | free_mem | temperature | location_id | device_type
+timestamp | device_id | cpu_1m_avg | free_mem | temperature | location_id | dev_type
 ---:|---:|---:|---:|---:|---:|---:
-2017-01-01 01:02:00 | abc123 | 80 | 500MB | 72 | 335 | field
-2017-01-01 01:02:23 | def456 | 90 | 400MB | 64 | 335 | roof
-2017-01-01 01:02:30 | ghi789 | 120 | 0MB | 56 | 77 | roof
-2017-01-01 01:03:12 | abc123 | 80 | 500MB | 72 | 335 | field
-2017-01-01 01:03:35 | def456 | 95 | 350MB | 64 | 335 | roof
-2017-01-01 01:03:42 | ghi789 | 100 | 100MB | 56 | 77 | roof
+2017-01-01 01:02:00 | abc123 |  80 | 500MB | 72 | 335 | field
+2017-01-01 01:02:23 | def456 |  90 | 400MB | 64 | 335 | roof
+2017-01-01 01:02:30 | ghi789 | 120 |   0MB | 56 |  77 | roof
+2017-01-01 01:03:12 | abc123 |  80 | 500MB | 72 | 335 | field
+2017-01-01 01:03:35 | def456 |  95 | 350MB | 64 | 335 | roof
+2017-01-01 01:03:42 | ghi789 | 100 | 100MB | 56 |  77 | roof
+
 
 Now, let's look at various ways to model this data.
 
@@ -39,20 +40,25 @@ Most time-series databases would represent this data in the following way:
 metric/tag-set combination
 
 In this model, each metric/tag-set combination is considered an individual
-"time-series" containing a sequence of time/value pairs.
+"time series" containing a sequence of time/value pairs.
 
-Using our example above, this approach would result in 9 different "time-series":
-1. {*name*: cpu_1m_avg, *device_id*: abc123, *location_id*: 335, *device_type*: field}
-1. {*name*: cpu_1m_avg, *device_id*: def456, *location_id*: 335, *device_type*: roof}
-1. {*name*: cpu_1m_avg, *device_id*: ghi789, *location_id*: 77, *device_type*: roof}
-1. {*name*: free_mem, *device_id*: abc123, *location_id*: 335, *device_type*: field}
-1. {*name*: free_mem, *device_id*: def456, *location_id*: 335, *device_type*: roof}
-1. {*name*: free_mem, *device_id*: ghi789, *location_id*: 77, *device_type*: roof}
-1. {*name*: temperature, *device_id*: abc123, *location_id*: 335, *device_type*: field}
-1. {*name*: temperature, *device_id*: def456, *location_id*: 335, *device_type*: roof}
-1. {*name*: temperature, *device_id*: ghi789, *location_id*: 77, *device_type*: roof}
+Using our example above, this approach would result in 9 different "time series", each of which is defined by a unique set of tags.
+```
+1. {name:  cpu_1m_avg,  device_id: abc123,  location_id: 335,  dev_type: field}
+2. {name:  cpu_1m_avg,  device_id: def456,  location_id: 335,  dev_type: roof}
+3. {name:  cpu_1m_avg,  device_id: ghi789,  location_id:  77,  dev_type: roof}
+4. {name:    free_mem,  device_id: abc123,  location_id: 335,  dev_type: field}
+5. {name:    free_mem,  device_id: def456,  location_id: 335,  dev_type: roof}
+6. {name:    free_mem,  device_id: ghi789,  location_id:  77,  dev_type: roof}
+7. {name: temperature,  device_id: abc123,  location_id: 335,  dev_type: field}
+8. {name: temperature,  device_id: def456,  location_id: 335,  dev_type: roof}
+9. {name: temperature,  device_id: ghi789,  location_id:  77,  dev_type: roof}
+```
+The number of such time series scales with the cross-product of the
+cardinality of each tag, i.e., (# names) x (# device ids) x (#
+location ids) x (device types).
 
-Each with its own set of time/value sequences.
+And each of these "time series" then has its own set of time/value sequences.
 
 Now, this approach may make sense if you collect each of your metrics
 independently, with little to no metadata.
@@ -75,7 +81,7 @@ structure in the data.
 
 Our wide-table model actually looks exactly the same as the initial data stream:
 
-timestamp | device_id | cpu_1m_avg | free_mem | temperature | location_id | device_type
+timestamp | device_id | cpu_1m_avg | free_mem | temperature | location_id | dev_type
 ---:|---:|---:|---:|---:|---:|---:
 2017-01-01 01:02:00 | abc123 | 80 | 500MB | 72 | 42 | field
 2017-01-01 01:02:23 | def456 | 90 | 400MB | 64 | 42 | roof
@@ -86,9 +92,9 @@ timestamp | device_id | cpu_1m_avg | free_mem | temperature | location_id | devi
 
 Here, each row is a new reading, with a set of measurements and metadata at a
 given time. This allows us to preserve relationships within the data, and
-ask more questions than before.
+ask more interesting or exploratory questions than before.
 
-Of course, this not a new format: it's what one would commonly find within
+Of course, this is not a new format: it's what one would commonly find within
 a relational database. Which is also why we find this format more intuitive.
 
 ## JOINs with Relational Data
