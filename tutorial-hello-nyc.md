@@ -107,7 +107,6 @@ Indexes:
 Triggers:
     _timescaledb_main_after_insert_trigger AFTER INSERT ON rides FOR EACH STATEMENT EXECUTE PROCEDURE _timescaledb_internal.main_table_after_insert_trigger()
     _timescaledb_main_insert_trigger BEFORE INSERT ON rides FOR EACH ROW EXECUTE PROCEDURE _timescaledb_internal.main_table_insert_trigger()
-    _timescaledb_modify_trigger BEFORE DELETE OR UPDATE ON rides FOR EACH STATEMENT EXECUTE PROCEDURE _timescaledb_internal.on_unsupported_main_table()
 ```
 
 Let's run a query that TimescaleDB handles better than vanilla
@@ -244,11 +243,11 @@ SELECT rates.description, COUNT(vendor_id) as num_trips FROM rides
 
       description      | num_trips
 -----------------------+-----------
- group ride            |        17
  JFK                   |     54832
  Nassau or Westchester |       967
- negotiated fare       |      7193
  Newark                |      4126
+ group ride            |        17
+ negotiated fare       |      7193
  standard rate         |   2266401
 (6 rows)
 ```
@@ -315,33 +314,32 @@ and see TimescaleDB at work:
 -- Peek behind the scenes
 EXPLAIN SELECT * FROM rides;
 
-                                      QUERY PLAN
----------------------------------------------------------------------------------------
- Append  (cost=0.00..332041.76 rows=10907579 width=114)
-   ->  Seq Scan on _hyper_1_0_replica  (cost=0.00..0.00 rows=1 width=472)
-   ->  Seq Scan on _hyper_1_1_0_partition  (cost=0.00..0.00 rows=1 width=472)
-   ->  Seq Scan on _hyper_1_2_0_partition  (cost=0.00..0.00 rows=1 width=472)
-   ->  Seq Scan on _hyper_1_1_0_1_data  (cost=0.00..306734.50 rows=10075450 width=114)
-   ->  Seq Scan on _hyper_1_1_0_3_data  (cost=0.00..24158.06 rows=793806 width=114)
-   ->  Seq Scan on _hyper_1_2_0_2_data  (cost=0.00..1056.52 rows=35252 width=113)
-   ->  Seq Scan on _hyper_1_2_0_4_data  (cost=0.00..92.68 rows=3068 width=113)
-(8 rows)
+                                    QUERY PLAN
+-----------------------------------------------------------------------------------
+ Append  (cost=0.00..258876.51 rows=3591152 width=472)
+   ->  Seq Scan on rides  (cost=0.00..0.00 rows=1 width=472)
+   ->  Seq Scan on _hyper_1_1_chunk  (cost=0.00..235846.56 rows=3253056 width=472)
+   ->  Seq Scan on _hyper_1_2_chunk  (cost=0.00..1043.31 rows=34831 width=113)
+   ->  Seq Scan on _hyper_1_3_chunk  (cost=0.00..21905.44 rows=302144 width=472)
+   ->  Seq Scan on _hyper_1_4_chunk  (cost=0.00..81.20 rows=1120 width=472)
+(6 rows)
 ```
 
-This shows that the hypertable `rides` is split across two partitions
-(`_hyper_1_1_0_partition` and `_hyper_1_2_0_partition`), each of which has
-two chunks, resulting in four chunks total
-(`_hyper_1_1_0_1_data`, `_hyper_1_1_0_3_data`, `_hyper_1_2_0_2_data`, `_hyper_1_2_0_4_data`).
+This shows that the hypertable `rides` is split across four chunks
+(`_hyper_1_1_chunk`, `_hyper_1_2_chunk`, `_hyper_1_3_chunk`, `_hyper_1_4_chunk`).
+
+>ttt This is the schema as of TimescaleDB 0.1.0.  Older versions of
+ the database had a slightly different internal schema.
 
 We can even query one of these chunks directly, accessing them via the
 private schema `_timescaledb_internal`:
 
 ```sql
-SELECT COUNT(*) FROM _timescaledb_internal._hyper_1_2_0_2_data;
+SELECT COUNT(*) FROM _timescaledb_internal._hyper_1_2_chunk;
 
  count
 -------
- 35252
+ 34831
 (1 row)
 ```
 
@@ -359,12 +357,9 @@ behind the curtain and see what's going on backstage.
 -----------------------+----------
  _timescaledb_cache    | postgres
  _timescaledb_catalog  | postgres
- _timescaledb_data_api | postgres
  _timescaledb_internal | postgres
- _timescaledb_meta     | postgres
- _timescaledb_meta_api | postgres
  public                | postgres
-(7 rows)
+(4 rows)
 ```
 
 ### 5. Bonus! Geospatial Queries via PostGIS <a id="tutorial-postgis"></a>
