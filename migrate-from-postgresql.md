@@ -130,7 +130,7 @@ To backup your data to CSV, we can run a `COPY`:
 
 ```bash
 # The following ensures 'foo' outputs to a comma-separated .csv file
-psql -d old_db -c "\COPY foo TO old_db.csv DELIMITER ',' CSV"
+psql -d old_db -c "\COPY (SELECT * FROM foo) TO old_db.csv DELIMITER ',' CSV"
 ```
 
 Your data is now stored in a file called `old_db.csv`.
