@@ -75,6 +75,12 @@ psql -U postgres -d devices_small -c "\COPY device_info FROM devices_small_devic
 
 The data is now ready for you to use.
 
+>ttt The standard `COPY` command in PostgreSQL is single threaded.
+ So to speed up importing the larger sample datasets, we recommend using
+ our [parallel importer][] instead.
+
+[parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
+
 ```bash
 # To access your database (e.g., devices_small)
 psql -U postgres -h localhost -d devices_small

@@ -154,6 +154,10 @@ psql -d new_db -c "\COPY foo FROM old_db.csv CSV"
 
 Once finished, your migration is complete!
 
+>ttt The standard `COPY` command in PostgreSQL is single threaded.
+ So to speed up importing larger amounts of data, we recommend using
+ our [parallel importer][] instead.
+
 Now checkout some common [hypertable commands][] for exploring your data.
 
 [setup]: /getting-started/setup
@@ -161,3 +165,4 @@ Now checkout some common [hypertable commands][] for exploring your data.
 [indexing]: /getting-started/basic-operations#indexing
 [unique_indexes]: /getting-started/basic-operations#unique_indexes
 [create_hypertable]: /api/api-timescaledb#create_hypertable
+[parallel importer]: https://github.com/timescale/timescaledb-parallel-copy

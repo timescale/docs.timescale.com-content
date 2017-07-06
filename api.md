@@ -368,6 +368,9 @@ Restore the data:
 psql -d new_db -c "\COPY foo FROM foo_data.csv CSV"
 ```
 
+>ttt The standard `COPY` command in PostgreSQL is single threaded.
+ So to speed up importing larger amounts of data, we recommend using
+ our [parallel importer][] instead.
 
 [migrate-from-postgresql]: /setup/migrate-from-postgresql
 [psql]:https://www.postgresql.org/docs/9.6/static/app-psql.html
@@ -384,3 +387,4 @@ psql -d new_db -c "\COPY foo FROM foo_data.csv CSV"
 [issues]:https://github.com/timescale/timescaledb/issues
 [pg_dump]:https://www.postgresql.org/docs/9.6/static/app-pgdump.html
 [pg_restore]:https://www.postgresql.org/docs/9.6/static/app-pgrestore.html
+[parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
