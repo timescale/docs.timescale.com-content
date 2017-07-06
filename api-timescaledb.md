@@ -1,6 +1,6 @@
 # TimescaleDB API Reference
 
-## create_hypertable()
+## create_hypertable() <a id="create_hypertable"></a>
 
 Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
 latter), partitioned on time and with the option to partition
@@ -28,7 +28,7 @@ still work on the resulting hypertable.
  TIMESTAMPTZ).  Additionally, if the time column is of type SMALLINT or INT,
  the `chunk_time_interval` **must** be set explicitly.
 
-#### Sample Usage
+#### Sample Usage <a id="create_hypertable-examples"></a>
 
 Convert table `foo` to hypertable with just time partitioning on column `ts`:
 ```sql
@@ -36,9 +36,9 @@ SELECT create_hypertable('foo', 'ts');
 ```
 
 Convert table `foo` to hypertable with time partitioning on `ts` and
-space partitioning (2 partitions) on `bar`:
+space partitioning (4 partitions) on `bar`:
 ```sql
-SELECT create_hypertable('foo', 'ts', 'bar', 2);
+SELECT create_hypertable('foo', 'ts', 'bar', 4);
 ```
 
 Convert table `foo` to hypertable with just time partitioning on column `ts`,
@@ -47,11 +47,62 @@ but setting `chunk_time_interval` to 24 hours:
 SELECT create_hypertable('foo', 'ts',
   chunk_time_interval => 86400000000);
 ```
+
+#### Best Practices <a id="create_hypertable-best-practices"></a>
+
+Users of TimescaleDB often have two common questions:
+
+1. How large should I configure my intervals for time partitioning?
+1. Should I use space partitioning, and how many space partitions should I use?
+
+**Time intervals**: The current release of TimescaleDB does not
+perform adaptive time intervals (although this is in the works).
+So, users must configure it when creating their hypertable by
+setting the `chunk_time_interval` (or use the default of 1 month).
+
+The key property of choosing the time interval is that the chunk
+belonging to the most recent interval (or chunks if using space
+partitions) fit into memory.  As such, we typically recommend setting
+the interval so that these chunk(s) comprise maybe 25\% of main
+memory.
+
+To determine this, you roughly need to understand your data rate.  If
+you are writing roughly 2GB of data per day and have 64GB of memory,
+setting the time interval to a week would be good.  If you are writing
+20GB per day on the same machine, setting the time interval to a day
+would be appropriate.  This interval would also hold if data is loaded
+more in batches, e.g., you bulk load 140GB of data per week, with data
+corresponding to records from throughout the week.
+
+While it's generally safer to make chunks smaller rather than too
+large, setting intervals too small can lead to *many* chunks, which
+corresponds to increased planning latency for some types of queries.
+
+**Space partitions**: A key advantage of using space partitions is the
+ability to parallelize queries, even during the same time intervals.
+This has the most significant impact when it also leads to parallel
+disk I/O, e.g., some separate threads can read in parallel from
+multiple disks.
+
+We recommend using space partitions in a hypertable when it is split
+over multiple disks.  In particular, the number of space partitions
+should be either equal to or a small multiple of the number of disks.
+Internally, the partition keys are then hashed and they hash value is
+mapped to one of these partitions.
+
+We typically recommend using 1 space partition per disk.
+
+TimescaleDB does *not* benefit from a very large number of space
+partitions (such as the number of unique items you expect in
+partition field).  A very large number of such partitions leads both
+to poorer per-partition load balancing, as well as much increased
+planning latency for some types of queries.
+
 ---
 
 ## drop_chunks() <a id="drop_chunks"></a>
 
->vvv Currently only supported on single-partition deployments
+>vvv Currently only supported on hypertables partitioned by time interval alone.
 
 Removes data chunks that are older than a given time interval across all
 hypertables or a specific one. Chunks are removed only if _all_ of their data is

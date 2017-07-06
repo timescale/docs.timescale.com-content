@@ -31,13 +31,17 @@ SELECT create_hypertable('conditions', 'time');
 
 -- OR you can additionally partition the data on another
 --   dimension (what we call 'space partitioning').
--- E.g., to partition `location` into 2 partitions:
+-- E.g., to partition `location` into 4 partitions:
 
-SELECT create_hypertable('conditions', 'time', 'location', 2);
+SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
+
+For more information about how to choose the appropriate partitioning
+for your data, see our [best practices discussion][].
 
 **Next let's learn how to create and work with a [hypertable][], the primary
 point of interaction for TimescaleDB.**
 
 [hypertable]: /getting-started/basic-operations
+[best practices discussion]: /api/api-timescaledb#create_hypertable-best-practices
 [API Reference]: /api/api-timescaledb
