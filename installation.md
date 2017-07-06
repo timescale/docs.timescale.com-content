@@ -3,18 +3,15 @@ by migrating data from another source**
 
 ---
 
-## Caveats
-Below are a few issues with the database that we are working on as we move out of beta:
+### Known Limitations
 
-- All users have full read/write access to the metadata tables for hypertables.
-- Permission changes on hypertables are not correctly propagated.
-- `create_hypertable()` can only be run on an empty table.
-- Custom user-created triggers on hypertables currently not allowed.
-- `drop_chunks()` (see our [API Reference][]) is currently only
-supported for hypertables that are not partitioned by space.
+For a list of currently known limitations, please see our Github page:
+
+- [Github issues][]
 
 ## More APIs
 For more information on TimescaleDB's APIs, check out our [API Reference][].
 
+[Github issues]: https://github.com/timescale/timescaledb/issues?q=is%3Aissue+is%3Aopen+label%3Alimitation
 [setup]: /getting-started/setup
 [API Reference]: /api/api-timescaledb
