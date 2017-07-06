@@ -56,7 +56,9 @@ convert `new_table` to a hypertable, then simply `INSERT` data from the old tabl
 ```sql
 -- Assuming 'time' is the time column for the dataset
 SELECT create_hypertable('new_table', 'time');
-  INSERT INTO new_table SELECT * FROM old_table;
+
+-- Insert everything from old_table
+INSERT INTO new_table SELECT * FROM old_table;
 ```
 
 ### 3. Add Additional Indexes
