@@ -66,7 +66,7 @@ CREATE INDEX ON conditions (time DESC, humidity)
 ```
 this creates a more compact, and thus efficient, index.
 
->ttt To a define an index as UNIQUE, the time column and, if it
+>ttt <a id="unique_indexes"></a> To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
 exists, the partitioning column **must** be the first (or first two)
 columns that comprise the index.  That is, using our running
 example, you can define a unique index on just the {time, location} fields,

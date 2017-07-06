@@ -299,9 +299,16 @@ What analytic functions are we missing?  [Let us know on github][issues].
 
 ## Backup & Restore <a id="backup"></a>
 
-Backing up a TimescaleDB database is identical to PostgreSQL, using the
-native `pg_dump` command ([PostgreSQL docs][pg_dump]).  For a database
-named _tutorial_, run from the command line:
+In this section, we cover how to backup and restore an entire
+database or individual hypertables using the native PostgreSQL
+`pg_dump` ([PostgreSQL docs][pg_dump]) and `pg_restore`
+([PostgreSQL docs][pg_restore]) commands.
+
+>vvv You must use `pg_dump` and `pg_restore` versions 9.6.2 and above.
+
+### Entire database
+
+To backup a database named _tutorial_, run from the command line:
 
 ```bash
 pg_dump -f tutorial.bak tutorial
@@ -322,7 +329,45 @@ SELECT restore_timescaledb();
 ALTER DATABASE tutorial SET timescaledb.restoring='off';
 ```
 
->vvv You must use `pg_dump` and `pg_restore` versions 9.6.2 and above.
+### Individual hypertables
+
+Below is the procedure for performing a backup and restore of hypertable `foo`.
+
+#### Backup
+
+Backup the hypertable schema:
+```bash
+pg_dump -s -d old_db --table foo -N _timescaledb_internal | \
+  grep -v _timescaledb_internal > schema.sql
+```
+
+Backup the hypertable data:
+```bash
+psql -d old_db \
+-c "\COPY (SELECT * FROM foo) TO foo_data.csv DELIMITER ',' CSV"
+```
+
+#### Restore
+Restore the schema:
+```bash
+psql -d new_db < schema.sql
+```
+
+Recreate the hypertables:
+```bash
+psql -d new_db -c "SELECT create_hypertable('foo', 'time')"
+```
+
+>ttt The parameters to `create_hypertable` do not need to be
+the same as in the old db, so this is a good way to re-organize
+your hypertables (e.g., change partitioning key, number of
+partitions, chunk interval sizes, etc.).
+
+Restore the data:
+```bash
+psql -d new_db -c "\COPY foo FROM foo_data.csv CSV"
+```
+
 
 [migrate-from-postgresql]: /setup/migrate-from-postgresql
 [psql]:https://www.postgresql.org/docs/9.6/static/app-psql.html
@@ -338,3 +383,4 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
 [first-last]: /api/api-timescaledb#first-last
 [issues]:https://github.com/timescale/timescaledb/issues
 [pg_dump]:https://www.postgresql.org/docs/9.6/static/app-pgdump.html
+[pg_restore]:https://www.postgresql.org/docs/9.6/static/app-pgrestore.html
