@@ -61,6 +61,12 @@ SELECT create_hypertable('new_table', 'time');
 INSERT INTO new_table SELECT * FROM old_table;
 ```
 
+>vvv `create_hypertable` may fail if invalid UNIQUE or PRIMARY
+KEY indexes existed on the old table (see this
+[note][unique_indexes]).
+In this case, you would have to reconfigure your indexes
+and/or schema.
+
 ### 3. Add Additional Indexes
 
 If you used the convenient method, whatever indexes were on `old_table` are now
@@ -153,4 +159,5 @@ Now checkout some common [hypertable commands][] for exploring your data.
 [setup]: /getting-started/setup
 [hypertable commands]: /getting-started/basic-operations
 [indexing]: /getting-started/basic-operations#indexing
+[unique_indexes]: /getting-started/basic-operations#unique_indexes
 [create_hypertable]: /api/api-timescaledb#create_hypertable
