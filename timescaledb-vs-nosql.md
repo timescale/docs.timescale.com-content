@@ -4,17 +4,17 @@ Compared to general NoSQL databases (e.g., MongoDB, Cassandra) or even
 more specialized time-oriented ones (e.g., InfluxDB, KairosDB),
 TimescaleDB provides both qualitative and quantitative differences:
 
-- **Normal SQL**: If you want to make standard SQL queries on
-  time-series data, even at scale.  Most (all?) NoSQL databases
-  require learning either a new query language or using something
-  that's at best "SQL-ish" (which still breaks compatibility with
-  existing tools).
+- **Normal SQL**: TimescaleDB gives you the power of standard SQL
+  queries on time-series data, even at scale.  Most (all?) NoSQL
+  databases require learning either a new query language or using
+  something that's at best "SQL-ish" (which still breaks compatibility
+  with existing tools).
 - **Operational simplicity**:  With TimescaleDB, you only need to manage one
   database for your relational and time-series data.  Otherwise, users
   often need to silo data into two databases: a "normal" relational
   one, and a second time-series one.
 - **JOINs** can be performed across relational and time-series data.
-- **Query performance** for a varied set
+- **Query performance** is faster for a varied set
   of queries.  More complex queries are often slow or full table scans
   on NoSQL databases, while some databases can't even support many
   natural queries.

@@ -51,7 +51,7 @@ until explicitly removed. Use `docker volume ls` to list the existing
 docker volumes.
 ([More information on data volumes][docker-data-voilumes])
 
-## Prebuilt with PostGISm
+## Prebuilt with PostGIS
 
 We have also published a Docker image that comes prebuilt with
 PostGIS.  This image is published under the
