@@ -7,15 +7,15 @@ using the `drop_chunks()` function.
 SELECT drop_chunks(interval '24 hours', 'conditions');
 ```
 
-This will drop all chunks from the hypertable 'conditions' that only_
-include data older than this duration, and will _not_ delete any
+This will drop all chunks from the hypertable 'conditions' that _only_ include
+data older than this duration, and will _not_ delete any
 individual rows of data in chunks.
 
 For example, if one chunk has data more than 36 hours old, a second
 chunk has data between 12 and 36 hours old, and a third chunk has the
 most recent 12 hours of data, only the first chunk is dropped when
-executing this `drop_chunks()` command. Thus, in this scenario, the
-`conditions` hypertable will still have data stretching back 36 hours.
+executing this `drop_chunks()` command. Thus, in this scenario,
+the `conditions` hypertable will still have data stretching back 36 hours.
 
 For more information on the `drop_chunks()` function and related
 parameters, please review the [API documentation][drop_chunks].
@@ -50,8 +50,8 @@ then saving and exiting.
 
 #### Using a Systemd Timer
 
-On a systemd-based OS (most modern Linux distributions), a systemd [unit][]
-with accompanying unit [timer][] can also be used to implement a
+On a systemd-based OS (most modern Linux distributions), a systemd [unit][] with
+accompanying unit [timer][] can also be used to implement a
 retention policy.
 
 First, create, e.g., `/etc/systemd/system/retention.service` unit file:
