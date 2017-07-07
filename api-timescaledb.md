@@ -63,7 +63,7 @@ setting the `chunk_time_interval` (or use the default of 1 month).
 The key property of choosing the time interval is that the chunk
 belonging to the most recent interval (or chunks if using space
 partitions) fit into memory.  As such, we typically recommend setting
-the interval so that these chunk(s) comprise maybe 25\% of main
+the interval so that these chunk(s) comprise maybe 25% of main
 memory.
 
 To determine this, you roughly need to understand your data rate.  If
