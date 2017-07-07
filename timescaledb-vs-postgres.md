@@ -32,7 +32,7 @@ time-space partitioning, even when running *on a single machine*.  So
 all writes to recent time intervals are only to tables that remain in
 memory, and updating any secondary indexes is also fast as a result.
 
-In short, TimescaleDBs sees throughput more than 15x that of
+In short, TimescaleDB sees throughput more than 15x that of
 PostgreSQL for moderately-sized tables:
 
 <img width="100%" src="//assets.timescale.com/benchmarks/timescale-vs-postgres-insert.jpg"></img>

@@ -62,8 +62,8 @@ INSERT INTO new_table SELECT * FROM old_table;
 ```
 
 >vvv `create_hypertable` may fail if invalid UNIQUE or PRIMARY
-KEY indexes existed on the old table (see this
-[note][unique_indexes]).
+KEY indexes existed on the old table (see
+this [note][unique_indexes]).
 In this case, you would have to reconfigure your indexes
 and/or schema.
 
@@ -87,12 +87,12 @@ our [operations][indexing] section.
 
 ## Migrating from a Different Database <a id="different-db"></a>
 
-To migrate your database from PostgreSQL to TimescaleDB, you need
-`pg_dump` for exporting your schema and data.
+To migrate your database from PostgreSQL to TimescaleDB, you
+need `pg_dump` for exporting your schema and data.
 
 Migration falls into three main steps:
 
-1. Copy over the database schema and choosing which tables will become
+1. Copy over the database schema and choose which tables will become
 hypertables (i.e., those that currently have time-series data).
 1. Backup data to comma-separated values (CSV).
 1. Import the data into TimescaleDB
