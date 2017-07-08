@@ -176,7 +176,7 @@ SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
 
 -- Number of data entries written in past 12 hours
 SELECT COUNT(*) FROM conditions
-  WHERE time = NOW() - interval '12 hours';
+  WHERE time > NOW() - interval '12 hours';
 ```
 To more advanced SQL queries:
 ```sql
@@ -187,7 +187,7 @@ SELECT time_bucket('15 minutes', time) AS fifteen_min,
     MAX(temperature) AS max_temp,
     MAX(humidity) AS max_hum
   FROM conditions
-  WHERE time = NOW() - interval '3 hours'
+  WHERE time > NOW() - interval '3 hours'
   GROUP BY fifteen_min, location
   ORDER BY fifteen_min DESC, max_temp DESC;
 
@@ -198,7 +198,7 @@ SELECT COUNT(DISTINCT location) FROM conditions
   JOIN locations
     ON conditions.location = locations.location
   WHERE locations.air_conditioning = True
-    AND time = NOW() - interval '1 day'
+    AND time > NOW() - interval '1 day'
 ```
 
 ---
@@ -247,7 +247,7 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
       ROWS BETWEEN 9 PRECEDING AND CURRENT ROW)
     AS smooth_temp
   FROM conditions
-  WHERE location = 'garage' and time > now() - '1 day'
+  WHERE location = 'garage' and time > NOW() - '1 day'
   ORDER BY time DESC;
 ```
 
