@@ -102,8 +102,6 @@ planning latency for some types of queries.
 
 ## drop_chunks() <a id="drop_chunks"></a>
 
->vvv Currently only supported on hypertables partitioned by time interval alone.
-
 Removes data chunks that are older than a given time interval across all
 hypertables or a specific one. Chunks are removed only if _all_ of their data is
 beyond the cut-off point, so the remaining data may contain timestamps that
