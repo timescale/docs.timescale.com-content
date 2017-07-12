@@ -8,9 +8,16 @@ Linux, [Postgres.app][] for MacOS)
 
 #### Build & Install with Local PostgreSQL
 
-Clone the repository from [Github][github-timescale].
+Clone the repository from [Github][github-timescale]. It is **highly
+recommended** that you then checkout the latest tagged commit to
+build from (see the repo's [Releases][github-releases] page for that).
 
 ```bash
+# Clone and checkout latest stable build
+git clone https://github.com/timescale/timescaledb.git
+cd timescaledb
+git checkout [latest tag]
+
 # To build the extension
 make
 
@@ -40,3 +47,4 @@ Then, restart the PostgreSQL instance.
 
 [Postgres.app]: https://postgresapp.com
 [github-timescale]: https://github.com/timescale/timescaledb
+[github-releases]: https://github.com/timescale/timescaledb/releases
