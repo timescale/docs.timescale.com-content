@@ -22,7 +22,9 @@ just make sure that a link or inline code phrase is not at the front or back of 
 If you want to link to a specific part of the page from the docs sidebar, you
 need to place an anchor `<a id="anchor_name"></a>`.  Do not use `name` in place
 of `id` or it will disrupt the javascript scrolling method that has been set up
-in the docs.
+in the docs.  
+
+**Your anchor name must be unique** in order for the highlight scrolling to work properly.
 
 ### A note on code blocks
 When showing commands being entered from a command line, do not include a
