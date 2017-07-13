@@ -30,21 +30,21 @@ still work on the resulting hypertable.
 
 #### Sample Usage <a id="create_hypertable-examples"></a>
 
-Convert table `foo` to hypertable with just time partitioning on column `ts`:
+Convert table `conditions` to hypertable with just time partitioning on column `time`:
 ```sql
-SELECT create_hypertable('foo', 'ts');
+SELECT create_hypertable('conditions', 'time');
 ```
 
-Convert table `foo` to hypertable with time partitioning on `ts` and
-space partitioning (4 partitions) on `bar`:
+Convert table `conditions` to hypertable with time partitioning on `time` and
+space partitioning (4 partitions) on `location`:
 ```sql
-SELECT create_hypertable('foo', 'ts', 'bar', 4);
+SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
-Convert table `foo` to hypertable with just time partitioning on column `ts`,
+Convert table `conditions` to hypertable with just time partitioning on column `time`,
 but setting `chunk_time_interval` to 24 hours:
 ```sql
-SELECT create_hypertable('foo', 'ts',
+SELECT create_hypertable('conditions', 'time',
   chunk_time_interval => 86400000000);
 ```
 
@@ -127,9 +127,9 @@ Drop all chunks older than 3 months:
 SELECT drop_chunks(interval '3 months');
 ```
 
-Drop all chunks from hypertable `foo` older than 3 months:
+Drop all chunks from hypertable `conditions` older than 3 months:
 ```sql
-SELECT drop_chunks(interval '3 months', 'foo');
+SELECT drop_chunks(interval '3 months', 'conditions');
 ```
 
 ---
