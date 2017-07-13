@@ -59,6 +59,7 @@ Users of TimescaleDB often have two common questions:
 perform adaptive time intervals (although this is in the works).
 So, users must configure it when creating their hypertable by
 setting the `chunk_time_interval` (or use the default of 1 month).
+The interval used for new chunks can be changed by calling `set_chunk_time_interval`.
 
 The key property of choosing the time interval is that the chunk
 belonging to the most recent interval (or chunks if using space
@@ -100,6 +101,27 @@ planning latency for some types of queries.
 
 ---
 
+## set_chunk_time_interval() <a id="set_chunk_time_interval"></a>
+Sets the chunk_time_interval on a hypertable. The new interval is used
+when new chunks are created but the time intervals on existing chunks are
+not affected.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to update interval for.|
+| `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0.([units][])|
+
+#### Sample Usage
+
+Set chunk_time_interval to 24 hours.
+```sql
+SELECT set_chunk_time_interval('conditions', 86400000000);
+```
+
+---
+
 ## drop_chunks() <a id="drop_chunks"></a>
 
 Removes data chunks that are older than a given time interval across all
@@ -130,6 +152,90 @@ SELECT drop_chunks(interval '3 months');
 Drop all chunks from hypertable `conditions` older than 3 months:
 ```sql
 SELECT drop_chunks(interval '3 months', 'conditions');
+```
+
+---
+
+## hypertable_relation_size() <a id="hypertable_relation_size"></a>
+
+Get relation size of hypertable like `pg_relation_size(hypertable)`.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get relation size for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|table_bytes|Disk space used by main_table (like pg_relation_size(main_table))|
+|index_bytes|Disc space used by indexes|
+|toast_bytes|Disc space of toast tables|
+|total_bytes|Total disk space used by the specified table, including all indexes and TOAST data|
+|table_size|Pretty output of table_bytes|
+|index_size|Pretty output of index_bytes|
+|toast_size|Pretty output of toast_bytes|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT hypertable_relation_size('conditions');
+```
+
+---
+
+## chunk_relation_size() <a id="chunk_relation_size"></a>
+
+Get relation size of the chunks of an hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get chunk relation sizes for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|chunk_id|Timescaledb id of a chunk|
+|chunk_table|Table used for the chunk|
+|table_bytes|Disk space used by main_table|
+|index_bytes|Disk space used by indexes|
+|toast_bytes|Disc space of toast tables|
+|total_bytes|Disk space used in total|
+|table_size|Pretty output of table_bytes|
+|index_size|Pretty output of index_bytes|
+|toast_size|Pretty output of toast_bytes|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT chunk_relation_size('conditions');
+```
+
+---
+
+## indexes_relation_size() <a id="indexes_relation_size"></a>
+
+Get sizes of indexes on a hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get indexes size for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|index_name|Index on hyper table|
+|total_bytes|Size of index on disk|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT indexes_relation_size('conditions');
 ```
 
 ---
