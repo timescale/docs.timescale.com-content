@@ -331,20 +331,20 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
 
 ### Individual hypertables
 
-Below is the procedure for performing a backup and restore of hypertable `foo`.
+Below is the procedure for performing a backup and restore of hypertable `conditions`.
 
 #### Backup
 
 Backup the hypertable schema:
 ```bash
-pg_dump -s -d old_db --table foo -N _timescaledb_internal | \
+pg_dump -s -d old_db --table conditions -N _timescaledb_internal | \
   grep -v _timescaledb_internal > schema.sql
 ```
 
 Backup the hypertable data:
 ```bash
 psql -d old_db \
--c "\COPY (SELECT * FROM foo) TO foo_data.csv DELIMITER ',' CSV"
+-c "\COPY (SELECT * FROM conditions) TO data.csv DELIMITER ',' CSV"
 ```
 
 #### Restore
@@ -355,7 +355,7 @@ psql -d new_db < schema.sql
 
 Recreate the hypertables:
 ```bash
-psql -d new_db -c "SELECT create_hypertable('foo', 'time')"
+psql -d new_db -c "SELECT create_hypertable('conditions', 'time')"
 ```
 
 >ttt The parameters to `create_hypertable` do not need to be
@@ -365,7 +365,7 @@ partitions, chunk interval sizes, etc.).
 
 Restore the data:
 ```bash
-psql -d new_db -c "\COPY foo FROM foo_data.csv CSV"
+psql -d new_db -c "\COPY conditions FROM data.csv CSV"
 ```
 
 >ttt The standard `COPY` command in PostgreSQL is single threaded.

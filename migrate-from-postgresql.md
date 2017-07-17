@@ -98,7 +98,7 @@ hypertables (i.e., those that currently have time-series data).
 1. Import the data into TimescaleDB
 
 For this example we'll assume you have a PostgreSQL instance with a database
-called `old_db` that contains a single table called `foo` that you want to
+called `old_db` that contains a single table called `conditions` that you want to
 convert into a hypertable in a new database called `new_db`.  
 
 ### 1. Copying Schema & Setting up Hypertables
@@ -110,7 +110,7 @@ pg_dump --schema-only -f old_db.bak old_db
 
 This creates a backup file called `old_db.bak` that contains only the
 SQL commands to recreate all the tables in `old_db`, which in this case
-is just `foo`.
+is just `conditions`.
 
 To create those tables in `new_db`:
 ```bash
@@ -124,10 +124,11 @@ psql -d new_db
 ```
 Then use the `create_hypertable()` function on the tables to make hypertables.
 Due to a current limitation, this must be run on a table while it is empty, so
-we do this before importing data. In this case, our hypertable target is `foo` (using
+we do this before importing data.
+In this case, our hypertable target is `conditions` (using
 column `time` as the time partitioning column):
 ```sql
-SELECT create_hypertable('foo', 'time');
+SELECT create_hypertable('conditions', 'time');
 ```
 
 Your new database is now ready for data.
@@ -137,8 +138,8 @@ Your new database is now ready for data.
 To backup your data to CSV, we can run a `COPY`:
 
 ```bash
-# The following ensures 'foo' outputs to a comma-separated .csv file
-psql -d old_db -c "\COPY (SELECT * FROM foo) TO old_db.csv DELIMITER ',' CSV"
+# The following ensures 'conditions' outputs to a comma-separated .csv file
+psql -d old_db -c "\COPY (SELECT * FROM conditions) TO old_db.csv DELIMITER ',' CSV"
 ```
 
 Your data is now stored in a file called `old_db.csv`.
@@ -149,7 +150,7 @@ To put the data into the new table, let's run another `COPY`, this one to copy
 data from the `.csv` into our new db:
 
 ```bash
-psql -d new_db -c "\COPY foo FROM old_db.csv CSV"
+psql -d new_db -c "\COPY conditions FROM old_db.csv CSV"
 ```
 
 Once finished, your migration is complete!
