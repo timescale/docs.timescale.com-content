@@ -6,17 +6,6 @@ pages using a bash script and markdown parser.
 
 All files are written in standard markdown.
 
-### A note on inline-code, links and inline formatted text
-
-Due to a quirk of HTML, if you have either inline code (text surrounded by one backtick) 
-or a markdown link (brackets around the link text), or formatted text 
-(**strong**, or _italics_) as the first or last item on a line, the previous or 
-next word respectively will not have a space between the item and itself.  
-
-For example this sentence `will`
-not have a space between the inline coded 'will' and the word 'not.'  To avoid this, 
-just make sure that a link or inline code phrase is not at the front or back of a line.
-
 ### A note on anchors
 
 If you want to link to a specific part of the page from the docs sidebar, you
