@@ -93,14 +93,14 @@ SELECT * FROM cpu
 Larger queries involving time-based GROUP BYs -- quite common in
 time-oriented analysis -- often achieve superior performance in TimescaleDB.
 
-For example, the following query that touches 33M rows is 15% faster
+For example, the following query that touches 33M rows is **5x** faster
 in TimescaleDB when the entire (hyper)table is 100M rows, and
-**double** the performance when the table is 1B rows.
+around **2x** faster when it is 1B rows.
 
 ```sql
-SELECT date_trunc('hour', time) as hour, 
+SELECT date_trunc('hour', time) as hour,
     hostname, avg(usage_user)
-  FROM cpu 
+  FROM cpu
   WHERE time >= '2017-01-01' AND time < '2017-01-02'
   GROUP BY hour, hostname
   ORDER BY hour;
@@ -116,7 +116,7 @@ following (given its knowledge that time is already ordered).  For our
 than PostgreSQL (82ms vs. 32566ms).
 
 ```sql
-SELECT date_trunc('minute', time) AS minute, max(usage_user) 
+SELECT date_trunc('minute', time) AS minute, max(usage_user)
   FROM cpu
   WHERE time < '2017-01-01'
   GROUP BY minute ORDER BY minute
@@ -127,7 +127,7 @@ We will be publishing more complete benchmarking comparisons between
 PostgreSQL and TimescaleDB soon, as well as the software to replicate
 our benchmarks.
 
-The high-level result from our query benchmarking is that 
+The high-level result from our query benchmarking is that
 for almost **every query** that we have tried, TimescaleDB achieves
 either **similar or superior (or vastly superior) performance** to vanilla PostgreSQL.
 
