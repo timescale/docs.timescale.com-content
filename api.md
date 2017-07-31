@@ -52,7 +52,7 @@ psql -d tutorial -c "\COPY tutorial TO tutorial.csv DELIMITER ',' CSV"
 
 ---
 
-## Schema Commands <a id="schema"></a>
+## Table Commands <a id="schema"></a><a id="tables"></a>
 
 Commands to create, alter, or delete schemas in TimescaleDB are
 identical to those in PostgreSQL.  Schema commands should be made to
