@@ -30,7 +30,7 @@ Further setup instructions [are found here][yuminstall].
 Then, fetch our RPM and install it:
 ```bash
 # Fetch our RPM
-wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-0.2.0-0.x86_64.rpm
+wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-0.3.0-0.x86_64.rpm
 
 # To install
 sudo yum install timescaledb
