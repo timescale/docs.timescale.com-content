@@ -293,6 +293,7 @@ INSERT INTO conditions
  partitioning, then the constraint would have
  to be `UNIQUE(time, device)` or `UNIQUE(time, device, location)`.
 
+<!-- -->
 >vvv TimescaleDB does not yet support `ON CONFLICT ON CONSTRAINT`
  functionality, so conflicts must currently occur over a unique index.
  This limitation will be removed in a future version. For now, the suggested
