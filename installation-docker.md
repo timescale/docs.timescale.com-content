@@ -49,7 +49,7 @@ start`) while retaining their volumes and data. Even if a docker
 container is deleted (`docker rm`) its data volume persists on disk
 until explicitly removed. Use `docker volume ls` to list the existing
 docker volumes.
-([More information on data volumes][docker-data-voilumes])
+([More information on data volumes][docker-data-volumes])
 
 ## Prebuilt with PostGIS
 
