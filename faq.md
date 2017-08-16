@@ -2,7 +2,7 @@
 - [What is TimescaleDB?](#what)
 - [Why build another time-series database?](#why-build)
 - [Why should I use TimescaleDB?](#why-use)
-- [Do you really support “all of SQL”](#sql-support)
+- [Do you really support "all of SQL"](#sql-support)
 - [Why SQL?](#why-sql)
 - [What SQL features are supported (JOIN)?](#sql-features)
 - [How do I write data?](#write)
@@ -10,8 +10,9 @@
 - [Is there a clustered version and how can I try it?](#clustered)
 - [How far can TimescaleDB scale?](#scaling)
 - [How does TimescaleDB scale?](#how-scaling)
-- [What are Hypertables and chunks?](#hypertable-chunks)
-- [How are Hypertable chunks determined across the space dimension (partition keys)?](#partitions)
+- [What are hypertables and chunks?](#hypertable-chunks)
+- [How are hypertable chunks determined across the space dimension (partition keys)?](#partitions)
+- [How should I configure chunking?](#partitions-best-practice)
 - [Why would I use TimescaleDB over vanilla PostgreSQL?](#vs-postgresql)
 - [How compatible is TimescaleDB with PostgreSQL?](#postgresql-compatibility)
 - [How does TimescaleDB handle geospatial data?](#geo-spatial)
@@ -23,6 +24,7 @@
 - [Can I get support or a commercial license?](#license-commercial)
 - [Where can I get TimescaleDB source code?](#where)
 - [How do I install TimescaleDB?](#install)
+- [How do I update an existing installation?](#update)
 ---
 ### **What is TimescaleDB?** <a id="what"></a>
 
@@ -78,9 +80,9 @@ time-based analysis as well as
 introduce [entirely new SQL queries that are unique to TimescaleDB](/api-timescaledb). [[Top]](#top)
 
 ### **How do I write data?** <a id="write"></a>
-Via normal SQL. [[Top]](#top)
+Just via normal SQL, but here are some [insert examples](/api#insert). [[Top]](#top)
 ### **How do I read data?** <a id="read"></a>
-Via normal SQL. [[Top]](#top)
+Just via normal SQL, but here are some [query examples](/api#select). [[Top]](#top)
 
 ### **Is there a clustered version and how can I try it?** <a id="clustered"></a>
 A clustered version is actively being developed. 
@@ -126,6 +128,9 @@ during inserts to avoid thrashing that would otherwise occur
 while modifying arbitrary locations in those trees. In addition, the user has the option when 
 creating the hypertable to partition across the space dimension (partition key) on something 
 like a device id, customer id, or other unique id. [[Top]](#top)
+
+### **How should I configure chunking?** <a id="partitions-best-practice"></a>
+See our [chunking best practices documentation](/api/api-timescaledb#create_hypertable-best-practices). [[Top]](#top)
 
 ### **Why would I use TimescaleDB over vanilla PostgreSQL?** <a id="vs-postgresql"></a>
 * Much higher ingest scale: TimescaleDB sees throughput more than 15X that of 
@@ -240,6 +245,8 @@ Yes. Please contact us for more information - support@timescale.com. [[Top]](#to
 See [GitHub](https://github.com/timescale/timescaledb). [[Top]](#top)
 ### **How do I install TimescaleDB?** <a id="install"></a>
 See our [install documentation](/getting-started/installation). [[Top]](#top)
+### **How do I update an existing installation?** <a id="update"></a>
+See our [updating documentation](/api/update). [[Top]](#top)
 
 
 [[Top]](#top)
