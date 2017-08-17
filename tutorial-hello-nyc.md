@@ -65,11 +65,11 @@ Let's see what tables we have:
 \dt
 
            List of relations
- Schema |     Name      | Type  | Owner
---------+---------------+-------+-------
- public | payment_types | table | ajay
- public | rates         | table | ajay
- public | rides         | table | ajay
+ Schema |     Name      | Type  |  Owner
+--------+---------------+-------+----------
+ public | payment_types | table | postgres
+ public | rates         | table | postgres
+ public | rides         | table | postgres
 (3 rows)
 ```
 
@@ -104,9 +104,6 @@ Indexes:
     "rides_pickup_datetime_vendor_id_idx" btree (pickup_datetime DESC, vendor_id)
     "rides_rate_code_pickup_datetime_idx" btree (rate_code, pickup_datetime DESC)
     "rides_vendor_id_pickup_datetime_idx" btree (vendor_id, pickup_datetime DESC)
-Triggers:
-    _timescaledb_main_after_insert_trigger AFTER INSERT ON rides FOR EACH STATEMENT EXECUTE PROCEDURE _timescaledb_internal.main_table_after_insert_trigger()
-    _timescaledb_main_insert_trigger BEFORE INSERT ON rides FOR EACH ROW EXECUTE PROCEDURE _timescaledb_internal.main_table_insert_trigger()
 ```
 
 Let's run a query that TimescaleDB handles better than vanilla
