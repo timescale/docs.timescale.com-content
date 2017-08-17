@@ -296,8 +296,8 @@ Simple 5-minute averaging:
 ```sql
 SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
   FROM metrics
-  GROUP BY five_min ORDER BY five_min
-  LIMIT 10;
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
 ```
 
 To report the middle of the bucket, instead of the left edge:
@@ -305,8 +305,8 @@ To report the middle of the bucket, instead of the left edge:
 SELECT time_bucket('5 minutes', time) + '2.5 minutes'
     AS five_min, avg(cpu)
   FROM metrics
-  GROUP BY five_min ORDER BY five_min
-  LIMIT 10;
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
 ```
 
 For rounding, move the alignment so that the middle of the bucket is at the
@@ -315,16 +315,17 @@ For rounding, move the alignment so that the middle of the bucket is at the
 SELECT time_bucket('5 minutes', time, '-2.5 minutes') + '2.5 minutes'
     AS five_min, avg(cpu)
   FROM metrics
-  GROUP BY five_min ORDER BY five_min
-  LIMIT 10;
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
 ```
 
 Bucketing a TIMESTAMPTZ at local time instead of UTC(see note above):
 ```sql
-SELECT time_bucket('2 hours', timetz::TIMESTAMP) five_min,
+SELECT time_bucket('2 hours', timetz::TIMESTAMP) AS five_min,
     avg(cpu)
   FROM metrics
-  GROUP BY five_min ORDER BY five_min;
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
 ```
 
 Note that the above cast to TIMESTAMP converts the time to local time according

@@ -119,7 +119,8 @@ than PostgreSQL (82ms vs. 32566ms).
 SELECT date_trunc('minute', time) AS minute, max(usage_user)
   FROM cpu
   WHERE time < '2017-01-01'
-  GROUP BY minute ORDER BY minute
+  GROUP BY minute
+  ORDER BY minute DESC
   LIMIT 5;
 ```
 
