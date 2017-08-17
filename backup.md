@@ -9,6 +9,7 @@ database or individual hypertables using the native PostgreSQL
  you don't need to backup/restore your data.
  Follow these [updating instructions][].
 
+<!-- -->
 >vvv You must use `pg_dump` and `pg_restore` versions 9.6.2 and above.
 
 ### Entire database
