@@ -275,7 +275,11 @@ Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
 #### Sample Usage
 ```sql
-SELECT hypertable_relation_size('conditions');
+SELECT * FROM hypertable_relation_size('conditions');
+```
+or, to reduce the output, a common use is:
+```sql
+SELECT table_size, index_size, toast_size, total_size FROM hypertable_relation_size('conditions');
 ```
 
 ---
@@ -295,6 +299,8 @@ Get relation size of the chunks of an hypertable.
 |---|---|
 |chunk_id|Timescaledb id of a chunk|
 |chunk_table|Table used for the chunk|
+|dimensions|Partitioning dimension names|
+|ranges|Partitioning ranges for each dimension|
 |table_bytes|Disk space used by main_table|
 |index_bytes|Disk space used by indexes|
 |toast_bytes|Disc space of toast tables|
@@ -306,7 +312,11 @@ Get relation size of the chunks of an hypertable.
 
 #### Sample Usage
 ```sql
-SELECT chunk_relation_size('conditions');
+SELECT * FROM chunk_relation_size('conditions');
+```
+or, to reduce the output, a common use is:
+```sql
+SELECT chunk_table, table_size, index_size, total_size FROM chunk_relation_size('conditions');
 ```
 
 ---
@@ -330,7 +340,7 @@ Get sizes of indexes on a hypertable.
 
 #### Sample Usage
 ```sql
-SELECT indexes_relation_size('conditions');
+SELECT * FROM indexes_relation_size('conditions');
 ```
 
 ---
