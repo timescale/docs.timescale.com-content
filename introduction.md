@@ -7,7 +7,7 @@ yet scales in ways previously reserved for NoSQL databases.
 
 Compared to the trade-offs demanded by these two alternatives
 (relational vs. NoSQL), TimescaleDB offers the best of both
-worlds **for time-series data**:
+worlds **for time-series data:**
 
 ## Easy to Use
 
