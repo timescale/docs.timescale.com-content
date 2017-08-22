@@ -57,10 +57,11 @@ $ docker inspect timescaledb --format='{{range .Mounts }}{{.Name}}{{end}}'
 069ba64815f0c26783b81a5f0ca813227fde8491f429cf77ed9a5ae3536c0b2c
 ```
 
-Remove the current TimescaleDB container using that mount point
-so you can connect the new one:
+Stop (if currently running) and remove the current TimescaleDB container
+using that mount point so you can connect the new one:
 
 ```bash
+docker stop timescaledb
 docker rm timescaledb
 ```
 
