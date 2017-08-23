@@ -246,7 +246,7 @@ See [GitHub](https://github.com/timescale/timescaledb). [[Top]](#top)
 ### **How do I install TimescaleDB?** <a id="install"></a>
 See our [install documentation](/getting-started/installation). [[Top]](#top)
 ### **How do I update an existing installation?** <a id="update"></a>
-See our [updating documentation](/api/update). [[Top]](#top)
+See our [updating documentation](/api/update-db). [[Top]](#top)
 
 
 [[Top]](#top)

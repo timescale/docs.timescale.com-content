@@ -90,7 +90,7 @@ psql -d new_db -c "\COPY conditions FROM data.csv CSV"
  So to speed up importing larger amounts of data, we recommend using
  our [parallel importer][] instead.
 
-[updating instructions]:/api/update
+[updating instructions]:/api/update-db
 [pg_dump]:https://www.postgresql.org/docs/current/static/app-pgdump.html
 [pg_restore]:https://www.postgresql.org/docs/current/static/app-pgrestore.html
 [parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
