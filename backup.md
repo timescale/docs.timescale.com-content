@@ -17,7 +17,7 @@ database or individual hypertables using the native PostgreSQL
 To backup a database named _tutorial_, run from the command line:
 
 ```bash
-pg_dump -f tutorial.bak tutorial
+pg_dump -Fc -f tutorial.bak tutorial
 ```
 
 Restoring data from a backup currently requires some additional procedures,
@@ -27,13 +27,25 @@ CREATE DATABASE tutorial;
 ALTER DATABASE tutorial SET timescaledb.restoring='on';
 
 -- execute the restore (or from a shell)
-\! pg_restore -d tutorial tutorial.bak
+\! pg_restore -Fc -d tutorial tutorial.bak
 
 -- connect to the restored db
 \c tutorial
 SELECT restore_timescaledb();
 ALTER DATABASE tutorial SET timescaledb.restoring='off';
 ```
+
+>vvv These instructions do not work if you use flags to selectively
+ choose tables (`-t`) or schemas (`--schema`), and so cannot be used
+ to backup only an individual hypertable.  In particular, even if you
+ explicitly specify both the hypertable and all of its constituent
+ chunks, this dump would still lack necessary information that
+ TimescaleDB stores in the database catalog about the relation between
+ these tables.
+
+>vvv You can, however, explicitly *exclude* tables from this whole
+ database backup (`-T`), as well as continue to selectively backup
+ plain tables (i.e., non-hypertable) as well.
 
 ### Individual hypertables
 
@@ -47,7 +59,7 @@ pg_dump -s -d old_db --table conditions -N _timescaledb_internal | \
   grep -v _timescaledb_internal > schema.sql
 ```
 
-Backup the hypertable data:
+Backup the hypertable data to a CSV file.
 ```bash
 psql -d old_db \
 -c "\COPY (SELECT * FROM conditions) TO data.csv DELIMITER ',' CSV"
