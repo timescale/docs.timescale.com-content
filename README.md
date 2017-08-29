@@ -1,6 +1,7 @@
 # README #
+for version 0.4.0
 
-This is the source for content for docs.timescaledb.com.  
+This is the source for content for docs.timescaledb.com.
 The docs site uses this repo as a submodule and converts the files directly into
 pages using a bash script and markdown parser.
 
@@ -11,7 +12,7 @@ All files are written in standard markdown.
 If you want to link to a specific part of the page from the docs sidebar, you
 need to place an anchor `<a id="anchor_name"></a>`.  Do not use `name` in place
 of `id` or it will disrupt the javascript scrolling method that has been set up
-in the docs.  
+in the docs.
 
 **Your anchor name must be unique** in order for the highlight scrolling to work properly.
 
@@ -37,7 +38,7 @@ Otherwise the code highlighter may be disrupted.
 
 ### Special rules
 There are some custom modifications to the markdown parser to allow for special
-formatting within the docs.  
+formatting within the docs.
 
 + Adding 'sss ' to the start of every list item in an ordered list will result in
   a switch to "steps" formatting which is used to denote instructional steps, as
@@ -53,6 +54,6 @@ _Make sure to include the space after the formatting command!_
 normal text. Adding 'ttt' or 'vvv' to the start of any standard paragraph will
 result in non-optimal html.  The characters will end up on the outside of the
 paragraph tag.  This is due to the way that the markdown parser interprets
-blockquotes with the new modifications.  
+blockquotes with the new modifications.
 This will be fixed in future versions if it becomes a big issue, but we don't
 anticipate that.
