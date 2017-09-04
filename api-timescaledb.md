@@ -24,6 +24,8 @@ still work on the resulting hypertable.
 | `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
 | `number_partitions` | Number of hash partitions to use for `partitioning_column` when this optional argument is supplied. Must be > 0.
 | `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month ([units][]).
+| `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
+| `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
 
 >vvv The time column currently only supports values with a data type of
  integer (SMALLINT, INT, BIGINT) or timestamp (TIMESTAMP,
@@ -51,10 +53,11 @@ SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
 Convert table `conditions` to hypertable with just time partitioning on column `time`,
-but setting `chunk_time_interval` to 24 hours:
+but setting `chunk_time_interval` to 24 hours.  Do not raise a warning
+if `conditions` is already a hypertable.
 ```sql
 SELECT create_hypertable('conditions', 'time',
-  chunk_time_interval => 86400000000);
+  chunk_time_interval => 86400000000, if_not_exists => TRUE);
 ```
 
 #### Best Practices <a id="create_hypertable-best-practices"></a>
