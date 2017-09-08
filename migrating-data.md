@@ -1,5 +1,6 @@
-# Migrate from PostgreSQL
->ttt First make sure that you have properly [installed][] AND [setup][] your Timescale database within your PostgreSQL instance.
+# Migrating Data
+
+## Migration from PostgreSQL
 
 Depending on where your data is currently stored,
 the steps to migrate it to TimescaleDB are slightly different.

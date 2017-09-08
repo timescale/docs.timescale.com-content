@@ -18,12 +18,12 @@ partitioning across "time and space".
 ### Hypertables <a id="hypertables"></a>
 The primary point of interaction with your data is a hypertable,
 the abstraction of a single continuous table across all space and time intervals,
-such that one can query it via vanilla SQL.  
+such that one can query it via vanilla SQL.
 
 Virtually all user interactions with TimescaleDB are with hypertables. Creating
 tables and indexes, altering tables, inserting data, selecting data, etc. can
 (and should) all be executed on the hypertable.
-[[Jump to basic SQL operations](/getting-started/basic-operations)]
+[[Jump to basic SQL operations](/using-timescaledb/hypertables)]
 
 A hypertable is defined by a standard schema with column names and
 types, with at least one column specifying a time value, and
@@ -49,7 +49,7 @@ full range of PostgreSQL index types).
 
 Internally, TimescaleDB automatically splits each
 hypertable into **chunks**, with each chunk corresponding to a specific time
-interval and a region of the partition key’s space (using hashing).  
+interval and a region of the partition key’s space (using hashing).
 These partitions are disjoint (non-overlapping), which helps the query planner
 to minimize the set of chunks it must touch to resolve a query.
 
