@@ -373,7 +373,7 @@ or 1 hour.
 |Name|Description|
 |---|---|
 | `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
-| `time` | The timestamp to bucket (timestamp/timestamptz)|
+| `time` | The timestamp to bucket (timestamp/timestamptz/date)|
 
 #### Optional Arguments
 
