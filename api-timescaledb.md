@@ -441,7 +441,7 @@ to the server's timezone setting.
 
 ---
 
-## last() and first() <a id="first-last"></a>
+## last() and first() <a id="first-last"></a><a id="first"></a><a id="last"></a>
 
 The `last()` and `first()` aggregates allow you to get the value of one column
 as ordered by another. For example, `last(temperature, time)` will return the
@@ -454,7 +454,7 @@ latest temperature value based on time within an aggregate group.
 | `value` | The value to return (anyelement) |
 | `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
 
-#### Examples
+#### Sample Usage
 
 Get the latest temperature by device_id:
 ```sql
@@ -464,6 +464,57 @@ SELECT device_id, last(temp, time)
 ```
 
 ---
+
+## histogram() <a id="histogram"></a>
+
+The `histogram()` function represents the distribution of a set of
+values as an array of equal-width buckets. It partitions the dataset
+into a specified number of buckets (`nbuckets`) ranging from the
+inputted `min` and `max` values.
+
+The return value is an array containing `nbuckets`+2 buckets, with the
+middle `nbuckets` bins for values in the stated range, the first
+bucket at the head of the array for values under the lower `min` bound,
+and the last bucket for values above the `max` bound.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `value` | A set of values to partition into a histogram |
+| `min` | The histogram’s lower bound used in bucketing |
+| `max` | The histogram’s upper bound used in bucketing |
+| `nbuckets` | The integer value for the number of histogram buckets (partitions) |
+
+#### Sample Usage
+
+A simple bucketing of device's battery levels from the `readings` dataset:
+
+```sql
+SELECT device_id, histogram(battery_level, 20, 60, 5)
+  FROM readings
+  GROUP BY device_id
+  LIMIT 10;
+```
+
+The expected output:
+```sql
+ device_id  |          histogram
+------------+------------------------------
+ demo000000 | {0,0,0,7,215,206,572}
+ demo000001 | {0,12,173,112,99,145,459}
+ demo000002 | {0,0,187,167,68,229,349}
+ demo000003 | {197,209,127,221,106,112,28}
+ demo000004 | {0,0,0,0,0,39,961}
+ demo000005 | {12,225,171,122,233,80,157}
+ demo000006 | {0,78,176,170,8,40,528}
+ demo000007 | {0,0,0,126,239,245,390}
+ demo000008 | {0,0,311,345,116,228,0}
+ demo000009 | {295,92,105,50,8,8,442}
+```
+
+---
+
 
 ## Time Units <a id="time-units"></a>
 Time units for TimescaleDB functions:
