@@ -27,10 +27,15 @@ still work on the resulting hypertable.
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
 
->vvv The time column currently only supports values with a data type of
- integer (SMALLINT, INT, BIGINT) or timestamp (TIMESTAMP,
- TIMESTAMPTZ).  Additionally, if the time column is of type SMALLINT or INT,
- the `chunk_time_interval` **must** be set explicitly.
+The time column currently only supports values with a data type of
+timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
+
+For time columns having timestamp or DATE types,
+the `chunk_time_interval` should be specified either as an `interval` type
+or a numerical value in microseconds.  For integer types,
+the `chunk_time_interval` **must** be set explicitly, as the database does
+not otherwise understand the semantics of what each integer value
+represents (a second, millisecond, nanosecond, etc.).
 
 <!-- -->
 >ttt The `add_dimension` function can be used following hypertable
@@ -46,18 +51,22 @@ Convert table `conditions` to hypertable with just time partitioning on column `
 SELECT create_hypertable('conditions', 'time');
 ```
 
+Convert table `conditions` to hypertable, setting `chunk_time_interval` to 24 hours.
+```sql
+SELECT create_hypertable('conditions', 'time', chunk_time_interval => 86400000000);
+SELECT create_hypertable('conditions', 'time', chunk_time_interval => interval '1 day');
+```
+
 Convert table `conditions` to hypertable with time partitioning on `time` and
 space partitioning (4 partitions) on `location`:
 ```sql
 SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
-Convert table `conditions` to hypertable with just time partitioning on column `time`,
-but setting `chunk_time_interval` to 24 hours.  Do not raise a warning
+Convert table `conditions` to hypertable. Do not raise a warning
 if `conditions` is already a hypertable.
 ```sql
-SELECT create_hypertable('conditions', 'time',
-  chunk_time_interval => 86400000000, if_not_exists => TRUE);
+SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 ```
 
 #### Best Practices <a id="create_hypertable-best-practices"></a>
@@ -209,7 +218,7 @@ not affected.
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to update interval for.|
-| `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0.([units][])|
+| `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0. ([units][])|
 
 #### Sample Usage
 
@@ -217,6 +226,18 @@ Set chunk_time_interval to 24 hours.
 ```sql
 SELECT set_chunk_time_interval('conditions', 86400000000);
 ```
+
+A hypertable that is doing
+time partitioning of a timestamp or DATE field must
+specify `chunk_time_interval` an integer
+value in microseconds.  (Unlike `create_hypertable()`, interval
+values currently not supported.)
+
+If the time column is an integer (SMALLINT, INT,
+BIGINT), the `chunk_time_interval` must be specified by an integer value
+corresponding to the underlying semantics of your data schema (e.g.,
+seconds if the INT time field represents seconds, nanoseconds if the
+BIGINT time field represents nanoseconds, etc.).
 
 ---
 
@@ -518,7 +539,7 @@ The expected output:
 
 ## Time Units <a id="time-units"></a>
 Time units for TimescaleDB functions:
-- Microseconds for TIMESTAMP and TIMESTAMPTZ.
+- Microseconds for TIMESTAMP, TIMESTAMPTZ, and DATE.
 - Same units as type for integer time types.
 
 [units]: #time-units
