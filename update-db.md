@@ -34,6 +34,10 @@ After executing the command, the psql `\dx` command should show the latest versi
 (1 row)
 ```
 
+>vvv If you use TimescaleDB in multiple databases within the same
+ PostgreSQL instance, you must run the `ALTER EXTENSION` command
+ in *all* the databases, not just one of them.
+
 ### Example: Migrating docker installations <a id="update-docker"></a>
 
 As a more concrete example, the following steps should be taken with a docker
