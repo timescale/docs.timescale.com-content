@@ -413,7 +413,7 @@ See our [API docs][first-last] for more details.
 
 ### Histogram
 
-TimescaleDB also provides a [histogram][histogram] function.
+TimescaleDB also provides a [histogram][] function.
 The following example defines a histogram with five buckets defined over
 the range 60..85. The generated histogram has seven bins where the first
 is for values below the minimun threshold of 60, the middle five bins are for

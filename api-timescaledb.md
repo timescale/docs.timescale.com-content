@@ -165,7 +165,7 @@ partitioning (e.g., for a second time partition) or hash partitioning.
 and talk with us on [Slack](https://slack-login.timescale.com) about
 your use case. Users will *rarely* want or need to use this command.
 
-<!-- --> 
+<!-- -->
 >vvv The `add_dimension` command can only be executed after a table has been
 converted to a hypertable (via `create_hypertable`), but must similarly
 be run only on an empty hypertable.
@@ -229,9 +229,9 @@ SELECT set_chunk_time_interval('conditions', 86400000000);
 
 A hypertable that is doing
 time partitioning of a timestamp or DATE field must
-specify `chunk_time_interval` an integer
+specify `chunk_time_interval` as an integer
 value in microseconds.  (Unlike `create_hypertable()`, interval
-values currently not supported.)
+values are currently not supported.)
 
 If the time column is an integer (SMALLINT, INT,
 BIGINT), the `chunk_time_interval` must be specified by an integer value
@@ -303,7 +303,7 @@ SELECT table_bytes, index_bytes, toast_bytes, total_bytes FROM hypertable_relati
 ```
 The expected output:
 ```
- table_bytes | index_bytes | toast_bytes | total_bytes 
+ table_bytes | index_bytes | toast_bytes | total_bytes
 -------------+-------------+-------------+-------------
   1227661312 |  1685979136 |      180224 |  2913820672
 ```
@@ -338,7 +338,7 @@ SELECT table_size, index_size, toast_size, total_size FROM hypertable_relation_s
 ```
 The expected output:
 ```
- table_size | index_size | toast_size | total_size 
+ table_size | index_size | toast_size | total_size
 ------------+------------+------------+------------
  1171 MB    | 1608 MB    | 176 kB     | 2779 MB
 ```
@@ -380,14 +380,14 @@ SELECT chunk_table, table_bytes, index_bytes, total_bytes FROM chunk_relation_si
 ```
 The expected output:
 ```
-                 chunk_table                 | table_bytes | index_bytes | total_bytes 
+                 chunk_table                 | table_bytes | index_bytes | total_bytes
 ---------------------------------------------+-------------+-------------+-------------
  "_timescaledb_internal"."_hyper_1_1_chunk"  |    29220864 |    37773312 |    67002368
  "_timescaledb_internal"."_hyper_1_2_chunk"  |    59252736 |    81297408 |   140558336
  ...
 ```
 
-Where 'chunk_table' is the table that contains the data, table bytes is the size of that table, index bytes is the size of the indexes of the table, and total bytes is the size of the table with indexes. 
+Where 'chunk_table' is the table that contains the data, table bytes is the size of that table, index bytes is the size of the indexes of the table, and total bytes is the size of the table with indexes.
 
 ---
 
@@ -425,13 +425,13 @@ SELECT chunk_table, table_size, index_size, total_size FROM chunk_relation_size_
 ```
 The expected output:
 ```
-                chunk_table                 | table_size | index_size | total_size 
+                chunk_table                 | table_size | index_size | total_size
 ---------------------------------------------+------------+------------+------------
  "_timescaledb_internal"."_hyper_1_1_chunk"  | 28 MB      | 36 MB      | 64 MB
  "_timescaledb_internal"."_hyper_1_2_chunk"  | 57 MB      | 78 MB      | 134 MB
  ...
 ```
-Where 'chunk_table' is the table that contains the data, table size is the size of that table, index size is the size of the indexes of the table, and total size is the size of the table with indexes. 
+Where 'chunk_table' is the table that contains the data, table size is the size of that table, index size is the size of the indexes of the table, and total size is the size of the table with indexes.
 
 ---
 
@@ -457,7 +457,7 @@ SELECT * FROM indexes_relation_size('conditions');
 ```
 The expected output:
 ```
-              index_name              | total_bytes 
+              index_name              | total_bytes
 --------------------------------------+-------------
  public.conditions_device_id_time_idx |  1198620672
  public.conditions_time_idx           |   487358464
@@ -490,7 +490,7 @@ SELECT * FROM indexes_relation_size_pretty('conditions');
 The expected output:
 ```
 
-             index_name_              | total_size 
+             index_name_              | total_size
 --------------------------------------+------------
  public.conditions_device_id_time_idx | 1143 MB
  public.conditions_time_idx           | 465 MB
