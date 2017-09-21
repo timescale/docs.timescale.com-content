@@ -50,6 +50,16 @@ commands on different platforms:
 - Mac brew: `brew services restart postgresql`
 - Docker: see below
 
+>vvv Some of these restart services will actually execute status
+ commands on the database instance after restarting them
+ (e.g., `services` calls `pg_isready`).  This may output an error due to
+ this aforementioned library/SQL mismatch, and cause the restart command
+ to state that it failed.  But, you can check and see that
+ the `postgres` instance is actually running.  If you then go ahead and
+ execute the `ALTER EXTENSION` command via `psql`, this issue will go away
+ and the upgrade will succeed.  We're working on eliminating this issue.
+
+<!-- -->
 >vvv If you use TimescaleDB in multiple databases within the same
  PostgreSQL instance, you must run the `ALTER EXTENSION` command
  in *all* the databases, not just one of them.
