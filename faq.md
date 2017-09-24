@@ -94,7 +94,7 @@ TimescaleDB's single-node scalability. [[Top]](#top)
 We've first focused on scaling TimescaleDB up on a single node, which you can read 
 about in the next question. On our internal benchmarks, we have consistently
 scaled TimescaleDB 10+ billion rows, while sustaining insert rates of 100-200k
-rows / second (or 1-2 million metric inserts / second). That said, the principle
+rows / second (or 1-2 million metric inserts / second). That said, the principal
 design decisions implemented
 for scaling up are the same for allowing TimescaleDB to scale out horizontally in a
 linear fashion across many servers. When clustering is released, all servers can
