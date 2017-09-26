@@ -1,6 +1,6 @@
 # Tutorial: Hello NYC
 
-Prerequisites: [Installed TimescaleDB](installation)
+Prerequisites: [Installed TimescaleDB](/getting-started/installation)
 
 By now you should already have: installed TimescaleDB, experienced
 creating hypertables, and tried inserting and querying data (i.e., it's
