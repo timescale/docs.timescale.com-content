@@ -47,6 +47,7 @@ formatting within the docs.
 + Adding '>vvv ' to the start of a blockquote (using '>') will create a "warning" callout.
 + Adding 'fff ' to the start of a paragraph(line) will format it as a "footer link".
 + Adding 'ddd ' to the start of a link will append a 'download link' icon to the end of the link inline.
++ Adding 'x.y.z' anywhere in the text will be replaced by the version number of the branch.  Ex. `look at file foo-x.y.z` >> `look at file foo-0.4.2`.
 
 _Make sure to include the space after the formatting command!_
 
