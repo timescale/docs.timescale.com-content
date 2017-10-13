@@ -35,6 +35,20 @@ SELECT restore_timescaledb();
 ALTER DATABASE tutorial SET timescaledb.restoring='off';
 ```
 
+>vvv PostgreSQL's `pg_dump` does not currently specify the *version* of
+ the extension in its backup, which leads to problems if you are
+ restoring into a database instance with a more recent extension
+ version installed.  (In particular, the backup could be for some
+ version 0.4, but then the `CREATE EXTENSION timescaledb` command just
+ installs the latest (say, 0.5), and thus does not have the
+ opportunity to run our upgrade scripts.)  We are looking into
+ submitting a fix for `pg_dump`.
+
+>The workaround is that when restoring from a backup, you need to
+ restore to a PostgreSQL instance with the same extension version
+ installed, and *then* upgrade the version.
+
+
 >vvv These instructions do not work if you use flags to selectively
  choose tables (`-t`) or schemas (`--schema`), and so cannot be used
  to backup only an individual hypertable.  In particular, even if you
