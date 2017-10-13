@@ -49,12 +49,62 @@ where you are most likely to use a
 CREATE INDEX ON conditions (time DESC, temperature);
 ```
 Having a `time DESC` column specification in the index allows for efficient
-queries by column-value and time. For example, the index defined above would
+queries by column value and time. For example, the index defined above would
 optimize the following query:
 ```sql
 SELECT * FROM conditions WHERE location = 'garage'
   ORDER BY time DESC LIMIT 10
 ```
+
+To understand why composite indexes should be defined in such a
+fashion, consider an example with two locations ("office" and "garage"), and
+various timestamps and temperatures:
+
+An index on `(location, time DESC)` would be organized in sorted order
+as follows:
+
+```
+garage-4
+garage-3
+garage-2
+garage-1
+office-3
+office-2
+office-1
+```
+
+An index on `(time DESC, location)` would be organized in sorted order
+as follow:
+
+```
+4-garage
+3-garage
+3-office
+2-garage
+2-office
+1-garage
+1-office
+```
+
+One can think of the indexes' btrees as being constructed from most
+significant bit downwards, so it first matches on the first character,
+then second, etc., while in the above example I conveniently showed
+them as two separate tuples.
+
+Now, with a predicate like `WHERE location = 'garage' and time >= 1 and
+time < 4`, the top is much better to use: all readings from a given
+location are contiguous, so the first bit of indexes precisely finds
+all metrics from garage, and then we can use any additional time
+predicates to further narrow down the selected set.  With the latter,
+you would have to look over all the time records [1,4), and then once
+again find the right device in each. Much less efficient.
+
+On the other hand, if our conditional was instead asking `temperature
+> 80`, particularly if that conditional matched a larger number of
+values.  You still need to search through all sets of time values
+matching your predicate, but in each one, your query also grabs a
+(potentially large) subset of the values, rather than just one
+distinct one.
 
 For sparse data where a column is often NULL, we suggest adding
 a `WHERE column IS NOT NULL` clause to the index (unless you are often
