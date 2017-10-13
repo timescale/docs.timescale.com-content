@@ -116,14 +116,16 @@ CREATE INDEX ON conditions (time DESC, humidity)
 ```
 this creates a more compact, and thus efficient, index.
 
->ttt <a id="unique_indexes"></a> To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
-exists, the partitioning column **must** be the first (or first two)
-columns that comprise the index.  That is, using our running
-example, you can define a unique index on just the {time, location} fields,
-or to include a third column (say, temperature), the index
-must be specified as {time, location, temperature}.  That said, we
-find UNIQUE indexes in time-series data to be much less prevalent than
-in traditional relational data models.
+>ttt <a id="unique_indexes"></a> To a define an index as UNIQUE or PRIMARY KEY,
+the time column and, if it exists, the partitioning column(s) **must** be the
+prefix of any composite index, i.e., the first (or first several) columns that
+comprise the index.
+
+>Using our running example, you can define a unique composit index on
+just the `(time, location)` fields, or to include a third column (say,
+temperature), the index must be specified as `(time, location, temperature)`.
+For further discussion, please see our discussion of
+UNIQUE constraints in the context of [UPSERT operations][UPSERT].
 
 
 #### Default Indexes
@@ -155,6 +157,7 @@ our [basic tutorial][] or play around on your own with our [sample datasets][].
 [migrating your data]: /getting-started/setup/migrate-from-postgresql
 [INSERT]: /api#insert
 [SELECT]: /api#select
+[UPSERT]: /api#upsert
 [basic tutorial]: /tutorials/tutorial-hello-nyc
 [sample datasets]: /tutorials/other-sample-datasets
 [create_hypertable]: /api/api-timescaledb#create_hypertable
