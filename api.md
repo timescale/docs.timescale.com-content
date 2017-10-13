@@ -270,7 +270,7 @@ The above `UNIQUE` statement during table creation internally is similar to:
 ```sql
 CREATE UNIQUE INDEX on conditions (time, location);
 ```
-both of which results on a unique index for the table:
+Both of these result on a unique index for the table:
 ```sql
 # \d+ conditions;
                               Table "public.conditions"
@@ -311,7 +311,7 @@ INSERT INTO conditions
 
 >If the schema were to have an additional column like `device` that is used
  as an additional partition dimension, then the constraint would have
- to be `UNIQUE(time, device)` or `UNIQUE(time, device, location)`. In such
+ to be `UNIQUE(time, device)` or `UNIQUE(time, device, location)`. In
  such scenarios then, `UNIQUE(time, location)` would *no longer* be
  a valid constraint.
 
