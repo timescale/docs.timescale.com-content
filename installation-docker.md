@@ -2,7 +2,8 @@
 
 #### Quick start
 
-Starting a TimescaleDB instance, pulling our Docker image from [Docker Hub][] if needed.
+Starting a TimescaleDB instance, pulling our Docker image
+from [Docker Hub][] if it has not been already installed.
 
 ```bash
 docker run -d --name timescaledb -p 5432:5432 timescale/timescaledb
@@ -17,6 +18,11 @@ container (NOTE: for Windows this is _necessary_):
 ```bash
 docker exec -it timescaledb psql -U postgres
 ```
+
+>ttt The `run` command will only pull an image from Docker Hub if one
+does not exist locally.  If you have previously pulled an image and
+want instead to *upgrade* to the latest version, you need to
+explicitly `pull` the latest: `docker pull timescale/timescaledb:latest`.
 
 #### More detailed instructions
 
