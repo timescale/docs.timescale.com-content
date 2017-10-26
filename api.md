@@ -530,5 +530,20 @@ Time units for TimescaleDB functions:
 - Microseconds for TIMESTAMP and TIMESTAMPTZ.
 - Same units as type for integer time types.
 
+---
+
+## Dump TimescaleDB meta data <a id="dump-meta-data"></a>
+
+To help when asking for support and reporting bugs, TimescaleDB includes a SQL script
+that outputs meta data from the internal TimescaleDB tables as well as version information.
+The script is available in the source distribution in `scripts/` but can also be
+[downloaded separately](https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql).
+To use it, run
+```bash
+psql [your connect flags] -d your_timescale_db < dump_meta_data.sql > dumpfile.txt
+```
+and then inspect `dump_file.txt` before sending it together with a bug report or support question.
+
+
 [units]: #time-units
 [best practices]: #create_hypertable-best-practices
