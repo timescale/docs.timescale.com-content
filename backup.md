@@ -49,6 +49,7 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
  installed, and *then* upgrade the version.
 
 <!-- -->
+
 >vvv These instructions do not work if you use flags to selectively
  choose tables (`-t`) or schemas (`--schema`), and so cannot be used
  to backup only an individual hypertable.  In particular, even if you
