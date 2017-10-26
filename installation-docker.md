@@ -2,8 +2,7 @@
 
 #### Quick start
 
-Starting a TimescaleDB instance, pulling our Docker image
-from [Docker Hub][] if it has not been already installed.
+Starting a TimescaleDB instance, pulling our Docker image from [Docker Hub][] if it has not been already installed.
 
 ```bash
 docker run -d --name timescaledb -p 5432:5432 timescale/timescaledb
