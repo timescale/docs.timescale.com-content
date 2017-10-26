@@ -78,7 +78,7 @@ conflicts with another can either (a) do nothing or (b) result in a
 subsequent update of that existing row.
 
 In order to create a conflict, an insert must be performed on
-identical value(s) in column(s) covered by a unique index. Such an
+identical value(s) in column(s) covered by a unique index or constraint. Such an
 index is created automatically when marking column(s) as PRIMARY KEY
 or with a UNIQUE constraint.
 
@@ -103,6 +103,25 @@ CREATE TABLE conditions (
 then the second attempt to insert to this same time will normally
 return an error.
 
+The above `UNIQUE` statement during table creation internally is similar to:
+
+```sql
+CREATE UNIQUE INDEX on conditions (time, location);
+```
+both of which results on a unique index for the table:
+```sql
+# \d+ conditions;
+                              Table "public.conditions"
+   Column    |           Type           | Modifiers | Storage  | Stats target | Description
+-------------+--------------------------+-----------+----------+--------------+-------------
+ time        | timestamp with time zone | not null  | plain    |              |
+ location    | text                     | not null  | extended |              |
+ temperature | double precision         |           | plain    |              |
+ humidity    | double precision         |           | plain    |              |
+Indexes:
+    "conditions_time_location_idx" UNIQUE, btree ("time", location)
+```
+
 Now, however, the INSERT command can specify that nothing be done on
 a conflict. This is particularly important when writing many rows as
 one batch, as otherwise the entire transaction will fail (as opposed
@@ -123,20 +142,23 @@ INSERT INTO conditions
         humidity = excluded.humidity;
 ```
 
->vvv Unique constraints must include all partitioning keys as their prefix.
- This above example works if either time, or time and
- location, are used to partition the hypertable (i.e., are the arguments
- to `create_hypertable`).  If the schema had an additional column
- like `device` which was alternatively used for space
- partitioning, then the constraint would have
- to be `UNIQUE(time, device)` or `UNIQUE(time, device, location)`.
+>>ttt Unique constraints must include all partitioning keys as
+ their prefix.  For example, if the table just uses time partitioning,
+ the system requires `time` as the initial part of the
+ constraint: `UNIQUE(time)`, `UNIQUE(time, location)`, etc.
+ On the other hand, `UNIQUE(location)` is *not* a valid constraint.
+
+>If the schema were to have an additional column like `device` that is used
+ as an additional partition dimension, then the constraint would have
+ to be `UNIQUE(time, device)` or `UNIQUE(time, device, location)`. In such
+ such scenarios then, `UNIQUE(time, location)` would *no longer* be
+ a valid constraint.
 
 <!-- -->
->vvv TimescaleDB does not yet support `ON CONFLICT ON CONSTRAINT`
- functionality, so conflicts must currently occur over a unique index.
- This limitation will be removed in a future version. For now, the suggested
- approach is either to explicitly define a unique index or specify that one
- column is UNIQUE.
+>vvv TimescaleDB does not yet support using `ON CONFLICT ON CONSTRAINT` with
+ a named key (e.g., `conditions_time_location_idx`), but much of this
+ functionality can be captured by specifying the same columns as above with
+ a unique index/constraint. This limitation will be removed in a future version.
 
 ---
 

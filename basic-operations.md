@@ -127,7 +127,6 @@ temperature), the index must be specified as `(time, location, temperature)`.
 For further discussion, please see our discussion of
 UNIQUE constraints in the context of [UPSERT operations][UPSERT].
 
-
 #### Default Indexes
 
 By default, TimescaleDB automatically creates a time index on your data when a hypertable is created.
