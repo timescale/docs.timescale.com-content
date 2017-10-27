@@ -142,7 +142,7 @@ INSERT INTO conditions
         humidity = excluded.humidity;
 ```
 
->>ttt Unique constraints must include all partitioning keys as
+>ttt Unique constraints must include all partitioning keys as
  their prefix.  For example, if the table just uses time partitioning,
  the system requires `time` as the initial part of the
  constraint: `UNIQUE(time)`, `UNIQUE(time, location)`, etc.

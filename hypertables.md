@@ -56,4 +56,5 @@ DROP TABLE conditions;
 **Need text here**
 
 [postgres-createtable]: https://www.postgresql.org/docs/9.6/static/sql-createtable.html
+[create_hypertable]: /api#create_hypertable
 [migrate-from-postgresql]: /getting-started/migrating-data
