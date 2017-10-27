@@ -107,7 +107,7 @@ easily run [cron jobs][kube_cronjob] that are managed by Kubernetes
 itself.
 
 
-[drop_chunks]: /api/api-timescaledb#drop_chunks
+[drop_chunks]: /api#drop_chunks
 [unit]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 [timer]: https://www.freedesktop.org/software/systemd/man/systemd.timer.html
 [kube_cronjob]: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/

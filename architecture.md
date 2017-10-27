@@ -23,13 +23,13 @@ such that one can query it via vanilla SQL.
 Virtually all user interactions with TimescaleDB are with hypertables. Creating
 tables and indexes, altering tables, inserting data, selecting data, etc. can
 (and should) all be executed on the hypertable.
-[[Jump to basic SQL operations](/using-timescaledb/hypertables)]
+[[Jump to basic SQL operations][jumpSQL]]
 
 A hypertable is defined by a standard schema with column names and
 types, with at least one column specifying a time value, and
 one (optional) column specifying an additional partitioning key.
 
->ttt See our [data model](/introduction/data-model) for a further discussion of various
+>ttt See our [data model][] for a further discussion of various
 ways to organize data, depending on your use cases;
 the simplest and most natural is in a "wide-table" like many
 relational databases.
@@ -104,9 +104,12 @@ while maintaining support for multiple indexes.
 For more on the motivation and design of TimescaleDB's adaptive space/time
 chunking, please see our [technical blog post][chunking].
 
-[hypertables]: /introduction/architecture#hypertables-and-chunks
-[chunking]: https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
 
 <!--- Picture of blog post -->
 
 **Next:** Benefits of this architecture design? [TimescaleDB vs. PostgreSQL](/introduction/timescaledb-vs-postgres)
+
+[data model]: /introduction/data-model
+[hypertables]: /introduction/architecture#hypertables-and-chunks
+[chunking]: https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
+[jumpSQL]: /using-timescaledb/hypertables

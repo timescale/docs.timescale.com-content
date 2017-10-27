@@ -28,7 +28,7 @@ After executing the command, the psql `\dx` command should show the latest versi
 ```sql
 \dx timescaledb
 
-    Name     | Version |   Schema   |                             Description                            
+    Name     | Version |   Schema   |                             Description
 -------------+---------+------------+---------------------------------------------------------------------
  timescaledb | 0.5.0   | public     | Enables scalable inserts and complex queries for time-series data
 (1 row)
@@ -39,8 +39,8 @@ restart PostgreSQL after installing the latest version,
 the running instance does not load the newly updated library
 (`timescaledb.so`).  On the flip side, if you forget to
 run `ALTER` on the database after restarting, the installed SQL
-API for that database will expect the old .so library, 
-as opposed to the new one.  Both scenarios will lead to a 
+API for that database will expect the old .so library,
+as opposed to the new one.  Both scenarios will lead to a
 mismatch likely to cause errors.
 
 Remember that restarting PostgreSQL is accomplished via different
@@ -115,4 +115,4 @@ You can then run the `\dx` command to make sure you have the
 latest version of TimescaleDB installed.
 
 [install]: /getting-started/installation
-[backup]: /api/backup
+[backup]: /using-timescaledb/backup

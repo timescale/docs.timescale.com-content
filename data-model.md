@@ -5,7 +5,7 @@ relational databases. This makes Timescale somewhat different than most other ti
 databases, which typically use a "narrow-table" model.
 
 Here we discuss why we chose the wide-table model,
-and how we recommend using it for time-series data, using an Internet 
+and how we recommend using it for time-series data, using an Internet
 of Things (IoT) example.
 
 Imagine a distributed group of 1,000 IoT devices designed to collect
@@ -127,4 +127,6 @@ to "Boston"), we can make this change without having to go back and
 overwrite historical data.
 
 
-**Next:**  [How is TimescaleDB's architecture different?](/introduction/architecture)
+**Next:**  [How is TimescaleDB's architecture different?][architecture]
+
+[architecture]: /introduction/architecture

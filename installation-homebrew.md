@@ -4,7 +4,7 @@ This will install both TimescaleDB *AND* PostgreSQL 9.6 via Homebrew.
 
 #### Prerequisites
 
-- [Homebrew](https://brew.sh/)
+- [Homebrew][]
 
 #### Build & Install
 
@@ -47,3 +47,4 @@ brew services restart postgresql@9.6
 # Add a superuser postgres:
 createuser postgres -s
 ```
+[Homebrew]: https://brew.sh/

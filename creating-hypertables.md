@@ -51,6 +51,7 @@ SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
 
 SQL `UPDATE` and `DELETE` commands also work as expected. For more
 examples of using TimescaleDB's standard SQL interface, please see our
-[use pages](/using-timescaledb).
+[use pages][].
 
 [API Reference]: /api#create_hypertable
+[use pages]: /using-timescaledb

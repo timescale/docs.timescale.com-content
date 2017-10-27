@@ -73,6 +73,6 @@ For more instructions on using PostGIS, [see our tutorial][tutorial-postgis].
 [official Postgres image]: https://github.com/docker-library/postgres/
 [alpine Linux]: https://alpinelinux.org/
 [Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
-[docker-data-volumes]: https://docs.docker.com/engine/tutorials/dockervolumes/#data-volumes
 [docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh
+[docker-data-volumes]: https://docs.docker.com/engine/tutorials/dockervolumes/#data-volumes
 [tutorial-postgis]: http://docs.timescale.com/tutorials/tutorial-hello-nyc#tutorial-postgis

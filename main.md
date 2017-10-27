@@ -13,7 +13,7 @@
       <div class="test-chooser__cyoa-menu-label">Installing TimescaleDB</div>
     </div>
   </a>
-  <a href="/getting-started/setup/migrate-from-postgresql">
+  <a href="/getting-started/migrating-data">
     <div class="cyoa-button">
       <img src="/assets/images/welcome-3-postgresql.png" class="cyoa-icon">
       <div class="test-chooser__cyoa-menu-label">Migrating from PostgreSQL</div>

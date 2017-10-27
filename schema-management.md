@@ -138,3 +138,7 @@ For additional information, see the [PostgreSQL docs][postgres-createtrigger].
 ## Maintenance
 
 **Need text here**
+
+[postgres-createindex]: https://www.postgresql.org/docs/9.6/static/sql-createindex.html
+[create_hypertable]: /api#create_hypertable
+[postgres-createtrigger]: https://www.postgresql.org/docs/9.6/static/sql-createtrigger.html

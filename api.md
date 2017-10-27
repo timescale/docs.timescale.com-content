@@ -9,7 +9,7 @@ The column selected as the dimension can either use interval
 partitioning (e.g., for a second time partition) or hash partitioning.
 
 >vvv Before using this command, please see the [best practices][] discussion
-and talk with us on [Slack](https://slack-login.timescale.com) about
+and talk with us on [Slack][] about
 your use case. Users will *rarely* want or need to use this command.
 
 <!-- -->
@@ -159,7 +159,7 @@ corresponds to increased planning latency for some types of queries.
 both the underlying data size *and* any indexes, so some care might be
 taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
-total chunk sizes via the [chunk relation size](#chunk_relation_size)
+total chunk sizes via the [chunk relation size][]
 function.
 
 **Space partitions**: The use of additional partitioning is a very
@@ -546,13 +546,15 @@ Time units for TimescaleDB functions:
 To help when asking for support and reporting bugs, TimescaleDB includes a SQL script
 that outputs meta data from the internal TimescaleDB tables as well as version information.
 The script is available in the source distribution in `scripts/` but can also be
-[downloaded separately](https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql).
+[downloaded separately][].
 To use it, run
 ```bash
 psql [your connect flags] -d your_timescale_db < dump_meta_data.sql > dumpfile.txt
 ```
 and then inspect `dump_file.txt` before sending it together with a bug report or support question.
 
-
+[Slack]: https://slack-login.timescale.com
+[chunk relation size]: #chunk_relation_size
 [units]: #time-units
 [best practices]: #create_hypertable-best-practices
+[downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql

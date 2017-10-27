@@ -47,5 +47,5 @@ storing time-series data in Postgres, and want to move this data to a
 TimescaleDB hypertable.
 
 [installed]: /getting-started/installation
-[start-scratch]: /getting-started/setup/starting-from-scratch
-[migrate-postgres]: /getting-started/setup/migrate-from-postgresql
+[start-scratch]: /getting-started/creating-hypertables
+[migrate-postgres]: /getting-started/migrating-data

@@ -1,6 +1,6 @@
 # Tutorial: Hello NYC
 
-Prerequisites: [Installed TimescaleDB](/getting-started/installation)
+Prerequisites: [Installed TimescaleDB][install]
 
 By now you should already have: installed TimescaleDB, experienced
 creating hypertables, and tried inserting and querying data (i.e., it's
@@ -10,8 +10,7 @@ But a database is only as interesting as the insights it allows you to
 derive from your data.
 
 For this tutorial, we've put together a sample data set from real-life
-New York City taxicab data ([courtesy of the NYC Taxi and Limousine
-Commission][NYCTLC]).
+New York City taxicab data ([courtesy of the NYC Taxi and Limousine Commission][NYCTLC]).
 
 >ttt For simplicity we'll assume that TimescaleDB is installed on a
 PostgreSQL server at `localhost` on the default port, and that a user `postgres` exists
@@ -455,10 +454,14 @@ TimescaleDB.
 ### 6. Next Steps
 Up for learning more? Here are a few suggestions:
 
-- [Try Other Sample Datasets](/tutorials/other-sample-datasets)
-- [Migrate your own Data](/getting-started/migrate-from-postgresql)
-- [Read the Technical Paper](http://www.timescale.com/papers/timescaledb.pdf)
+- [Try Other Sample Datasets][other samples]
+- [Migrate your own Data][migrate]
+- [Read the Technical Paper][paper]
 
+[install]: /getting-started/installation
 [NYCTLC]: http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml
 [nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
 [postgis]: http://postgis.net/documentation
+[other samples]: /tutorials/other-sample-datasets
+[migrate]: /getting-started/migrating-data
+[paper]: http://www.timescale.com/papers/timescaledb.pdf

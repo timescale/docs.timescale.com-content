@@ -92,4 +92,6 @@ air flow, carbon monoxide (CO), nitrogen dioxide (NO2), particulate matter (PM10
 
 - (and more)
 
-**Next:** [TimescaleDB's data model](/introduction/data-model)
+**Next:** [TimescaleDB's data model][data-model]
+
+[data-model]: /introduction/data-model

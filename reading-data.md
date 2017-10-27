@@ -109,42 +109,38 @@ SELECT location, last(temperature, time)
   FROM conditions
   GROUP BY location;
 ```
-See our [API docs][first-last] for more details.
+See our [API docs][first] for more details.
 
 ### Histogram
 
-TimescaleDB also supports PostgreSQL's PLpgSQL scripting language to define new
-functions.  For the following example, we first created a `histogram` function
-using the [code found here][histogram], which returns a histogram as an `array` type.
+TimescaleDB also provides a [histogram][] function.
+The following example defines a histogram with five buckets defined over
+the range 60..85. The generated histogram has seven bins where the first
+is for values below the minimun threshold of 60, the middle five bins are for
+values in the stated range and the last is for values above 85.
 
-After cutting and pasting the code found in that example to the `psql`
-command line, one can ask histogram questions about data.  The
-following example defines a histogram with five buckets defined over
-the range 60..85.
 
 ```sql
 SELECT location, COUNT(*),
     histogram(temperature, 60.0, 85.0, 5)
-  FROM conditions
-  WHERE time > NOW() - '7 days'
-  GROUP BY location;
+   FROM conditions
+   WHERE time > NOW() - interval '7 days'
+   GROUP BY location;
 ```
 This query will output data in the following form:
 ```bash
  location   | count |        histogram
 ------------+-------+-------------------------
- office     | 10080 | [0:5]={0,3860,6220,0,0}
- basement   | 10080 | [0:5]={6056,4024,0,0,0}
- garage     | 10080 | [0:5]={2679,957,2420,2150,1874}
+ office     | 10080 | {0,0,3860,6220,0,0,0}
+ basement   | 10080 | {0,6056,4024,0,0,0,0}
+ garage     | 10080 | {0,2679,957,2420,2150,1874,0}
 ```
-
-(We plan to add native histogram support in the future.)
 
 What analytic functions are we missing?  [Let us know on github][issues].
 
 [postgres-select]: https://www.postgresql.org/docs/current/static/sql-select.html
 [percentile_cont]: https://www.postgresql.org/docs/current/static/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
-[indexing]: /getting-started/basic-operations#indexing-data
-[histogram]: https://wiki.postgresql.org/wiki/Aggregate_Histogram
-[first-last]: /api/api-timescaledb#first-last
+[indexing]: /using-timescaledb/schema-management#indexing
+[histogram]: /api#histogram
+[first]: /api#first
 [issues]: https://github.com/timescale/timescaledb/issues

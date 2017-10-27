@@ -163,8 +163,8 @@ Now checkout some common [hypertable commands][] for exploring your data.
 
 [installed]: /getting-started/installation
 [setup]: /getting-started/setup
-[hypertable commands]: /getting-started/basic-operations
-[indexing]: /getting-started/basic-operations#indexing
-[unique_indexes]: /getting-started/basic-operations#unique_indexes
-[create_hypertable]: /api/api-timescaledb#create_hypertable
+[create_hypertable]: /api#create_hypertable
+[unique_indexes]: /using-timescaledb/schema-management#unique_indexes
+[indexing]: /using-timescaledb/schema-management#indexing
 [parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
+[hypertable commands]: /using-timescaledb/hypertables

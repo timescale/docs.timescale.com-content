@@ -99,8 +99,8 @@ predicates to further narrow down the selected set.  With the latter,
 you would have to look over all the time records [1,4), and then once
 again find the right device in each. Much less efficient.
 
-On the other hand, if our conditional was instead
-asking `temperature > 80`, particularly if that conditional matched a larger number of
+On the other hand, if our conditional was instead asking `temperature
+> 80`, particularly if that conditional matched a larger number of
 values.  You still need to search through all sets of time values
 matching your predicate, but in each one, your query also grabs a
 (potentially large) subset of the values, rather than just one

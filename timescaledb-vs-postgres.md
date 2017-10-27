@@ -136,7 +136,7 @@ The one additional cost of TimescaleDB compared to PostgreSQL is more
 complex planning (given that a single hypertable can be comprised of
 many chunks).  This can translate to a few extra milliseconds of
 planning time, which can have a disproportional influence for very
-low-latency queries (<10ms).
+low-latency queries (< 10ms).
 
 ## Time-oriented Features
 
@@ -231,8 +231,9 @@ vacuuming that can be prohibitively expensive in very large tables.
 For more details, see our [data retention][] discussion, including how
 to automate your data retention policies.
 
-**Next:** How does TimescaleDB compare to NoSQL time-series DBs? [TimescaleDB vs. NoSQL](/introduction/timescaledb-vs-nosql)
+**Next:** How does TimescaleDB compare to NoSQL time-series DBs? [TimescaleDB vs. NoSQL][vs NoSQL]
 
 [architectural discussion]: /introduction/architecture#benefits-chunking
-[time bucketing]: /api/api-timescaledb#time_bucket
+[time bucketing]: /api#time_bucket
 [data retention]: /api/data-retention
+[vs NoSQL]: /introduction/timescaledb-vs-nosql
