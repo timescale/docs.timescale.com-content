@@ -3,6 +3,8 @@
 The primary point of interaction with your data is a hypertable,
 the abstraction of a single continuous table across all space and time intervals, such that one can query it via vanilla SQL.
 
+>ttt First make sure that you have properly [installed][] AND [setup][] your Timescale database within your PostgreSQL instance.
+
 ### Creating a (Hyper)table
 To create a hypertable, you start with a regular SQL table, and then convert
 it into a hypertable via the function `create_hypertable()` ([API reference][]).
@@ -53,5 +55,7 @@ SQL `UPDATE` and `DELETE` commands also work as expected. For more
 examples of using TimescaleDB's standard SQL interface, please see our
 [use pages][].
 
+[installed]: /getting-started/installation
+[setup]: /getting-started/setup
 [API Reference]: /api#create_hypertable
 [use pages]: /using-timescaledb

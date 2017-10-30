@@ -1,4 +1,5 @@
 # Migrating Data
+>ttt First make sure that you have properly [installed][] AND [setup][] your Timescale database within your PostgreSQL instance.
 
 ## Migration from PostgreSQL
 
