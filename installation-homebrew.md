@@ -26,6 +26,7 @@ brew install timescaledb
 
 Also, you will need to edit your `postgresql.conf` file to include
 necessary libraries:
+
 ```bash
 # Modify postgresql.conf to uncomment this line and add required libraries.
 # For example:
@@ -34,6 +35,8 @@ shared_preload_libraries = 'timescaledb'
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
+>vvv You must specify `9.6` in the below command to prevent homebrew from trying to use PostgreSQL 10 as the instance reference.
+
 ```bash
 # Restart PostgreSQL instance
 brew services restart postgresql@9.6
