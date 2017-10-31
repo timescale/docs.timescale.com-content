@@ -36,7 +36,7 @@ To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
 ```bash
 # Restart PostgreSQL instance
-brew services restart postgresql
+brew services restart postgresql@9.6
 
 # Add a superuser postgres:
 createuser postgres -s
