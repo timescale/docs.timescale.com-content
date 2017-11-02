@@ -393,7 +393,6 @@ or 1 hour.
 |---|---|
 | `offset` | The amount to offset all buckets by (integer) |
 
-
 #### Sample Usage
 
 Simple 5-minute averaging:

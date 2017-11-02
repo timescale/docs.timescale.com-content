@@ -97,11 +97,20 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
   WHERE location = 'garage' and time > NOW() - '1 day'
   ORDER BY time DESC;
 ```
+### Time Bucket
 
+TimescaleDBs [time_bucket][] acts as a more powerful version of the PostgreSQL function [date_trunc][].  It accepts arbitrary time intervals as well as optional offsets and returns the bucket start time.
+
+```sql
+SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
+  FROM metrics
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
+```
 
 ### First, Last
 
-TimescaleDB defines functions for `first` and `last`,
+TimescaleDB defines functions for [first][] and [last][],
 which allow you to get the value of one column as ordered by another.
 
 ```sql
@@ -109,7 +118,6 @@ SELECT location, last(temperature, time)
   FROM conditions
   GROUP BY location;
 ```
-See our [API docs][first] for more details.
 
 ### Histogram
 
@@ -141,6 +149,9 @@ What analytic functions are we missing?  [Let us know on github][issues].
 [postgres-select]: https://www.postgresql.org/docs/current/static/sql-select.html
 [percentile_cont]: https://www.postgresql.org/docs/current/static/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
 [indexing]: /using-timescaledb/schema-management#indexing
-[histogram]: /api#histogram
+[time_bucket]: /api#time_bucket
+[date_trunc]: https://www.postgresql.org/docs/current/static/functions-datetime.html#functions-datetime-trunc
 [first]: /api#first
+[last]: /api#last
+[histogram]: /api#histogram
 [issues]: https://github.com/timescale/timescaledb/issues
