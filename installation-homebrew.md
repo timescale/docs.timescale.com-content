@@ -20,6 +20,9 @@ brew tap timescale/tap
 
 # To install
 brew install timescaledb
+
+# Post-install to move files to appropriate place
+/usr/local/bin/timescaledb_move.sh
 ```
 
 #### Update Postgresql.conf
