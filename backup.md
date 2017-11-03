@@ -1,4 +1,4 @@
-## Backup & Restore <a id="backup"></a>
+# Backup & Restore <a id="backup"></a>
 
 In this section, we cover how to backup and restore an entire
 database or individual hypertables using the native PostgreSQL

@@ -1,4 +1,4 @@
-## Updating software versions <a id="update"></a>
+# Updating software versions <a id="update"></a>
 
 This section describes how to upgrade between different versions of
 TimescaleDB.  Since version 0.1, TimescaleDB supports **in-place updates**:
