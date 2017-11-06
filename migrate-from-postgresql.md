@@ -1,4 +1,5 @@
 # Migrate from PostgreSQL
+>ttt First make sure that you have properly [installed][] AND [setup][] your Timescale database within your PostgreSQL instance.
 
 Depending on where your data is currently stored,
 the steps to migrate it to TimescaleDB are slightly different.
@@ -10,8 +11,6 @@ data, [follow these instructions](#same-db).
 - **Different database**: If you want to migrate data from
 a different database or a different PostgreSQL instance
 altogether, [follow these instructions](#different-db).
-
-We assume that the new database has already been [setup][] with the timescale extension.
 
 ## Migrating from the Same Database <a id="same-db"></a>
 
@@ -72,7 +71,7 @@ and/or schema.
 If you used the convenient method, whatever indexes were on `old_table` are now
 on `new_table` making this step optional. For the faster `CREATE TABLE` method
 or for adding any indexes not on `old_table`, you need to add indexes to
-this hypertable.  
+this hypertable.
 
 ```sql
 CREATE INDEX on new_table (column_name, <options>)
@@ -99,7 +98,7 @@ hypertables (i.e., those that currently have time-series data).
 
 For this example we'll assume you have a PostgreSQL instance with a database
 called `old_db` that contains a single table called `conditions` that you want to
-convert into a hypertable in a new database called `new_db`.  
+convert into a hypertable in a new database called `new_db`.
 
 ### 1. Copying Schema & Setting up Hypertables
 
@@ -161,6 +160,7 @@ Once finished, your migration is complete!
 
 Now checkout some common [hypertable commands][] for exploring your data.
 
+[installed]: /getting-started/installation
 [setup]: /getting-started/setup
 [hypertable commands]: /getting-started/basic-operations
 [indexing]: /getting-started/basic-operations#indexing
