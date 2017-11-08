@@ -620,6 +620,22 @@ SELECT device_id, last(temp, time)
   GROUP BY device_id;
 ```
 
+Get the temperature every 5 minutes for each device over the past day:
+```sql
+SELECT device_id, time_bucket('5 minutes', time) as interval,
+  last(temp, time)
+  FROM metrics
+  WHERE time > now () - interval '1 day'
+  GROUP BY device_id, interval
+  ORDER BY interval DESC;
+```
+
+>vvv The `last` and `first` commands do **not** use indexes, and instead
+ perform a sequential scan through their groups.  They are primarily used
+ for ordered selection within a `GROUP BY` aggregate, and not as an
+ alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
+ latest value (which will use indexes).
+
 ---
 
 ## histogram() <a id="histogram"></a>
