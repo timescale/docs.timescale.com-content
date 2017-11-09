@@ -1,5 +1,18 @@
 # TimescaleDB API Reference
 
+>toplist
+> ### Command List
+> - [add_dimension()](#add_dimension)
+> - [create_hypertable()](#create_hypertable)
+> - [drop_chunks()](#drop_chunks)
+> - [first()](#first)
+> - [last()](#last)
+> - [histogram()](#histogram)
+> - [time_bucket()](#time_bucket)
+> - [chunk_relation_size()](#chunk_relation_size)
+> - [hypertable_relation_size()](#hypertable_relation_size)
+> - [indexes_relation_size()](#indexes_relation_size)
+
 ## Hypertable management <a id="hypertable-management"></a>
 
 ### add_dimension() <a id="add_dimension"></a>
