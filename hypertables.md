@@ -51,9 +51,10 @@ correspondingly delete all chunks belonging to the hypertable.
 DROP TABLE conditions;
 ```
 
+<!--
 ### Best Practices <a id="best-practices"></a>
 
-**Need text here**
+-->
 
 [postgres-createtable]: https://www.postgresql.org/docs/9.6/static/sql-createtable.html
 [create_hypertable]: /api#create_hypertable

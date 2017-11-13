@@ -160,11 +160,14 @@ INSERT INTO conditions
  functionality can be captured by specifying the same columns as above with
  a unique index/constraint. This limitation will be removed in a future version.
 
+<!--
 ---
 
 ## DELETE <a id="delete"></a>
 
 **Need text here**
+
+-->
 
 [postgres-insert]: https://www.postgresql.org/docs/current/static/sql-insert.html
 [postgres-update]: https://www.postgresql.org/docs/current/static/sql-update.html
