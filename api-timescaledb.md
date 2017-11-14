@@ -1,5 +1,21 @@
 # TimescaleDB API Reference
 
+>toplist
+> ### Command List
+> - [add_dimension()](#add_dimension)
+> - [chunk_relation_size()](#chunk_relation_size)
+> - [chunk_relation_size_pretty()](#chunk_relation_size_pretty)
+> - [create_hypertable()](#create_hypertable)
+> - [first()](#first)
+> - [histogram()](#histogram)
+> - [hypertable_relation_size()](#hypertable_relation_size)
+> - [hypertable_relation_size_pretty()](#hypertable_relation_size_pretty)
+> - [indexes_relation_size()](#indexes_relation_size)
+> - [indexes_relation_size_pretty()](#indexes_relation_size_pretty)
+> - [last()](#last)
+> - [time_bucket()](#time_bucket)
+
+
 ## create_hypertable() <a id="create_hypertable"></a>
 
 Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
