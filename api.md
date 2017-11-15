@@ -1,28 +1,30 @@
 # TimescaleDB API Reference
 
 >toplist
-> ### Command List
+> ### Command List (A-Z)
 > - [add_dimension()](#add_dimension)
-> - [create_hypertable()](#create_hypertable)
-> - [drop_chunks()](#drop_chunks)
-> - [first()](#first)
-> - [last()](#last)
-> - [histogram()](#histogram)
-> - [time_bucket()](#time_bucket)
 > - [chunk_relation_size()](#chunk_relation_size)
+> - [chunk_relation_size_pretty()](#chunk_relation_size_pretty)
+> - [create_hypertable()](#create_hypertable)
+> - [first()](#first)
+> - [histogram()](#histogram)
 > - [hypertable_relation_size()](#hypertable_relation_size)
+> - [hypertable_relation_size_pretty()](#hypertable_relation_size_pretty)
 > - [indexes_relation_size()](#indexes_relation_size)
+> - [indexes_relation_size_pretty()](#indexes_relation_size_pretty)
+> - [last()](#last)
+> - [time_bucket()](#time_bucket)
 
 ## Hypertable management <a id="hypertable-management"></a>
 
-### add_dimension() <a id="add_dimension"></a>
+## add_dimension() <a id="add_dimension"></a>
 
 Add an additional partitioning dimension to a TimescaleDB hypertable.
 The column selected as the dimension can either use interval
 partitioning (e.g., for a second time partition) or hash partitioning.
 
 >vvv Before using this command, please see the [best practices][] discussion
-and talk with us on [Slack][] about
+and talk with us on [Slack](https://slack-login.timescale.com) about
 your use case. Users will *rarely* want or need to use this command.
 
 <!-- -->
@@ -53,7 +55,6 @@ partitioning.
  to use at most one "space" dimension (in addition to the required
  time interval specified in `create_hypertable`).
 
-
 #### Sample Usage <a id="add_dimension-examples"></a>
 
 First convert table `conditions` to hypertable with just time
@@ -66,9 +67,8 @@ SELECT add_dimension('conditions', location, number_partitions => 4);
 
 Convert table `conditions` to hypertable with time partitioning on `time` and
 space partitioning (4 partitions) on `location`, then add two additional dimensions.
-
-**Note: More than one additional partitioning dimension is currently experimental and not recommended for production deployments.**
-
+(*Note: More than one additional partitioning dimension is currently experimental and not
+recommended for production deployments.*)
 ```sql
 SELECT create_hypertable('conditions', 'time', 'location', 2);
 SELECT add_dimension('conditions', 'time_received', interval_length => 86400000000);
@@ -77,7 +77,7 @@ SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 
 ---
 
-### create_hypertable() <a id="create_hypertable"></a>
+## create_hypertable() <a id="create_hypertable"></a>
 
 Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
 latter), partitioned on time and with the option to partition
@@ -104,10 +104,15 @@ still work on the resulting hypertable.
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
 
->vvv The time column currently only supports values with a data type of
- integer (SMALLINT, INT, BIGINT) or timestamp (TIMESTAMP,
- TIMESTAMPTZ).  Additionally, if the time column is of type SMALLINT or INT,
- the `chunk_time_interval` **must** be set explicitly.
+The time column currently only supports values with a data type of
+timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
+
+For time columns having timestamp or DATE types,
+the `chunk_time_interval` should be specified either as an `interval` type
+or a numerical value in microseconds.  For integer types,
+the `chunk_time_interval` **must** be set explicitly, as the database does
+not otherwise understand the semantics of what each integer value
+represents (a second, millisecond, nanosecond, etc.).
 
 <!-- -->
 >ttt The `add_dimension` function can be used following hypertable
@@ -123,18 +128,22 @@ Convert table `conditions` to hypertable with just time partitioning on column `
 SELECT create_hypertable('conditions', 'time');
 ```
 
+Convert table `conditions` to hypertable, setting `chunk_time_interval` to 24 hours.
+```sql
+SELECT create_hypertable('conditions', 'time', chunk_time_interval => 86400000000);
+SELECT create_hypertable('conditions', 'time', chunk_time_interval => interval '1 day');
+```
+
 Convert table `conditions` to hypertable with time partitioning on `time` and
 space partitioning (4 partitions) on `location`:
 ```sql
 SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
-Convert table `conditions` to hypertable with just time partitioning on column `time`,
-but setting `chunk_time_interval` to 24 hours.  Do not raise a warning
+Convert table `conditions` to hypertable. Do not raise a warning
 if `conditions` is already a hypertable.
 ```sql
-SELECT create_hypertable('conditions', 'time',
-  chunk_time_interval => 86400000000, if_not_exists => TRUE);
+SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 ```
 
 #### Best Practices <a id="create_hypertable-best-practices"></a>
@@ -172,7 +181,7 @@ corresponds to increased planning latency for some types of queries.
 both the underlying data size *and* any indexes, so some care might be
 taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
-total chunk sizes via the [chunk relation size][]
+total chunk sizes via the [chunk relation size](#chunk_relation_size)
 function.
 
 **Space partitions**: The use of additional partitioning is a very
@@ -223,7 +232,7 @@ queries.
 
 ---
 
-### drop_chunks() <a id="drop_chunks"></a>
+## drop_chunks() <a id="drop_chunks"></a>
 
 Removes data chunks that are older than a given time interval across all
 hypertables or a specific one. Chunks are removed only if _all_ of their data is
@@ -281,33 +290,15 @@ SELECT device_id, first(temp, time)
   GROUP BY device_id;
 ```
 
----
-
-### last() <a id="last"></a>
-
-The `first()` aggregate allows you to get the value of one column
-as ordered by another. For example, `last(temperature, time)` will return the
-latest temperature value based on time within an aggregate group.
-
-#### Required Arguments
-
-|Name|Description|
-|---|---|
-| `value` | The value to return (anyelement) |
-| `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
-
-#### Examples
-
-Get the latest temperature by device_id:
-```sql
-SELECT device_id, last(temp, time)
-  FROM metrics
-  GROUP BY device_id;
-```
+>vvv The `last` and `first` commands do **not** use indexes, and instead
+ perform a sequential scan through their groups.  They are primarily used
+ for ordered selection within a `GROUP BY` aggregate, and not as an
+ alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
+ latest value (which will use indexes).
 
 ---
 
-### histogram() <a id="histogram"></a>
+## histogram() <a id="histogram"></a>
 
 The `histogram()` function represents the distribution of a set of
 values as an array of equal-width buckets. It partitions the dataset
@@ -355,10 +346,42 @@ The expected output:
  demo000009 | {295,92,105,50,8,8,442}
 ```
 
+---
+
+### last() <a id="last"></a>
+
+The `first()` aggregate allows you to get the value of one column
+as ordered by another. For example, `last(temperature, time)` will return the
+latest temperature value based on time within an aggregate group.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `value` | The value to return (anyelement) |
+| `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
+
+#### Examples
+
+Get the temperature every 5 minutes for each device over the past day:
+```sql
+SELECT device_id, time_bucket('5 minutes', time) as interval,
+  last(temp, time)
+  FROM metrics
+  WHERE time > now () - interval '1 day'
+  GROUP BY device_id, interval
+  ORDER BY interval DESC;
+```
+
+>vvv The `last` and `first` commands do **not** use indexes, and instead
+ perform a sequential scan through their groups.  They are primarily used
+ for ordered selection within a `GROUP BY` aggregate, and not as an
+ alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
+ latest value (which will use indexes).
 
 ---
 
-### time_bucket() <a id="time_bucket"></a>
+## time_bucket() <a id="time_bucket"></a>
 
 This is a more powerful version of the standard PostgreSQL `date_trunc` function.
 It allows for arbitrary time intervals instead of the second, minute, hour, etc.
@@ -383,7 +406,7 @@ or 1 hour.
 |Name|Description|
 |---|---|
 | `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
-| `time` | The timestamp to bucket (timestamp/timestamptz)|
+| `time` | The timestamp to bucket (timestamp/timestamptz/date)|
 
 #### Optional Arguments
 
@@ -405,6 +428,7 @@ or 1 hour.
 |Name|Description|
 |---|---|
 | `offset` | The amount to offset all buckets by (integer) |
+
 
 #### Sample Usage
 
@@ -452,7 +476,7 @@ to the server's timezone setting.
 
 ## Utilities/Statistics <a id="utilities"></a>
 
-### chunk_relation_size() <a id="chunk_relation_size"></a>
+## chunk_relation_size() <a id="chunk_relation_size"></a>
 
 Get relation size of the chunks of an hypertable.
 
@@ -467,16 +491,15 @@ Get relation size of the chunks of an hypertable.
 |---|---|
 |chunk_id|Timescaledb id of a chunk|
 |chunk_table|Table used for the chunk|
+|partitioning_columns|Partitioning column names|
+|partitioning_column_types|Types of partitioning columns|
+|partitioning_hash_functions|Hash functions of partitioning columns|
 |dimensions|Partitioning dimension names|
 |ranges|Partitioning ranges for each dimension|
 |table_bytes|Disk space used by main_table|
 |index_bytes|Disk space used by indexes|
 |toast_bytes|Disc space of toast tables|
 |total_bytes|Disk space used in total|
-|table_size|Pretty output of table_bytes|
-|index_size|Pretty output of index_bytes|
-|toast_size|Pretty output of toast_bytes|
-|total_size|Pretty output of total_bytes|
 
 #### Sample Usage
 ```sql
@@ -484,12 +507,66 @@ SELECT * FROM chunk_relation_size('conditions');
 ```
 or, to reduce the output, a common use is:
 ```sql
-SELECT chunk_table, table_size, index_size, total_size FROM chunk_relation_size('conditions');
+SELECT chunk_table, table_bytes, index_bytes, total_bytes FROM chunk_relation_size('conditions');
 ```
+The expected output:
+```
+                 chunk_table                 | table_bytes | index_bytes | total_bytes
+---------------------------------------------+-------------+-------------+-------------
+ "_timescaledb_internal"."_hyper_1_1_chunk"  |    29220864 |    37773312 |    67002368
+ "_timescaledb_internal"."_hyper_1_2_chunk"  |    59252736 |    81297408 |   140558336
+ ...
+```
+
+Where 'chunk_table' is the table that contains the data, table bytes is the size of that table, index bytes is the size of the indexes of the table, and total bytes is the size of the table with indexes.
 
 ---
 
-### hypertable_relation_size() <a id="hypertable_relation_size"></a>
+## chunk_relation_size_pretty() <a id="chunk_relation_size_pretty"></a>
+
+Get relation size of the chunks of an hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get chunk relation sizes for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|chunk_id|Timescaledb id of a chunk|
+|chunk_table|Table used for the chunk|
+|partitioning_columns|Partitioning column names|
+|partitioning_column_types|Types of partitioning columns|
+|partitioning_hash_functions|Hash functions of partitioning columns|
+|ranges|Partitioning ranges for each dimension|
+|table_size|Pretty output of table_bytes|
+|index_size|Pretty output of index_bytes|
+|toast_size|Pretty output of toast_bytes|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT * FROM chunk_relation_size_pretty('conditions');
+```
+or, to reduce the output, a common use is:
+```sql
+SELECT chunk_table, table_size, index_size, total_size FROM chunk_relation_size_pretty('conditions');
+```
+The expected output:
+```
+                chunk_table                 | table_size | index_size | total_size
+---------------------------------------------+------------+------------+------------
+ "_timescaledb_internal"."_hyper_1_1_chunk"  | 28 MB      | 36 MB      | 64 MB
+ "_timescaledb_internal"."_hyper_1_2_chunk"  | 57 MB      | 78 MB      | 134 MB
+ ...
+```
+Where 'chunk_table' is the table that contains the data, table size is the size of that table, index size is the size of the indexes of the table, and total size is the size of the table with indexes.
+
+---
+
+## hypertable_relation_size() <a id="hypertable_relation_size"></a>
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
@@ -506,10 +583,6 @@ Get relation size of hypertable like `pg_relation_size(hypertable)`.
 |index_bytes|Disc space used by indexes|
 |toast_bytes|Disc space of toast tables|
 |total_bytes|Total disk space used by the specified table, including all indexes and TOAST data|
-|table_size|Pretty output of table_bytes|
-|index_size|Pretty output of index_bytes|
-|toast_size|Pretty output of toast_bytes|
-|total_size|Pretty output of total_bytes|
 
 #### Sample Usage
 ```sql
@@ -517,12 +590,52 @@ SELECT * FROM hypertable_relation_size('conditions');
 ```
 or, to reduce the output, a common use is:
 ```sql
-SELECT table_size, index_size, toast_size, total_size FROM hypertable_relation_size('conditions');
+SELECT table_bytes, index_bytes, toast_bytes, total_bytes FROM hypertable_relation_size('conditions');
+```
+The expected output:
+```
+ table_bytes | index_bytes | toast_bytes | total_bytes
+-------------+-------------+-------------+-------------
+  1227661312 |  1685979136 |      180224 |  2913820672
+```
+---
+
+## hypertable_relation_size_pretty() <a id="hypertable_relation_size_pretty"></a>
+
+Get relation size of hypertable like `pg_relation_size(hypertable)`.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get relation size for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|table_size|Pretty output of table_bytes|
+|index_size|Pretty output of index_bytes|
+|toast_size|Pretty output of toast_bytes|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT * FROM hypertable_relation_size_pretty('conditions');
+```
+or, to reduce the output, a common use is:
+```sql
+SELECT table_size, index_size, toast_size, total_size FROM hypertable_relation_size_pretty('conditions');
+```
+The expected output:
+```
+ table_size | index_size | toast_size | total_size
+------------+------------+------------+------------
+ 1171 MB    | 1608 MB    | 176 kB     | 2779 MB
 ```
 
 ---
 
-### indexes_relation_size() <a id="indexes_relation_size"></a>
+## indexes_relation_size() <a id="indexes_relation_size"></a>
 
 Get sizes of indexes on a hypertable.
 
@@ -537,11 +650,50 @@ Get sizes of indexes on a hypertable.
 |---|---|
 |index_name|Index on hyper table|
 |total_bytes|Size of index on disk|
-|total_size|Pretty output of total_bytes|
 
 #### Sample Usage
 ```sql
 SELECT * FROM indexes_relation_size('conditions');
+```
+The expected output:
+```
+              index_name              | total_bytes
+--------------------------------------+-------------
+ public.conditions_device_id_time_idx |  1198620672
+ public.conditions_time_idx           |   487358464
+
+```
+
+---
+
+## indexes_relation_size_pretty() <a id="indexes_relation_size"></a>
+
+Get sizes of indexes on a hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get indexes size for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|index_name|Index on hyper table|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT * FROM indexes_relation_size_pretty('conditions');
+```
+The expected output:
+```
+
+             index_name_              | total_size
+--------------------------------------+------------
+ public.conditions_device_id_time_idx | 1143 MB
+ public.conditions_time_idx           | 465 MB
+
 ```
 
 ---
@@ -556,7 +708,7 @@ Time units for TimescaleDB functions:
 ## Dump TimescaleDB meta data <a id="dump-meta-data"></a>
 
 To help when asking for support and reporting bugs, TimescaleDB includes a SQL script
-that outputs meta data from the internal TimescaleDB tables as well as version information.
+that outputs metadata from the internal TimescaleDB tables as well as version information.
 The script is available in the source distribution in `scripts/` but can also be
 [downloaded separately][].
 To use it, run
