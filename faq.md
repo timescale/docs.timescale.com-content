@@ -252,7 +252,7 @@ See our [updating documentation][update]. [[Top]](#top)
 [[Top]](#top)
 [api]: /api
 [INSERT]: /using-timescaledb/writing-data#insert
-[SELECT]: /using-timescaledb/writing-data#select
+[SELECT]: /using-timescaledb/reading-data#select
 [rdbms > nosql]: http://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c
 [tech-paper]: http://www.timescaledb.com/papers/timescaledb.pdf
 [docs-architecture]: /introduction/architecture
