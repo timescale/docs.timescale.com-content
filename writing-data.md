@@ -160,15 +160,28 @@ INSERT INTO conditions
  functionality can be captured by specifying the same columns as above with
  a unique index/constraint. This limitation will be removed in a future version.
 
-<!--
+
 ---
 
 ## DELETE <a id="delete"></a>
 
-**Need text here**
+Data can be deleted from a hypertable using the standard DELETE SQL command ([PostgrSQL docs][postgres-delete]).
 
--->
+```sql
+DELETE FROM conditions WHERE temperature < 35;
+```
+
+>ttt For efficient deletion of data at the chunk level rather than for individual rows, the TimescaleDB function [`drop_chunks`][drop_chunks] is more performant.  See the section on [data retention][].
+
+
+
+
+
+
 
 [postgres-insert]: https://www.postgresql.org/docs/current/static/sql-insert.html
 [postgres-update]: https://www.postgresql.org/docs/current/static/sql-update.html
 [postgres-upsert]: https://www.postgresql.org/docs/current/static/sql-insert.html#SQL-ON-CONFLICT
+[postgresqk-delete]: https://www.postgresql.org/docs/current/static/sql-delete.html
+[drop_chunks]: /api#drop_chunks
+[data retention]: /using-timescaledb/data-retention
