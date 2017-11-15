@@ -121,26 +121,6 @@ TimescaleDB supports the full gamut of
 triggers: `BEFORE INSERT`, `AFTER INSERT`, `BEFORE UPDATE`, `AFTER UPDATE`, `BEFORE DELETE`, `AFTER DELETE`.
 For additional information, see the [PostgreSQL docs][postgres-createtrigger].
 
-<!--
----
-
-## Constraints
-
-**Need text here**
-
----
-
-## JSON
-
-**Need text here**
-
----
-
-## Maintenance
-
-**Need text here**
--->
-
 [postgres-createindex]: https://www.postgresql.org/docs/9.6/static/sql-createindex.html
 [create_hypertable]: /api#create_hypertable
 [postgres-createtrigger]: https://www.postgresql.org/docs/9.6/static/sql-createtrigger.html
