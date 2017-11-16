@@ -165,7 +165,7 @@ INSERT INTO conditions
 
 ## DELETE <a id="delete"></a>
 
-Data can be deleted from a hypertable using the standard DELETE SQL command ([PostgrSQL docs][postgres-delete]).
+Data can be deleted from a hypertable using the standard DELETE SQL command ([PostgreSQL docs][postgres-delete]).
 
 ```sql
 DELETE FROM conditions WHERE temperature < 35;
@@ -182,6 +182,6 @@ DELETE FROM conditions WHERE temperature < 35;
 [postgres-insert]: https://www.postgresql.org/docs/current/static/sql-insert.html
 [postgres-update]: https://www.postgresql.org/docs/current/static/sql-update.html
 [postgres-upsert]: https://www.postgresql.org/docs/current/static/sql-insert.html#SQL-ON-CONFLICT
-[postgresql-delete]: https://www.postgresql.org/docs/current/static/sql-delete.html
+[postgres-delete]: https://www.postgresql.org/docs/current/static/sql-delete.html
 [drop_chunks]: /api#drop_chunks
 [data retention]: /using-timescaledb/data-retention
