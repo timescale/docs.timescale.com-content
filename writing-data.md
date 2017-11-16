@@ -182,6 +182,6 @@ DELETE FROM conditions WHERE temperature < 35;
 [postgres-insert]: https://www.postgresql.org/docs/current/static/sql-insert.html
 [postgres-update]: https://www.postgresql.org/docs/current/static/sql-update.html
 [postgres-upsert]: https://www.postgresql.org/docs/current/static/sql-insert.html#SQL-ON-CONFLICT
-[postgresqk-delete]: https://www.postgresql.org/docs/current/static/sql-delete.html
+[postgresql-delete]: https://www.postgresql.org/docs/current/static/sql-delete.html
 [drop_chunks]: /api#drop_chunks
 [data retention]: /using-timescaledb/data-retention
