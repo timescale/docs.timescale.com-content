@@ -7,7 +7,7 @@ the abstraction of a single continuous table across all space and time intervals
 
 ### Creating a (Hyper)table
 To create a hypertable, you start with a regular SQL table, and then convert
-it into a hypertable via the function `create_hypertable()` ([API reference][]).
+it into a hypertable via the function `create_hypertable` ([API reference][]).
 
 The following example creates a hypertable for tracking
 temperature and humidity across a collection of devices over time.
@@ -23,7 +23,7 @@ CREATE TABLE conditions (
 );
 ```
 
-Next, transform it into a hypertable with `create_hypertable()`:
+Next, transform it into a hypertable with `create_hypertable`:
 
 ```sql
 -- This creates a hypertable that is partitioned by time

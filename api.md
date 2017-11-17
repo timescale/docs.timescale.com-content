@@ -6,6 +6,7 @@
 > - [chunk_relation_size()](#chunk_relation_size)
 > - [chunk_relation_size_pretty()](#chunk_relation_size_pretty)
 > - [create_hypertable()](#create_hypertable)
+> - [drop_chunks](#drop_chunks)
 > - [first()](#first)
 > - [histogram()](#histogram)
 > - [hypertable_relation_size()](#hypertable_relation_size)
@@ -67,13 +68,14 @@ SELECT add_dimension('conditions', location, number_partitions => 4);
 
 Convert table `conditions` to hypertable with time partitioning on `time` and
 space partitioning (4 partitions) on `location`, then add two additional dimensions.
-(*Note: More than one additional partitioning dimension is currently experimental and not
-recommended for production deployments.*)
+
 ```sql
 SELECT create_hypertable('conditions', 'time', 'location', 2);
 SELECT add_dimension('conditions', 'time_received', interval_length => 86400000000);
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 ```
+
+>vvv More than one additional partitioning dimension is currently experimental and not recommended for production deployments.
 
 ---
 
@@ -181,14 +183,14 @@ corresponds to increased planning latency for some types of queries.
 both the underlying data size *and* any indexes, so some care might be
 taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
-total chunk sizes via the [chunk relation size](#chunk_relation_size)
+total chunk sizes via the [`chunk_relation_size`](#chunk_relation_size)
 function.
 
 **Space partitions**: The use of additional partitioning is a very
 specialized use case.  **Most users will not need to use it.**
 
 Space partitions use hashing: Every distinct item is hashed to one of
-N buckets.  Remember that we are already using (flexible) time
+*N* buckets.  Remember that we are already using (flexible) time
 intervals to manage chunk sizes; the main purpose of space
 partitioning is to enable parallel I/O to the same time interval.
 
@@ -270,7 +272,7 @@ SELECT drop_chunks(interval '3 months', 'conditions');
 
 ### first() <a id="first"></a>
 
-The `first()` aggregate allows you to get the value of one column
+The `first` aggregate allows you to get the value of one column
 as ordered by another. For example, `first(temperature, time)` will return the
 earliest temperature value based on time within an aggregate group.
 
@@ -350,7 +352,7 @@ The expected output:
 
 ### last() <a id="last"></a>
 
-The `first()` aggregate allows you to get the value of one column
+The `last` aggregate allows you to get the value of one column
 as ordered by another. For example, `last(temperature, time)` will return the
 latest temperature value based on time within an aggregate group.
 
@@ -518,7 +520,7 @@ The expected output:
  ...
 ```
 
-Where 'chunk_table' is the table that contains the data, table bytes is the size of that table, index bytes is the size of the indexes of the table, and total bytes is the size of the table with indexes.
+Where `chunk_table` is the table that contains the data, `table_bytes` is the size of that table, `index_bytes` is the size of the indexes of the table, and `total_bytes` is the size of the table with indexes.
 
 ---
 
@@ -562,7 +564,7 @@ The expected output:
  "_timescaledb_internal"."_hyper_1_2_chunk"  | 57 MB      | 78 MB      | 134 MB
  ...
 ```
-Where 'chunk_table' is the table that contains the data, table size is the size of that table, index size is the size of the indexes of the table, and total size is the size of the table with indexes.
+Where `chunk_table` is the table that contains the data, `table_size` is the size of that table, `index_size` is the size of the indexes of the table, and `total_size` is the size of the table with indexes.
 
 ---
 
@@ -710,7 +712,7 @@ Time units for TimescaleDB functions:
 To help when asking for support and reporting bugs, TimescaleDB includes a SQL script
 that outputs metadata from the internal TimescaleDB tables as well as version information.
 The script is available in the source distribution in `scripts/` but can also be
-[downloaded separately][].
+[ddd downloaded separately][].
 To use it, run
 ```bash
 psql [your connect flags] -d your_timescale_db < dump_meta_data.sql > dumpfile.txt

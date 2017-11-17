@@ -12,6 +12,15 @@ CREATE INDEX ON conditions (location, time DESC);
 ```
 This can be done before or after converting the table to a hypertable.
 
+>ttt For sparse data where a column is often NULL, we suggest adding
+a `WHERE column IS NOT NULL` clause to the index (unless you are often
+searching for missing data). For example,
+```sql
+CREATE INDEX ON conditions (time DESC, humidity)
+  WHERE humidity IS NOT NULL;
+```
+this creates a more compact, and thus efficient, index.
+
 ### Indexing Suggestions
 
 Our experience has shown that for time-series data, the most-useful index type
@@ -67,13 +76,13 @@ as follows:
 1-office
 ```
 
-One can think of the indexes' btrees as being constructed from the most
+One can think of an index's btrees as being constructed from the most
 significant bit downwards, so it first matches on the first character,
 then second, etc., while in the above example they are conveniently shown
 as two separate tuples.
 
 Now, with a predicate like `WHERE location = 'garage' and time >= 1 and time < 4`, the top is much better to use: all readings from a given
-location are contiguous, so the first bit of the indexes precisely finds
+location are contiguous, so the first bit of the index precisely finds
 all metrics from "garage", and then we can use any additional time
 predicates to further narrow down the selected set.  With the latter,
 you would have to look over all of the time records [1,4), and then once
@@ -84,16 +93,6 @@ values.  You still need to search through all sets of time values
 matching your predicate, but in each one, your query also grabs a
 (potentially large) subset of the values, rather than just one
 distinct one.
-
-For sparse data where a column is often NULL, we suggest adding
-a `WHERE column IS NOT NULL` clause to the index (unless you are often
-searching for missing data). For example,
-
-```sql
-CREATE INDEX ON conditions (time DESC, humidity)
-  WHERE humidity IS NOT NULL;
-```
-this creates a more compact, and thus efficient, index.
 
 >ttt <a id="unique_indexes"></a> To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
 exists, the partitioning column **must** be the first (or first two)
@@ -121,8 +120,7 @@ TimescaleDB will automatically create the following index:
 CREATE INDEX ON conditions (location, time DESC);
 ```
 
-This default behavior can be overridden when executing the `create_hypertable` command
-([see the API docs][create_hypertable]).
+This default behavior can be overridden when executing the [`create_hypertable`][create_hypertable] command.
 
 ---
 

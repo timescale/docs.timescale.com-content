@@ -82,7 +82,7 @@ CREATE INDEX on new_table (column_name, <options>)
 Tada!  You did it!
 
 For more info on the best strategies for indexing, check out
-our [operations][indexing] section.
+our [schema management][indexing] section.
 
 ---
 
@@ -123,7 +123,7 @@ where appropriate. So let's connect with the client:
 ```bash
 psql -d new_db
 ```
-Then use the `create_hypertable()` function on the tables to make hypertables.
+Then use the `create_hypertable` function on the tables to make hypertables.
 Due to a current limitation, this must be run on a table while it is empty, so
 we do this before importing data.
 In this case, our hypertable target is `conditions` (using

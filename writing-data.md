@@ -2,7 +2,7 @@
 
 ## INSERT <a id="insert"></a>
 
-Data can be inserted into a hypertable using the standard INSERT SQL command
+Data can be inserted into a hypertable using the standard `INSERT` SQL command
 ([PostgreSQL docs][postgres-insert]).
 
 ```sql
@@ -122,7 +122,7 @@ Indexes:
     "conditions_time_location_idx" UNIQUE, btree ("time", location)
 ```
 
-Now, however, the INSERT command can specify that nothing be done on
+Now, however, the `INSERT` command can specify that nothing be done on
 a conflict. This is particularly important when writing many rows as
 one batch, as otherwise the entire transaction will fail (as opposed
 to just skipping the row that conflicts).
@@ -165,7 +165,7 @@ INSERT INTO conditions
 
 ## DELETE <a id="delete"></a>
 
-Data can be deleted from a hypertable using the standard DELETE SQL command ([PostgreSQL docs][postgres-delete]).
+Data can be deleted from a hypertable using the standard `DELETE` SQL command ([PostgreSQL docs][postgres-delete]).
 
 ```sql
 DELETE FROM conditions WHERE temperature < 35;

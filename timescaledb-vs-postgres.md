@@ -216,7 +216,7 @@ policies on the two (hyper)tables, storing the aggregated data much
 longer.
 
 TimescaleDB allows efficient deletion of old data at the **chunk** level,
-rather than at the row level, via its `drop_chunks()` functionality.
+rather than at the row level, via its `drop_chunks` functionality.
 
 ```sql
 SELECT drop_chunks(interval '7 days', 'conditions');

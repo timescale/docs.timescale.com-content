@@ -36,6 +36,12 @@ or this:
 
 Otherwise the code highlighter may be disrupted.
 
+### General formatting conventions
+
+To maintain consistency, please follow these general rules.
+1. All functions, commands and standalone function arguments (ex. `SELECT`, `time_bucket`) should be set as inline code within backticks ("\`command\`").
+1. Functions should not be written with parentheses unless the function is being written with arguments within the parentheses.
+
 ### Special rules
 There are some custom modifications to the markdown parser to allow for special
 formatting within the docs.
