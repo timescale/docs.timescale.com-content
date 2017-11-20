@@ -270,7 +270,7 @@ SELECT drop_chunks(interval '3 months', 'conditions');
 
 ## Analytics <a id="analytics"></a>
 
-### first() <a id="first"></a>
+## first() <a id="first"></a>
 
 The `first` aggregate allows you to get the value of one column
 as ordered by another. For example, `first(temperature, time)` will return the
@@ -350,7 +350,7 @@ The expected output:
 
 ---
 
-### last() <a id="last"></a>
+## last() <a id="last"></a>
 
 The `last` aggregate allows you to get the value of one column
 as ordered by another. For example, `last(temperature, time)` will return the
