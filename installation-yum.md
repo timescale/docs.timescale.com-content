@@ -36,9 +36,6 @@ wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-0.x86
 sudo yum install timescaledb
 ```
 
-[pgdg]: https://yum.postgresql.org/repopackages.php
-[yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation
-
 #### Update `postgresql.conf`
 
 You will need to edit your `postgresql.conf` file to include
@@ -61,3 +58,5 @@ a `postgres` superuser (used in the rest of the docs):
 # Add a superuser postgres:
 createuser postgres -s
 ```
+[pgdg]: https://yum.postgresql.org/repopackages.php
+[yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation

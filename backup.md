@@ -1,9 +1,8 @@
-## Backup & Restore <a id="backup"></a>
+# Backup & Restore <a id="backup"></a>
 
 In this section, we cover how to backup and restore an entire
 database or individual hypertables using the native PostgreSQL
-`pg_dump` ([PostgreSQL docs][pg_dump]) and `pg_restore`
-([PostgreSQL docs][pg_restore]) commands.
+[`pg_dump`][pg_dump] and [`pg_restore`][pg_restore] commands.
 
 >ttt Upgrades between different versions of TimescaleDB can be done in place;
  you don't need to backup/restore your data.
@@ -104,7 +103,7 @@ psql -d new_db -c "\COPY conditions FROM data.csv CSV"
  So to speed up importing larger amounts of data, we recommend using
  our [parallel importer][] instead.
 
-[updating instructions]:/api/update-db
-[pg_dump]:https://www.postgresql.org/docs/current/static/app-pgdump.html
-[pg_restore]:https://www.postgresql.org/docs/current/static/app-pgrestore.html
+[updating instructions]: /api/update-db
+[pg_dump]: https://www.postgresql.org/docs/current/static/app-pgdump.html
+[pg_restore]: https://www.postgresql.org/docs/current/static/app-pgrestore.html
 [parallel importer]: https://github.com/timescale/timescaledb-parallel-copy

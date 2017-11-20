@@ -9,7 +9,6 @@ Each gzip archive contains a single `.sql` file to create the necessary
 data to be copied into those tables. These files presume the database
 you are importing them to has already been [set up with the TimescaleDB extension][installation].
 
-[installation]: /getting-started/installation
 
 **Device Ops**: These datasets are designed to represent metrics (e.g. CPU,
 memory, network) collected from mobile devices. (Click on the name to
@@ -30,16 +29,6 @@ download.)
 1. [ddd `weather_big`][weather-big] - 2,000 locations over 20,000 two-minute intervals
 
 For more details and example usage, see [In-depth: Weather datasets](#in-depth-weather).
-
-<!-- datasets -->
-[devices-small]:https://timescaledata.blob.core.windows.net/datasets/devices_small.tar.gz
-[devices-medium]:https://timescaledata.blob.core.windows.net/datasets/devices_med.tar.gz
-[devices-big]:https://timescaledata.blob.core.windows.net/datasets/devices_big.tar.gz
-
-[weather-small]:https://timescaledata.blob.core.windows.net/datasets/weather_small.tar.gz
-[weather-medium]:https://timescaledata.blob.core.windows.net/datasets/weather_med.tar.gz
-[weather-big]:https://timescaledata.blob.core.windows.net/datasets/weather_big.tar.gz
-
 
 ## Importing
 <!-- Add steps format-->
@@ -78,8 +67,6 @@ The data is now ready for you to use.
 >ttt The standard `COPY` command in PostgreSQL is single threaded.
  So to speed up importing the larger sample datasets, we recommend using
  our [parallel importer][] instead.
-
-[parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
 
 ```bash
 # To access your database (e.g., devices_small)
@@ -322,3 +309,14 @@ hour                   | avg_temp | min_temp | max_temp
 2016-11-16 06:00:00-05 |    78.42 |    69.49 |    84.40
 (24 rows)
 ```
+[installation]: /getting-started/installation
+<!-- datasets -->
+[devices-small]: https://timescaledata.blob.core.windows.net/datasets/devices_small.tar.gz
+[devices-medium]: https://timescaledata.blob.core.windows.net/datasets/devices_med.tar.gz
+[devices-big]: https://timescaledata.blob.core.windows.net/datasets/devices_big.tar.gz
+
+[weather-small]: https://timescaledata.blob.core.windows.net/datasets/weather_small.tar.gz
+[weather-medium]: https://timescaledata.blob.core.windows.net/datasets/weather_med.tar.gz
+[weather-big]: https://timescaledata.blob.core.windows.net/datasets/weather_big.tar.gz
+
+[parallel importer]: https://github.com/timescale/timescaledb-parallel-copy

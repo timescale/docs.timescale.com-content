@@ -1,479 +1,726 @@
-# API/Command Reference
-
-## Psql Commands <a id="psql"></a>
-Here we list some of the most common `psql` commands.  For a complete list, check out the [PostgreSQL psql docs][psql].
-
-- `-c <command>`, `--command=<command>`
-
-    Tells `psql` to execute the string *`<command>`* without entering the
-    client shell. The *`<command>`* string can be **either** a backslash
-    command or a SQL command, but not a combination.  Multiple `-c` commands can be chained.
-
-- `-d <name>`, `--dbname=<name>`
-
-    Denotes the *`<name>`* of the database to connect to.
-
-- `-h <hostname>`, `--host=<hostname>`
-
-    Denotes the *`<hostname>`* of the machine where the PostgreSQL
-    server is running.
-
-- `-U <username>`, `--username=<username>`
-
-    Denotes the *`<username>`* of the user with which to connect
-    to the database.
-
-Common `psql` commands include:
-
-```bash
-# Connect to the database 'tutorial' with username 'postgres'
-psql -U postgres -h localhost -d tutorial
-
-# Backup your database to a .csv file
-psql -d tutorial -c "\COPY tutorial TO tutorial.csv DELIMITER ',' CSV"
-```
-
----
-
-### Psql Shell Commands
-
-- `\l`
-
-    List available databases
-
-- `\c`, `\connect`
-
-    Connect to a PostgreSQL database using the given parameters.
-
-- `\d`
-
-    List available tables.  If optional argument `NAME` is given, describe
-    table, view, or index in more detail.
-
----
-
-## Table Commands <a id="schema"></a><a id="tables"></a>
-
-Commands to create, alter, or delete schemas in TimescaleDB are
-identical to those in PostgreSQL.  Schema commands should be made to
-the hypertable name, and any changes are propagated to all chunks
-belonging to that hypertable.
-
-### Create a Hypertable
-
-Creating a hypertable is a two-step process.
-<!-- add steps format?-->
-1. Create a standard table ([PostgreSQL docs][postgres-createtable]).
-```sql
-CREATE TABLE conditions (
-    time        TIMESTAMPTZ       NOT NULL,
-    location    TEXT              NOT NULL,
-    temperature DOUBLE PRECISION  NULL
-);
-```
-
-1. Then, execute the TimescaleDB `create_hypertable` command on this
-newly created table ([API docs][create_hypertable]).
-
->vvv You can only convert a plain PostgreSQL table into a
-  hypertable if it is currently empty.  Otherwise,
-  the `create_hypertable` command will throw an error.  If you need
-  to *migrate* data from an existing table to a hypertable, [follow these
-  migration instructions instead][migrate-from-postgresql].
-
-### Alter a Hypertable
-
-You can execute standard `ALTER TABLE` commands against the hypertable ([PostgreSQL docs][postgres-createtable]).
-
-```sql
-ALTER TABLE conditions
-  ADD COLUMN humidity DOUBLE PRECISION NULL;
-```
-
-TimescaleDB will then automatically propagate these schema changes to
-the chunks that constitute this hypertable.
-
->vvv Altering a table's schema is quite efficient provided that its
-default value is set to NULL.  If its default is a non-null value, TimescaleDB
-will need to fill in this value into all rows (of all chunks) belonging to this
-hypertable.
-
-### Deleting a Hypertable
-
-It's just the standard `DROP TABLE` command, where TimescaleDB will
-correspondingly delete all chunks belonging to the hypertable.
-```sql
-DROP TABLE conditions;
-```
-
-### Creating Indexes <a id="indexes"></a>
-
-TimescaleDB supports the range of PostgreSQL index types, and creating, altering,
-or dropping an index on the hypertable ([PostgreSQL docs][postgres-createindex])
-will similarly be propagated to all its constituent chunks.
-
-```sql
-CREATE INDEX ON conditions (location, time DESC);
-```
-
-For more instructions and suggestions about indexing data within
-TimescaleDB, as well as information about default indexes that
-TimescaleDB automatically creates, [please see our indexing
-discussion][indexing].
-
-### Creating Triggers <a id="triggers"></a>
-
-TimescaleDB supports the full range of PostgreSQL triggers, and creating,
-altering, or dropping triggers on the hypertable will similarly
-propagate these changes to all of a hypertable's constituent chunks.
-
-In the following example, let's say you want to create a new
-table `error_conditions` with the same schema as `conditions`, but designed
-to only store records which are deemed erroneous, where an application
-signals a sensor error by sending a `temperature` or `humidity` having a
-value >= 1000.
-
-So, we'll take a two-step approach. First, let's create a function that
-will insert data deemed erroneous into this second table:
-
-```sql
-CREATE OR REPLACE FUNCTION record_error()
-  RETURNS trigger AS $record_error$
-BEGIN
- IF NEW.temperature >= 1000 OR NEW.humidity >= 1000 THEN
-   INSERT INTO error_conditions
-     VALUES(NEW.time, NEW.location, NEW.temperature, NEW.humidity);
- END IF;
- RETURN NEW;
-END;
-$record_error$ LANGUAGE plpgsql;
-```
-Second, create a trigger that will call this function whenever a new row is
-inserted into the hypertable.
-
-```sql
-CREATE TRIGGER record_error
-  BEFORE INSERT ON conditions
-  FOR EACH ROW
-  EXECUTE PROCEDURE record_error();
-```
-Now, all data is inserted into the `conditions` data, but any row deemed
-erroneous is _also_ added to the `error_conditions` table.
-
-TimescaleDB supports the full gamut of
-triggers: `BEFORE INSERT`, `AFTER INSERT`, `BEFORE UPDATE`, `AFTER UPDATE`, `BEFORE DELETE`, `AFTER DELETE`.
-For additional information, see the [PostgreSQL docs][postgres-createtrigger].
-
----
-
-## INSERT Commands <a id="insert"></a>
-
-Data can be inserted into a hypertable using the standard INSERT SQL command
-([PostgreSQL docs][postgres-insert]).
-
-```sql
-INSERT INTO conditions(time, location, temperature, humidity)
-  VALUES (NOW(), 'office', 70.0, 50.0);
-```
-
-You can also insert multiple rows into a hypertable using a single `INSERT` call,
-even thousands at a time. This is typically much more efficient than
-inserting data row-by-row, and is recommended when possible.
-
-```sql
-INSERT INTO conditions
-  VALUES
-    (NOW(), 'office', 70.0, 50.0),
-    (NOW(), 'basement', 66.5, 60.0),
-    (NOW(), 'garage', 77.0, 65.2);
-```
-
->ttt The rows that belong to a single batch INSERT command do **not** need
-to belong to the same chunk (by time interval or partitioning key).
-Upon receiving an `INSERT` command for multiple rows, the TimescaleDB
-engine will determine which rows (sub-batches) belong to which chunks,
-and will write them accordingly to each chunk in a single transaction.
-
-You can also specify that INSERT returns some or all of the inserted
-data via the `RETURNING` statement:
-
-```sql
-INSERT INTO conditions
-  VALUES (NOW(), 'office', 70.1, 50.1) RETURNING *;
-
-             time              | location | temperature | humidity
--------------------------------+----------+-------------+----------
- 2017-07-28 11:42:42.846621+00 | office   |        70.1 |     50.1
-(1 row)
-```
-
-## UPDATE Commands <a id="update"></a>
-
-Updates in TimescaleDB work as expected in standard SQL ([PostgreSQL docs][postgres-update]).
-
-```sql
-UPDATE conditions SET temperature = 70.2, humidity = 50.0
-  WHERE time = '2017-07-28 11:42:42.846621+00' AND location = 'office';
-```
-
-An update command can touch many rows at once, i.e., the following
-will modify all rows found in a 10-minute block of data.
-
-```sql
-UPDATE conditions SET temperature = temperature + 0.1
-  WHERE time >= '2017-07-28 11:40' AND time < '2017-07-28 11:50';
-```
-
->vvv TimescaleDB achieves much higher insert performance compared to
- vanilla PostgreSQL when inserts are localized to the most recent time
- interval (or two).  If your workload is heavily based on UPDATEs to old
- time intervals instead, you may observe significantly lower write
- throughput.
-
-## UPSERT Functionality <a id="upsert"></a>
-
-TimescaleDB supports UPSERTs in the same manner as PostgreSQL
-via the optional `ON CONFLICT` clause ([PostgreSQL docs][postgres-upsert]).
-If such a clause is provided, rather than cause an error,
-an inserted row that
-conflicts with another can either (a) do nothing or (b) result in a
-subsequent update of that existing row.
-
-In order to create a conflict, an insert must be performed on
-identical value(s) in column(s) covered by a unique index or constraint. Such an
-index is created automatically when marking column(s) as PRIMARY KEY
-or with a UNIQUE constraint.
-
-Following the examples given above, an INSERT with an identical
-timestamp and location as an existing row will succeed and create an
-additional row in the database.
-
-If, however, the `conditions` table had been created with a UNIQUE
-constraint defined on one or more of the columns (either at table
-creation time or via an ALTER command):
-
-```sql
-CREATE TABLE conditions (
-    time        TIMESTAMPTZ       NOT NULL,
-    location    TEXT              NOT NULL,
-    temperature DOUBLE PRECISION  NULL,
-    humidity    DOUBLE PRECISION  NULL,
-    UNIQUE (time, location)
-);
-```
-
-then the second attempt to insert to this same time will normally
-return an error.
-
-The above `UNIQUE` statement during table creation internally is similar to:
-
-```sql
-CREATE UNIQUE INDEX on conditions (time, location);
-```
-Both of these result on a unique index for the table:
-```sql
-# \d+ conditions;
-                              Table "public.conditions"
-   Column    |           Type           | Modifiers | Storage  | Stats target | Description
--------------+--------------------------+-----------+----------+--------------+-------------
- time        | timestamp with time zone | not null  | plain    |              |
- location    | text                     | not null  | extended |              |
- temperature | double precision         |           | plain    |              |
- humidity    | double precision         |           | plain    |              |
-Indexes:
-    "conditions_time_location_idx" UNIQUE, btree ("time", location)
-```
-Now, however, the INSERT command can specify that nothing be done on
-a conflict. This is particularly important when writing many rows as
-one batch, as otherwise the entire transaction will fail (as opposed
-to just skipping the row that conflicts).
-
-```sql
-INSERT INTO conditions
-  VALUES ('2017-07-28 11:42:42.846621+00', 'office', 70.1, 50.0)
-  ON CONFLICT DO NOTHING;
-```
-
-Alternatively, one can specify how to update the existing data:
-```sql
-INSERT INTO conditions
-  VALUES ('2017-07-28 11:42:42.846621+00', 'office', 70.2, 50.1)
-  ON CONFLICT (time, location) DO UPDATE
-    SET temperature = excluded.temperature,
-        humidity = excluded.humidity;
-```
-
->ttt Unique constraints must include all partitioning keys as
- their prefix.  For example, if the table just uses time partitioning,
- the system requires `time` as the initial part of the
- constraint: `UNIQUE(time)`, `UNIQUE(time, location)`, etc.
- On the other hand, `UNIQUE(location)` is *not* a valid constraint.
-
->If the schema were to have an additional column like `device` that is used
- as an additional partition dimension, then the constraint would have
- to be `UNIQUE(time, device)` or `UNIQUE(time, device, location)`. In
- such scenarios then, `UNIQUE(time, location)` would *no longer* be
- a valid constraint.
+# TimescaleDB API Reference
+
+>toplist
+> ### Command List (A-Z)
+> - [add_dimension()](#add_dimension)
+> - [chunk_relation_size()](#chunk_relation_size)
+> - [chunk_relation_size_pretty()](#chunk_relation_size_pretty)
+> - [create_hypertable()](#create_hypertable)
+> - [drop_chunks](#drop_chunks)
+> - [first()](#first)
+> - [histogram()](#histogram)
+> - [hypertable_relation_size()](#hypertable_relation_size)
+> - [hypertable_relation_size_pretty()](#hypertable_relation_size_pretty)
+> - [indexes_relation_size()](#indexes_relation_size)
+> - [indexes_relation_size_pretty()](#indexes_relation_size_pretty)
+> - [last()](#last)
+> - [time_bucket()](#time_bucket)
+
+## Hypertable management <a id="hypertable-management"></a>
+
+## add_dimension() <a id="add_dimension"></a>
+
+Add an additional partitioning dimension to a TimescaleDB hypertable.
+The column selected as the dimension can either use interval
+partitioning (e.g., for a second time partition) or hash partitioning.
+
+>vvv Before using this command, please see the [best practices][] discussion
+and talk with us on [Slack](https://slack-login.timescale.com) about
+your use case. Users will *rarely* want or need to use this command.
 
 <!-- -->
->vvv TimescaleDB does not yet support using `ON CONFLICT ON CONSTRAINT` with
- a named key (e.g., `conditions_time_location_idx`), but much of this
- functionality can be captured by specifying the same columns as above with
- a unique index/constraint. This limitation will be removed in a future version.
+>vvv The `add_dimension` command can only be executed after a table has been
+converted to a hypertable (via `create_hypertable`), but must similarly
+be run only on an empty hypertable.
 
+#### Required Arguments
 
-## SELECT Commands <a id="select"></a>
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to add the dimension to.|
+| `column_name` | Name of the column to partition by.|
 
-TimescaleDB supports **full SQL**.
+#### Optional Arguments
 
-Data can be queried from a hypertable using the standard SELECT SQL command
-([PostgreSQL docs][postgres-select]), including with arbitrary WHERE clauses,
-GROUP BY and ORDER BY commands, JOINS, subqueries, window functions,
-user-defined functions (UDFs), HAVING clauses, and so on.
+|Name|Description|
+|---|---|
+| `number_partitions` | Number of hash partitions to use on `column_name`. Must be > 0.|
+| `interval_length` | Interval in that each chunk covers. Must be > 0.|
 
-In other words, if you already know SQL&mdash;or use tools that speak SQL
-or PostgreSQL&mdash;you already know how to use TimescaleDB.
+When executing this function, either `number_partitions` or `interval_length`
+must be supplied, which will dictate if the dimension will use hash or interval
+partitioning.
 
-From basic queries:
+>vvv Supporting **more** than one additional dimension is currently
+ experimental.  For any production environments, users are recommended
+ to use at most one "space" dimension (in addition to the required
+ time interval specified in `create_hypertable`).
 
+#### Sample Usage <a id="add_dimension-examples"></a>
+
+First convert table `conditions` to hypertable with just time
+partitioning on column `time`, then add an additional space
+partitioning:
 ```sql
--- Return the last 100 entries written to the database
-SELECT * FROM conditions LIMIT 100;
-
--- Return the more recent 100 entries by time order
-SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
-
--- Number of data entries written in past 12 hours
-SELECT COUNT(*) FROM conditions
-  WHERE time > NOW() - interval '12 hours';
+SELECT create_hypertable('conditions', 'time');
+SELECT add_dimension('conditions', location, number_partitions => 4);
 ```
-To more advanced SQL queries:
+
+Convert table `conditions` to hypertable with time partitioning on `time` and
+space partitioning (4 partitions) on `location`, then add two additional dimensions.
+
 ```sql
--- Information about each 15-min period for each location
--- over the past 3 hours, ordered by time and temperature
-SELECT time_bucket('15 minutes', time) AS fifteen_min,
-    location, COUNT(*),
-    MAX(temperature) AS max_temp,
-    MAX(humidity) AS max_hum
-  FROM conditions
-  WHERE time > NOW() - interval '3 hours'
-  GROUP BY fifteen_min, location
-  ORDER BY fifteen_min DESC, max_temp DESC;
+SELECT create_hypertable('conditions', 'time', 'location', 2);
+SELECT add_dimension('conditions', 'time_received', interval_length => 86400000000);
+SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
+```
 
+>vvv More than one additional partitioning dimension is currently experimental and not recommended for production deployments.
 
--- How many distinct locations with air conditioning
--- have reported data in the past day
-SELECT COUNT(DISTINCT location) FROM conditions
-  JOIN locations
-    ON conditions.location = locations.location
-  WHERE locations.air_conditioning = True
-    AND time > NOW() - interval '1 day'
+---
+
+## create_hypertable() <a id="create_hypertable"></a>
+
+Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
+latter), partitioned on time and with the option to partition
+on one or more other columns (i.e., space).
+All actions, such as `ALTER TABLE`, `SELECT`, etc.,
+still work on the resulting hypertable.
+
+>vvv The `create_hypertable` command can only be executed on an empty table.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of table to convert to hypertable|
+| `time_column_name` | Name of the column containing time values|
+
+#### Optional Arguments
+
+|Name|Description|
+|---|---|
+| `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
+| `number_partitions` | Number of hash partitions to use for `partitioning_column` when this optional argument is supplied. Must be > 0.
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month ([units][]).
+| `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
+| `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
+
+The time column currently only supports values with a data type of
+timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
+
+For time columns having timestamp or DATE types,
+the `chunk_time_interval` should be specified either as an `interval` type
+or a numerical value in microseconds.  For integer types,
+the `chunk_time_interval` **must** be set explicitly, as the database does
+not otherwise understand the semantics of what each integer value
+represents (a second, millisecond, nanosecond, etc.).
+
+<!-- -->
+>ttt The `add_dimension` function can be used following hypertable
+ creation to add one or more additional partitioning dimensions (and
+ as an alternative to specifying the optional argument
+ in `create_hypertable`).  See [best practices][] before using any
+ spatial partitioning.
+
+#### Sample Usage <a id="create_hypertable-examples"></a>
+
+Convert table `conditions` to hypertable with just time partitioning on column `time`:
+```sql
+SELECT create_hypertable('conditions', 'time');
+```
+
+Convert table `conditions` to hypertable, setting `chunk_time_interval` to 24 hours.
+```sql
+SELECT create_hypertable('conditions', 'time', chunk_time_interval => 86400000000);
+SELECT create_hypertable('conditions', 'time', chunk_time_interval => interval '1 day');
+```
+
+Convert table `conditions` to hypertable with time partitioning on `time` and
+space partitioning (4 partitions) on `location`:
+```sql
+SELECT create_hypertable('conditions', 'time', 'location', 4);
+```
+
+Convert table `conditions` to hypertable. Do not raise a warning
+if `conditions` is already a hypertable.
+```sql
+SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
+```
+
+#### Best Practices <a id="create_hypertable-best-practices"></a>
+
+Users of TimescaleDB often have two common questions:
+
+1. How large should I configure my intervals for time partitioning?
+1. Should I use space partitioning, and how many space partitions should I use?
+
+**Time intervals**: The current release of TimescaleDB does not
+perform adaptive time intervals (although this is in the works).
+So, users must configure it when creating their hypertable by
+setting the `chunk_time_interval` (or use the default of 1 month).
+The interval used for new chunks can be changed by calling `set_chunk_time_interval`.
+
+The key property of choosing the time interval is that the chunk
+belonging to the most recent interval (or chunks if using space
+partitions) fit into memory.  As such, we typically recommend setting
+the interval so that these chunk(s) comprise no more than 25% of main
+memory.
+
+To determine this, you roughly need to understand your data rate.  If
+you are writing roughly 2GB of data per day and have 64GB of memory,
+setting the time interval to a week would be good.  If you are writing
+10GB per day on the same machine, setting the time interval to a day
+would be appropriate.  This interval would also hold if data is loaded
+more in batches, e.g., you bulk load 70GB of data per week, with data
+corresponding to records from throughout the week.
+
+While it's generally safer to make chunks smaller rather than too
+large, setting intervals too small can lead to *many* chunks, which
+corresponds to increased planning latency for some types of queries.
+
+>ttt One caveat is that the total chunk size is actually dependent on
+both the underlying data size *and* any indexes, so some care might be
+taken if you make heavy use of expensive index types (e.g., some
+PostGIS geospatial indexes).  During testing, you might check your
+total chunk sizes via the [`chunk_relation_size`](#chunk_relation_size)
+function.
+
+**Space partitions**: The use of additional partitioning is a very
+specialized use case.  **Most users will not need to use it.**
+
+Space partitions use hashing: Every distinct item is hashed to one of
+*N* buckets.  Remember that we are already using (flexible) time
+intervals to manage chunk sizes; the main purpose of space
+partitioning is to enable parallel I/O to the same time interval.
+
+Parallel I/O can benefit in two scenarios: (a) two or more concurrent
+queries should be able to read from different disks in parallel, or
+(b) a single query should be able to use query parallelization to read
+from multiple disks in parallel.
+
+Note that query parallelization in PostgreSQL 9.6 (and 10) does not
+support querying *different* hypertable chunks in parallel;
+query parallelization only works on a single physical table (and thus
+a single chunk). We might add our own support for this, but it is not
+currently supported.
+
+Thus, users looking for parallel I/O have two options:
+
+1. Use a RAID setup across multiple physical disks, and expose a
+single logical disk to the hypertable (i.e., via a single tablespace).
+
+1. For each physical disk, add a separate tablespace to the
+database.  TimescaleDB allows you to actually add multiple tablespaces
+to a *single* hypertable (although under the covers, each underlying
+chunk will be mapped by TimescaleDB to a single tablespace / physical
+disk).
+
+We recommend a RAID setup when possible, as it supports both forms of
+parallelization described above (i.e., separate queries to separate
+disks, single query to multiple disks in parallel).  The multiple
+tablespace approach only supports the former.  With a RAID setup,
+*no spatial partitioning is required*.
+
+That said, when using space partitions, we recommend using 1
+space partition per disk.
+
+TimescaleDB does *not* benefit from a very large number of space
+partitions (such as the number of unique items you expect in partition
+field).  A very large number of such partitions leads both to poorer
+per-partition load balancing (the mapping of items to partitions using
+hashing), as well as much increased planning latency for some types of
+queries.
+
+---
+
+## drop_chunks() <a id="drop_chunks"></a>
+
+Removes data chunks that are older than a given time interval across all
+hypertables or a specific one. Chunks are removed only if _all_ of their data is
+beyond the cut-off point, so the remaining data may contain timestamps that
+are before the cut-off point, but only one chunk's worth.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed. ([units][])|
+
+#### Optional Arguments
+
+|Name|Description|
+|---|---|
+| `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
+| `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
+
+#### Sample Usage
+
+Drop all chunks older than 3 months:
+```sql
+SELECT drop_chunks(interval '3 months');
+```
+
+Drop all chunks from hypertable `conditions` older than 3 months:
+```sql
+SELECT drop_chunks(interval '3 months', 'conditions');
 ```
 
 ---
 
-## Advanced Analytic Queries  <a id="advanced-analytics"></a>
+## Analytics <a id="analytics"></a>
 
-TimescaleDB can be used for a variety of analytical queries, both through its
-native support for PostgreSQL's full range of SQL functionality, as well as
-additional functions added to TimescaleDB (both for ease-of-use and for better
-query optimization).
+### first() <a id="first"></a>
 
-The following list is just a sample of some of its analytical capabilities.
+The `first` aggregate allows you to get the value of one column
+as ordered by another. For example, `first(temperature, time)` will return the
+earliest temperature value based on time within an aggregate group.
 
-### Median/Percentile
+#### Required Arguments
 
-PostgreSQL has inherent methods for determining median values and percentiles
-namely the function `percentile_cont` ([PostgreSQL docs][percentile_cont]).  An example query
-for the median temperature is:
+|Name|Description|
+|---|---|
+| `value` | The value to return (anyelement) |
+| `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
 
+#### Examples
+
+Get the earliest temperature by device_id:
 ```sql
-SELECT percentile_cont(0.5)
-  WITHIN GROUP (ORDER BY temperature)
-  FROM conditions;
+SELECT device_id, first(temp, time)
+  FROM metrics
+  GROUP BY device_id;
 ```
 
-### Cumulative Sum
+>vvv The `last` and `first` commands do **not** use indexes, and instead
+ perform a sequential scan through their groups.  They are primarily used
+ for ordered selection within a `GROUP BY` aggregate, and not as an
+ alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
+ latest value (which will use indexes).
 
-One way to determine cumulative sum is using the SQL
-command `sum(sum(column)) OVER(ORDER BY group)`.  For example:
+---
 
-```sql
-SELECT host, sum(sum(temperature)) OVER(ORDER BY location)
-  FROM conditions
-  GROUP BY location;
-```
+## histogram() <a id="histogram"></a>
 
-### Moving Average
+The `histogram()` function represents the distribution of a set of
+values as an array of equal-width buckets. It partitions the dataset
+into a specified number of buckets (`nbuckets`) ranging from the
+inputted `min` and `max` values.
 
-For a simple moving average, you can use the `OVER` windowing function over
-some number of rows, then compute an aggregation function over those rows. The
-following computes the smoothed temperature of a device by averaging its last
-10 readings together:
+The return value is an array containing `nbuckets`+2 buckets, with the
+middle `nbuckets` bins for values in the stated range, the first
+bucket at the head of the array for values under the lower `min` bound,
+and the last bucket for values above the `max` bound.
 
-```sql
-SELECT time, AVG(temperature) OVER(ORDER BY time
-      ROWS BETWEEN 9 PRECEDING AND CURRENT ROW)
-    AS smooth_temp
-  FROM conditions
-  WHERE location = 'garage' and time > NOW() - interval '1 day'
-  ORDER BY time DESC;
-```
+#### Required Arguments
 
+|Name|Description|
+|---|---|
+| `value` | A set of values to partition into a histogram |
+| `min` | The histogram’s lower bound used in bucketing |
+| `max` | The histogram’s upper bound used in bucketing |
+| `nbuckets` | The integer value for the number of histogram buckets (partitions) |
 
-### First, Last
+#### Sample Usage
 
-TimescaleDB defines functions for `first` and `last`,
-which allow you to get the value of one column as ordered by another.
-
-```sql
-SELECT location, last(temperature, time)
-  FROM conditions
-  GROUP BY location;
-```
-See our [API docs][first-last] for more details.
-
-### Histogram
-
-TimescaleDB also provides a [histogram][] function.
-The following example defines a histogram with five buckets defined over
-the range 60..85. The generated histogram has seven bins where the first
-is for values below the minimun threshold of 60, the middle five bins are for
-values in the stated range and the last is for values above 85.
-
+A simple bucketing of device's battery levels from the `readings` dataset:
 
 ```sql
-SELECT location, COUNT(*),
-    histogram(temperature, 60.0, 85.0, 5)
-   FROM conditions
-   WHERE time > NOW() - interval '7 days'
-   GROUP BY location;
+SELECT device_id, histogram(battery_level, 20, 60, 5)
+  FROM readings
+  GROUP BY device_id
+  LIMIT 10;
 ```
-This query will output data in the following form:
+
+The expected output:
+```sql
+ device_id  |          histogram
+------------+------------------------------
+ demo000000 | {0,0,0,7,215,206,572}
+ demo000001 | {0,12,173,112,99,145,459}
+ demo000002 | {0,0,187,167,68,229,349}
+ demo000003 | {197,209,127,221,106,112,28}
+ demo000004 | {0,0,0,0,0,39,961}
+ demo000005 | {12,225,171,122,233,80,157}
+ demo000006 | {0,78,176,170,8,40,528}
+ demo000007 | {0,0,0,126,239,245,390}
+ demo000008 | {0,0,311,345,116,228,0}
+ demo000009 | {295,92,105,50,8,8,442}
+```
+
+---
+
+### last() <a id="last"></a>
+
+The `last` aggregate allows you to get the value of one column
+as ordered by another. For example, `last(temperature, time)` will return the
+latest temperature value based on time within an aggregate group.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `value` | The value to return (anyelement) |
+| `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
+
+#### Examples
+
+Get the temperature every 5 minutes for each device over the past day:
+```sql
+SELECT device_id, time_bucket('5 minutes', time) as interval,
+  last(temp, time)
+  FROM metrics
+  WHERE time > now () - interval '1 day'
+  GROUP BY device_id, interval
+  ORDER BY interval DESC;
+```
+
+>vvv The `last` and `first` commands do **not** use indexes, and instead
+ perform a sequential scan through their groups.  They are primarily used
+ for ordered selection within a `GROUP BY` aggregate, and not as an
+ alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
+ latest value (which will use indexes).
+
+---
+
+## time_bucket() <a id="time_bucket"></a>
+
+This is a more powerful version of the standard PostgreSQL `date_trunc` function.
+It allows for arbitrary time intervals instead of the second, minute, hour, etc.
+provided by `date_trunc`. The return value is the bucket's start time.
+Below is necessary information for using it effectively.
+
+>ttt TIMESTAMPTZ arguments are
+bucketed by the time at UTC. So the alignment of buckets is
+on UTC time. One consequence of this is that daily buckets are
+aligned to midnight UTC, not local time.
+
+>If the user wants buckets aligned by local time, the TIMESTAMPTZ input should be
+cast to TIMESTAMP (such a cast converts the value to local time) before being
+passed to time_bucket (see example below).  Note that along daylight savings
+time boundaries the amount of data aggregated into a bucket after such a cast is
+irregular: for example if the bucket_width is 2 hours, the number of UTC hours
+bucketed by local time on daylight savings time boundaries can be either 3 hours
+or 1 hour.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
+| `time` | The timestamp to bucket (timestamp/timestamptz/date)|
+
+#### Optional Arguments
+
+|Name|Description|
+|---|---|
+| `offset` | The time interval to offset all buckets by (interval) |
+
+### For Integer Time Inputs
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `bucket_width` | The bucket width (integer) |
+| `time` | The timestamp to bucket (integer) |
+
+#### Optional Arguments
+
+|Name|Description|
+|---|---|
+| `offset` | The amount to offset all buckets by (integer) |
+
+
+#### Sample Usage
+
+Simple 5-minute averaging:
+
+```sql
+SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
+  FROM metrics
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
+```
+
+To report the middle of the bucket, instead of the left edge:
+```sql
+SELECT time_bucket('5 minutes', time) + '2.5 minutes'
+    AS five_min, avg(cpu)
+  FROM metrics
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
+```
+
+For rounding, move the alignment so that the middle of the bucket is at the
+5 minute mark (and report the middle of the bucket):
+```sql
+SELECT time_bucket('5 minutes', time, '-2.5 minutes') + '2.5 minutes'
+    AS five_min, avg(cpu)
+  FROM metrics
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
+```
+
+Bucketing a TIMESTAMPTZ at local time instead of UTC(see note above):
+```sql
+SELECT time_bucket('2 hours', timetz::TIMESTAMP) AS five_min,
+    avg(cpu)
+  FROM metrics
+  GROUP BY five_min
+  ORDER BY five_min DESC LIMIT 10;
+```
+
+Note that the above cast to TIMESTAMP converts the time to local time according
+to the server's timezone setting.
+
+---
+
+## Utilities/Statistics <a id="utilities"></a>
+
+## chunk_relation_size() <a id="chunk_relation_size"></a>
+
+Get relation size of the chunks of an hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get chunk relation sizes for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|chunk_id|Timescaledb id of a chunk|
+|chunk_table|Table used for the chunk|
+|partitioning_columns|Partitioning column names|
+|partitioning_column_types|Types of partitioning columns|
+|partitioning_hash_functions|Hash functions of partitioning columns|
+|dimensions|Partitioning dimension names|
+|ranges|Partitioning ranges for each dimension|
+|table_bytes|Disk space used by main_table|
+|index_bytes|Disk space used by indexes|
+|toast_bytes|Disc space of toast tables|
+|total_bytes|Disk space used in total|
+
+#### Sample Usage
+```sql
+SELECT * FROM chunk_relation_size('conditions');
+```
+or, to reduce the output, a common use is:
+```sql
+SELECT chunk_table, table_bytes, index_bytes, total_bytes FROM chunk_relation_size('conditions');
+```
+The expected output:
+```
+                 chunk_table                 | table_bytes | index_bytes | total_bytes
+---------------------------------------------+-------------+-------------+-------------
+ "_timescaledb_internal"."_hyper_1_1_chunk"  |    29220864 |    37773312 |    67002368
+ "_timescaledb_internal"."_hyper_1_2_chunk"  |    59252736 |    81297408 |   140558336
+ ...
+```
+
+Where `chunk_table` is the table that contains the data, `table_bytes` is the size of that table, `index_bytes` is the size of the indexes of the table, and `total_bytes` is the size of the table with indexes.
+
+---
+
+## chunk_relation_size_pretty() <a id="chunk_relation_size_pretty"></a>
+
+Get relation size of the chunks of an hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get chunk relation sizes for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|chunk_id|Timescaledb id of a chunk|
+|chunk_table|Table used for the chunk|
+|partitioning_columns|Partitioning column names|
+|partitioning_column_types|Types of partitioning columns|
+|partitioning_hash_functions|Hash functions of partitioning columns|
+|ranges|Partitioning ranges for each dimension|
+|table_size|Pretty output of table_bytes|
+|index_size|Pretty output of index_bytes|
+|toast_size|Pretty output of toast_bytes|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT * FROM chunk_relation_size_pretty('conditions');
+```
+or, to reduce the output, a common use is:
+```sql
+SELECT chunk_table, table_size, index_size, total_size FROM chunk_relation_size_pretty('conditions');
+```
+The expected output:
+```
+                chunk_table                 | table_size | index_size | total_size
+---------------------------------------------+------------+------------+------------
+ "_timescaledb_internal"."_hyper_1_1_chunk"  | 28 MB      | 36 MB      | 64 MB
+ "_timescaledb_internal"."_hyper_1_2_chunk"  | 57 MB      | 78 MB      | 134 MB
+ ...
+```
+Where `chunk_table` is the table that contains the data, `table_size` is the size of that table, `index_size` is the size of the indexes of the table, and `total_size` is the size of the table with indexes.
+
+---
+
+## hypertable_relation_size() <a id="hypertable_relation_size"></a>
+
+Get relation size of hypertable like `pg_relation_size(hypertable)`.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get relation size for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|table_bytes|Disk space used by main_table (like pg_relation_size(main_table))|
+|index_bytes|Disc space used by indexes|
+|toast_bytes|Disc space of toast tables|
+|total_bytes|Total disk space used by the specified table, including all indexes and TOAST data|
+
+#### Sample Usage
+```sql
+SELECT * FROM hypertable_relation_size('conditions');
+```
+or, to reduce the output, a common use is:
+```sql
+SELECT table_bytes, index_bytes, toast_bytes, total_bytes FROM hypertable_relation_size('conditions');
+```
+The expected output:
+```
+ table_bytes | index_bytes | toast_bytes | total_bytes
+-------------+-------------+-------------+-------------
+  1227661312 |  1685979136 |      180224 |  2913820672
+```
+---
+
+## hypertable_relation_size_pretty() <a id="hypertable_relation_size_pretty"></a>
+
+Get relation size of hypertable like `pg_relation_size(hypertable)`.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get relation size for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|table_size|Pretty output of table_bytes|
+|index_size|Pretty output of index_bytes|
+|toast_size|Pretty output of toast_bytes|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT * FROM hypertable_relation_size_pretty('conditions');
+```
+or, to reduce the output, a common use is:
+```sql
+SELECT table_size, index_size, toast_size, total_size FROM hypertable_relation_size_pretty('conditions');
+```
+The expected output:
+```
+ table_size | index_size | toast_size | total_size
+------------+------------+------------+------------
+ 1171 MB    | 1608 MB    | 176 kB     | 2779 MB
+```
+
+---
+
+## indexes_relation_size() <a id="indexes_relation_size"></a>
+
+Get sizes of indexes on a hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get indexes size for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|index_name|Index on hyper table|
+|total_bytes|Size of index on disk|
+
+#### Sample Usage
+```sql
+SELECT * FROM indexes_relation_size('conditions');
+```
+The expected output:
+```
+              index_name              | total_bytes
+--------------------------------------+-------------
+ public.conditions_device_id_time_idx |  1198620672
+ public.conditions_time_idx           |   487358464
+
+```
+
+---
+
+## indexes_relation_size_pretty() <a id="indexes_relation_size"></a>
+
+Get sizes of indexes on a hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to get indexes size for.|
+
+#### Returns
+|Column|Description|
+|---|---|
+|index_name|Index on hyper table|
+|total_size|Pretty output of total_bytes|
+
+#### Sample Usage
+```sql
+SELECT * FROM indexes_relation_size_pretty('conditions');
+```
+The expected output:
+```
+
+             index_name_              | total_size
+--------------------------------------+------------
+ public.conditions_device_id_time_idx | 1143 MB
+ public.conditions_time_idx           | 465 MB
+
+```
+
+---
+
+## Time Units <a id="time-units"></a>
+Time units for TimescaleDB functions:
+- Microseconds for TIMESTAMP and TIMESTAMPTZ.
+- Same units as type for integer time types.
+
+---
+
+## Dump TimescaleDB meta data <a id="dump-meta-data"></a>
+
+To help when asking for support and reporting bugs, TimescaleDB includes a SQL script
+that outputs metadata from the internal TimescaleDB tables as well as version information.
+The script is available in the source distribution in `scripts/` but can also be
+[ddd downloaded separately][].
+To use it, run
 ```bash
- location   | count |        histogram
-------------+-------+-------------------------
- office     | 10080 | {0,0,3860,6220,0,0,0}
- basement   | 10080 | {0,6056,4024,0,0,0,0}
- garage     | 10080 | {0,2679,957,2420,2150,1874,0}
+psql [your connect flags] -d your_timescale_db < dump_meta_data.sql > dumpfile.txt
 ```
+and then inspect `dump_file.txt` before sending it together with a bug report or support question.
 
-What analytic functions are we missing?  [Let us know on github][issues].
-
-
-[migrate-from-postgresql]: /setup/migrate-from-postgresql
-[psql]:https://www.postgresql.org/docs/current/static/app-psql.html
-[create_hypertable]: /api/api-timescaledb#create_hypertable
-[postgres-createtable]:https://www.postgresql.org/docs/current/static/sql-createtable.html
-[postgres-createindex]:https://www.postgresql.org/docs/current/static/sql-createindex.html
-[postgres-createtrigger]:https://www.postgresql.org/docs/current/static/sql-createtrigger.html
-[postgres-altertable]:https://www.postgresql.org/docs/current/static/sql-altertable.html
-[postgres-insert]:https://www.postgresql.org/docs/current/static/sql-insert.html
-[postgres-update]:https://www.postgresql.org/docs/current/static/sql-update.html
-[postgres-upsert]:https://www.postgresql.org/docs/current/static/sql-insert.html#SQL-ON-CONFLICT
-[postgres-select]:https://www.postgresql.org/docs/current/static/sql-select.html
-[percentile_cont]:https://www.postgresql.org/docs/current/static/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
-[indexing]: /getting-started/basic-operations#indexing
-[first-last]: /api/api-timescaledb#first-last
-[issues]:https://github.com/timescale/timescaledb/issues
-[histogram]:/api/api-timescaledb#histogram
+[Slack]: https://slack-login.timescale.com
+[chunk relation size]: #chunk_relation_size
+[units]: #time-units
+[best practices]: #create_hypertable-best-practices
+[downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql

@@ -1,5 +1,7 @@
-# Migrate from PostgreSQL
+# Migrating Data
 >ttt First make sure that you have properly [installed][] AND [setup][] your Timescale database within your PostgreSQL instance.
+
+## Migration from PostgreSQL
 
 Depending on where your data is currently stored,
 the steps to migrate it to TimescaleDB are slightly different.
@@ -80,7 +82,7 @@ CREATE INDEX on new_table (column_name, <options>)
 Tada!  You did it!
 
 For more info on the best strategies for indexing, check out
-our [operations][indexing] section.
+our [schema management][indexing] section.
 
 ---
 
@@ -121,7 +123,7 @@ where appropriate. So let's connect with the client:
 ```bash
 psql -d new_db
 ```
-Then use the `create_hypertable()` function on the tables to make hypertables.
+Then use the `create_hypertable` function on the tables to make hypertables.
 Due to a current limitation, this must be run on a table while it is empty, so
 we do this before importing data.
 In this case, our hypertable target is `conditions` (using
@@ -162,8 +164,8 @@ Now checkout some common [hypertable commands][] for exploring your data.
 
 [installed]: /getting-started/installation
 [setup]: /getting-started/setup
-[hypertable commands]: /getting-started/basic-operations
-[indexing]: /getting-started/basic-operations#indexing
-[unique_indexes]: /getting-started/basic-operations#unique_indexes
-[create_hypertable]: /api/api-timescaledb#create_hypertable
+[create_hypertable]: /api#create_hypertable
+[unique_indexes]: /using-timescaledb/schema-management#unique_indexes
+[indexing]: /using-timescaledb/schema-management#indexing
 [parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
+[hypertable commands]: /using-timescaledb/hypertables

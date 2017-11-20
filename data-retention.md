@@ -1,4 +1,4 @@
-## Data Retention <a id="data-retention"></a>
+# Data Retention <a id="data-retention"></a>
 
 TimescaleDB allows efficient deletion of old data at the chunk level
 using the `drop_chunks()` function.
@@ -14,15 +14,15 @@ individual rows of data in chunks.
 For example, if one chunk has data more than 36 hours old, a second
 chunk has data between 12 and 36 hours old, and a third chunk has the
 most recent 12 hours of data, only the first chunk is dropped when
-executing this `drop_chunks()` command. Thus, in this scenario,
+executing this `drop_chunks` command. Thus, in this scenario,
 the `conditions` hypertable will still have data stretching back 36 hours.
 
-For more information on the `drop_chunks()` function and related
+For more information on the `drop_chunks` function and related
 parameters, please review the [API documentation][drop_chunks].
 
 ### Automatic Data Retention Policies
 
-The `drop_chunks()` command can be combined with an external tool for
+The `drop_chunks` command can be combined with an external tool for
 job scheduling, like `crontab` or `systemd`, to implement automatic
 data retention policies. Below we give some examples of how to
 implement such policies.
@@ -107,7 +107,7 @@ easily run [cron jobs][kube_cronjob] that are managed by Kubernetes
 itself.
 
 
-[drop_chunks]: /api/api-timescaledb#drop_chunks
+[drop_chunks]: /api#drop_chunks
 [unit]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 [timer]: https://www.freedesktop.org/software/systemd/man/systemd.timer.html
 [kube_cronjob]: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
