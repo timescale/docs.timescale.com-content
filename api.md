@@ -2,19 +2,19 @@
 
 >toplist
 > ### Command List (A-Z)
-> - [add_dimension()](#add_dimension)
-> - [chunk_relation_size()](#chunk_relation_size)
-> - [chunk_relation_size_pretty()](#chunk_relation_size_pretty)
-> - [create_hypertable()](#create_hypertable)
+> - [add_dimension](#add_dimension)
+> - [chunk_relation_size](#chunk_relation_size)
+> - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
+> - [create_hypertable](#create_hypertable)
 > - [drop_chunks](#drop_chunks)
-> - [first()](#first)
-> - [histogram()](#histogram)
-> - [hypertable_relation_size()](#hypertable_relation_size)
-> - [hypertable_relation_size_pretty()](#hypertable_relation_size_pretty)
-> - [indexes_relation_size()](#indexes_relation_size)
-> - [indexes_relation_size_pretty()](#indexes_relation_size_pretty)
-> - [last()](#last)
-> - [time_bucket()](#time_bucket)
+> - [first](#first)
+> - [histogram](#histogram)
+> - [hypertable_relation_size](#hypertable_relation_size)
+> - [hypertable_relation_size_pretty](#hypertable_relation_size_pretty)
+> - [indexes_relation_size](#indexes_relation_size)
+> - [indexes_relation_size_pretty](#indexes_relation_size_pretty)
+> - [last](#last)
+> - [time_bucket](#time_bucket)
 
 ## Hypertable management <a id="hypertable-management"></a>
 
