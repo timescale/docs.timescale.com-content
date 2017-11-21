@@ -2,9 +2,10 @@
 
 #### Prerequisites
 
-- A standard **PostgreSQL 9.6** installation with development environment
-(header files) (e.g., `postgresql-server-dev-9.6` package for
-Linux, [Postgres.app][] for MacOS)
+
+- A standard **PostgreSQL 9.6** installation with development environment (header files) (e.g., `postgresql-server-dev-9.6` package for Linux, [Postgres.app][] for MacOS)
+- C compiler (e.g., gcc or clang)
+- [CMake][] version 3.4 or greater
 
 #### Build & Install with Local PostgreSQL
 
@@ -13,13 +14,14 @@ recommended** that you then checkout the latest tagged commit to
 build from (see the repo's [Releases][github-releases] page for that).
 
 ```bash
-# Clone and checkout latest stable build
-git clone https://github.com/timescale/timescaledb.git
+git clone git@github.com:timescale/timescaledb.git
 cd timescaledb
-git checkout [latest tag]
+
+# Bootstrap the build system
+./bootstrap
 
 # To build the extension
-make
+cd build && make
 
 # To install
 make install
@@ -46,5 +48,6 @@ shared_preload_libraries = 'timescaledb'
 Then, restart the PostgreSQL instance.
 
 [Postgres.app]: https://postgresapp.com
+[CMake]: https://cmake.org/
 [github-timescale]: https://github.com/timescale/timescaledb
 [github-releases]: https://github.com/timescale/timescaledb/releases
