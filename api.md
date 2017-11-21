@@ -14,6 +14,7 @@
 > - [indexes_relation_size](#indexes_relation_size)
 > - [indexes_relation_size_pretty](#indexes_relation_size_pretty)
 > - [last](#last)
+> - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [time_bucket](#time_bucket)
 
 ## Hypertable management <a id="hypertable-management"></a>
@@ -161,11 +162,12 @@ So, users must configure it when creating their hypertable by
 setting the `chunk_time_interval` (or use the default of 1 month).
 The interval used for new chunks can be changed by calling `set_chunk_time_interval`.
 
-The key property of choosing the time interval is that the chunk
-belonging to the most recent interval (or chunks if using space
+The key property of choosing the time interval is that the chunk (including indexes) belonging to the most recent interval (or chunks if using space
 partitions) fit into memory.  As such, we typically recommend setting
 the interval so that these chunk(s) comprise no more than 25% of main
 memory.
+
+>ttt Make sure that you are planning for recent chunks from _all_ active hypertables to fit into 25% of main memory, rather than 25% per hypertable.
 
 To determine this, you roughly need to understand your data rate.  If
 you are writing roughly 2GB of data per day and have 64GB of memory,
@@ -265,6 +267,39 @@ Drop all chunks from hypertable `conditions` older than 3 months:
 ```sql
 SELECT drop_chunks(interval '3 months', 'conditions');
 ```
+
+---
+
+## set_chunk_time_interval() <a id="set_chunk_time_interval"></a>
+Sets the chunk_time_interval on a hypertable. The new interval is used
+when new chunks are created but the time intervals on existing chunks are
+not affected.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to update interval for.|
+| `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0. ([units][])|
+
+#### Sample Usage
+
+Set chunk_time_interval to 24 hours.
+```sql
+SELECT set_chunk_time_interval('conditions', 86400000000);
+```
+
+A hypertable that is doing
+time partitioning of a timestamp or DATE field must
+specify `chunk_time_interval` as an integer
+value in microseconds.  (Unlike `create_hypertable()`, interval
+values are currently not supported.)
+
+If the time column is an integer (SMALLINT, INT,
+BIGINT), the `chunk_time_interval` must be specified by an integer value
+corresponding to the underlying semantics of your data schema (e.g.,
+seconds if the INT time field represents seconds, nanoseconds if the
+BIGINT time field represents nanoseconds, etc.).
 
 ---
 

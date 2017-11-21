@@ -47,7 +47,7 @@ hypertable.
 
 ---
 
-### Deleting a Hypertable <a id="delete"></a>
+### Deleting a Hypertable <a id="delete"></a><a id="drop"></a>
 
 It's just the standard `DROP TABLE` command, where TimescaleDB will
 correspondingly delete all chunks belonging to the hypertable.
@@ -70,11 +70,12 @@ So, users must configure it when creating their hypertable by
 setting the `chunk_time_interval` (or use the default of 1 month).
 The interval used for new chunks can be changed by calling `set_chunk_time_interval`.
 
-The key property of choosing the time interval is that the chunk
-belonging to the most recent interval (or chunks if using space
+The key property of choosing the time interval is that the chunk (including indexes) belonging to the most recent interval (or chunks if using space
 partitions) fit into memory.  As such, we typically recommend setting
 the interval so that these chunk(s) comprise no more than 25% of main
 memory.
+
+>ttt Make sure that you are planning for single chunks from _all_ active hypertables fit into 25% of main memory, rather than 25% per hypertable.
 
 To determine this, you roughly need to understand your data rate.  If
 you are writing roughly 2GB of data per day and have 64GB of memory,
