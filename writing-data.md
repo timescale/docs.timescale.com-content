@@ -28,7 +28,7 @@ Upon receiving an `INSERT` command for multiple rows, the TimescaleDB
 engine will determine which rows (sub-batches) belong to which chunks,
 and will write them accordingly to each chunk in a single transaction.
 
-You can also specify that INSERT returns some or all of the inserted
+You can also specify that `INSERT` returns some or all of the inserted
 data via the `RETURNING` statement:
 
 ```sql
@@ -62,7 +62,7 @@ UPDATE conditions SET temperature = temperature + 0.1
 
 >vvv TimescaleDB achieves much higher insert performance compared to
  vanilla PostgreSQL when inserts are localized to the most recent time
- interval (or two).  If your workload is heavily based on UPDATEs to old
+ interval (or two).  If your workload is heavily based on `UPDATE`s to old
  time intervals instead, you may observe significantly lower write
  throughput.
 
@@ -79,16 +79,16 @@ subsequent update of that existing row.
 
 In order to create a conflict, an insert must be performed on
 identical value(s) in column(s) covered by a unique index or constraint. Such an
-index is created automatically when marking column(s) as PRIMARY KEY
-or with a UNIQUE constraint.
+index is created automatically when marking column(s) as `PRIMARY KEY`
+or with a `UNIQUE` constraint.
 
-Following the examples given above, an INSERT with an identical
+Following the examples given above, an `INSERT` with an identical
 timestamp and location as an existing row will succeed and create an
 additional row in the database.
 
 If, however, the `conditions` table had been created with a UNIQUE
 constraint defined on one or more of the columns (either at table
-creation time or via an ALTER command):
+creation time or via an `ALTER` command):
 
 ```sql
 CREATE TABLE conditions (

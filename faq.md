@@ -81,7 +81,7 @@ queries were only limited by your imagination, not by the query language. [[Top]
 We support all of SQL, including secondary indices, complex predicates, JOINs,
 window functions, etc. We optimize many SQL queries that are often useful in
 time-based analysis as well as
-introduce [entirely new SQL queries that are unique to TimescaleDB][api]. [[Top]](#top)
+introduce [entirely new SQL queries that are unique to TimescaleDB][new-queries]. [[Top]](#top)
 
 ### **How do I write data?** <a id="write"></a>
 Just via normal SQL, but here are some [insert examples][INSERT]. [[Top]](#top)
@@ -90,7 +90,7 @@ Just via normal SQL, but here are some [query examples][SELECT]. [[Top]](#top)
 
 ### **Is there a clustered version and how can I try it?** <a id="clustered"></a>
 A clustered version is actively being developed.
-If you'd like to learn more, please contact us at hello@timescale.com.
+If you'd like to learn more, please contact us at <hello@timescale.com>.
 In the meantime, please read the two questions below about the extent of
 TimescaleDB's single-node scalability. [[Top]](#top)
 
@@ -120,7 +120,7 @@ data (a “hypertable”). For more information, see this blog
 post: [Time-series data: Why (and how) to use a relational database instead of NoSQL][rdbms > nosql]. [[Top]](#top)
 
 ### **What are hypertables and chunks?** <a id="hypertable-chunks"></a>
-[Our technical paper goes into these design elements][tech-paper]() as
+[Our technical paper goes into these design elements][tech-paper] as
 does [our documentation][docs-architecture]. [[Top]](#top)
 
 ### **How are hypertable chunks determined across the space dimension (partition keys)?** <a id="partitions"></a>
@@ -251,6 +251,7 @@ See our [updating documentation][update]. [[Top]](#top)
 
 [[Top]](#top)
 [api]: /api
+[new-queries]: /using-timescaledb/reading-data#advanced-analytics
 [INSERT]: /using-timescaledb/writing-data#insert
 [SELECT]: /using-timescaledb/reading-data#select
 [rdbms > nosql]: http://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c
