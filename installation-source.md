@@ -3,7 +3,7 @@
 #### Prerequisites
 
 - A standard **PostgreSQL 9.6** installation with development environment
-(header files) (e.g., postgresql-server-dev-9.6 package for
+(header files) (e.g., `postgresql-server-dev-9.6` package for
 Linux, [Postgres.app][] for MacOS)
 
 #### Build & Install with Local PostgreSQL

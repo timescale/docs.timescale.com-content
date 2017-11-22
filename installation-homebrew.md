@@ -38,11 +38,12 @@ shared_preload_libraries = 'timescaledb'
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
->vvv You must specify `9.6` in the below command to prevent homebrew from trying to use PostgreSQL 10 as the instance reference.
+>vvv If you are still on PostgreSQL 9.6 via Homebrew, you should
+replace `postgresql` with `postgresql@9.6`.
 
 ```bash
 # Restart PostgreSQL instance
-brew services restart postgresql@9.6
+brew services restart postgresql
 
 # Add a superuser postgres:
 createuser postgres -s

@@ -41,7 +41,8 @@ a `postgres` superuser (used in the rest of the docs):
 ```bash
 # Restart PostgreSQL instance
 sudo service postgresql restart
-
-# Add a superuser postgres:
-createuser postgres -s
 ```
+
+[Here are some instructions to create the `postgres` superuser][createuser].
+
+[createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
