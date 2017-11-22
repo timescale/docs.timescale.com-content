@@ -50,13 +50,11 @@ shared_preload_libraries = 'timescaledb'
 is `/var/lib/pgsql/9.6/data/postgresql.conf` but this may vary
 depending on your setup.
 
-To get started you'll now need to restart PostgreSQL and add
-a `postgres` superuser (used in the rest of the docs):
-```bash
-# Restart PostgreSQL instance (this is distribution-specific)
+To get started you'll need to restart PostgreSQL and add
+a `postgres` superuser (used in the rest of the docs). Please
+refer to your distribution for how to restart services and
+[these instructions for adding a `postgres` user][createuser].
 
-# Add a superuser postgres:
-createuser postgres -s
-```
+[createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 [pgdg]: https://yum.postgresql.org/repopackages.php
 [yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation

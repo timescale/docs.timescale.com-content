@@ -21,7 +21,9 @@ docker exec -it timescaledb psql -U postgres
 >ttt The `run` command will only pull an image from Docker Hub if one
 does not exist locally.  If you have previously pulled an image and
 want instead to *upgrade* to the latest version, you need to
-explicitly `pull` the latest: `docker pull timescale/timescaledb:latest`.
+explicitly `pull` the latest:
+`docker pull timescale/timescaledb:latest-pg9.6` (PostgreSQL 9.6) or
+`docker pull timescale/timescaledb:latest-pg10` (PostgreSQL 10).
 
 #### More detailed instructions
 
