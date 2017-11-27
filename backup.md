@@ -30,7 +30,6 @@ ALTER DATABASE tutorial SET timescaledb.restoring='on';
 
 -- connect to the restored db
 \c tutorial
-SELECT restore_timescaledb();
 ALTER DATABASE tutorial SET timescaledb.restoring='off';
 ```
 
