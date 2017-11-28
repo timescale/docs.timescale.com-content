@@ -1,6 +1,8 @@
 ## apt Installation <a id="installation-apt"></a>
 
-This will install both TimescaleDB *AND* PostgreSQL 9.6 via `apt`.
+This will install both TimescaleDB *and* PostgreSQL 9.6 via `apt`.
+
+**Note: PostgreSQL 9.6 is required for TimescaleDB on Ubuntu distros.  Releases with PostgreSQL 10 are coming soon**
 
 #### Prerequisites
 
