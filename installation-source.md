@@ -1,10 +1,10 @@
 ## From Source <a id="installation-source"></a>
 
-**Note: PostgreSQL 9.6 is required for TimescaleDB.  Compatibility with PostgreSQL 10 is coming soon**
+**Note: TimescaleDB only supports PostgreSQL 9.6 and 10**
 
 #### Prerequisites
 
-- A standard **PostgreSQL 9.6** installation with development environment (header files) (e.g., `postgresql-server-dev-9.6` package for Linux, [Postgres.app][] for MacOS)
+- A standard **PostgreSQL 9.6 or 10** installation with development environment (header files) (e.g., `postgresql-server-dev-9.6` package for Linux, [Postgres.app][] for MacOS)
 - C compiler (e.g., gcc or clang)
 - [CMake][] version 3.4 or greater
 
