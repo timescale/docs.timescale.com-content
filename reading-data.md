@@ -59,7 +59,7 @@ query optimization).
 
 The following list is just a sample of some of its analytical capabilities.
 
-### Median/Percentile
+### Median/Percentile <a id="median"></a>
 
 PostgreSQL has inherent methods for determining median values and percentiles
 namely the function [`percentile_cont`][percentile_cont].  An example query
@@ -71,7 +71,7 @@ SELECT percentile_cont(0.5)
   FROM conditions;
 ```
 
-### Cumulative Sum
+### Cumulative Sum <a id="cumulative-sum"></a>
 
 One way to determine cumulative sum is using the SQL
 command `sum(sum(column)) OVER(ORDER BY group)`.  For example:
@@ -82,7 +82,7 @@ SELECT host, sum(sum(temperature)) OVER(ORDER BY location)
   GROUP BY location;
 ```
 
-### Moving Average
+### Moving Average <a id="moving-average"></a>
 
 For a simple moving average, you can use the `OVER` windowing function over
 some number of rows, then compute an aggregation function over those rows. The
@@ -97,21 +97,23 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
   WHERE location = 'garage' and time > NOW() - '1 day'
   ORDER BY time DESC;
 ```
-### Time Bucket
+### Time Bucket <a id="time-bucket"></a>
 
-TimescaleDBs [`time_bucket`][time_bucket] acts as a more powerful version of the PostgreSQL function [`date_trunc`][date_trunc].  It accepts arbitrary time intervals as well as optional offsets and returns the bucket start time.
+TimescaleDB's [`time_bucket`][time_bucket] acts as a more powerful version of the PostgreSQL function [`date_trunc`][date_trunc].  It accepts arbitrary time intervals as well as optional offsets and returns the bucket start time.
 
 ```sql
 SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
   FROM metrics
   GROUP BY five_min
-  ORDER BY five_min DESC LIMIT 10;
+  ORDER BY five_min DESC LIMIT 12;
 ```
 
-### First, Last
+### First, Last <a id="first"></a><a id="last"></a>
 
 TimescaleDB defines functions for [`first`][first] and [`last`][last],
 which allow you to get the value of one column as ordered by another.
+This is commonly used in an aggregation, such as getting the
+first or last element of that group.
 
 ```sql
 SELECT location, last(temperature, time)
@@ -119,7 +121,14 @@ SELECT location, last(temperature, time)
   GROUP BY location;
 ```
 
-### Histogram
+```sql
+SELECT ('5 minutes', time) five_min, location, last(temperature, time)
+  FROM conditions
+  GROUP BY five_min, location
+  ORDER BY five_min DESC LIMIT 12;
+```
+
+### Histogram <a id="histogram"></a>
 
 TimescaleDB also provides a [`histogram`][histogram] function.
 The following example defines a histogram with five buckets defined over
@@ -144,6 +153,89 @@ This query will output data in the following form:
  garage     | 10080 | {0,2679,957,2420,2150,1874,0}
 ```
 
+### Gap Filling <a id="gap-filling"></a>
+
+Some time-series analyses or visualizations want to display records for
+each selected time period, even if no data was recorded during that
+period.  This is commonly termed "gap filling", and may involve
+performing such operations as recording a "0" for any missing period.
+
+TimescaleDB allows you to use
+PostgreSQL's [`generate_series`][generate_series] functionality to
+generate a set of the desired time periods, then join this set against
+the actual time-series data.
+
+In the following example, we use trading data that includes
+a `time` timestamp, the `asset_code` being traded, as well as
+the `price` of the asset and `volume` of the asset traded.
+
+Consider first a query for the volume of a certain asset 'TIMS' being
+traded every day for the month of September:
+
+```sql
+SELECT
+    time_bucket('1 day', time)::date AS date,
+    sum(volume) AS volume
+  FROM trades
+  WHERE asset_code = 'TIMS'
+    AND time >= '2017-09-01' AND time < '2017-10-01'
+  GROUP BY date
+  ORDER BY date DESC;
+```
+This query will output data in the following form:
+```
+    date    | volume
+------------+--------
+ 2017-09-29 |  11315
+ 2017-09-28 |   8216
+ 2017-09-27 |   5591
+ 2017-09-26 |   9182
+ 2017-09-25 |  14359
+ 2017-09-22 |   9855
+```
+
+Note that no records are included for 09-23, 09-24, or 09-30 as no
+trade data was recorded for those days (they were weekends).  To
+instead output a value of "0" for each missing day, one can use the
+following query, which joins data from the prices table (akin to the
+query above) with a generated stream of dates.
+
+```sql
+WITH
+  data AS (
+    SELECT
+        time_bucket('1 day', time)::date AS date,
+        sum(volume) AS volume
+      FROM trades
+      WHERE asset_code = 'TIMS'
+        AND time >= '2017-07-01' AND time < '2017-07-10'
+      GROUP BY time
+  ),
+  period AS (
+    SELECT date::date
+      FROM generate_series(date '2017-07-01', date '2017-07-10', interval '1 day') date
+  )
+SELECT period.date, coalesce(sum(data.volume), 0) AS volume
+  FROM period
+  LEFT JOIN data ON period.date = data.date
+  GROUP BY period.date
+  ORDER BY period.date DESC;
+```
+This query will then output data in the following form:
+```
+    date    | volume
+------------+--------
+ 2017-09-30 |      0
+ 2017-09-29 |  11315
+ 2017-09-28 |   8216
+ 2017-09-27 |   5591
+ 2017-09-26 |   9182
+ 2017-09-25 |  14359
+ 2017-09-24 |      0
+ 2017-09-23 |      0
+ 2017-09-22 |   9855
+```
+
 What analytic functions are we missing?  [Let us know on github][issues].
 
 [postgres-select]: https://www.postgresql.org/docs/current/static/sql-select.html
@@ -154,4 +246,5 @@ What analytic functions are we missing?  [Let us know on github][issues].
 [first]: /api#first
 [last]: /api#last
 [histogram]: /api#histogram
+[generate_series]: https://www.postgresql.org/docs/current/static/functions-srf.html
 [issues]: https://github.com/timescale/timescaledb/issues
