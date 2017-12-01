@@ -70,38 +70,67 @@ As a more concrete example, the following steps should be taken with a docker
 installation to upgrade to the latest TimescaleDB version, while
 retaining data across the updates.
 
-First, install the latest TimescaleDB image:
+The following instructions assume that your docker instance is named
+`timescaledb`. If not, replace this name with the one you use in the subsequent
+commands.
+
+#### Step 1: Pull new image
+Install the latest TimescaleDB image:
 
 ```bash
 docker pull timescale/timescaledb:latest
 ```
 
+#### Step 2: Determine mount point used by old container
 As you'll want to restart the new docker image pointing to a mount point
 that contains the previous version's data, we first need to determine
 the current mount point.
 
-Assuming that your current docker instance is named "timescaledb", execute the following command (leave off the `--format` argument to print out a lot more details about the instance).
+There are two types of mounts. To find which mount type your old container is
+using you can run the following command:
+```bash
+docker inspect timescaledb --format='{{range .Mounts }}{{.Type}}{{end}}'
+```
+This command will return either `volume` or `bind`, corresponding
+to the two options below.
 
+1. [Volumes][volumes] -- to get the current volume name use:
 ```bash
 $ docker inspect timescaledb --format='{{range .Mounts }}{{.Name}}{{end}}'
 069ba64815f0c26783b81a5f0ca813227fde8491f429cf77ed9a5ae3536c0b2c
 ```
 
-Stop (if currently running) and remove the current TimescaleDB container
-using that mount point so you can connect the new one:
+2. [Bind-mounts][bind-mounts] -- to get the current mount path use:
+```bash
+$ docker inspect timescaledb --format='{{range .Mounts }}{{.Source}}{{end}}'
+/path/to/data
+```
+
+#### Step 3: Stop old container
+If the container is currently running, stop and remove it in order to connect
+the new one.
 
 ```bash
 docker stop timescaledb
 docker rm timescaledb
 ```
 
+#### Step 4: Start new container
 Launch a new container with the updated docker image, but pointing to
-this existing mount point:
+the existing mount point. This will again differ by mount type.
 
+1. For volume mounts you can use:
 ```bash
 docker run -v 069ba64815f0c26783b81a5f0ca813227fde8491f429cf77ed9a5ae3536c0b2c:/var/lib/postgresql/data -d --name timescaledb -p 5432:5432 timescale/timescaledb
 ```
 
+2. If using bind-mounts, you need to run:
+```bash
+docker run -v /path/to/data:/var/lib/postgresql/data -d --name timescaledb -p 5432:5432 timescale/timescaledb
+```
+
+
+#### Step 5: Run ALTER EXTENSION
 Finally, connect to this instance via `psql` and execute the `ALTER` command
 as above in order to update the extension to the latest version:
 
@@ -116,3 +145,5 @@ latest version of TimescaleDB installed.
 
 [install]: /getting-started/installation
 [backup]: /using-timescaledb/backup
+[bind-mounts]: https://docs.docker.com/engine/admin/volumes/bind-mounts/
+[volumes]: https://docs.docker.com/engine/admin/volumes/volumes/
