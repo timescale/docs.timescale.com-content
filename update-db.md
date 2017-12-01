@@ -73,8 +73,9 @@ retaining data across the updates.
 First, install the latest TimescaleDB image:
 
 ```bash
-docker pull timescale/timescaledb:latest
+docker pull timescale/timescaledb:latest-pg96
 ```
+>ttt If you are using PostgreSQL 10 images, use the tag `latest-pg10`.
 
 As you'll want to restart the new docker image pointing to a mount point
 that contains the previous version's data, we first need to determine
