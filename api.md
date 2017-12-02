@@ -52,6 +52,19 @@ When executing this function, either `number_partitions` or `interval_length`
 must be supplied, which will dictate if the dimension will use hash or interval
 partitioning.
 
+Currently, the `interval_length` must be specified in a BIGINT.  If
+the column to be partitions is an TIMESTAMP, TIMESTAMPTZ, or DATE,
+this length represents some number of *microseconds*.  If the column
+is some other integer or numeric type, this length should reflect the column's
+underlying semantics (e.g., the `interval_length` should be given in
+milliseconds if the time column is the number of milliseconds since
+the UNIX epoch).
+
+>vvv Supporting **more** than one additional dimension is currently
+ experimental.  For any production environments, users are recommended
+ to use at most one "space" dimension (in addition to the required
+ time interval specified in `create_hypertable`).
+
 #### Sample Usage <a id="add_dimension-examples"></a>
 
 First convert table `conditions` to hypertable with just time
@@ -101,19 +114,25 @@ still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
 | `number_partitions` | Number of hash partitions to use for `partitioning_column` when this optional argument is supplied. Must be > 0.
-| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month ([units][]).
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month.
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
 
 The time column currently only supports values with a data type of
 timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
 
-For time columns having timestamp or DATE types,
-the `chunk_time_interval` should be specified either as an `interval` type
-or a numerical value in microseconds.  For integer types,
-the `chunk_time_interval` **must** be set explicitly, as the database does
-not otherwise understand the semantics of what each integer value
-represents (a second, millisecond, nanosecond, etc.).
+The units of `chunk_time_interval` should be set as follows:
+
+- For time columns having timestamp or DATE types, the
+`chunk_time_interval` should be specified either as an `interval` type
+or a numerical value in microseconds.
+
+- For integer types, the `chunk_time_interval` **must** be set
+explicitly, as the database does not otherwise understand the
+semantics of what each integer value represents (a second,
+millisecond, nanosecond, etc.).  So if your time column is the number
+of milliseconds since the UNIX epoch, and you wish to each chunk to
+cover 1 day, you should specify `chunk_time_interval => 86400000`.
 
 <!-- -->
 >ttt The `add_dimension` function can be used following hypertable
@@ -245,7 +264,7 @@ are before the cut-off point, but only one chunk's worth.
 
 |Name|Description|
 |---|---|
-| `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed. ([units][])|
+| `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed.|
 
 #### Optional Arguments
 
@@ -253,6 +272,18 @@ are before the cut-off point, but only one chunk's worth.
 |---|---|
 | `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
+
+The `older_than` can be specified in two ways:
+
+- **interval type**: The cut-off point is computed as `now() -
+    older_than`.  An error will be returned if an interval is supplied
+    and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
+    DATE.
+
+- **timestamp, date, or integer type**: The cut-off point is
+    explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
+    SMALLINT / INT / BIGINT. The choice of timestamp or integer should
+    generally follow the type of the hypertable's time column.
 
 #### Sample Usage
 
@@ -264,6 +295,16 @@ SELECT drop_chunks(interval '3 months');
 Drop all chunks from hypertable `conditions` older than 3 months:
 ```sql
 SELECT drop_chunks(interval '3 months', 'conditions');
+```
+
+Drop all chunks from hypertable `conditions` before 2017:
+```sql
+SELECT drop_chunks('2017-01-01'::date, 'conditions');
+```
+
+Drop all chunks from hypertable `conditions` before 2017, where time column is given in milliseconds from the UNIX epoch:
+```sql
+SELECT drop_chunks(1483228800000, 'conditions');
 ```
 
 ---
@@ -278,26 +319,34 @@ not affected.
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to update interval for.|
-| `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0. ([units][])|
+| `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0.|
+
+The valid types for the `chunk_time_interval` depends on the type of
+hypertable time column:
+
+- **TIMESTAMP, TIMESTAMPTZ, DATE**: The specified
+    `chunk_time_interval` should be an
+    integer (or bigint) value, representing some number of microseconds.
+
+- **INTEGER**: The specified `chunk_time_interval` should be an
+    integer (smallint, int, bigint) value and represent the understand
+    semantics of the hypertable's time column, e.g., given in
+    milliseconds if the time column is expressed in milliseconds
+    (see `create_hypertable` [instructions](#create_hypertable)).
 
 #### Sample Usage
 
-Set chunk_time_interval to 24 hours.
+For a TIMESTAMP column, set `chunk_time_interval` to 24 hours.
 ```sql
+SELECT set_chunk_time_interval('conditions', interval '1 day');
 SELECT set_chunk_time_interval('conditions', 86400000000);
 ```
 
-A hypertable that is doing
-time partitioning of a timestamp or DATE field must
-specify `chunk_time_interval` as an integer
-value in microseconds.  (Unlike `create_hypertable()`, interval
-values are currently not supported.)
-
-If the time column is an integer (SMALLINT, INT,
-BIGINT), the `chunk_time_interval` must be specified by an integer value
-corresponding to the underlying semantics of your data schema (e.g.,
-seconds if the INT time field represents seconds, nanoseconds if the
-BIGINT time field represents nanoseconds, etc.).
+For a time column expressed as the number of milliseconds since the
+UNIX epoch, set `chunk_time_interval` to 24 hours.
+```sql
+SELECT set_chunk_time_interval('conditions', 86400000);
+```
 
 ---
 
@@ -733,13 +782,6 @@ The expected output:
 
 ---
 
-## Time Units <a id="time-units"></a>
-Time units for TimescaleDB functions:
-- Microseconds for TIMESTAMP and TIMESTAMPTZ.
-- Same units as type for integer time types.
-
----
-
 ## Dump TimescaleDB meta data <a id="dump-meta-data"></a>
 
 To help when asking for support and reporting bugs, TimescaleDB includes a SQL script
@@ -754,6 +796,5 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 
 [Slack]: https://slack-login.timescale.com
 [chunk relation size]: #chunk_relation_size
-[units]: #time-units
 [best practices]: #create_hypertable-best-practices
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
