@@ -3,9 +3,12 @@
 >toplist
 > ### Command List (A-Z)
 > - [add_dimension](#add_dimension)
+> - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > - [create_hypertable](#create_hypertable)
+> - [detach_tablespace](#detach_tablespace)
+> - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
 > - [first](#first)
 > - [histogram](#histogram)
@@ -15,6 +18,7 @@
 > - [indexes_relation_size_pretty](#indexes_relation_size_pretty)
 > - [last](#last)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
+> - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 
 ## Hypertable management <a id="hypertable-management"></a>
@@ -92,6 +96,54 @@ SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
  experimental.  For any production environments, users are recommended
  to use at most one "space" dimension (in addition to the required
  time interval specified in `create_hypertable`).
+
+---
+
+## attach_tablespace() <a id="attach_tablespace"></a>
+
+Attach a tablespace to a hypertable and use it to store chunks. A
+[tablespace][postgres-tablespaces] is a directory on the filesystem
+that allows control over where individual tables and indexes are
+stored on the filesystem. A common use case is to create a tablespace
+for a particular storage disk, allowing tables to be stored
+there. Please review the standard PostgreSQL documentation for more
+[information on tablespaces][postgres-tablespaces].
+
+TimescaleDB can manage a set of tablespaces for each hypertable,
+automatically spreading chunks across the set of tablespaces attached
+to a hypertable. If a hypertable is hash partitioned, TimescaleDB will
+try to place chunks that belong to the same partition in the same
+tablespace. Changing the set of tablespaces attached to a hypertable
+may also change the placement behavior. A hypertable with no attached
+tablespaces will have its chunks placed in the database's default
+tablespace.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `tablespace` | Name of the tablespace to attach.|
+| `hypertable` | Identifier of hypertable to attach the tablespace to.|
+
+Tablespaces need to be [created][postgres-createtablespace] before
+being attached to a hypertable. Once created, tablespaces can be
+attached to multiple hypertables simultaneously to share the
+underlying disk storage. Associating a regular table with a tablespace
+using the `TABLESPACE` option to `CREATE TABLE`, prior to calling
+`create_hypertable`, will have the same effect as calling
+`attach_tablespace` immediately following `create_hypertable`.
+
+#### Sample Usage <a id="attach_tablespace-examples"></a>
+
+Attach the tablespace `disk1` to the hypertable `conditions`:
+
+
+```sql
+SELECT attach_tablespace('disk1', 'conditions');
+ ```
+
+>vvv The management of tablespaces on hypertables is currently an
+experimental feature.
 
 ---
 
@@ -260,6 +312,84 @@ field).  A very large number of such partitions leads both to poorer
 per-partition load balancing (the mapping of items to partitions using
 hashing), as well as much increased planning latency for some types of
 queries.
+
+---
+
+## detach_tablespace() <a id="detach_tablespace"></a>
+
+Detach a tablespace from one or more hypertables. This _only_ means
+that _new_ chunks will not be placed on the detached tablespace. This
+is useful, for instance, when a tablespace is running low on disk
+space and one would like to prevent new chunks from being created in
+the tablespace. The detached tablespace itself and any existing chunks
+with data on it will remain unchanged and will continue to work as
+before, including being available for queries. Note that newly
+inserted data rows may still be inserted into an existing chunk on the
+detached tablespace since existing data is not cleared from a detached
+tablespace. A detached tablespace can be reattached if desired to once
+again be considered for chunk placement.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `tablespace` | Name of the tablespace to detach.|
+
+When giving only the tablespace name as argument, the given tablespace
+will be detached from all hypertables that the current role has the
+appropriate permissions for. Therefore, without proper permissions,
+the tablespace may still receive new chunks after this command
+is issued.
+
+
+#### Optional Arguments
+
+|Name|Description|
+|---|---|
+| `hypertable` | Identifier of hypertable to detach a the tablespace from.|
+
+
+When specifying a specific hypertable, the tablespace will only be
+detached from the given hypertable and thus may remain attached to
+other hypertables.
+
+#### Sample Usage <a id="detach_tablespace-examples"></a>
+
+Detach the tablespace `disk1` from the hypertable `conditions`:
+
+```sql
+SELECT detach_tablespace('disk1', 'conditions');
+```
+
+Detach the tablespace `disk1` from all hypertables that the current
+user has permissions for:
+
+```sql
+SELECT detach_tablespace('disk1');
+```
+
+---
+
+## detach_tablespaces() <a id="detach_tablespaces"></a>
+
+Detach all tablespaces from a hypertable. After issuing this command
+on a hypertable, it will no longer have any tablespaces attached to
+it. New chunks will instead be placed in the database's default
+tablespace.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `hypertable` | Identifier of hypertable to detach a the tablespace from.|
+
+#### Sample Usage <a id="detach_tablespaces-examples"></a>
+
+Detach all tablespaces from the hypertable `conditions`:
+
+```sql
+SELECT detach_tablespaces('conditions');
+```
 
 ---
 
@@ -473,6 +603,19 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
  for ordered selection within a `GROUP BY` aggregate, and not as an
  alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
  latest value (which will use indexes).
+
+---
+
+## show_tablespaces() <a id="show_tablespaces"></a>
+
+Show the tablespaces attached to a hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `hypertable` | Identifier of hypertable to show attached tablespaces for.|
+
 
 ---
 
@@ -809,3 +952,5 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [chunk relation size]: #chunk_relation_size
 [best practices]: #create_hypertable-best-practices
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
+[postgres-tablespaces]: https://www.postgresql.org/docs/9.6/static/manage-ag-tablespaces.html
+[postgres-createtablespace]: https://www.postgresql.org/docs/9.6/static/sql-createtablespace.html
