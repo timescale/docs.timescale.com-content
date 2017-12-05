@@ -52,11 +52,6 @@ When executing this function, either `number_partitions` or `interval_length`
 must be supplied, which will dictate if the dimension will use hash or interval
 partitioning.
 
->vvv Supporting **more** than one additional dimension is currently
- experimental.  For any production environments, users are recommended
- to use at most one "space" dimension (in addition to the required
- time interval specified in `create_hypertable`).
-
 #### Sample Usage <a id="add_dimension-examples"></a>
 
 First convert table `conditions` to hypertable with just time
@@ -76,7 +71,10 @@ SELECT add_dimension('conditions', 'time_received', interval_length => 864000000
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 ```
 
->vvv More than one additional partitioning dimension is currently experimental and not recommended for production deployments.
+>vvv Supporting **more** than one additional dimension is currently
+ experimental.  For any production environments, users are recommended
+ to use at most one "space" dimension (in addition to the required
+ time interval specified in `create_hypertable`).
 
 ---
 
