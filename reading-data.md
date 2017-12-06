@@ -77,7 +77,7 @@ One way to determine cumulative sum is using the SQL
 command `sum(sum(column)) OVER(ORDER BY group)`.  For example:
 
 ```sql
-SELECT host, sum(sum(temperature)) OVER(ORDER BY location)
+SELECT location, sum(sum(temperature)) OVER(ORDER BY location)
   FROM conditions
   GROUP BY location;
 ```
@@ -94,7 +94,7 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
       ROWS BETWEEN 9 PRECEDING AND CURRENT ROW)
     AS smooth_temp
   FROM conditions
-  WHERE location = 'garage' and time > NOW() - '1 day'
+  WHERE location = 'garage' and time > NOW() - interval '1 day'
   ORDER BY time DESC;
 ```
 ### Time Bucket <a id="time-bucket"></a>
