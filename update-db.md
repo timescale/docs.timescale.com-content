@@ -78,8 +78,9 @@ commands.
 Install the latest TimescaleDB image:
 
 ```bash
-docker pull timescale/timescaledb:latest
+docker pull timescale/timescaledb:latest-pg96
 ```
+>ttt If you are using PostgreSQL 10 images, use the tag `latest-pg10`.
 
 #### Step 2: Determine mount point used by old container
 As you'll want to restart the new docker image pointing to a mount point
