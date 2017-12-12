@@ -147,18 +147,37 @@ Your data is now stored in a file called `old_db.csv`.
 
 ### 3. Import Data into TimescaleDB
 
-To put the data into the new table, let's run another `COPY`, this one to copy
-data from the `.csv` into our new db:
+#### Using PostgreSQL's `COPY`
+
+To put the data into the new table, we can use PostgreSQL's bulk insert
+command `COPY` to copy data from the `.csv` into our new db:
 
 ```bash
 psql -d new_db -c "\COPY conditions FROM old_db.csv CSV"
 ```
 
-Once finished, your migration is complete!
+This method is straightforward and requires no extra tools, but for
+large datasets it can be impractical and time-consuming because
+`COPY` is single-threaded. For a faster method that can utilize more
+of the CPU, use the next method.
 
->ttt The standard `COPY` command in PostgreSQL is single threaded.
- So to speed up importing larger amounts of data, we recommend using
- our [parallel importer][] instead.
+#### Using `timescaledb-parallel-copy`
+
+We have [open sourced a Go program][parallel importer] that can be
+used to speed up large data migrations by running multiple `COPY`s
+concurrently. For example, to use 4 workers:
+```bash
+timescaledb-parallel-copy --db-name new_db --table conditions \
+    --file old_db.csv --workers 4 --copy-options "CSV"
+```
+
+In addition to parallelizing the workload, the tool also offers flags
+to improve the copy experience. [See the repo on Github][parallel importer] for full details.
+
+>ttt We recommend not setting the number of workers higher than
+the number of available CPU cores on the machine.
+Above that, the workers tend to compete with each other for
+resources and reduce the performance improvements.
 
 Now checkout some common [hypertable commands][] for exploring your data.
 
