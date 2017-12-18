@@ -15,7 +15,7 @@ recommended** that you then checkout the latest tagged commit to
 build from (see the repo's [Releases][github-releases] page for that).
 
 ```bash
-git clone git@github.com:timescale/timescaledb.git
+git clone https://github.com/timescale/timescaledb.git
 cd timescaledb
 
 # Bootstrap the build system
