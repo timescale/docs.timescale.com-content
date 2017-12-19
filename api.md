@@ -273,7 +273,7 @@ are before the cut-off point, but only one chunk's worth.
 | `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 
-The `older_than` can be specified in two ways:
+The `older_than` parameter can be specified in two ways:
 
 - **interval type**: The cut-off point is computed as `now() -
     older_than`.  An error will be returned if an interval is supplied
@@ -321,7 +321,7 @@ not affected.
 | `main_table` | Identifier of hypertable to update interval for.|
 | `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0.|
 
-The valid types for the `chunk_time_interval` depends on the type of
+The valid types for the `chunk_time_interval` depend on the type of
 hypertable time column:
 
 - **TIMESTAMP, TIMESTAMPTZ, DATE**: The specified
@@ -329,7 +329,7 @@ hypertable time column:
     integer (or bigint) value, representing some number of microseconds.
 
 - **INTEGER**: The specified `chunk_time_interval` should be an
-    integer (smallint, int, bigint) value and represent the understand
+    integer (smallint, int, bigint) value and represent the underlying
     semantics of the hypertable's time column, e.g., given in
     milliseconds if the time column is expressed in milliseconds
     (see `create_hypertable` [instructions](#create_hypertable)).
