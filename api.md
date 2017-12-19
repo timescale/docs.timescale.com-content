@@ -338,7 +338,6 @@ hypertable time column:
 
 For a TIMESTAMP column, set `chunk_time_interval` to 24 hours.
 ```sql
-SELECT set_chunk_time_interval('conditions', interval '1 day');
 SELECT set_chunk_time_interval('conditions', 86400000000);
 ```
 
