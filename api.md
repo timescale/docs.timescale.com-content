@@ -46,19 +46,23 @@ be run only on an empty hypertable.
 |Name|Description|
 |---|---|
 | `number_partitions` | Number of hash partitions to use on `column_name`. Must be > 0.|
-| `interval_length` | Interval in that each chunk covers. Must be > 0.|
+| `interval_length` | Interval that each chunk covers. Must be > 0.|
 
 When executing this function, either `number_partitions` or `interval_length`
 must be supplied, which will dictate if the dimension will use hash or interval
 partitioning.
 
-Currently, the `interval_length` must be specified in a BIGINT.  If
-the column to be partitions is an TIMESTAMP, TIMESTAMPTZ, or DATE,
-this length represents some number of *microseconds*.  If the column
-is some other integer or numeric type, this length should reflect the column's
-underlying semantics (e.g., the `interval_length` should be given in
-milliseconds if the time column is the number of milliseconds since
-the UNIX epoch).
+The `interval_length` should be specified as follows:
+
+- If the column to be partitioned is a TIMESTAMP, TIMESTAMPTZ, or
+DATE, this length should be specified either as an INTERVAL type or
+an integer value in *microseconds*.
+
+- If the column is some other integer type, this length
+should be an integer that reflects
+the column's underlying semantics (e.g., the
+`interval_length` should be given in milliseconds if this column
+is the number of milliseconds since the UNIX epoch).
 
 >vvv Supporting **more** than one additional dimension is currently
  experimental.  For any production environments, users are recommended
@@ -80,7 +84,7 @@ space partitioning (4 partitions) on `location`, then add two additional dimensi
 
 ```sql
 SELECT create_hypertable('conditions', 'time', 'location', 2);
-SELECT add_dimension('conditions', 'time_received', interval_length => 86400000000);
+SELECT add_dimension('conditions', 'time_received', interval_length => interval '1 day');
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 ```
 
@@ -125,7 +129,7 @@ The units of `chunk_time_interval` should be set as follows:
 
 - For time columns having timestamp or DATE types, the
 `chunk_time_interval` should be specified either as an `interval` type
-or a numerical value in microseconds.
+or an integral value in *microseconds*.
 
 - For integer types, the `chunk_time_interval` **must** be set
 explicitly, as the database does not otherwise understand the
@@ -325,8 +329,9 @@ The valid types for the `chunk_time_interval` depend on the type of
 hypertable time column:
 
 - **TIMESTAMP, TIMESTAMPTZ, DATE**: The specified
-    `chunk_time_interval` should be an
-    integer (or bigint) value, representing some number of microseconds.
+    `chunk_time_interval` should be given either as an interval type
+    (`interval '1 day'`) or as an
+    integer or bigint value (representing some number of microseconds).
 
 - **INTEGER**: The specified `chunk_time_interval` should be an
     integer (smallint, int, bigint) value and represent the underlying
@@ -338,6 +343,7 @@ hypertable time column:
 
 For a TIMESTAMP column, set `chunk_time_interval` to 24 hours.
 ```sql
+SELECT set_chunk_time_interval('conditions', interval '24 hours');
 SELECT set_chunk_time_interval('conditions', 86400000000);
 ```
 
