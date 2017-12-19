@@ -246,6 +246,38 @@ TimescaleDB supports the full gamut of
 triggers: `BEFORE INSERT`, `AFTER INSERT`, `BEFORE UPDATE`, `AFTER UPDATE`, `BEFORE DELETE`, `AFTER DELETE`.
 For additional information, see the [PostgreSQL docs][postgres-createtrigger].
 
+## Adding Constraints <a id="constraints"></a>
+
+Hypertables support all standard PostgreSQL constraint types, with the
+exception of foreign key constraints on other tables that reference
+values in a hypertable. Creating, deleting, or altering constraints on
+hypertables will propagate to chunks, accounting also for any indexes
+associated with the constraints. For instance, a table can be created
+as follows:
+
+
+```sql
+CREATE TABLE conditions (
+    time       TIMESTAMPTZ
+    temp       FLOAT NOT NULL,
+    device_id  INTEGER CHECK (device_id > 0),
+    location   INTEGER REFERENCES locations (id),
+    PRIMARY KEY(time, device_id)
+);
+
+SELECT create_hypertable('conditions', 'time');
+```
+
+This table will only allow positive device IDs, non-null temperature
+readings, and will guarantee unique time values for each device. It
+also references values in another `locations` table via a foreign key
+constraint. Note that time columns used for partitioning do not allow
+`NULL` values by default. TimescaleDB will automatically add a `NOT
+NULL` constraint to such columns if missing.
+
+For additional information on how to manage constraints, see the
+[PostgreSQL docs][postgres-createconstraint].
+
 [postgres-createindex]: https://www.postgresql.org/docs/9.6/static/sql-createindex.html
 [create_hypertable]: /api#create_hypertable
 [postgres-createtrigger]: https://www.postgresql.org/docs/9.6/static/sql-createtrigger.html
@@ -254,3 +286,4 @@ For additional information, see the [PostgreSQL docs][postgres-createtrigger].
 [expression-index]: https://www.postgresql.org/docs/current/static/indexes-expressional.html
 [partial-index]: https://www.postgresql.org/docs/current/static/indexes-partial.html
 [multicolumn-index]: https://www.postgresql.org/docs/current/static/indexes-multicolumn.html
+[postgres-createconstraint]: https://www.postgresql.org/docs/9.6/static/ddl-constraints.html
