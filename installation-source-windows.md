@@ -1,32 +1,49 @@
-## From Source <a id="installation-source"></a>
+## From Source (Windows) <a id="installation-source"></a>
 
 **Note: TimescaleDB only supports PostgreSQL 9.6 and 10**
 
 #### Prerequisites
 
-- A standard **PostgreSQL 9.6 or 10** installation with development environment (header files) (e.g., `postgresql-server-dev-9.6` package for Linux, [Postgres.app][] for MacOS)
-- C compiler (e.g., gcc or clang)
-- [CMake][] version 3.4 or greater
+- A standard **PostgreSQL 9.6 or 10 64-bit** installation
+- Visual Studio 2017 with Git & CMake components
+- **OR** Visual Studio 2015/2016 with [CMake][] version 3.4+ and Git
+- Make sure all relevant binaries are in your PATH: `pg_config`, `cmake`, `MSBuild`
 
 #### Build & Install with Local PostgreSQL
 >ttt It is **highly recommended** that you then checkout the latest
 tagged commit to build from (see the repo's [Releases][github-releases] page for that)
 
 Clone the repository from [Github][github-timescale]:
+
 ```bash
 git clone https://github.com/timescale/timescaledb.git
 cd timescaledb
 git checkout <release_tag>  # e.g., git checkout x.y.z
-
-# Bootstrap the build system
-./bootstrap
-
-# To build the extension
-cd build && make
-
-# To install
-make install
 ```
+
+If you are using Visual Studio 2017 with the CMake and Git components,
+you should be able to open the folder in Visual Studio, which will take
+care of the rest.
+
+If you are using an earlier version of Visual Studio:
+```bash
+# Bootstrap the build system
+./bootstrap.bat
+
+# To build the extension from command line
+cd build
+MSBuild.exe timescaledb.sln
+
+# Alternatively, open build/timescaledb.sln in Visual Studio and build
+```
+
+To install, you'll need to copy the `.sql` files inside `build/sql/`
+to the `share/extension` directory inside your PostgreSQL's installation
+directory (e.g., `C:\Program Files\PostgreSQL\`). You'll also need to copy
+the `timescaledb.dll` from `build/src/` and `timescaledb.control` from
+`build` to the `lib` directory inside your PostgreSQL's installation
+directory. You can use Windows Explorer or a shell (e.g., Powershell)
+to do this.
 
 #### Update `postgresql.conf`
 
@@ -48,7 +65,6 @@ shared_preload_libraries = 'timescaledb'
 
 Then, restart the PostgreSQL instance.
 
-[Postgres.app]: https://postgresapp.com
 [CMake]: https://cmake.org/
 [github-timescale]: https://github.com/timescale/timescaledb
 [github-releases]: https://github.com/timescale/timescaledb/releases
