@@ -236,6 +236,93 @@ This query will then output data in the following form:
  2017-09-22 |   9855
 ```
 
+### Last Point <a id="last-point"></a>
+
+A common query in many settings is to find the *last point* for each
+unique item in the database, e.g., the last recorded measurement from
+each IoT device, the last location of each item in asset tracking, the
+last price of each security, etc.
+
+Yet the standard approach for minimizing the amount of data one needs
+to search -- using a time predicate to tightly bound the amount of
+time (number of chunks) one needs to traverse -- is not sound if you
+can't guarantee that all items has at least one record within that
+period.
+
+Instead, a last point query effectively determines, for each unique
+item, the latest record for that item.
+
+Consider the following setup in asset tracking or fleet management,
+where you have a meta-data table about each vehicle, and a second
+time-series table about their location at a given time.
+
+```sql
+CREATE TABLE vehicles (
+  vehicle_id INTEGER PRIMARY KEY,
+  vin_number CHAR(17),
+  last_checkup TIMESTAMP
+);
+
+CREATE TABLE location (
+  time TIMESTAMP NOT NULL,
+  vehicle_id INTEGER REFERENCES vehicles (vehicle_id),
+  latitude FLOAT,
+  longitude FLOAT
+);
+
+SELECT create_hypertable('location', 'time');
+```
+
+Now, we use this first table, which gives us the distinct set of
+vehicles, to perform a LATERAL JOIN against the location table:
+
+```sql
+SELECT data.* FROM vehicles v
+  INNER JOIN LATERAL (
+    SELECT * FROM location l
+      WHERE l.vehicle_id = v.vehicle_id
+      ORDER BY time DESC LIMIT 1
+  ) AS data
+ON true
+ORDER BY v.vehicle_id, data.time DESC;
+
+            time            | vehicle_id | latitude  |  longitude
+----------------------------+------------+-----------+-------------
+ 2017-12-19 20:58:20.071784 |         72 | 40.753690 |  -73.980340
+ 2017-12-20 11:19:30.837041 |        156 | 40.729265 |  -73.993611
+ 2017-12-15 18:54:01.185027 |        231 | 40.350437 |  -74.651954
+```
+
+This approach requires keeping a separate table of distinct item
+identifiers/names, which can be done through the use of a foreign key
+from the hypertable to the metadata table (as shown via the
+`REFERENCES` definition above).
+
+This metadata table may be populated through other business logic
+(e.g., when a vehicle is first registered with the system), or it can
+be dynamically populated via a trigger when inserts or updates
+are performed against the hypertable:
+
+```sql
+CREATE OR REPLACE FUNCTION create_vehicle_trigger_fn()
+  RETURNS TRIGGER LANGUAGE PLPGSQL AS
+$BODY$
+BEGIN
+  INSERT INTO vehicles VALUES(NEW.vehicle_id, NULL, NULL) ON CONFLICT DO NOTHING;
+  RETURN NEW;
+END
+$BODY$;
+
+CREATE TRIGGER create_vehicle_trigger
+  BEFORE INSERT OR UPDATE ON location
+  FOR EACH ROW EXECUTE PROCEDURE create_vehicle_trigger_fn();
+```
+
+Alternatively, you can implement this functionality without a separate
+metadata table by performing a [loose index scan][] over the
+`location` hypertable, albeit at higher cost.
+
+
 What analytic functions are we missing?  [Let us know on github][issues].
 
 [postgres-select]: https://www.postgresql.org/docs/current/static/sql-select.html
@@ -247,4 +334,5 @@ What analytic functions are we missing?  [Let us know on github][issues].
 [last]: /api#last
 [histogram]: /api#histogram
 [generate_series]: https://www.postgresql.org/docs/current/static/functions-srf.html
+[loose index scan]: https://wiki.postgresql.org/wiki/Loose_indexscan
 [issues]: https://github.com/timescale/timescaledb/issues
