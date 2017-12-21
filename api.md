@@ -141,6 +141,12 @@ cover 1 day, you should specify `chunk_time_interval => 86400000`.
  in `create_hypertable`).  See [best practices][] before using any
  spatial partitioning.
 
+<!-- -->
+>ttt The time column in `create_hypertable` must be defined as `NOT
+ NULL`.  If this is not already specified on table creation,
+ `create_hypertable` will automatically add this constraint on the
+ table when it is executed.
+
 #### Sample Usage <a id="create_hypertable-examples"></a>
 
 Convert table `conditions` to hypertable with just time partitioning on column `time`:
