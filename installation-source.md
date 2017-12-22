@@ -28,6 +28,11 @@ cd build && make
 make install
 ```
 
+>vvv Our build scripts use `pg_config` to find out where PostgreSQL
+stores its extension files. If you have two versions of PostgreSQL
+installed, use `pg_config` to find out which version TimescaleDB was
+installed with.
+
 #### Update `postgresql.conf`
 
 Also, you will need to edit your `postgresql.conf` file to include
