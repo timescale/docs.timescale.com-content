@@ -3,7 +3,7 @@
 The primary point of interaction with your data is a hypertable,
 the abstraction of a single continuous table across all space and time intervals, such that one can query it via vanilla SQL.
 
->ttt First make sure that you have properly [installed][] AND [setup][] your Timescale database within your PostgreSQL instance.
+>ttt First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
 
 ### Creating a (Hyper)table
 To create a hypertable, you start with a regular SQL table, and then convert
