@@ -123,6 +123,84 @@ CREATE INDEX ON conditions (location, time DESC);
 This default behavior can be overridden when executing the [`create_hypertable`][create_hypertable] command.
 
 ---
+
+## Creating Triggers <a id="triggers"></a>
+
+TimescaleDB supports the full range of PostgreSQL triggers, and creating,
+altering, or dropping triggers on the hypertable will similarly
+propagate these changes to all of a hypertable's constituent chunks.
+
+In the following example, let's say you want to create a new
+table `error_conditions` with the same schema as `conditions`, but designed
+to only store records which are deemed erroneous, where an application
+signals a sensor error by sending a `temperature` or `humidity` having a
+value >= 1000.
+
+So, we'll take a two-step approach. First, let's create a function that
+will insert data deemed erroneous into this second table:
+
+```sql
+CREATE OR REPLACE FUNCTION record_error()
+  RETURNS trigger AS $record_error$
+BEGIN
+ IF NEW.temperature >= 1000 OR NEW.humidity >= 1000 THEN
+   INSERT INTO error_conditions
+     VALUES(NEW.time, NEW.location, NEW.temperature, NEW.humidity);
+ END IF;
+ RETURN NEW;
+END;
+$record_error$ LANGUAGE plpgsql;
+```
+Second, create a trigger that will call this function whenever a new row is
+inserted into the hypertable.
+
+```sql
+CREATE TRIGGER record_error
+  BEFORE INSERT ON conditions
+  FOR EACH ROW
+  EXECUTE PROCEDURE record_error();
+```
+Now, all data is inserted into the `conditions` data, but any row deemed
+erroneous is _also_ added to the `error_conditions` table.
+
+TimescaleDB supports the full gamut of
+triggers: `BEFORE INSERT`, `AFTER INSERT`, `BEFORE UPDATE`, `AFTER UPDATE`, `BEFORE DELETE`, `AFTER DELETE`.
+For additional information, see the [PostgreSQL docs][postgres-createtrigger].
+
+## Adding Constraints <a id="constraints"></a>
+
+Hypertables support all standard PostgreSQL constraint types, with the
+exception of foreign key constraints on other tables that reference
+values in a hypertable. Creating, deleting, or altering constraints on
+hypertables will propagate to chunks, accounting also for any indexes
+associated with the constraints. For instance, a table can be created
+as follows:
+
+
+```sql
+CREATE TABLE conditions (
+    time       TIMESTAMPTZ
+    temp       FLOAT NOT NULL,
+    device_id  INTEGER CHECK (device_id > 0),
+    location   INTEGER REFERENCES locations (id),
+    PRIMARY KEY(time, device_id)
+);
+
+SELECT create_hypertable('conditions', 'time');
+```
+
+This table will only allow positive device IDs, non-null temperature
+readings, and will guarantee unique time values for each device. It
+also references values in another `locations` table via a foreign key
+constraint. Note that time columns used for partitioning do not allow
+`NULL` values by default. TimescaleDB will automatically add a `NOT
+NULL` constraint to such columns if missing.
+
+For additional information on how to manage constraints, see the
+[PostgreSQL docs][postgres-createconstraint].
+
+---
+
 ## JSON support for semi-structured data <a id="json"></a>
 
 TimescaleDB can work with any data types available in PostgreSQL, including JSON
@@ -201,82 +279,6 @@ DESC` as a leading column). Note, however, that to enable index-only scans, you
 need `data` as a column, not the full expression `((data->>'cpu')::double
 precision)`.
 
----
-
-## Creating Triggers <a id="triggers"></a>
-
-TimescaleDB supports the full range of PostgreSQL triggers, and creating,
-altering, or dropping triggers on the hypertable will similarly
-propagate these changes to all of a hypertable's constituent chunks.
-
-In the following example, let's say you want to create a new
-table `error_conditions` with the same schema as `conditions`, but designed
-to only store records which are deemed erroneous, where an application
-signals a sensor error by sending a `temperature` or `humidity` having a
-value >= 1000.
-
-So, we'll take a two-step approach. First, let's create a function that
-will insert data deemed erroneous into this second table:
-
-```sql
-CREATE OR REPLACE FUNCTION record_error()
-  RETURNS trigger AS $record_error$
-BEGIN
- IF NEW.temperature >= 1000 OR NEW.humidity >= 1000 THEN
-   INSERT INTO error_conditions
-     VALUES(NEW.time, NEW.location, NEW.temperature, NEW.humidity);
- END IF;
- RETURN NEW;
-END;
-$record_error$ LANGUAGE plpgsql;
-```
-Second, create a trigger that will call this function whenever a new row is
-inserted into the hypertable.
-
-```sql
-CREATE TRIGGER record_error
-  BEFORE INSERT ON conditions
-  FOR EACH ROW
-  EXECUTE PROCEDURE record_error();
-```
-Now, all data is inserted into the `conditions` data, but any row deemed
-erroneous is _also_ added to the `error_conditions` table.
-
-TimescaleDB supports the full gamut of
-triggers: `BEFORE INSERT`, `AFTER INSERT`, `BEFORE UPDATE`, `AFTER UPDATE`, `BEFORE DELETE`, `AFTER DELETE`.
-For additional information, see the [PostgreSQL docs][postgres-createtrigger].
-
-## Adding Constraints <a id="constraints"></a>
-
-Hypertables support all standard PostgreSQL constraint types, with the
-exception of foreign key constraints on other tables that reference
-values in a hypertable. Creating, deleting, or altering constraints on
-hypertables will propagate to chunks, accounting also for any indexes
-associated with the constraints. For instance, a table can be created
-as follows:
-
-
-```sql
-CREATE TABLE conditions (
-    time       TIMESTAMPTZ
-    temp       FLOAT NOT NULL,
-    device_id  INTEGER CHECK (device_id > 0),
-    location   INTEGER REFERENCES locations (id),
-    PRIMARY KEY(time, device_id)
-);
-
-SELECT create_hypertable('conditions', 'time');
-```
-
-This table will only allow positive device IDs, non-null temperature
-readings, and will guarantee unique time values for each device. It
-also references values in another `locations` table via a foreign key
-constraint. Note that time columns used for partitioning do not allow
-`NULL` values by default. TimescaleDB will automatically add a `NOT
-NULL` constraint to such columns if missing.
-
-For additional information on how to manage constraints, see the
-[PostgreSQL docs][postgres-createconstraint].
 
 [postgres-createindex]: https://www.postgresql.org/docs/9.6/static/sql-createindex.html
 [create_hypertable]: /api#create_hypertable
