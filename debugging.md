@@ -1,5 +1,37 @@
 # Debugging TimescaleDB
 
+##  Log error: could not access file "timescaledb"
+
+If your PostgreSQL logs have this error preventing it from starting up,
+you should double check that the TimescaleDB files have been installed
+to the correct location. Our installation methods use `pg_config` to
+get PostgreSQL's location. However if you have multiple versions of
+PostgreSQL installed on the same machine, the location `pg_config`
+points to may not be for the version you expect. To check which
+version TimescaleDB used:
+```bash
+$ pg_config --version
+PostgreSQL 9.6.6
+```
+
+If that is the correct version, double check that the installation path is
+the one you'd expect. For example, for PostgreSQL 10.1 installed via
+Homebrew on macOS it should be `/usr/local/Cellar/postgresql/10.1/bin`:
+```bash
+$ pg_config --bindir
+/usr/local/Cellar/postgresql/10.1/bin
+```
+
+If either of those steps is not the version you are expecting, you need
+to either (a) uninstall the incorrect version of PostgreSQL if you can or
+(b) update your `PATH` environmental variable to have the correct
+path of `pg_config` listed first, i.e., by prepending the full path:
+```bash
+$ export PATH = /usr/local/Cellar/postgresql/10.1/bin:$PATH
+```
+Then, reinstall TimescaleDB and it should find the correct installation
+path.
+
 ##  Explaining query performance
 
 PostgreSQL's EXPLAIN feature allows users to understand the underlying query
