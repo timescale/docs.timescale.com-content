@@ -5,6 +5,12 @@ TimescaleDB.  Since version 0.1, TimescaleDB supports **in-place updates**:
 you don't need to dump and restore your data, and versions are published with
 automated migration scripts that converts any internal state if necessary.
 
+>ttt If you are looking to upgrade the version of the **PostgreSQL instance** (e.g. from 9.6 to 10) rather than the version of the TimescaleDB extension, you have two choices. Either use [`pg_upgrade`][pg_upgrade] with the command:
+> ```
+> pg_upgrade -b oldbindir -B newbindir -d olddatadir -D newdatadir -O "-c timescaledb.restoring='on'"
+> ```
+> or [backup][] and then restore into a new version of the instance.
+
 ### Using ALTER EXTENSION
 
 Software upgrades use PostgreSQL's `ALTER EXTENSION` support
@@ -144,7 +150,8 @@ postgres=# ALTER EXTENSION timescaledb UPDATE;
 You can then run the `\dx` command to make sure you have the
 latest version of TimescaleDB installed.
 
-[install]: /getting-started/installation
+[pg_upgrade]: https://www.postgresql.org/docs/9.6/static/pgupgrade.html
 [backup]: /using-timescaledb/backup
+[install]: /getting-started/installation
 [bind-mounts]: https://docs.docker.com/engine/admin/volumes/bind-mounts/
 [volumes]: https://docs.docker.com/engine/admin/volumes/volumes/
