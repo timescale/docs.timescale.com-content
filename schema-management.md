@@ -1,5 +1,23 @@
 # Schema management
 
+Designing proper table schemas is a key part of using PostgreSQL. Creating the
+appropriate schema for a given workload can result in significant performance
+improvements (and conversely, designing the wrong schema can result in
+significant performance degradation).
+
+TimescaleDB supports all schema elements supported within PostgreSQL, including
+data types, indexes, triggers, etc.
+
+Note that sometimes it is useful to have a flexible schema, in particular when storing
+semi-structured data (e.g., storing readings from IoT sensors collecting
+varying measurements). For these cases, TimescaleDB also supports the
+PostgreSQL JSON and JSONB datatypes.
+
+In this section, we provide detailed examples and best practices of how to
+create appropriate indexes, triggers, and constraints on your tables,
+as well as how to
+appropriately utilize the JSON and JSONB datatypes.
+
 ## Indexing Data <a id="indexing"></a>
 
 TimescaleDB supports the range of PostgreSQL index types, and creating, altering,
