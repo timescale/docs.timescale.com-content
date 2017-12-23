@@ -286,7 +286,7 @@ are before the cut-off point, but only one chunk's worth.
 The `older_than` parameter can be specified in two ways:
 
 - **interval type**: The cut-off point is computed as `now() -
-    older_than`.  An error will be returned if an interval is supplied
+    older_than`.  An error will be returned if an INTERVAL is supplied
     and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
     DATE.
 
@@ -335,7 +335,7 @@ The valid types for the `chunk_time_interval` depend on the type of
 hypertable time column:
 
 - **TIMESTAMP, TIMESTAMPTZ, DATE**: The specified
-    `chunk_time_interval` should be given either as an interval type
+    `chunk_time_interval` should be given either as an INTERVAL type
     (`interval '1 day'`) or as an
     integer or bigint value (representing some number of microseconds).
 
