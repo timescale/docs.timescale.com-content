@@ -167,6 +167,8 @@ TimescaleDB supports the full gamut of
 triggers: `BEFORE INSERT`, `AFTER INSERT`, `BEFORE UPDATE`, `AFTER UPDATE`, `BEFORE DELETE`, `AFTER DELETE`.
 For additional information, see the [PostgreSQL docs][postgres-createtrigger].
 
+---
+
 ## Adding Constraints <a id="constraints"></a>
 
 Hypertables support all standard PostgreSQL constraint types, with the
