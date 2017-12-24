@@ -5,8 +5,8 @@
 #### Prerequisites
 
 - A standard **PostgreSQL 9.6 or 10 64-bit** installation
-- Visual Studio 2017 with Git & CMake components
-- **OR** Visual Studio 2015/2016 with [CMake][] version 3.4+ and Git
+- Visual Studio 2017 (with [CMake][] and Git components)  
+  **or** Visual Studio 2015/2016 (with [CMake][] version 3.4+ and Git components)
 - Make sure all relevant binaries are in your PATH: `pg_config`, `cmake`, `MSBuild`
 
 #### Build & Install with Local PostgreSQL
