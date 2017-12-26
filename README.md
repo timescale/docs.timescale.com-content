@@ -67,3 +67,18 @@ paragraph tag.  This is due to the way that the markdown parser interprets
 blockquotes with the new modifications.
 This will be fixed in future versions if it becomes a big issue, but we don't
 anticipate that.
+
+### Editing the API section
+
+There is a specific format for the API section which consists of:
+- Function name with empty parentheses (if function takes arguments). Ex. `add_dimension()`
+- Brief, specific description of the function
+- Any warnings necessary
+- Required Arguments
+    - A table with columns for "Name" and "Description"
+- Optional Arguments
+    - A table with columns for "Name" and "Description"
+- Any specific instructions about the arguments, including valid types
+- Sample Usage: one or two literal examples of the function being used to demonstrate argument syntax.
+
+See the API file to get an idea.
