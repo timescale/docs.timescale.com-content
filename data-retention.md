@@ -1,7 +1,7 @@
 # Data Retention <a id="data-retention"></a>
 
 TimescaleDB allows efficient deletion of old data at the chunk level
-using the `drop_chunks()` function.
+using the `drop_chunks` function.
 
 ```sql
 SELECT drop_chunks(interval '24 hours', 'conditions');
@@ -14,7 +14,7 @@ individual rows of data in chunks.
 For example, if one chunk has data more than 36 hours old, a second
 chunk has data between 12 and 36 hours old, and a third chunk has the
 most recent 12 hours of data, only the first chunk is dropped when
-executing this `drop_chunks` command. Thus, in this scenario,
+executing `drop_chunks`. Thus, in this scenario,
 the `conditions` hypertable will still have data stretching back 36 hours.
 
 For more information on the `drop_chunks` function and related
