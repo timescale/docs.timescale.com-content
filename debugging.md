@@ -1,6 +1,7 @@
 # Debugging TimescaleDB
 
-##  Log error: could not access file "timescaledb"
+## Common Errors
+###  Log error: could not access file "timescaledb" <a id="access-timescaledb"></a>
 
 If your PostgreSQL logs have this error preventing it from starting up,
 you should double check that the TimescaleDB files have been installed
@@ -32,7 +33,11 @@ $ export PATH = /usr/local/Cellar/postgresql/10.1/bin:$PATH
 Then, reinstall TimescaleDB and it should find the correct installation
 path.
 
-##  Explaining query performance
+---
+
+## Getting more information
+
+###  EXPLAINing query performance <a id="explain"></a>
 
 PostgreSQL's EXPLAIN feature allows users to understand the underlying query
 plan that PostgreSQL uses to execute a query. There are multiple ways that
@@ -61,6 +66,24 @@ When asking query-performance related questions by
 email(<support@timescale.com>) or [slack][], providing the EXPLAIN output of a
 query is immensely helpful.
 
+---
+
+## Dump TimescaleDB meta data <a id="dump-meta-data"></a>
+
+To help when asking for support and reporting bugs, 
+TimescaleDB includes a SQL script that outputs metadata 
+from the internal TimescaleDB tables as well as version information.
+The script is available in the source distribution in `scripts/` 
+but can also be [downloaded separately][].
+To use it, run:
+
+```bash
+psql [your connect flags] -d your_timescale_db < dump_meta_data.sql > dumpfile.txt
+```
+
+and then inspect `dump_file.txt` before sending it together with a bug report or support question.
+
 [using explain]: https://www.postgresql.org/docs/current/static/using-explain.html
 [track_io_timing]: https://www.postgresql.org/docs/current/static/runtime-config-statistics.html#GUC-TRACK-IO-TIMING
 [slack]: https://slack-login.timescale.com/
+[downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
