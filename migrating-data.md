@@ -1,20 +1,20 @@
 # Migrating Data
 >ttt First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
 
-### Migration from the PostgreSQL instance
+- ### Migration from the PostgreSQL instance
 
 Depending on where your data is currently stored,
 the steps to migrate it to TimescaleDB are slightly different.
 
-- **Same database**:  If you want to setup TimescaleDB in the
-same database in the same PostgreSQL instance as your stored
-data, [follow these instructions][same-db].
+    - **Same database**:  If you want to setup TimescaleDB in the
+    same database in the same PostgreSQL instance as your stored
+    data, [follow these instructions][same-db].
 
-- **Different database**: If you want to migrate data from
-a different database or a different PostgreSQL instance
-altogether, [follow these instructions][different-db].
+    - **Different database**: If you want to migrate data from
+    a different database or a different PostgreSQL instance
+    altogether, [follow these instructions][different-db].
 
-### Importing data from `.csv`
+- ### Importing data from `.csv`
 
 If you have a dataset stored in a `.csv` file, you can import it into an empty TimescaleDB hypertable. [follow these instructions][import-data]
 
