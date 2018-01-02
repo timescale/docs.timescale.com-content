@@ -412,6 +412,7 @@ are before the cut-off point, but only one chunk's worth.
 |---|---|
 | `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
+| `cascade` | Boolean on whether to `CASCADE` the drop on chunks, therefore removing dependent objects on chunks to be removed. Defaults to `FALSE`.
 
 The `older_than` parameter can be specified in two ways:
 
@@ -445,6 +446,11 @@ SELECT drop_chunks('2017-01-01'::date, 'conditions');
 Drop all chunks from hypertable `conditions` before 2017, where time column is given in milliseconds from the UNIX epoch:
 ```sql
 SELECT drop_chunks(1483228800000, 'conditions');
+```
+
+Drop all chunks from hypertable `conditions` older than 3 months, including dependent objects (e.g., views):
+```sql
+SELECT drop_chunks(interval '3 months', 'conditions', cascade => TRUE);
 ```
 
 ---
