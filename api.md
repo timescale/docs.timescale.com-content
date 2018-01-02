@@ -51,10 +51,11 @@ be run only on an empty hypertable.
 |---|---|
 | `number_partitions` | Number of hash partitions to use on `column_name`. Must be > 0.|
 | `interval_length` | Interval that each chunk covers. Must be > 0.|
+| `partitioning_func` | The function to use for calculating a value's partition (see `create_hypertable` [instructions](#create_hypertable)).|
 
-When executing this function, either `number_partitions` or `interval_length`
-must be supplied, which will dictate if the dimension will use hash or interval
-partitioning.
+When executing this function, either `number_partitions` or
+`interval_length` must be supplied, which will dictate if the
+dimension will use hash or interval partitioning.
 
 The `interval_length` should be specified as follows:
 
@@ -173,6 +174,7 @@ still work on the resulting hypertable.
 | `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month.
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
+| `partitioning_func` | The function to use for calculating a value's partition.|
 
 The time column currently only supports values with a data type of
 timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
@@ -189,6 +191,18 @@ semantics of what each integer value represents (a second,
 millisecond, nanosecond, etc.).  So if your time column is the number
 of milliseconds since the UNIX epoch, and you wish to each chunk to
 cover 1 day, you should specify `chunk_time_interval => 86400000`.
+
+In case of hash partitioning (i.e., `number_partitions` is greater
+than zero), it is possible to optionally specify a custom partitioning
+function. If no custom partitioning function is specified, the default
+partitioning function is used. The default partitioning function calls
+PostgreSQL's internal hash function for the given type, if one
+exists. Thus, a custom partitioning function can be used for value
+types that do not have a native PostgreSQL hash function. A
+partitioning function should take a single `anyelement` type argument
+and return a positive `integer` hash value. Note that this hash value
+is _not_ a partition ID, but rather the inserted value's position in
+the dimension's key space, which is then divided across the partitions.
 
 <!-- -->
 >ttt The `add_dimension` function can be used following hypertable
@@ -222,8 +236,14 @@ space partitioning (4 partitions) on `location`:
 SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
+The same as above, but using a custom partitioning function:
+
+```sql
+SELECT create_hypertable('conditions', 'time', 'location', 4, partitioning_func => 'location_hash');
+```
+
 Convert table `conditions` to hypertable. Do not raise a warning
-if `conditions` is already a hypertable.
+if `conditions` is already a hypertable:
 ```sql
 SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 ```
