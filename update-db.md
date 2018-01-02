@@ -144,7 +144,8 @@ as above in order to update the extension to the latest version:
 ```bash
 docker exec -it timescaledb psql -U postgres
 
-postgres=# ALTER EXTENSION timescaledb UPDATE;
+# within the PostgreSQL instance
+ALTER EXTENSION timescaledb UPDATE;
 ```
 
 You can then run the `\dx` command to make sure you have the
