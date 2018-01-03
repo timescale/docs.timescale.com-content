@@ -1,20 +1,26 @@
 # Migrating Data
 >ttt First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
 
-## Migration from PostgreSQL
+There are two choices available to migrate data into TimescaleDB:
 
+### 1. Migration from the PostgreSQL instance
 Depending on where your data is currently stored,
 the steps to migrate it to TimescaleDB are slightly different.
 
-- **Same database**:  If you want to setup TimescaleDB in the
+  1. **Same database**:  If you want to setup TimescaleDB in the
 same database in the same PostgreSQL instance as your stored
-data, [follow these instructions](#same-db).
+data, [follow these instructions][same-db].
 
-- **Different database**: If you want to migrate data from
+  2. **Different database**: If you want to migrate data from
 a different database or a different PostgreSQL instance
-altogether, [follow these instructions](#different-db).
+altogether, [follow these instructions][different-db].
 
-## Migrating from the Same Database <a id="same-db"></a>
+### 2. Importing data from `.csv`
+If you have a dataset stored in a `.csv` file, you can import it into an empty TimescaleDB hypertable. [follow these instructions][import-data]
+
+---
+
+## Migrate from the Same Database <a id="same-db"></a>
 
 For this example we'll assume that you have a table named `old_table` that you
 want to migrate to a table named `new_table`.  The steps are:
@@ -147,6 +153,40 @@ Your data is now stored in a file called `old_db.csv`.
 
 ### 3. Import Data into TimescaleDB
 
+Follow the [instructions below][csv-import] to insert data into your hypertable.
+
+---
+
+## Import data into TimescaleDB <a id="import-data"></a>
+
+If you have data stored in an external `.csv` file, you can import it into TimescaleDB:
+
+1. Create a new empty table with the same schema as the data file and convert the table to a hypertable.
+2.  Insert the data from the file.
+
+### 1. Creating the new Empty Table
+
+Creating the empty table requires foreknowledge of the schema of the data in the file, but is otherwise the same as creating any new hypertable.  Our example is a database named `new_db` and a data file named `old_db.csv`.
+
+First create a new empty PostgreSQL table:
+
+```sql
+-- Assuming the data file's columns are time, location, temperature
+CREATE TABLE conditions (
+    time        TIMESTAMPTZ         NOT NULL,
+    location    text                NOT NULL,
+    temperature DOUBLE PRECISION    NULL
+);
+```
+
+Then convert that table into a hypertable using [`create_hypertable`][create_hypertable]:
+
+```sql
+SELECT create_hypertable('conditions', 'time');
+```
+
+### 2. Inserting data into the hypertable <a id="csv-import"></a>
+
 #### Using PostgreSQL's `COPY`
 
 To put the data into the new table, we can use PostgreSQL's bulk insert
@@ -179,12 +219,16 @@ the number of available CPU cores on the machine.
 Above that, the workers tend to compete with each other for
 resources and reduce the performance improvements.
 
-Now checkout some common [hypertable commands][] for exploring your data.
+Now check out some common [hypertable commands][] for exploring your data.
 
 [installed]: /getting-started/installation
 [setup]: /getting-started/setup
+[same-db]: #same-db
+[different-db]: #different-db
+[import-data]: #import-data
 [create_hypertable]: /api#create_hypertable
 [unique_indexes]: /using-timescaledb/schema-management#unique_indexes
 [indexing]: /using-timescaledb/schema-management#indexing
+[csv-import]: #csv-import
 [parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
 [hypertable commands]: /using-timescaledb/hypertables
