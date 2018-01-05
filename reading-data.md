@@ -209,7 +209,7 @@ WITH
       FROM trades
       WHERE asset_code = 'TIMS'
         AND time >= '2017-07-01' AND time < '2017-07-10'
-      GROUP BY time
+      GROUP BY date
   ),
   period AS (
     SELECT date::date
