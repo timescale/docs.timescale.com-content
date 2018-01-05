@@ -632,19 +632,6 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
 
 ---
 
-## show_tablespaces() <a id="show_tablespaces"></a>
-
-Show the tablespaces attached to a hypertable.
-
-#### Required Arguments
-
-|Name|Description|
-|---|---|
-| `hypertable` | Identifier of hypertable to show attached tablespaces for.|
-
-
----
-
 ## time_bucket() <a id="time_bucket"></a>
 
 This is a more powerful version of the standard PostgreSQL `date_trunc` function.
@@ -959,6 +946,19 @@ The expected output:
  public.conditions_time_idx           | 465 MB
 
 ```
+
+---
+
+## show_tablespaces() <a id="show_tablespaces"></a>
+
+Show the tablespaces attached to a hypertable.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `hypertable` | Identifier of hypertable to show attached tablespaces for.|
+
 
 ---
 
