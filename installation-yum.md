@@ -1,9 +1,9 @@
 ## yum Installation <a id="installation-yum"></a>
 
-This will install both TimescaleDB *and* PostgreSQL 9.6 via `yum`
+This will install both TimescaleDB *and* PostgreSQL via `yum`
 (or `dnf` on Fedora).
 
-**Note: PostgreSQL 9.6 is required for TimescaleDB on RedHat distros.  Releases with PostgreSQL 10 are coming soon**
+**Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
 
 #### Prerequisites
 
@@ -21,7 +21,7 @@ sure to remove non-`yum` installations before using this method.
 You'll need to [download the correct PGDG from Postgres][pgdg] for
 your operating system and architecture and install it:
 ```bash
-# Download PGDG, e.g. for Fedora 24:
+# Download PGDG for PostgreSQL 9.6, e.g. for Fedora 24:
 sudo yum install -y https://download.postgresql.org/pub/repos/yum/9.6/fedora/fedora-24-x86_64/pgdg-fedora96-9.6-3.noarch.rpm
 
 ## Follow the initial setup instructions found below:
@@ -31,8 +31,10 @@ Further setup instructions [are found here][yuminstall].
 
 Then, fetch our RPM and install it:
 ```bash
-# Fetch our RPM
-wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-0.x86_64.rpm
+# Fetch our RPM (for PostgreSQL 9.6)
+wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-9.6-0.x86_64.rpm
+# For PostgreSQL 10:
+# wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-10-0.x86_64.rpm
 
 # To install
 sudo yum install timescaledb
@@ -49,8 +51,9 @@ shared_preload_libraries = 'timescaledb'
 ```
 
 >ttt The usual location of `postgres.conf`
-is `/var/lib/pgsql/9.6/data/postgresql.conf` but this may vary
-depending on your setup.
+is `/var/lib/pgsql/9.6/data/postgresql.conf` for PostgreSQL 9.6
+and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
+but this may vary depending on your setup.
 
 To get started you'll need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs). Please
