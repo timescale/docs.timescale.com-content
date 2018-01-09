@@ -1,6 +1,6 @@
 ## From Source <a id="installation-source"></a>
 
-**Note: TimescaleDB only supports PostgreSQL 9.6 and 10**
+**Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
 
 #### Prerequisites
 

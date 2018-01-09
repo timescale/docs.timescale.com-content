@@ -2,7 +2,7 @@
 
 This will install both TimescaleDB *AND* PostgreSQL via Homebrew.
 
-**Note: TimescaleDB only supports PostgreSQL 9.6 and 10**
+**Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
 
 #### Prerequisites
 
