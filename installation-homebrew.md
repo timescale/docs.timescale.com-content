@@ -37,6 +37,9 @@ necessary libraries:
 # For example:
 shared_preload_libraries = 'timescaledb'
 ```
+>ttt The usual location of `postgres.conf` is
+`/usr/local/var/postgres/postgresql.conf`, but this may vary depending on
+your setup.
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
