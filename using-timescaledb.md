@@ -1,8 +1,9 @@
 # Using TimescaleDB
 
-TimescaleDB focuses on _simplicity_ for our users and how they can operate and manage their database, infrastructure, and applications, especially at scale.
+TimescaleDB focuses on _simplicity_ for our users and how they can operate and
+manage their database, infrastructure, and applications, especially at scale.
 
-First and foremost, developed TimescaleDB as an extension to PostgreSQL,
+First and foremost, we developed TimescaleDB as an extension to PostgreSQL,
 rather than building a time-series database from scratch. We also chose not to introduce
 our own custom query language. Instead, TimescaleDB fully embraces SQL.
 
@@ -21,8 +22,20 @@ partitioning, so users don't have to worry about managing any of the underlying
 chunks individually. Instead, users can focus on developing and interacting with their data as
 they would with regular tables within a PostgreSQL database. For advanced users, TimescaleDB is
 transparent about the presence of chunks and allows several ways to access them directly.
-This section covers all of the operations, and more, for using TimescaleDB. Again, for
-those coming from the world of SQL and PostgreSQL, these docs will be refreshingly simple.
+This section covers all of the operations, and more, for using TimescaleDB.
+
+If you're entirely new to PostgreSQL, here are some resources to help you get started:
+- [PostgreSQL Manuals][]
+
+If you're entirely new to SQL, here are some resources to help you get started:
+- [Khan Academy: Intro to SQL][khanacademy]
+- [Tutorials Point: SQL Tutorial][tutorialspoint]
+- [Codecademy: Learn SQL][codecademy]
+
 
 [architecture]: /introduction/architecture
 [creating-hypertables]: /using-timescaledb/hypertables
+[PostgreSQL Manual]: https://www.postgresql.org/docs/manuals/
+[tutorialspoint]: https://www.tutorialspoint.com/sql/
+[khanacademy]: https://www.khanacademy.org/computing/computer-programming/sql
+[codecademy]: https://www.codecademy.com/learn/learn-sql
