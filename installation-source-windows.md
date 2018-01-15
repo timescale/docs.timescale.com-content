@@ -34,16 +34,12 @@ If you are using an earlier version of Visual Studio:
 cd build
 MSBuild.exe timescaledb.sln
 
-# Alternatively, open build/timescaledb.sln in Visual Studio and build
-```
+# To install
+MSBuild.exe /p:Configuration=Release INSTALL.vcxproj
 
-To install, you'll need to copy the `.sql` files inside `build/sql/`
-to the `share/extension` directory inside your PostgreSQL's installation
-directory (e.g., `C:\Program Files\PostgreSQL\`). You'll also need to copy
-the `timescaledb.dll` from `build/src/` and `timescaledb.control` from
-`build` to the `lib` directory inside your PostgreSQL's installation
-directory. You can use Windows Explorer or a shell (e.g., Powershell)
-to do this.
+# Alternatively, open build/timescaledb.sln in Visual Studio and build,
+# then open & build build/INSTALL.vcxproj
+```
 
 #### Update `postgresql.conf`
 
