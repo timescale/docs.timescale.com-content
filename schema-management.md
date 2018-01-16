@@ -301,6 +301,20 @@ precision)`.
 
 ---
 
+## Altering table schemas <a id="updating-schemas"></a>
+
+TimescaleDB supports using the `ALTER TABLE` command to modify the schema of the
+hypertable. A change to the hypertable schema results in changes to the schema of each
+underlying chunk.
+
+This change can be a potentially expensive operation if it requires a rewrite of
+the underlying data.  However, a common modification is to add a field with a
+default value of NULL (if no DEFAULT clause is specified, then the default will
+be NULL); such a schema modification is inexpensive. More details can be found
+in the Notes section of the [documentation on ALTER TABLE][postgres-alter-table].
+
+---
+
 ## Storage management with tablespaces <a id="tablespaces"></a>
 
 An administrator can use tablespaces to manage storage for a
@@ -345,12 +359,13 @@ partitions continuously, and will therefore have chunks assigned to
 tablespaces in a way similar to round-robin.
 
 [postgres-tablespaces]: https://www.postgresql.org/docs/current/static/manage-ag-tablespaces.html
-[postgres-createindex]: https://www.postgresql.org/docs/9.6/static/sql-createindex.html
+[postgres-createindex]: https://www.postgresql.org/docs/current/static/sql-createindex.html
+[postgres-alter-table]: https://www.postgresql.org/docs/current/static/sql-altertable.html
 [attach_tablespace]: /api/#attach_tablespace
 [detach_tablespace]: /api/#detach_tablespace
 [show_tablespaces]: /api/#show_tablespaces
 [create_hypertable]: /api#create_hypertable
-[postgres-createtrigger]: https://www.postgresql.org/docs/9.6/static/sql-createtrigger.html
+[postgres-createtrigger]: https://www.postgresql.org/docs/current/static/sql-createtrigger.html
 [json-indexing]: https://www.postgresql.org/docs/current/static/datatype-json.html#JSON-INDEXING
 [json-operators]: https://www.postgresql.org/docs/current/static/functions-json.html#FUNCTIONS-JSONB-OP-TABLE
 [expression-index]: https://www.postgresql.org/docs/current/static/indexes-expressional.html
