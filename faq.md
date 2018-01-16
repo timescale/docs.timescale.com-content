@@ -99,13 +99,11 @@ read about in the next question. In our internal benchmarks on standard cloud VM
 we regularly test  TimescaleDB to 10+ billion rows, while sustaining insert rates
 of 100-200k rows / second (1-2 million metric inserts / second).
 
-<a id="single-node-scale"></a> With more powerful hardware, customers
-benchmark TimescaleDB further. With more resources customers have scaled
-TimescaleDB to 500 billion rows of data while sustaining 400k row
-inserts / second. In this case, customers took advantage of the fact that we
-allow users to elastically add disks (i.e., RAID), in order to scale up capacity
-on a single node. As disks are added, chunks are redistributed across them, in
-similar fashion to how they would be distributed across nodes.
+With more powerful hardware, users have scaled TimescaleDB to 500 billion rows of data
+while sustaining 400k row inserts / second. In this case, customers took advantage of
+the fact that we allow users to elastically add disks (i.e., RAID), in order to scale
+up capacity on a single node. As disks are added, chunks are redistributed across them,
+in similar fashion to how they would be distributed across nodes.
 
 With that said, the principle design decisions implemented for scaling up are
 much the same for allowing TimescaleDB to scale out horizontally in a linear
@@ -150,18 +148,17 @@ Timescale has some support for query parallelization and will develop more
 capability in this area.
 
 To recap, we currently support read-only clustering via PostgreSQL streaming
-replication for high availability and for increasing query throughput. The
-single node scalability described two questions prior (to 500 billion rows),
-by elastically adding disk space (especially simple using network
-attached disks in cloud environments), applies to read-only clusters.
+replication for high availability and for increasing query throughput. TimescaleDB's
+single node scalability (to over 500 billion rows / 50TB), achieved by elastically
+adding disk space (especially simple using network attached disks in cloud environments),
+applies to these read-only clusters.
 
 Full, scale-out clustering (i.e., for data volumes > 500 billion rows
 and ingest rates > 300K row inserts / second) is in the works but will
 leverage the automated partitioning capabilities already available in
 single-node TimescaleDB today.
 
-If you'd like to learn more and discuss this with us further,
-please contact us at <hello@timescale.com>. [[Top]](#top)
+For more information, please get in touch at <hello@timescale.com>. [[Top]](#top)
 
 ### **What are hypertables and chunks?** <a id="hypertable-chunks"></a>
 Our [documentation][docs-architecture] describes these design elements in more depth. [[Top]](#top)
@@ -187,6 +184,11 @@ Read our TimescaleDB-PostgreSQL benchmarks:
 * [Problems with PostgreSQL 10 for time-series data][Postgres-problems-time-series]
 
 To summarize, TimescaleDB offers:
+* Ease-of-use: TimescaleDB is far easier to use because creating partitions (or what we call
+"chunks") is automatically performed for the user. Chunks will also be adaptively sized by
+the system as data rates and volumes fluctuate. All of the complexity of automatic, adaptive
+partitioning is abstracted away behind a "hypertable", which users interact with just as
+they would with a PostgreSQL table.
 * Much higher ingest scale: TimescaleDB sees throughput more than 20X that of
 PostgreSQL once tables reach moderate size (e.g., 10s of millions of rows).
 While vanilla PostgreSQL is suitable for time-series data at low volumes, it does
@@ -204,11 +206,11 @@ specifically about time ordering can be _much_ more performant (1000s of times f
 in TimescaleDB. On single disk machines, at least, many simple queries that just perform
 indexed lookups or table scans are similarly performant between PostgreSQL and TimescaleDB.
 * Much faster data deletion: To save space or to implement data retention policies,
-vanilla PostgreSQL will require expensive "vacuuming" operations to defragment
-the disk storage associated with such tables. Through its chunking architecture,
-TimescaleDB avoids vacuuming operations and easily enforces data retention policies
-by specifying the data you wish to be deleted that is older than a specified time period.
-For more information, see [Data Retention][data-retention]. [[Top]](#top)
+vanilla PostgreSQL requires expensive "vacuuming" operations to defragment
+the disk storage associated with such tables. TimescaleDB avoids vacuuming operations
+and easily enforces data retention policies by specifying the data you wish to be
+deleted that is older than a specified time period. For more information, see
+[Data Retention][data-retention]. [[Top]](#top)
 * Extended time-oriented features: TimescaleDB includes time-series specific features
 not included in vanilla PostgreSQL and entirely unique to TimescaleDB
 (e.g., [`time_bucket`][time_bucket],[`first`][first] and [`last`][last]), with more to come.
@@ -326,7 +328,7 @@ See our [updating documentation][update]. [[Top]](#top)
 [time_bucket]: /api#time_bucket
 [first]: /api#first
 [last]: /api#last
-[data-retention]: http://docs.timescale.com/v0.7/using-timescaledb/data-retention
+[data-retention]: http://docs.timescale.com/using-timescaledb/data-retention
 [postgis]: /tutorials/tutorial-hello-nyc#tutorial-postgis
 [Github]: https://github.com/timescale/timescaledb/issues
 [joining our Slack group]: https://slack-login.timescale.com/
