@@ -20,7 +20,7 @@
 > - [How compatible is TimescaleDB with PostgreSQL?](#postgresql-compatibility)
 > - [How does TimescaleDB handle geospatial data?](#geo-spatial)
 > - [What can I use TimescaleDB for?](#what-for)
-> - [Is TimescaleDB currently being used in production?](#in-production")
+> - [Is TimescaleDB currently being used in production?](#in-production)
 > - [When is TimescaleDB a good choice?](#when-good)
 > - [When is TimescaleDB not a good choice?](#when-less-good)
 > - [What is the TimescaleDB open-source license?](#license)
@@ -33,12 +33,11 @@
 
 ### **What is TimescaleDB?** <a id="what"></a>
 
-TimescaleDB is the only open source time-series database that supports
-Full-SQL, and is optimized for fast ingest and complex queries. It is
-correspondingly easy to use like a traditional relational database,
-yet scales in ways previously reserved for NoSQL databases. This makes
-TimescaleDB an ideal candidate for operational analytics. TimescaleDB
-is distributed under the Apache 2.0 license. [[Top]](#top)
+TimescaleDB is the only open source time-series database that supports full SQL.
+Optimized for fast ingest and complex queries, TimescaleDB is easy to use like a
+traditional relational database, yet scales in ways previously reserved for NoSQL
+databases. In particular, this makes TimescaleDB an ideal candidate for
+operational analytics. TimescaleDB is distributed under the Apache 2.0 license. [[Top]](#top)
 
 ### **Why build another time-series database?** <a id="why-build"></a>
 Time-series data is cropping up in more and more places: monitoring and DevOps,
@@ -83,9 +82,11 @@ language. For a deeper dive into why we're bullish on SQL, read this blog post:
 
 ### **What SQL features are supported?** <a id="sql-features"></a>
 We support all of SQL, including secondary indices, complex predicates, JOINs,
-window functions, CTEs, etc. We continue to optimize many SQL queries where
-PostgreSQL does not have the proper logic to reason about time-ordered data,
-as well as introduce [entirely new SQL queries that are unique to TimescaleDB][new-queries]. [[Top]](#top)
+window functions, CTEs, etc. Additionally, we extend SQL to introduce
+[new semantics that make time-series manipulation easier][new-queries]. Behind
+the scenes, we also optimize the PostgreSQL query planner to enable the database
+to properly reason about time-series data, which in some cases leads to over
+10,000x improvement in query latency. [[Top]](#top)
 
 ### **How do I write data?** <a id="write"></a>
 Just via normal SQL, but here are some [insert examples][INSERT]. [[Top]](#top)
@@ -181,7 +182,6 @@ performing a range query for a single device/customer/ticker. For more
 details on space partitioning, see [Best Practices][best-practices].  [[Top]](#top)
 
 ### **Why would I use TimescaleDB over vanilla PostgreSQL?** <a id="vs-postgresql"></a>
-20x higher inserts, 2000x faster deletes, 1.2x-14,000x faster queries.
 Read our TimescaleDB-PostgreSQL benchmarks:
 * [TimescaleDB vs. PostgreSQL for time-series data][Postgres-benchmark]
 * [Problems with PostgreSQL 10 for time-series data][Postgres-problems-time-series]
@@ -230,25 +230,25 @@ by location). If you have a use case with a geospatial component,
 please email us at <hello@timescale.com> and we'd be happy to discuss. [[Top]](#top)
 
 ### **What can I use TimescaleDB for?** <a id="what-for"></a>
-TimescaleDB can be used to store large amounts of time-series data in a
-relational model (and alongside relational data in vanilla PostgreSQL tables) while
-exposing a full-SQL interface to the user. Since JOINs are natively supported, data from
-different sources within a business can be combined at query time, and only one database has
-to be managed, instead of a polyglot architecture with two or more databases.
-All of this allows various teams in an organization to run performant complex
-queries in ad-hoc and arbitrary ways across more data, as well as have an easier time
-managing that data, developing their applications, and enriching predictive models.
-TimescaleDB is currently deployed in production across a variety of industries,
-including manufacturing, energy, utilities, mining, oil and gas, finance, ad tech,
-smart home, and more. Use cases include monitoring and predicting the performance
-and behavior of applications, models, consumers and connected machines; powering
-operational analytical workflows and dashboards; for QA and performance testing;
-and more. [[Top]](#top)
+TimescaleDB is ideal for time-series workloads that would benefit from a SQL interface.
+SQL carries a variety of benefits: a query language that most developers already know;
+rich set of functions and utilities; and a broad ecosystem of tools, connectors, and
+visualization options. Also, since SQL JOINS are natively supported in TimescaleDB, data
+from different sources can be combined at query time (e.g., combining relational data stored
+in PostgreSQL tables with time-series data stored in TimescaleDB hypertables). This ability
+to store relational data alongside time-series data enables developers to simplify their stack,
+potentially reducing complex polyglot architectures to a single operational analytical database.
+
+Owing to these advantages, TimescaleDB is currently deployed across a variety of industries,
+including manufacturing, energy, utilities, mining, oil and gas, finance, ad tech, smart spaces,
+and more. Use cases include complex monitoring and analytics; predicting the performance and
+behavior of applications, models, consumers and connected machines; powering operational
+analytical workflows and dashboards; for QA and performance testing. [[Top]](#top)
 
 ### **Is TimescaleDB currently being used in production?** <a id="in-production"></a>
 Yes. TimescaleDB is currently deployed in production across a variety of industries
 including manufacturing, energy, utilities, mining, oil and gas, finance, ad tech,
-smart home, and more.
+smart spaces, and more.
 
 ### **When is TimescaleDB a good choice?**  <a id="when-good"></a>
 TimescaleDB is a good choice:
