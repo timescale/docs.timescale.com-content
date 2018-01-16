@@ -110,7 +110,7 @@ Moreover, other queries that can reason specifically about time ordering can
 be _much_ more performant in TimescaleDB.
 
 For example, TimescaleDB introduces a time-based "merge append" optimization to
-minimize the number of groups which much be processed to execute the
+minimize the number of groups which must be processed to execute the
 following (given its knowledge that time is already ordered).  For our
 100M row table, this results in query latency that is **396x** faster
 than PostgreSQL (82ms vs. 32566ms).
