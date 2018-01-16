@@ -249,7 +249,6 @@ See our [install documentation][install]. [[Top]](#top)
 See our [updating documentation][update]. [[Top]](#top)
 
 
-[[Top]](#top)
 [api]: /api
 [new-queries]: /using-timescaledb/reading-data#advanced-analytics
 [INSERT]: /using-timescaledb/writing-data#insert
