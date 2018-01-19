@@ -32,7 +32,6 @@
 
 
 ### **What is TimescaleDB?** <a id="what"></a>
-
 TimescaleDB is the only open source time-series database that supports full SQL.
 Optimized for fast ingest and complex queries, TimescaleDB is easy to use like a
 traditional relational database, yet scales in ways previously reserved for NoSQL
@@ -63,7 +62,7 @@ supporting a query language already in wide use, TimescaleDB ensures that your
 questions are limited by your imagination, not the database. [[Top]](#top)
 
 ### **Do you really support “all of SQL”?** <a id="sql-support"></a>
-Yes, all of SQL, including: secondary indices, JOINs, window functions. In fact,
+Yes, all of SQL, including: secondary indexes, JOINs, window functions. In fact,
 to the outside world, TimescaleDB looks like a PostgreSQL database: You connect
 to the database as if it's PostgreSQL, and you can administer the database as if
 it's PostgreSQL. Any tools and libraries that connect with PostgreSQL will
@@ -94,10 +93,10 @@ Just via normal SQL, but here are some [insert examples][INSERT]. [[Top]](#top)
 Just via normal SQL, but here are some [query examples][SELECT]. [[Top]](#top)
 
 ### **How far can TimescaleDB scale?** <a id="scaling"></a>
-We've first focused on scaling TimescaleDB up on a single node, which you can
-read about in the next question. In our internal benchmarks on standard cloud VMs
-we regularly test  TimescaleDB to 10+ billion rows, while sustaining insert rates
-of 100-200k rows / second (1-2 million metric inserts / second).
+We've first focused on scaling TimescaleDB up on a single node. In our internal
+benchmarks on standard cloud VMs we regularly test  TimescaleDB to 10+ billion
+rows, while sustaining insert rates of 100-200k rows / second (1-2 million metric
+inserts / second).
 
 With more powerful hardware, users have scaled TimescaleDB to 500 billion rows of data
 while sustaining 400k row inserts / second. In this case, customers took advantage of
@@ -105,7 +104,7 @@ the fact that we allow users to elastically add disks (i.e., RAID), in order to 
 up capacity on a single node. As disks are added, chunks are redistributed across them,
 in similar fashion to how they would be distributed across nodes.
 
-With that said, the principle design decisions implemented for scaling up are
+With that said, the principal design decisions implemented for scaling up are
 much the same for allowing TimescaleDB to scale out horizontally in a linear
 fashion across many servers. TimescaleDB is designed to combine the
 scalability of popular NoSQL databases, with the native query complexity
@@ -131,21 +130,17 @@ a normal table in PostgreSQL does. For more information, see this blog post:
 ### **Is there a clustered version and how can I try it?** <a id="clustered"></a>
 We often find that there may be a few different things people are looking for when they ask
 about support for "clustering":
-* They want to scale the amount of available storage (i.e., scale-out clustering)?
-Timescale allows you to elastically add disks to scale-up the capacity on a
-single hypertable, which is how users have scaled to the
-[data volumes mentioned above.](#single-node-scale)
-* They want high availability?
-As a PostgreSQL extension, hot standbys of Timescale can be set up using streaming
-replication. This is done just as one would do setting up read replicas with vanilla PostgreSQL.
-* They want to support more concurrent queries? Along with ensuring high
-availability, replicas can be queried in parallel with the master node to
-increase query throughput.
-* You want to support high ingest rates? Depending on your use case,
-we have users inserting 100-400K row inserts / second on a single node.
-* They want to parallelize individual queries (that touch a lot of data)? Today
-Timescale has some support for query parallelization and will develop more
-capability in this area.
+* High availability: As a PostgreSQL extension, hot standbys of Timescale can be set
+up using streaming replication. This is done just as one would do setting up read replicas
+with vanilla PostgreSQL (although we do not recommend using logical replication).
+* Scale the amount of available storage: Timescale allows you to elastically add disks
+to scale-up the capacity on a single hypertable.
+* Increase insert rates: Depending on your use case, we have users inserting 100-400K
+row inserts / second on a single node.
+* Increase query throughput: Along with ensuring high availability, replicas can be
+queried in parallel with the master node to increase query throughput.
+* Query parallelization: Today TimescaleDB takes advantage of the enhanced
+parallelization support offered in PostgreSQL 10.
 
 To recap, we currently support read-only clustering via PostgreSQL streaming
 replication for high availability and for increasing query throughput. TimescaleDB's
@@ -154,7 +149,7 @@ adding disk space (especially simple using network attached disks in cloud envir
 applies to these read-only clusters.
 
 Full, scale-out clustering (i.e., for data volumes > 500 billion rows
-and ingest rates > 300K row inserts / second) is in the works but will
+and ingest rates > 300K row inserts / second) is in the works and will
 leverage the automated partitioning capabilities already available in
 single-node TimescaleDB today.
 
