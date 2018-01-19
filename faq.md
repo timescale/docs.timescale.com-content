@@ -74,9 +74,9 @@ database and manipulating data. We wanted TimescaleDB to be easy to use and powe
 Because SQL is so widely-used, it allows an entire organization to access their data,
 lending different perspectives to the analysis of that data and empowering people
 in their respective roles. It also allows for easy migration of data residing in
-a regular PostgreSQL database to TimescaleDB hypertables. Put another way: we wanted
+PostgreSQL tables to TimescaleDB hypertables. Put another way: we wanted
 to ensure that your queries were only limited by your imagination, not by the query
-language. For a deeper dive into why we're bullish on SQL, read this blog post:
+language. For a deeper dive into why we're positive on SQL, read this blog post:
 [Why SQL is beating NoSQL, and what this means for the future of data][why-sql] [[Top]](#top)
 
 ### **What SQL features are supported?** <a id="sql-features"></a>
