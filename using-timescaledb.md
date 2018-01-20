@@ -14,8 +14,8 @@ functions for operational ease-of-use and analytical flexibility. In general, if
 familiar with SQL, TimescaleDB will be familiar to you.
 
 The most important design aspect for providing users with a simple interface to
-the database is the TimescaleDB hypertable, discussed earlier within
-[Architecture & Concepts][architecture].
+the database is the TimescaleDB hypertable, explained in our 
+[database architecture][architecture] section.
 
 Essentially, hypertables abstract away the complexity of TimescaleDB's automatic
 partitioning, so users don't have to worry about managing any of the underlying
@@ -25,7 +25,7 @@ transparent about the presence of chunks and allows several ways to access them 
 This section covers all of the operations, and more, for using TimescaleDB.
 
 If you're entirely new to PostgreSQL, here are some resources to help you get started:
-- [PostgreSQL Manuals][]
+- [PostgreSQL Manuals][postgres-manuals]
 
 If you're entirely new to SQL, here are some resources to help you get started:
 - [Khan Academy: Intro to SQL][khanacademy]
@@ -35,7 +35,7 @@ If you're entirely new to SQL, here are some resources to help you get started:
 
 [architecture]: /introduction/architecture
 [creating-hypertables]: /using-timescaledb/hypertables
-[PostgreSQL Manual]: https://www.postgresql.org/docs/manuals/
+[postgres-manuals]: https://www.postgresql.org/docs/manuals/
 [tutorialspoint]: https://www.tutorialspoint.com/sql/
 [khanacademy]: https://www.khanacademy.org/computing/computer-programming/sql
 [codecademy]: https://www.codecademy.com/learn/learn-sql
