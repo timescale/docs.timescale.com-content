@@ -120,8 +120,7 @@ data (a “hypertable”). For more information, see this blog
 post: [Time-series data: Why (and how) to use a relational database instead of NoSQL][rdbms > nosql]. [[Top]](#top)
 
 ### **What are hypertables and chunks?** <a id="hypertable-chunks"></a>
-[Our technical paper goes into these design elements][tech-paper] as
-does [our documentation][docs-architecture]. [[Top]](#top)
+Our [documentation][docs-architecture] describes these design elements in more depth. [[Top]](#top)
 
 ### **How are hypertable chunks determined across the space dimension (partition keys)?** <a id="partitions"></a>
 All hypertable chunks are partitioned automatically across time, which is necessary for
@@ -254,7 +253,6 @@ See our [updating documentation][update]. [[Top]](#top)
 [INSERT]: /using-timescaledb/writing-data#insert
 [SELECT]: /using-timescaledb/reading-data#select
 [rdbms > nosql]: http://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c
-[tech-paper]: http://www.timescaledb.com/papers/timescaledb.pdf
 [docs-architecture]: /introduction/architecture
 [hypertable-best-practices]: /using-timescaledb/hypertables#best-practices
 [time_bucket]: /api#time_bucket

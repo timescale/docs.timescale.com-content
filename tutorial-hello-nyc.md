@@ -456,7 +456,6 @@ Up for learning more? Here are a few suggestions:
 
 - [Try Other Sample Datasets][other samples]
 - [Migrate your own Data][migrate]
-- [Read the Technical Paper][paper]
 
 [install]: /getting-started/installation
 [NYCTLC]: http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml
@@ -464,4 +463,3 @@ Up for learning more? Here are a few suggestions:
 [postgis]: http://postgis.net/documentation
 [other samples]: /tutorials/other-sample-datasets
 [migrate]: /getting-started/migrating-data
-[paper]: http://www.timescale.com/papers/timescaledb.pdf
