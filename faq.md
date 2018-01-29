@@ -204,8 +204,7 @@ indexed lookups or table scans are similarly performant between PostgreSQL and T
 vanilla PostgreSQL requires expensive "vacuuming" operations to defragment
 the disk storage associated with such tables. TimescaleDB avoids vacuuming operations
 and easily enforces data retention policies by specifying the data you wish to be
-deleted that is older than a specified time period. For more information, see
-[Data Retention][data-retention]. [[Top]](#top)
+deleted that is older than a specified time period. For more information, see [Data Retention][data-retention]. [[Top]](#top)
 * Extended time-oriented features: TimescaleDB includes time-series specific features
 not included in vanilla PostgreSQL and entirely unique to TimescaleDB
 (e.g., [`time_bucket`][time_bucket],[`first`][first] and [`last`][last]), with more to come.

@@ -3,7 +3,7 @@
 This section describes how to upgrade between different versions of
 TimescaleDB.  Since version 0.1, TimescaleDB supports **in-place updates**:
 you don't need to dump and restore your data, and versions are published with
-automated migration scripts that converts any internal state if necessary.
+automated migration scripts that convert any internal state if necessary.
 
 >ttt If you are looking to upgrade the version of the **PostgreSQL instance** (e.g. from 9.6 to 10) rather than the version of the TimescaleDB extension, you have two choices. Either use [`pg_upgrade`][pg_upgrade] with the command:
 > ```
