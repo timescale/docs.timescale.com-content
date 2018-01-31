@@ -1,16 +1,13 @@
 # Reading data
 
-## SELECT Commands <a id="select"></a>
+TimescaleDB hypertables are designed to behave in the same manner as PostgreSQL database tables for reading data, using standard SQL commands.
 
-TimescaleDB supports **full SQL**.
+## SELECT Commands <a id="select"></a>
 
 Data can be queried from a hypertable using the standard `SELECT` SQL command
 ([PostgreSQL docs][postgres-select]), including with arbitrary `WHERE` clauses,
 `GROUP BY` and `ORDER BY` commands, joins, subqueries, window functions,
 user-defined functions (UDFs), `HAVING` clauses, and so on.
-
-In other words, if you already know SQL &mdash; or use tools that speak SQL
-or PostgreSQL &mdash; you already know how to use TimescaleDB.
 
 From basic queries:
 

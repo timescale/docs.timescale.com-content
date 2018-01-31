@@ -77,7 +77,7 @@ memory.
 
 >ttt Make sure that you are planning for single chunks from _all_ active hypertables fit into 25% of main memory, rather than 25% per hypertable.
 
-To determine this, you roughly need to understand your data rate.  If
+To determine this, you need to have a general idea of your data rate.  If
 you are writing roughly 2GB of data per day and have 64GB of memory,
 setting the time interval to a week would be good.  If you are writing
 10GB per day on the same machine, setting the time interval to a day

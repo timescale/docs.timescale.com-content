@@ -55,8 +55,8 @@ Using our example above, this approach would result in 9 different "time series"
 9. {name: temperature,  device_id: ghi789,  location_id:  77,  dev_type: roof}
 ```
 The number of such time series scales with the cross-product of the
-cardinality of each tag, i.e., (# names) x (# device ids) x (#
-location ids) x (device types).
+cardinality of each tag, i.e., (# names) &times; (# device ids) &times; (#
+location ids) &times; (device types).
 
 And each of these "time series" then has its own set of time/value sequences.
 

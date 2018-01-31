@@ -29,7 +29,7 @@ Add an additional partitioning dimension to a TimescaleDB hypertable.
 The column selected as the dimension can either use interval
 partitioning (e.g., for a second time partition) or hash partitioning.
 
->vvv Before using this command, please see the [best practices][] discussion
+>vvv Before using this command, please see the hypertable [best practices][] discussion
 and talk with us on [Slack](https://slack-login.timescale.com) about
 your use case. Users will *rarely* want or need to use this command.
 

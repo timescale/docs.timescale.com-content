@@ -108,7 +108,7 @@ The above `UNIQUE` statement during table creation internally is similar to:
 ```sql
 CREATE UNIQUE INDEX on conditions (time, location);
 ```
-Both of these result on a unique index for the table:
+Both of these result in a unique index for the table:
 ```sql
 # \d+ conditions;
                               Table "public.conditions"
