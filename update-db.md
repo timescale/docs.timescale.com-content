@@ -1,4 +1,4 @@
-# Updating software versions <a id="update"></a>
+# Updating software versions [](update)
 
 This section describes how to upgrade between different versions of
 TimescaleDB.  Since version 0.1, TimescaleDB supports **in-place updates**:
@@ -70,7 +70,7 @@ commands on different platforms:
  PostgreSQL instance, you must run the `ALTER EXTENSION` command
  in *all* the databases, not just one of them.
 
-### Example: Migrating docker installations <a id="update-docker"></a>
+### Example: Migrating docker installations [](update-docker)
 
 As a more concrete example, the following steps should be taken with a docker
 installation to upgrade to the latest TimescaleDB version, while

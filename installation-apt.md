@@ -1,4 +1,4 @@
-## apt Installation <a id="installation-apt"></a>
+## apt Installation [](installation-apt)
 
 This will install both TimescaleDB *and* PostgreSQL 9.6 via `apt`.
 

@@ -13,9 +13,9 @@ by a time interval, and by an (optional) "partition key" such as
 device ID, location, user id, etc.  We sometimes refer to this as
 partitioning across "time and space".
 
-## Terminology <a id="terminology"></a>
+## Terminology [](terminology)
 
-### Hypertables <a id="hypertables"></a>
+### Hypertables [](hypertables)
 The primary point of interaction with your data is a hypertable,
 the abstraction of a single continuous table across all space and time intervals,
 such that one can query it via vanilla SQL.
@@ -45,7 +45,7 @@ Indexes on time and the partitioning key are automatically created on hypertable
 although additional indexes can also be created (and TimescaleDB supports the
 full range of PostgreSQL index types).
 
-### Chunks <a id="chunks"></a>
+### Chunks [](chunks)
 
 Internally, TimescaleDB automatically splits each
 hypertable into **chunks**, with each chunk corresponding to a specific time
@@ -66,7 +66,7 @@ The runtime can perform such operations by simply dropping chunks (internal
 tables), rather than deleting individual rows.
 
 
-## Single Node vs. Clustering <a id="single-node-vs-clustering"></a>
+## Single Node vs. Clustering [](single-node-vs-clustering)
 
 TimescaleDB performs this extensive partitioning both
 on **single-node** deployments as well as **clustered** deployments
@@ -80,7 +80,7 @@ deployments. Of note is that the single-node version of TimescaleDB has been
 benchmarked to over 10-billion-row hypertables on commodity machines without
 a loss in insert performance.
 
-## Benefits of Single-node Partitioning <a id="benefits-chunking"></a>
+## Benefits of Single-node Partitioning [](benefits-chunking)
 
 A common problem with scaling database performance on a single machine
 is the significant cost/performance trade-off between memory and disk.

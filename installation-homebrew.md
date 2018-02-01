@@ -1,4 +1,4 @@
-## Homebrew <a id="homebrew"></a>
+## Homebrew [](homebrew)
 
 This will install both TimescaleDB *AND* PostgreSQL via Homebrew.
 

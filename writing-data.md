@@ -1,6 +1,6 @@
 # Writing data
 
-## INSERT <a id="insert"></a>
+## INSERT [](insert)
 
 Data can be inserted into a hypertable using the standard `INSERT` SQL command
 ([PostgreSQL docs][postgres-insert]).
@@ -43,7 +43,7 @@ INSERT INTO conditions
 
 ---
 
-## UPDATE Commands <a id="update"></a>
+## UPDATE Commands [](update)
 
 Updates in TimescaleDB work as expected in standard SQL ([PostgreSQL docs][postgres-update]).
 
@@ -68,7 +68,7 @@ UPDATE conditions SET temperature = temperature + 0.1
 
 ---
 
-## UPSERT Functionality <a id="upsert"></a>
+## UPSERT Functionality [](upsert)
 
 TimescaleDB supports UPSERTs in the same manner as PostgreSQL
 via the optional `ON CONFLICT` clause ([PostgreSQL docs][postgres-upsert]).
@@ -163,7 +163,7 @@ INSERT INTO conditions
 
 ---
 
-## DELETE <a id="delete"></a>
+## DELETE [](delete)
 
 Data can be deleted from a hypertable using the standard `DELETE` SQL
 command ([PostgreSQL docs][postgres-delete]), which will propagate

@@ -1,6 +1,6 @@
-# Backup & Restore <a id="backup"></a>
+# Backup & Restore [](backup)
 
-## Using `pg_dump` and `pg_restore` <a id="pg_dump-pg_restore"></a>
+## Using `pg_dump` and `pg_restore` [](pg_dump-pg_restore)
 
 In this section, we cover how to backup and restore an entire
 database or individual hypertables using the native PostgreSQL
@@ -104,7 +104,7 @@ psql -d new_db -c "\COPY conditions FROM data.csv CSV"
  So to speed up importing larger amounts of data, we recommend using
  our [parallel importer][] instead.
 
-## Using Docker & WAL-E <a id="docker-wale"></a>
+## Using Docker & WAL-E [](docker-wale)
 
 If you're using TimescaleDB in a containerized environment, we provide
 images that allow you hook your TimescaleDB container with a WAL-E
@@ -132,7 +132,7 @@ The values for `PGWAL` and `PGDATA` are up to you for your setup;
 remember these values since the WAL-E sidecar needs to know them
 (and share access to the directories) in order to coordinate the backups.
 
-### Backup <a id="docker-wale-backup"></a>
+### Backup [](docker-wale-backup)
 
 #### TimescaleDB container
 
@@ -198,7 +198,7 @@ more info). WAL backups will be handled by the TimescaleDB container
 running the given `archive_command`, which communicates via HTTP with
 the WAL-E sidecar.
 
-### Restore <a id="docker-wale-restore"></a>
+### Restore [](docker-wale-restore)
 
 The restoration process is very similar to the backup process. First
 you'll need to setup an empty TimescaleDB/PostgreSQL instance without

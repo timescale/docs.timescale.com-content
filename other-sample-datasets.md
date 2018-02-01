@@ -73,7 +73,7 @@ The data is now ready for you to use.
 psql -U postgres -h localhost -d devices_small
 ```
 
-## In-depth: Device Ops Datasets <a id="in-depth-devices"></a>
+## In-depth: Device Ops Datasets [](in-depth-devices)
 After importing one of these datasets (`devices_small`, `devices_med`, `devices_big`),
 you will find a plain PostgreSQL table called `device_info`
 and a hypertable called `readings`. The `device_info` table has (static)
@@ -190,7 +190,7 @@ hour                   | min_battery_level | max_battery_level
 
 ---
 
-## In-depth: Weather Datasets <a id="in-depth-weather"></a>
+## In-depth: Weather Datasets [](in-depth-weather)
 After importing one of these datasets (`weather_small`, `weather_med`, `weather_big`),
 you will find a plain PostgreSQL table called `locations` and
 a hypertable called `conditions`. The `locations` table has metadata about

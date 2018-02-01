@@ -1,4 +1,4 @@
-# Data Retention <a id="data-retention"></a>
+# Data Retention [](data-retention)
 
 TimescaleDB allows efficient deletion of old data at the chunk level
 using the `drop_chunks` function.

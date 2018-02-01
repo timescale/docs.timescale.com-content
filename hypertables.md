@@ -5,7 +5,7 @@ identical to those in PostgreSQL.  Schema commands should be made to
 the hypertable name, and any changes are propagated to all chunks
 belonging to that hypertable.
 
-### Create a Hypertable <a id="create"></a>
+### Create a Hypertable [](create)
 
 Creating a hypertable is a two-step process.
 <!-- add steps format?-->
@@ -28,7 +28,7 @@ newly created table ([API docs][create_hypertable]).
 
 ---
 
-### Alter a Hypertable <a id="alter"></a>
+### Alter a Hypertable [](alter)
 
 You can execute standard `ALTER TABLE` commands against the hypertable ([PostgreSQL docs][postgres-createtable]).
 
@@ -47,7 +47,7 @@ hypertable.
 
 ---
 
-### Deleting a Hypertable <a id="delete"></a><a id="drop"></a>
+### Deleting a Hypertable [](delete"></a><a id="drop)
 
 It's just the standard `DROP TABLE` command, where TimescaleDB will
 correspondingly delete all chunks belonging to the hypertable.
@@ -57,7 +57,7 @@ DROP TABLE conditions;
 
 ---
 
-### Best Practices <a id="best-practices"></a>
+### Best Practices [](best-practices)
 
 Users of TimescaleDB often have two common questions:
 
