@@ -39,7 +39,7 @@ CREATE INDEX ON conditions (time DESC, humidity)
 ```
 this creates a more compact, and thus efficient, index.
 
-### Indexing Suggestions
+### Best Practices  <a id="indexing-best-practices"></a>
 
 Our experience has shown that for time-series data, the most-useful index type
 varies depending on your data.
