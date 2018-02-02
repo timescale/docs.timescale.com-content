@@ -7,7 +7,7 @@ settings can be adjusted in your machine's `postgresql.conf`.
 >ttt You can determine the location of `postgresql.conf` by running `SHOW config_file;`
 from within psql.
 
-## Memory settings <a id="memory"></a>
+## Memory settings [](memory)
 
 The settings `shared_buffers`, `effective_cache_size`, `work_mem`, and
 `maintenance_work_mem` need to be adjusted to match the machine's available
@@ -17,7 +17,7 @@ website (suggeted DB Type: Data warehouse). You should also adjust the
 connection between `max_connections` and memory settings. Other settings from
 PgTune may also be helpful.
 
-## Disk-write settings <a id="disk-write"></a>
+## Disk-write settings [](disk-write)
 
 In order to increase write throughput, there are [multiple
 settings][async-commit] to adjust the behaviour that postgres uses to write data

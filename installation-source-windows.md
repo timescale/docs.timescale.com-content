@@ -1,4 +1,4 @@
-## From Source (Windows) <a id="installation-source"></a>
+## From Source (Windows) [](installation-source)
 
 **Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
 

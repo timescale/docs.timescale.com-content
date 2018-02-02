@@ -358,7 +358,7 @@ behind the curtain and see what's going on backstage.
 (4 rows)
 ```
 
-### 5. Bonus! Geospatial Queries via PostGIS <a id="tutorial-postgis"></a>
+### 5. Bonus! Geospatial Queries via PostGIS [](tutorial-postgis)
 
 TimescaleDB is packaged as a PostgreSQL extension, meaning one can install it
 alongside other extensions for additional functionality. One example of that is

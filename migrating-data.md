@@ -20,7 +20,7 @@ If you have a dataset stored in a `.csv` file, you can import it into an empty T
 
 ---
 
-## Migrate from the Same Database <a id="same-db"></a>
+## Migrate from the Same Database [](same-db)
 
 For this example we'll assume that you have a table named `old_table` that you
 want to migrate to a table named `new_table`.  The steps are:
@@ -92,7 +92,7 @@ our [schema management][indexing] section.
 
 ---
 
-## Migrating from a Different Database <a id="different-db"></a>
+## Migrating from a Different Database [](different-db)
 
 To migrate your database from PostgreSQL to TimescaleDB, you
 need `pg_dump` for exporting your schema and data.
@@ -157,7 +157,7 @@ Follow the [instructions below][csv-import] to insert data into your hypertable.
 
 ---
 
-## Import data into TimescaleDB <a id="import-data"></a>
+## Import data into TimescaleDB [](import-data)
 
 If you have data stored in an external `.csv` file, you can import it into TimescaleDB:
 
@@ -185,7 +185,7 @@ Then convert that table into a hypertable using [`create_hypertable`][create_hyp
 SELECT create_hypertable('conditions', 'time');
 ```
 
-### 2. Inserting data into the hypertable <a id="csv-import"></a>
+### 2. Inserting data into the hypertable [](csv-import)
 
 #### Using PostgreSQL's `COPY`
 

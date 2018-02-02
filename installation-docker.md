@@ -1,4 +1,4 @@
-## Docker Hub <a id="docker"></a>
+## Docker Hub [](docker)
 
 #### Quick start
 

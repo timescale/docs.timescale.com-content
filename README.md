@@ -10,9 +10,7 @@ All files are written in standard markdown.
 ### A note on anchors
 
 If you want to link to a specific part of the page from the docs sidebar, you
-need to place an anchor `<a id="anchor_name"></a>`.  Do not use `name` in place
-of `id` or it will disrupt the javascript scrolling method that has been set up
-in the docs.
+need to place a special anchor `[](anchor_name)`.
 
 **Your anchor name must be unique** in order for the highlight scrolling to work properly.
 
@@ -54,6 +52,7 @@ formatting within the docs.
 + Adding '>toplist ' (no spaces) as the first line of a blockquote (using '>') will create a fixed right-oriented box, useful for a table of contents or list of functions, etc.  See the FAQ page for an example.
     - The first headline in the toplist will act as the title and will be separated from the remainder of the content stylewise (on the FAQ page, it's the headline "Questions").
     - Everything else acts as a normal blockquote does.
++ Adding a text free link to a header with a text address (Ex. `## Important Header [](indexing)`) will create an anchor icon that links to that header with the hash name of the text.
 + Adding 'fff ' to the start of a paragraph(line) will format it as a "footer link".
 + Adding 'ddd ' to the start of a link will append a 'download link' icon to the end of the link inline.
 + Adding 'x.y.z' anywhere in the text will be replaced by the version number of the branch.  Ex. `look at file foo-x.y.z` >> `look at file foo-0.4.2`.

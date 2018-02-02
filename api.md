@@ -21,9 +21,9 @@
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 
-## Hypertable management <a id="hypertable-management"></a>
+## Hypertable management [](hypertable-management)
 
-## add_dimension() <a id="add_dimension"></a>
+## add_dimension() [](add_dimension)
 
 Add an additional partitioning dimension to a TimescaleDB hypertable.
 The column selected as the dimension can either use interval
@@ -74,7 +74,7 @@ is the number of milliseconds since the UNIX epoch).
  to use at most one "space" dimension (in addition to the required
  time interval specified in `create_hypertable`).
 
-#### Sample Usage <a id="add_dimension-examples"></a>
+#### Sample Usage [](add_dimension-examples)
 
 First convert table `conditions` to hypertable with just time
 partitioning on column `time`, then add an additional space
@@ -100,7 +100,7 @@ SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 
 ---
 
-## attach_tablespace() <a id="attach_tablespace"></a>
+## attach_tablespace() [](attach_tablespace)
 
 Attach a tablespace to a hypertable and use it to store chunks. A
 [tablespace][postgres-tablespaces] is a directory on the filesystem
@@ -134,7 +134,7 @@ using the `TABLESPACE` option to `CREATE TABLE`, prior to calling
 `create_hypertable`, will have the same effect as calling
 `attach_tablespace` immediately following `create_hypertable`.
 
-#### Sample Usage <a id="attach_tablespace-examples"></a>
+#### Sample Usage [](attach_tablespace-examples)
 
 Attach the tablespace `disk1` to the hypertable `conditions`:
 
@@ -148,7 +148,7 @@ experimental feature.
 
 ---
 
-## create_hypertable() <a id="create_hypertable"></a>
+## create_hypertable() [](create_hypertable)
 
 Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
 latter), partitioned on time and with the option to partition
@@ -217,7 +217,7 @@ the dimension's key space, which is then divided across the partitions.
  `create_hypertable` will automatically add this constraint on the
  table when it is executed.
 
-#### Sample Usage <a id="create_hypertable-examples"></a>
+#### Sample Usage [](create_hypertable-examples)
 
 Convert table `conditions` to hypertable with just time partitioning on column `time`:
 ```sql
@@ -248,7 +248,7 @@ if `conditions` is already a hypertable:
 SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 ```
 
-#### Best Practices <a id="create_hypertable-best-practices"></a>
+#### Best Practices [](create_hypertable-best-practices)
 
 Users of TimescaleDB often have two common questions:
 
@@ -335,7 +335,7 @@ queries.
 
 ---
 
-## detach_tablespace() <a id="detach_tablespace"></a>
+## detach_tablespace() [](detach_tablespace)
 
 Detach a tablespace from one or more hypertables. This _only_ means
 that _new_ chunks will not be placed on the detached tablespace. This
@@ -373,7 +373,7 @@ When specifying a specific hypertable, the tablespace will only be
 detached from the given hypertable and thus may remain attached to
 other hypertables.
 
-#### Sample Usage <a id="detach_tablespace-examples"></a>
+#### Sample Usage [](detach_tablespace-examples)
 
 Detach the tablespace `disk1` from the hypertable `conditions`:
 
@@ -390,7 +390,7 @@ SELECT detach_tablespace('disk1');
 
 ---
 
-## detach_tablespaces() <a id="detach_tablespaces"></a>
+## detach_tablespaces() [](detach_tablespaces)
 
 Detach all tablespaces from a hypertable. After issuing this command
 on a hypertable, it will no longer have any tablespaces attached to
@@ -403,7 +403,7 @@ tablespace.
 |---|---|
 | `hypertable` | Identifier of hypertable to detach a the tablespace from.|
 
-#### Sample Usage <a id="detach_tablespaces-examples"></a>
+#### Sample Usage [](detach_tablespaces-examples)
 
 Detach all tablespaces from the hypertable `conditions`:
 
@@ -413,7 +413,7 @@ SELECT detach_tablespaces('conditions');
 
 ---
 
-## drop_chunks() <a id="drop_chunks"></a>
+## drop_chunks() [](drop_chunks)
 
 Removes data chunks that are older than a given time interval across all
 hypertables or a specific one. Chunks are removed only if _all_ of their data is
@@ -475,7 +475,7 @@ SELECT drop_chunks(interval '3 months', 'conditions', cascade => TRUE);
 
 ---
 
-## set_chunk_time_interval() <a id="set_chunk_time_interval"></a>
+## set_chunk_time_interval() [](set_chunk_time_interval)
 Sets the chunk_time_interval on a hypertable. The new interval is used
 when new chunks are created but the time intervals on existing chunks are
 not affected.
@@ -517,9 +517,9 @@ SELECT set_chunk_time_interval('conditions', 86400000);
 
 ---
 
-## Analytics <a id="analytics"></a>
+## Analytics [](analytics)
 
-## first() <a id="first"></a>
+## first() [](first)
 
 The `first` aggregate allows you to get the value of one column
 as ordered by another. For example, `first(temperature, time)` will return the
@@ -549,7 +549,7 @@ SELECT device_id, first(temp, time)
 
 ---
 
-## histogram() <a id="histogram"></a>
+## histogram() [](histogram)
 
 The `histogram()` function represents the distribution of a set of
 values as an array of equal-width buckets. It partitions the dataset
@@ -599,7 +599,7 @@ The expected output:
 
 ---
 
-## last() <a id="last"></a>
+## last() [](last)
 
 The `last` aggregate allows you to get the value of one column
 as ordered by another. For example, `last(temperature, time)` will return the
@@ -632,7 +632,7 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
 
 ---
 
-## time_bucket() <a id="time_bucket"></a>
+## time_bucket() [](time_bucket)
 
 This is a more powerful version of the standard PostgreSQL `date_trunc` function.
 It allows for arbitrary time intervals instead of the second, minute, hour, etc.
@@ -725,9 +725,9 @@ to the server's timezone setting.
 
 ---
 
-## Utilities/Statistics <a id="utilities"></a>
+## Utilities/Statistics [](utilities)
 
-## chunk_relation_size() <a id="chunk_relation_size"></a>
+## chunk_relation_size() [](chunk_relation_size)
 
 Get relation size of the chunks of an hypertable.
 
@@ -773,7 +773,7 @@ Where `chunk_table` is the table that contains the data, `table_bytes` is the si
 
 ---
 
-## chunk_relation_size_pretty() <a id="chunk_relation_size_pretty"></a>
+## chunk_relation_size_pretty() [](chunk_relation_size_pretty)
 
 Get relation size of the chunks of an hypertable.
 
@@ -817,7 +817,7 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
-## hypertable_relation_size() <a id="hypertable_relation_size"></a>
+## hypertable_relation_size() [](hypertable_relation_size)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
@@ -851,7 +851,7 @@ The expected output:
 ```
 ---
 
-## hypertable_relation_size_pretty() <a id="hypertable_relation_size_pretty"></a>
+## hypertable_relation_size_pretty() [](hypertable_relation_size_pretty)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
@@ -886,7 +886,7 @@ The expected output:
 
 ---
 
-## indexes_relation_size() <a id="indexes_relation_size"></a>
+## indexes_relation_size() [](indexes_relation_size)
 
 Get sizes of indexes on a hypertable.
 
@@ -917,7 +917,7 @@ The expected output:
 
 ---
 
-## indexes_relation_size_pretty() <a id="indexes_relation_size"></a>
+## indexes_relation_size_pretty() [](indexes_relation_size)
 
 Get sizes of indexes on a hypertable.
 
@@ -949,7 +949,7 @@ The expected output:
 
 ---
 
-## show_tablespaces() <a id="show_tablespaces"></a>
+## show_tablespaces() [](show_tablespaces)
 
 Show the tablespaces attached to a hypertable.
 
@@ -962,7 +962,7 @@ Show the tablespaces attached to a hypertable.
 
 ---
 
-## Dump TimescaleDB meta data <a id="dump-meta-data"></a>
+## Dump TimescaleDB meta data [](dump-meta-data)
 
 To help when asking for support and reporting bugs, 
 TimescaleDB includes a SQL script that outputs metadata 

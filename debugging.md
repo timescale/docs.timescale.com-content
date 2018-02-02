@@ -1,7 +1,7 @@
 # Debugging TimescaleDB
 
 ## Common Errors
-###  Log error: could not access file "timescaledb" <a id="access-timescaledb"></a>
+###  Log error: could not access file "timescaledb" [](access-timescaledb)
 
 If your PostgreSQL logs have this error preventing it from starting up,
 you should double check that the TimescaleDB files have been installed
@@ -37,7 +37,7 @@ path.
 
 ## Getting more information
 
-###  EXPLAINing query performance <a id="explain"></a>
+###  EXPLAINing query performance [](explain)
 
 PostgreSQL's EXPLAIN feature allows users to understand the underlying query
 plan that PostgreSQL uses to execute a query. There are multiple ways that
@@ -68,7 +68,7 @@ query is immensely helpful.
 
 ---
 
-## Dump TimescaleDB meta data <a id="dump-meta-data"></a>
+## Dump TimescaleDB meta data [](dump-meta-data)
 
 To help when asking for support and reporting bugs, 
 TimescaleDB includes a SQL script that outputs metadata 

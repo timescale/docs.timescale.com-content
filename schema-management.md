@@ -18,7 +18,7 @@ create appropriate indexes, triggers, and constraints on your tables,
 as well as how to
 appropriately utilize the JSON and JSONB datatypes.
 
-## Indexing Data <a id="indexing"></a>
+## Indexing Data [](indexing)
 
 TimescaleDB supports the range of PostgreSQL index types, and creating, altering,
 or dropping an index on the hypertable ([PostgreSQL docs][postgres-createindex])
@@ -39,7 +39,7 @@ CREATE INDEX ON conditions (time DESC, humidity)
 ```
 this creates a more compact, and thus efficient, index.
 
-### Best Practices  <a id="indexing-best-practices"></a>
+### Best Practices  [](indexing-best-practices)
 
 Our experience has shown that for time-series data, the most-useful index type
 varies depending on your data.
@@ -112,7 +112,7 @@ matching your predicate, but in each one, your query also grabs a
 (potentially large) subset of the values, rather than just one
 distinct one.
 
->ttt <a id="unique_indexes"></a> To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
+>ttt [](unique_indexes) To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
 exists, the partitioning column **must** be the first (or first two)
 columns that comprise the index.  That is, using our running
 example, you can define a unique index on just the {time, location} fields,
@@ -142,7 +142,7 @@ This default behavior can be overridden when executing the [`create_hypertable`]
 
 ---
 
-## Creating Triggers <a id="triggers"></a>
+## Creating Triggers [](triggers)
 
 TimescaleDB supports the full range of PostgreSQL triggers, and creating,
 altering, or dropping triggers on the hypertable will similarly
@@ -187,7 +187,7 @@ For additional information, see the [PostgreSQL docs][postgres-createtrigger].
 
 ---
 
-## Adding Constraints <a id="constraints"></a>
+## Adding Constraints [](constraints)
 
 Hypertables support all standard PostgreSQL constraint types, with the
 exception of foreign key constraints on other tables that reference
@@ -221,7 +221,7 @@ For additional information on how to manage constraints, see the
 
 ---
 
-## JSON support for semi-structured data <a id="json"></a>
+## JSON support for semi-structured data [](json)
 
 TimescaleDB can work with any data types available in PostgreSQL, including JSON
 and JSONB. These datatypes are most useful for data that contains user-defined
@@ -245,14 +245,14 @@ efficient.
 2. We use the JSONB data type (that is, JSON stored in a binary format) and not the JSON data type. JSONB data types are
 are more efficient in both storage overhead and lookup performance.
 
->ttt <a id="sparse_json"></a> Often, people use JSON for sparse data as opposed
+>ttt [](sparse_json) Often, people use JSON for sparse data as opposed
 to user-defined data. We do not recommend this usage inside TimescaleDB for most
 datasets (unless the data is extremely sparse, e.g., more than 95% of fields for
 a row are empty). Instead, we suggest using NULLable fields and, if possible,
 running on top of a compressed file system like ZFS.
 
 
-### Indexing the entire JSONB structure <a id="indexing-all-json"></a>
+### Indexing the entire JSONB structure [](indexing-all-json)
 
 When indexing JSONB data across all fields that may be contained inside, it is
 often best to use a GIN index. PostgreSQL documentation has a [nice
@@ -269,7 +269,7 @@ uses the `?`, `?&`, `?|`, or `@>` operator (for a description of these operators
 see [this table][json-operators] in the PostgreSQL docs). So you should make
 sure to structure your queries appropriately.
 
-### Indexing individual fields within a JSONB <a id="indexing-json-fields"></a>
+### Indexing individual fields within a JSONB [](indexing-json-fields)
 
 Sometimes, JSONB columns have common fields whose values are useful to index
 individually. Such indexes could be useful for ordering operations on field
@@ -301,7 +301,7 @@ precision)`.
 
 ---
 
-## Altering/updating table schemas <a id="updating-schemas"></a>
+## Altering/updating table schemas [](updating-schemas)
 
 TimescaleDB supports using the `ALTER TABLE` command to modify the schema of the
 hypertable. A change to the hypertable schema results in changes to the schema of each
@@ -315,7 +315,7 @@ in the Notes section of the [PostgreSQL documentation on ALTER TABLE][postgres-a
 
 ---
 
-## Storage management with tablespaces <a id="tablespaces"></a>
+## Storage management with tablespaces [](tablespaces)
 
 An administrator can use tablespaces to manage storage for a
 hypertable. A tablespace is a location on a file system where database
