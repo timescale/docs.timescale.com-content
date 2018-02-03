@@ -205,12 +205,12 @@ WITH
         sum(volume) AS volume
       FROM trades
       WHERE asset_code = 'TIMS'
-        AND time >= '2017-07-01' AND time < '2017-07-10'
+        AND time >= '2017-09-01' AND time < '2017-10-01'
       GROUP BY date
   ),
   period AS (
     SELECT date::date
-      FROM generate_series(date '2017-07-01', date '2017-07-10', interval '1 day') date
+      FROM generate_series(date '2017-09-01', date '2017-10-01', interval '1 day') date
   )
 SELECT period.date, coalesce(sum(data.volume), 0) AS volume
   FROM period
