@@ -105,7 +105,7 @@ SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
   ORDER BY five_min DESC LIMIT 12;
 ```
 
-### First, Last [](first"></a><a id="last)
+### First, Last [](first-last)
 
 TimescaleDB defines functions for [`first`][first] and [`last`][last],
 which allow you to get the value of one column as ordered by another.

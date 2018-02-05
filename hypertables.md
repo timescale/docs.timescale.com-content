@@ -47,7 +47,7 @@ hypertable.
 
 ---
 
-### Deleting a Hypertable [](delete"></a><a id="drop)
+### Deleting a Hypertable [](delete)
 
 It's just the standard `DROP TABLE` command, where TimescaleDB will
 correspondingly delete all chunks belonging to the hypertable.
