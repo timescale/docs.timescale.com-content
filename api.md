@@ -69,34 +69,28 @@ the column's underlying semantics (e.g., the
 `interval_length` should be given in milliseconds if this column
 is the number of milliseconds since the UNIX epoch).
 
->vvv Supporting **more** than one additional dimension is currently
+>vvv Supporting more than **one** additional dimension is currently
  experimental.  For any production environments, users are recommended
  to use at most one "space" dimension (in addition to the required
- time interval specified in `create_hypertable`).
+ time dimension specified in `create_hypertable`).
 
 #### Sample Usage [](add_dimension-examples)
 
 First convert table `conditions` to hypertable with just time
-partitioning on column `time`, then add an additional space
-partitioning:
+partitioning on column `time`, then add an additional partition key on `location` with four partitions:
 ```sql
 SELECT create_hypertable('conditions', 'time');
-SELECT add_dimension('conditions', location, number_partitions => 4);
+SELECT add_dimension('conditions', 'location', number_partitions => 4);
 ```
 
 Convert table `conditions` to hypertable with time partitioning on `time` and
-space partitioning (4 partitions) on `location`, then add two additional dimensions.
+space partitioning (2 partitions) on `location`, then add two additional dimensions.
 
 ```sql
 SELECT create_hypertable('conditions', 'time', 'location', 2);
 SELECT add_dimension('conditions', 'time_received', interval_length => interval '1 day');
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 ```
-
->vvv Supporting **more** than one additional dimension is currently
- experimental.  For any production environments, users are recommended
- to use at most one "space" dimension (in addition to the required
- time interval specified in `create_hypertable`).
 
 ---
 

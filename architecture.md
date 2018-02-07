@@ -7,11 +7,11 @@ only an abstraction or a virtual view of many individual tables comprising the
 actual data.
 
 This single-table view, which we call a **hypertable**, is thus comprised of
-many **chunks**.  Chunks are created by partitioning the hypertable's data in
-either one or two dimensions:
-by a time interval, and by an (optional) "partition key" such as
-device ID, location, user id, etc.  We sometimes refer to this as
-partitioning across "time and space".
+many **chunks**.  Chunks are created by partitioning the hypertable's data into
+one or multiple dimensions:
+All hypertables are partitioned by a time interval, and can additionally be
+partitioned by a key such as device ID, location, user id, etc.
+We sometimes refer to this as partitioning across "time and space".
 
 ## Terminology [](terminology)
 
