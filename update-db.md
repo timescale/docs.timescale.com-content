@@ -84,7 +84,7 @@ commands.
 Install the latest TimescaleDB image:
 
 ```bash
-docker pull timescale/timescaledb:latest-pg96
+docker pull timescale/timescaledb:latest-pg9.6
 ```
 >ttt If you are using PostgreSQL 10 images, use the tag `latest-pg10`.
 
