@@ -6,7 +6,9 @@ This will install both TimescaleDB *and* PostgreSQL 9.6 via `apt`.
 
 #### Prerequisites
 
-- Ubuntu 16.04 or later
+- Ubuntu 16.04 or later, except obsoleted versions. Check [releases.ubuntu.com][ubuntu-releases] for list of supported releases.
+- A standard PostgreSQL installation. See [here for instructions][postgresql-apt] to
+install via `apt`.
 
 #### Build & Install
 
@@ -48,3 +50,5 @@ sudo service postgresql restart
 [Here are some instructions to create the `postgres` superuser][createuser].
 
 [createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
+[ubuntu-releases]: http://releases.ubuntu.com/
+[postgresql-apt]: https://www.postgresql.org/download/linux/ubuntu/
