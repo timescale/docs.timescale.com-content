@@ -1,29 +1,34 @@
 ## apt Installation [](installation-apt)
 
-This will install both TimescaleDB *and* PostgreSQL 9.6 via `apt`.
+This will install TimescaleDB via `apt`.
 
-**Note: PostgreSQL 9.6 is required for TimescaleDB on Ubuntu distros.  Releases with PostgreSQL 10 are coming soon**
+**Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
 
 #### Prerequisites
 
-- Ubuntu 16.04 or later, except obsoleted versions. Check [releases.ubuntu.com][ubuntu-releases] for list of supported releases.
-- A standard PostgreSQL installation. See [here for instructions][postgresql-apt] to
-install via `apt`.
+- Ubuntu 16.04 or later, except obsoleted versions.
+Check [releases.ubuntu.com][ubuntu-releases] for list of
+non-obsolete releases.
+- A standard PostgreSQL installation.
+See [here for instructions][postgresql-apt] to install via `apt`.
 
 #### Build & Install
 
 >vvv If you have another PostgreSQL installation not via `apt`,
 this will likely cause problems.
 If you wish to maintain your current version of PostgreSQL outside
-of `apt`, we recommend installing from source.  Otherwise please be
+of `apt`, we recommend installing from source.  Otherwise, please be
 sure to remove non-`apt` installations before using this method.
 
 ```bash
 # Add our PPA
 sudo add-apt-repository ppa:timescale/timescaledb-ppa
 sudo apt-get update
-# To install
-sudo apt install timescaledb
+
+# To install for PG 9.6
+sudo apt install timescaledb-postgresql-9.6
+# To install for PG 10
+sudo apt install timescaledb-postgresql-10
 ```
 
 #### Update `postgresql.conf`
@@ -37,7 +42,8 @@ shared_preload_libraries = 'timescaledb'
 ```
 
 >ttt The usual location of `postgres.conf`
-is `/etc/postgresql/9.6/main/postgresql.conf` but this may vary
+is `/etc/postgresql/9.6/main/postgresql.conf` for 9.6 and
+`/etc/postgresql/10/main/postgresql.conf` for 10, but this may vary
 depending on your setup.
 
 To get started you'll now need to restart PostgreSQL and add
