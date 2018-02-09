@@ -18,6 +18,7 @@
 > - [indexes_relation_size_pretty](#indexes_relation_size_pretty)
 > - [last](#last)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
+> - [set_number_partitions](#set_number_partitions)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 
@@ -52,6 +53,7 @@ be run only on an empty hypertable.
 | `number_partitions` | Number of hash partitions to use on `column_name`. Must be > 0.|
 | `interval_length` | Interval that each chunk covers. Must be > 0.|
 | `partitioning_func` | The function to use for calculating a value's partition (see `create_hypertable` [instructions](#create_hypertable)).|
+| `if_not_exists` | Set to true to avoid throwing an error if a dimension for the column already exists. A notice is issued instead.|
 
 When executing this function, either `number_partitions` or
 `interval_length` must be supplied, which will dictate if the
@@ -90,6 +92,7 @@ space partitioning (2 partitions) on `location`, then add two additional dimensi
 SELECT create_hypertable('conditions', 'time', 'location', 2);
 SELECT add_dimension('conditions', 'time_received', interval_length => interval '1 day');
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
+SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_exists => true);
 ```
 
 ---
@@ -507,6 +510,41 @@ For a time column expressed as the number of milliseconds since the
 UNIX epoch, set `chunk_time_interval` to 24 hours.
 ```sql
 SELECT set_chunk_time_interval('conditions', 86400000);
+```
+
+---
+
+## set_number_partitions() [](set_number_partitions)
+Sets the number of partitions (slices) of a space dimension on a
+hypertable. The new partitioning only affects new chunks.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of hypertable to update the number of partitions for.|
+| `number_partitions` | The new number of partitions for the dimension. Must be greater than 0 and less than 32,768.|
+
+#### Optional Arguments
+
+|Name|Description|
+|---|---|
+| `dimension_name` | The name of the space dimension to set the number of partitions for.|
+
+The `dimension_name` needs to be explicitly specified only if the
+hypertable has more than one space dimension. An error will be thrown
+otherwise.
+
+#### Sample Usage
+
+For a table with a single space dimension:
+```sql
+SELECT set_number_partitions('conditions', 2);
+```
+
+For a table with more than one space dimension:
+```sql
+SELECT set_number_partitions('conditions', 2, 'device_id');
 ```
 
 ---
@@ -958,10 +996,10 @@ Show the tablespaces attached to a hypertable.
 
 ## Dump TimescaleDB meta data [](dump-meta-data)
 
-To help when asking for support and reporting bugs, 
-TimescaleDB includes a SQL script that outputs metadata 
+To help when asking for support and reporting bugs,
+TimescaleDB includes a SQL script that outputs metadata
 from the internal TimescaleDB tables as well as version information.
-The script is available in the source distribution in `scripts/` 
+The script is available in the source distribution in `scripts/`
 but can also be [downloaded separately][].
 To use it, run:
 
