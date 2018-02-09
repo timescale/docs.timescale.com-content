@@ -1,4 +1,4 @@
-# Debugging TimescaleDB
+# Troubleshooting
 
 ## Common Errors
 ###  Log error: could not access file "timescaledb" [](access-timescaledb)
@@ -46,7 +46,7 @@ slow sequence scan or a much more efficient index scan. The choice of plan
 depends on what indexes are created on the table, the statistics that PostgreSQL
 has about your data, and various planner settings. The EXPLAIN output let's you
 know which plan PostgreSQL is choosing for a particular query. PostgreSQL has a
-[in-depth explanation][using explain] of this feature.  
+[in-depth explanation][using explain] of this feature.
 
 To understand the query performance on a hypertable, we suggest first
 making sure that the planner statistics and table maintenance is up-to-date on the hypertable
@@ -70,10 +70,10 @@ query is immensely helpful.
 
 ## Dump TimescaleDB meta data [](dump-meta-data)
 
-To help when asking for support and reporting bugs, 
-TimescaleDB includes a SQL script that outputs metadata 
+To help when asking for support and reporting bugs,
+TimescaleDB includes a SQL script that outputs metadata
 from the internal TimescaleDB tables as well as version information.
-The script is available in the source distribution in `scripts/` 
+The script is available in the source distribution in `scripts/`
 but can also be [downloaded separately][].
 To use it, run:
 
