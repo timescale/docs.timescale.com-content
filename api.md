@@ -179,6 +179,7 @@ still work on the resulting hypertable.
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
 | `partitioning_func` | The function to use for calculating a value's partition.|
+| `migrate_data` | Set to true to migrate any existing table data to sub-table chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false.|
 
 The time column currently only supports values with a data type of
 timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
@@ -220,6 +221,14 @@ the dimension's key space, which is then divided across the partitions.
  NULL`.  If this is not already specified on table creation,
  `create_hypertable` will automatically add this constraint on the
  table when it is executed.
+
+<!-- -->
+>vvv Data migration (using the `migrate_data` option) is equivalent
+to copying data from the original table to hypertable chunks, followed
+by a `TRUNCATE` on the original table. This operation is transactional
+and requires an exclusive lock on the original table. Thus, with a lot
+of data, migration might lock the table for a considerable amount of
+time.
 
 #### Sample Usage [](create_hypertable-examples)
 
