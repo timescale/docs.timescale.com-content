@@ -53,7 +53,7 @@ be run only on an empty hypertable.
 | `number_partitions` | Number of hash partitions to use on `column_name`. Must be > 0.|
 | `interval_length` | Interval that each chunk covers. Must be > 0.|
 | `partitioning_func` | The function to use for calculating a value's partition (see `create_hypertable` [instructions](#create_hypertable)).|
-| `if_not_exists` | Set to true to avoid throwing an error if a dimension for the column already exists. A notice is issued instead.|
+| `if_not_exists` | Set to true to avoid throwing an error if a dimension for the column already exists. A notice is issued instead. Defaults to false. |
 
 When executing this function, either `number_partitions` or
 `interval_length` must be supplied, which will dictate if the
@@ -131,6 +131,12 @@ using the `TABLESPACE` option to `CREATE TABLE`, prior to calling
 `create_hypertable`, will have the same effect as calling
 `attach_tablespace` immediately following `create_hypertable`.
 
+#### Optional Arguments
+
+|Name|Description|
+|---|---|
+| `if_not_attached` | Set to true to avoid throwing an error if the tablespace is already attached to the table. A notice is issued instead. Defaults to false. |
+
 #### Sample Usage [](attach_tablespace-examples)
 
 Attach the tablespace `disk1` to the hypertable `conditions`:
@@ -138,6 +144,7 @@ Attach the tablespace `disk1` to the hypertable `conditions`:
 
 ```sql
 SELECT attach_tablespace('disk1', 'conditions');
+SELECT attach_tablespace('disk2', 'conditions', if_not_attached => true);
  ```
 
 >vvv The management of tablespaces on hypertables is currently an
@@ -364,6 +371,7 @@ is issued.
 |Name|Description|
 |---|---|
 | `hypertable` | Identifier of hypertable to detach a the tablespace from.|
+| `if_attached` | Set to true to avoid throwing an error if the tablespace is not attached to the given table. A notice is issued instead. Defaults to false. |
 
 
 When specifying a specific hypertable, the tablespace will only be
@@ -376,6 +384,7 @@ Detach the tablespace `disk1` from the hypertable `conditions`:
 
 ```sql
 SELECT detach_tablespace('disk1', 'conditions');
+SELECT detach_tablespace('disk2', 'conditions', if_attached => true);
 ```
 
 Detach the tablespace `disk1` from all hypertables that the current
@@ -991,6 +1000,16 @@ Show the tablespaces attached to a hypertable.
 |---|---|
 | `hypertable` | Identifier of hypertable to show attached tablespaces for.|
 
+
+#### Sample Usage
+
+```sql
+SELECT * FROM show_tablespaces('conditions');
+ show_tablespaces
+------------------
+ disk1
+ disk2
+```
 
 ---
 
