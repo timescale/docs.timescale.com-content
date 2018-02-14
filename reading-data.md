@@ -99,7 +99,7 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
 TimescaleDB's [`time_bucket`][time_bucket] acts as a more powerful version of the PostgreSQL function [`date_trunc`][date_trunc].  It accepts arbitrary time intervals as well as optional offsets and returns the bucket start time.
 
 ```sql
-SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
+SELECT time_bucket('5 minutes', time) AS five_min, avg(cpu)
   FROM metrics
   GROUP BY five_min
   ORDER BY five_min DESC LIMIT 12;
