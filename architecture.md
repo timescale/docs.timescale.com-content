@@ -1,24 +1,23 @@
 # Architecture & Concepts
 
-TimescaleDB is implemented as an extension on PostgreSQL that provides hooks
-deep into Postgres' query planner, data model, and execution engine.  This
-allows TimescaleDB to expose what look like regular tables, but are actually
-only an abstraction or a virtual view of many individual tables comprising the
-actual data.
+## Overview [](overview)
 
-This single-table view, which we call a **hypertable**, is thus comprised of
-many **chunks**.  Chunks are created by partitioning the hypertable's data into
-one or multiple dimensions:
-All hypertables are partitioned by a time interval, and can additionally be
-partitioned by a key such as device ID, location, user id, etc.
-We sometimes refer to this as partitioning across "time and space".
+TimescaleDB is implemented as an extension on PostgreSQL which means that a Timescale database runs within an overall PostgreSQL instance.  The extension template allows the database to take advantage of many of the attributes of PostgreSQL such as reliability, security, and connectivity to a wide range of third-party tools.  At the same time TimescaleDB leverages the high degree of customization available to extensions by adding hooks deep into PostgreSQL's query planner, data model, and execution engine.
+
+From a user perspective, TimescaleDB exposes what look like singular tables,
+called **hypertables** that are actually an abstraction or a virtual view of many individual tables holding the data, called **chunks**.
+
+Chunks are created by partitioning the hypertable's data into
+one or multiple dimensions: All hypertables are partitioned by a time interval,
+and can additionally be partitioned by a key such as device ID, location,
+user id, etc. We sometimes refer to this as partitioning across "time and space".
 
 ## Terminology [](terminology)
 
 ### Hypertables [](hypertables)
 The primary point of interaction with your data is a hypertable,
-the abstraction of a single continuous table across all space and time intervals,
-such that one can query it via vanilla SQL.
+the abstraction of a single continuous table across all space and time
+intervals, such that one can query it via vanilla SQL.
 
 Virtually all user interactions with TimescaleDB are with hypertables. Creating
 tables and indexes, altering tables, inserting data, selecting data, etc. can
