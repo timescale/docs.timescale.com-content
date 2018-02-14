@@ -680,7 +680,8 @@ or 1 hour.
 Simple 5-minute averaging:
 
 ```sql
-SELECT time_bucket('5 minutes', time) five_min, avg(cpu)
+SELECT time_bucket('5 minutes', time)
+    AS five_min, avg(cpu)
   FROM metrics
   GROUP BY five_min
   ORDER BY five_min DESC LIMIT 10;

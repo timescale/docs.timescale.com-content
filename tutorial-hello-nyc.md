@@ -151,7 +151,7 @@ Now let's run a query _beyond_ what vanilla PostgreSQL supports:
 ```sql
 -- Number of rides by 5 minute intervals
 --   (using the TimescaleDB "time_bucket" function)
-SELECT time_bucket('5 minute', pickup_datetime) as five_min, count(*)
+SELECT time_bucket('5 minute', pickup_datetime) AS five_min, count(*)
   FROM rides
   WHERE pickup_datetime < '2016-01-01 02:00'
   GROUP BY five_min ORDER BY five_min;
