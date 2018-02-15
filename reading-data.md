@@ -94,7 +94,7 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
   WHERE location = 'garage' and time > NOW() - interval '1 day'
   ORDER BY time DESC;
 ```
-### Time Bucket [](time-bucket)
+### Time Bucket :timescale_function: [](time-bucket)
 
 TimescaleDB's [`time_bucket`][time_bucket] acts as a more powerful version of the PostgreSQL function [`date_trunc`][date_trunc].  It accepts arbitrary time intervals as well as optional offsets and returns the bucket start time.
 
@@ -105,7 +105,7 @@ SELECT time_bucket('5 minutes', time) AS five_min, avg(cpu)
   ORDER BY five_min DESC LIMIT 12;
 ```
 
-### First, Last [](first-last)
+### First, Last :timescale_function: [](first-last)
 
 TimescaleDB defines functions for [`first`][first] and [`last`][last],
 which allow you to get the value of one column as ordered by another.
@@ -125,7 +125,7 @@ SELECT ('5 minutes', time) five_min, location, last(temperature, time)
   ORDER BY five_min DESC LIMIT 12;
 ```
 
-### Histogram [](histogram)
+### Histogram :timescale_function: [](histogram)
 
 TimescaleDB also provides a [`histogram`][histogram] function.
 The following example defines a histogram with five buckets defined over
