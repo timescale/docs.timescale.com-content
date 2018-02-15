@@ -18,6 +18,10 @@ create appropriate indexes, triggers, and constraints on your tables,
 as well as how to
 appropriately utilize the JSON and JSONB datatypes.
 
+>ttt One of the most common ways of getting information about various aspects 
+of your database is through `psql`, the interactive terminal.  See the 
+[PostgreSQL docs][psql-docs] for more information.
+
 ## Indexing Data [](indexing)
 
 TimescaleDB supports the range of PostgreSQL index types, and creating, altering,
@@ -358,6 +362,7 @@ Hypertables that are only time-partitioned will add new
 partitions continuously, and will therefore have chunks assigned to
 tablespaces in a way similar to round-robin.
 
+[psql-docs]: https://www.postgresql.org/docs/current/static/app-psql.html
 [postgres-tablespaces]: https://www.postgresql.org/docs/current/static/manage-ag-tablespaces.html
 [postgres-createindex]: https://www.postgresql.org/docs/current/static/sql-createindex.html
 [postgres-alter-table]: https://www.postgresql.org/docs/current/static/sql-altertable.html
