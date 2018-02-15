@@ -2,10 +2,17 @@
 
 ## Overview [](overview)
 
-TimescaleDB is implemented as an extension on PostgreSQL which means that a Timescale database runs within an overall PostgreSQL instance.  The extension template allows the database to take advantage of many of the attributes of PostgreSQL such as reliability, security, and connectivity to a wide range of third-party tools.  At the same time TimescaleDB leverages the high degree of customization available to extensions by adding hooks deep into PostgreSQL's query planner, data model, and execution engine.
+TimescaleDB is implemented as an extension on PostgreSQL, which means that a
+Timescale database runs within an overall PostgreSQL instance.  The extension
+model allows the database to take advantage of many of the attributes of
+PostgreSQL such as reliability, security, and connectivity to a wide range of
+third-party tools.  At the same time, TimescaleDB leverages the high degree of
+customization available to extensions by adding hooks deep into PostgreSQL's
+query planner, data model, and execution engine.
 
 From a user perspective, TimescaleDB exposes what look like singular tables,
-called **hypertables** that are actually an abstraction or a virtual view of many individual tables holding the data, called **chunks**.
+called **hypertables**, that are actually an abstraction or a virtual view of
+many individual tables holding the data, called **chunks**.
 
 Chunks are created by partitioning the hypertable's data into
 one or multiple dimensions: All hypertables are partitioned by a time interval,
