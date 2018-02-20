@@ -24,7 +24,7 @@ user id, etc. We sometimes refer to this as partitioning across "time and space"
 ### Hypertables [](hypertables)
 The primary point of interaction with your data is a hypertable,
 the abstraction of a single continuous table across all space and time
-intervals, such that one can query it via vanilla SQL.
+intervals, such that one can query it via standard SQL.
 
 Virtually all user interactions with TimescaleDB are with hypertables. Creating
 tables and indexes, altering tables, inserting data, selecting data, etc. can
