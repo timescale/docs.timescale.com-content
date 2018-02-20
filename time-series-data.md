@@ -53,7 +53,7 @@ If you look closely at how it’s produced and ingested, there are important
 characteristics that time-series databases like TimescaleDB typically leverage:
 
 - **Time-centric**: Data records always have a timestamp.
-- **Append-only** : Data is almost solely append-only (INSERTs).
+- **Append-only**: Data is almost solely append-only (INSERTs).
 - **Recent**: New data is typically about recent time intervals, and we
 more rarely make updates or backfill missing data about old intervals.
 

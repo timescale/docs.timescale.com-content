@@ -80,7 +80,7 @@ The following instructions assume that your docker instance is named
 `timescaledb`. If not, replace this name with the one you use in the subsequent
 commands.
 
-#### Step 1: Pull new image
+#### Step 1: Pull new image [](update-docker-1)
 Install the latest TimescaleDB image:
 
 ```bash
@@ -88,7 +88,7 @@ docker pull timescale/timescaledb:latest-pg9.6
 ```
 >ttt If you are using PostgreSQL 10 images, use the tag `latest-pg10`.
 
-#### Step 2: Determine mount point used by old container
+#### Step 2: Determine mount point used by old container [](update-docker-2)
 As you'll want to restart the new docker image pointing to a mount point
 that contains the previous version's data, we first need to determine
 the current mount point.
@@ -113,7 +113,7 @@ $ docker inspect timescaledb --format='{{range .Mounts }}{{.Source}}{{end}}'
 /path/to/data
 ```
 
-#### Step 3: Stop old container
+#### Step 3: Stop old container [](update-docker-3)
 If the container is currently running, stop and remove it in order to connect
 the new one.
 
@@ -122,7 +122,7 @@ docker stop timescaledb
 docker rm timescaledb
 ```
 
-#### Step 4: Start new container
+#### Step 4: Start new container [](update-docker-4)
 Launch a new container with the updated docker image, but pointing to
 the existing mount point. This will again differ by mount type.
 
@@ -137,7 +137,7 @@ docker run -v /path/to/data:/var/lib/postgresql/data -d --name timescaledb -p 54
 ```
 
 
-#### Step 5: Run ALTER EXTENSION
+#### Step 5: Run ALTER EXTENSION [](update-docker-5)
 Finally, connect to this instance via `psql` and execute the `ALTER` command
 as above in order to update the extension to the latest version:
 
