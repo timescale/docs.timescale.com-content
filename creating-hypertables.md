@@ -5,7 +5,7 @@ the abstraction of a single continuous table across all space and time intervals
 
 >ttt First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
 
-### Creating a (Hyper)table
+### Creating a (Hyper)table [](create-hypertable)
 To create a hypertable, you start with a regular SQL table, and then convert
 it into a hypertable via the function `create_hypertable` ([API reference][]).
 
@@ -38,7 +38,7 @@ SELECT create_hypertable('conditions', 'time');
 SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
-### Inserting & Querying
+### Inserting & Querying [](inserting-querying)
 Inserting data into the hypertable is done via normal SQL `INSERT` commands,
 e.g. using millisecond timestamps:
 ```sql
