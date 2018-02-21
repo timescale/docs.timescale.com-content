@@ -119,7 +119,7 @@ SELECT location, last(temperature, time)
 ```
 
 ```sql
-SELECT ('5 minutes', time) five_min, location, last(temperature, time)
+SELECT time_bucket('5 minutes', time) five_min, location, last(temperature, time)
   FROM conditions
   GROUP BY five_min, location
   ORDER BY five_min DESC LIMIT 12;
