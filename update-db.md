@@ -13,6 +13,10 @@ automated migration scripts that convert any internal state if necessary.
 
 ### Using ALTER EXTENSION
 
+>vvv Please note: When updating your database, you should connect using psql
+with the -X flag to prevent any .psqlrc commands from accidentally triggering
+the load of a previous DB version.
+
 Software upgrades use PostgreSQL's `ALTER EXTENSION` support
 to update to the latest version.  It's a four-step process:
 
@@ -138,11 +142,11 @@ docker run -v /path/to/data:/var/lib/postgresql/data -d --name timescaledb -p 54
 
 
 #### Step 5: Run ALTER EXTENSION [](update-docker-5)
-Finally, connect to this instance via `psql` and execute the `ALTER` command
+Finally, connect to this instance via `psql` (with the `-X` flag) and execute the `ALTER` command
 as above in order to update the extension to the latest version:
 
 ```bash
-docker exec -it timescaledb psql -U postgres
+docker exec -it timescaledb psql -U postgres -X
 
 # within the PostgreSQL instance
 ALTER EXTENSION timescaledb UPDATE;
