@@ -13,8 +13,8 @@ automated migration scripts that convert any internal state if necessary.
 
 ### Using ALTER EXTENSION
 
->vvv Please note: When updating your database, you should connect using psql
-with the -X flag to prevent any .psqlrc commands from accidentally triggering
+>vvv When updating your database, you should connect using psql
+with the `-X` flag to prevent any .psqlrc commands from accidentally triggering
 the load of a previous DB version.
 
 Software upgrades use PostgreSQL's `ALTER EXTENSION` support
