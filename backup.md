@@ -42,7 +42,7 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
  installs the latest (say, 0.5), and thus does not have the
  opportunity to run our upgrade scripts.)  We are looking into
  submitting a fix for `pg_dump`.
-
+>
 >The workaround is that when restoring from a backup, you need to
  restore to a PostgreSQL instance with the same extension version
  installed, and *then* upgrade the version.
@@ -55,7 +55,7 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
  chunks, this dump would still lack necessary information that
  TimescaleDB stores in the database catalog about the relation between
  these tables.
-
+>
 >You can, however, explicitly *exclude* tables from this whole
  database backup (`-T`), as well as continue to selectively backup
  plain tables (i.e., non-hypertable) as well.

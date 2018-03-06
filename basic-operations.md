@@ -120,7 +120,7 @@ this creates a more compact, and thus efficient, index.
 the time column and, if it exists, the partitioning column(s) **must** be the
 prefix of any composite index, i.e., the first (or first several) columns that
 comprise the index.
-
+>
 >Using our running example, you can define a unique composite index on
 just the `(time, location)` fields, or to include a third column (say,
 temperature), the index must be specified as `(time, location, temperature)`.
