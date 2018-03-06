@@ -9,7 +9,7 @@
 - [CMake][] version 3.4 or greater
 
 #### Build & Install with Local PostgreSQL
->ttt It is **highly recommended** that you then checkout the latest
+>ttt It is **highly recommended** that you checkout the latest
 tagged commit to build from (see the repo's [Releases][github-releases] page for that)
 
 Clone the repository from [Github][github-timescale]:
@@ -35,11 +35,10 @@ installed with.
 
 #### Update `postgresql.conf`
 
-Also, you will need to edit your `postgresql.conf` file to include
-necessary libraries, and then restart PostgreSQL.
+You will need to edit your `postgresql.conf` file to include
+necessary libraries, and then restart PostgreSQL. First, locate your postgresql.conf file:
 
 ```bash
-# First, locate your postgresql.conf file
 psql -d postgres -c "SHOW config_file;"
 ```
 

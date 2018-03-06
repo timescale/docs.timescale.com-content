@@ -693,7 +693,7 @@ Below is necessary information for using it effectively.
 bucketed by the time at UTC. So the alignment of buckets is
 on UTC time. One consequence of this is that daily buckets are
 aligned to midnight UTC, not local time.
-
+>
 >If the user wants buckets aligned by local time, the TIMESTAMPTZ input should be
 cast to TIMESTAMP (such a cast converts the value to local time) before being
 passed to time_bucket (see example below).  Note that along daylight savings

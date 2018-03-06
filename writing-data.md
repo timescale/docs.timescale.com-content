@@ -147,7 +147,7 @@ INSERT INTO conditions
  the system requires `time` as the initial part of the
  constraint: `UNIQUE(time)`, `UNIQUE(time, location)`, etc.
  On the other hand, `UNIQUE(location)` is *not* a valid constraint.
-
+>
 >If the schema were to have an additional column like `device` that is used
  as an additional partition dimension, then the constraint would have
  to be `UNIQUE(time, device)` or `UNIQUE(time, device, location)`. In
