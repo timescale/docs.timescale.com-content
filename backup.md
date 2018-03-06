@@ -56,7 +56,7 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
  chunks, this dump would still lack necessary information that
  TimescaleDB stores in the database catalog about the relation between
  these tables.
-
+>
 >You can, however, explicitly *exclude* tables from this whole
  database backup (`-T`), as well as continue to selectively backup
  plain tables (i.e., non-hypertable) as well.
