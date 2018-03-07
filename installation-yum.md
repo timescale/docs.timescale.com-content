@@ -34,7 +34,7 @@ Then, fetch our RPM and install it:
 # Fetch our RPM (for PostgreSQL 9.6)
 wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-9.6-0.x86_64.rpm
 # For PostgreSQL 10:
-# wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-10-0.x86_64.rpm
+wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-10-0.x86_64.rpm
 
 # To install
 sudo yum install timescaledb
