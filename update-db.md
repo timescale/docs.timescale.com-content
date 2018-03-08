@@ -13,25 +13,38 @@ automated migration scripts that convert any internal state if necessary.
 
 ### Using ALTER EXTENSION
 
->vvv When updating your database, you should connect using psql
-with the `-X` flag to prevent any .psqlrc commands from accidentally triggering
-the load of a previous DB version.
-
-Software upgrades use PostgreSQL's `ALTER EXTENSION` support
-to update to the latest version.  It's a four-step process:
+Software upgrades use PostgreSQL's `ALTER EXTENSION` support to update to the
+latest version. Since 0.9.0, TimescaleDB supports having different extension
+versions on different databases within the same PostgreSQL instance. This
+allowss you to update extensions independently on different databases. The
+upgrade process is involves three-steps:
 
 1. Optionally, perform a [backup][] of your database via `pg_dump`.
 1. [Install][] the latest version of the TimescaleDB extension.
-1. Restart PostgreSQL in order to load the updated extension library.
-1. Execute the following `psql` command:
+1. Execute the following `psql` command inside any database that you want to
+   update:
 
 ```sql
 ALTER EXTENSION timescaledb UPDATE;
 ```
 
+>vvv When executing `ALTER EXTENSION`, you should connect using psql
+with the `-X` flag to prevent any .psqlrc commands from accidentally triggering
+the load of a previous DB version on session startup.
+
+<!-- -->
+
+>vvv If upgrading from a TimescaleDB version older than 0.9.0,
+you will need to restart your database before calling `ALTER EXTENSION`.
+Remember that restarting PostgreSQL is accomplished via different
+commands on different platforms:
+- Linux services: `sudo service postgresql restart`
+- Mac brew: `brew services restart postgresql`
+- Docker: see below
+
+
 This will upgrade TimescaleDB to the latest installed version, even if you
-are several versions behind. For example, if you install 0.5 but currently
-have 0.4.1 running, the above command will first upgrade to 0.4.2 then to 0.5.
+are several versions behind.
 
 After executing the command, the psql `\dx` command should show the latest version:
 
@@ -44,35 +57,6 @@ After executing the command, the psql `\dx` command should show the latest versi
 (1 row)
 ```
 
-These steps must be followed in the above order.  If you forget to
-restart PostgreSQL after installing the latest version,
-the running instance does not load the newly updated library
-(`timescaledb.so`).  On the flip side, if you forget to
-run `ALTER` on the database after restarting, the installed SQL
-API for that database will expect the old .so library,
-as opposed to the new one.  Both scenarios will lead to a
-mismatch likely to cause errors.
-
-Remember that restarting PostgreSQL is accomplished via different
-commands on different platforms:
-
-- Linux services: `sudo service postgresql restart`
-- Mac brew: `brew services restart postgresql`
-- Docker: see below
-
->vvv Some of these restart services will actually execute status
- commands on the database instance after restarting them
- (e.g., `services` calls `pg_isready`).  This may output an error due to
- this aforementioned library/SQL mismatch, and cause the restart command
- to state that it failed.  But, you can check and see that
- the `postgres` instance is actually running.  If you then go ahead and
- execute the `ALTER EXTENSION` command via `psql`, this issue will go away
- and the upgrade will succeed.  We're working on eliminating this issue.
-
-<!-- -->
->vvv If you use TimescaleDB in multiple databases within the same
- PostgreSQL instance, you must run the `ALTER EXTENSION` command
- in *all* the databases, not just one of them.
 
 ### Example: Migrating docker installations [](update-docker)
 
