@@ -236,7 +236,7 @@ If you need to have custom time interval (for example 1080 datapoints for the la
 ```sql
 WITH 
   secs AS (
-	  SELECT
+    SELECT
       (
         (
           extract (epoch from now()) - extract(epoch from (now() - interval '2 weeks'))
