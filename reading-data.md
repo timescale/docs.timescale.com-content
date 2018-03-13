@@ -232,6 +232,35 @@ This query will then output data in the following form:
  2017-09-23 |      0
  2017-09-22 |   9855
 ```
+If you need to have custom time interval (for example 1080 datapoints for the last two week) you need to calculate the seconds for each datapoint and align the period to data using data_bucket in the period CTE query also. Also notice that your time is the type of timestamptz and value is null if no values in the bucket.
+```sql
+WITH 
+  secs AS (
+	  SELECT
+      (
+        (
+          extract (epoch from now()) - extract(epoch from (now() - interval '2 weeks'))
+        )/1080 || ' seconds'
+      )::interval as secs
+  ),
+  data AS (
+    SELECT
+      time_bucket((select secs from secs), time::timestamptz) as btime, 
+      avg(value) as value
+    FROM data
+    WHERE time > now() - interval '2 weeks'
+      AND meter_id = 1
+    GROUP BY btime
+  ),
+  period AS (
+      SELECT time_bucket((select secs from secs), time) as btime
+        FROM  generate_series(now() - interval '2 weeks', now(), (select secs from secs)) time
+  )
+SELECT period.btime as time, value
+	FROM period
+	LEFT JOIN data USING (btime)
+	ORDER BY period.btime DESC;
+```
 
 ### Last Point [](last-point)
 
