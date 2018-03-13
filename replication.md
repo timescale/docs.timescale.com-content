@@ -9,16 +9,14 @@ or outage on the primary server. Replica nodes can also be used as read only
 databases (sometimes called "read replicas"), allowing reads to be horizontally
 scaled by spreading the read query volume across multiple nodes.
 
-Timescale supports replication using PostgreSQL's built-in [streaming
-replication][postgres-streaming-replication-docs].  Using [logical
-replication][postgres-logrep-docs] with Timescale is *not recommended*, as it
-requires schema synchronization between the primary and replica nodes and
-replicating partition root tables, which are [not currently
-supported][postgres-partition-limitations].
+Timescale supports replication using PostgreSQL's built-in [streaming replication][postgres-streaming-replication-docs].  Using 
+[logical replication][postgres-logrep-docs] with Timescale is *not recommended*, as it requires schema synchronization between the primary and
+replica nodes and replicating partition root tables, which are
+[not currently supported][postgres-partition-limitations].
 
 This tutorial will outline the basic configuration needed to set up streaming
 replication on one or more replicas, covering both synchronous and asynchronous
-options. It assumes you have at least 2 separate instances of TimescaleDB
+options. It assumes you have at least two separate instances of TimescaleDB
 running.  If you're using our [Docker Image][timescale-docker], we recommend
 using a [Postgres entrypoint script][docker-postgres-scripts] to run the
 configuration. For our sample Docker configuration and run scripts, check out
@@ -26,7 +24,7 @@ our [Streaming Replication Docker Repository][timescale-streamrep-docker].
 
 >ttt PostgreSQL achieves streaming replication by having replicas continuously
 stream the WAL from the primary database.  See the official
-[replication documentation][postgres-replication-docs] for details. For more
+[replication documentation][postgres-streaming-replication-docs] for details. For more
 information about how PostgreSQL implements Write-Ahead Logging,
 see their [WAL Documentation][postgres-wal-docs].
 
@@ -125,7 +123,7 @@ arbitrary -- we'll call the slot for this replica `replica_1_slot`.
 SELECT * FROM pg_create_physical_replication_slot('replica_1_slot');
 ```
 
-### Configure Host Based Authentication
+### Configure Host Based Authentication [](configure-host-based-authentication)
 
 Configure the `pg_hba.conf` file (run `show hba_file;` in a `psql` shell if
 you're unsure of its location) to accept connections from the replication user
@@ -231,7 +229,7 @@ and querying the replica to ensure they have been properly copied over.
 This is fully compatible with TimescaleDB's functionality, provided
 you [set up TimescaleDB][timescale-setup-docs] on the primary database.
 
-## Configure Replication Modes
+## Configure Replication Modes [](replication-modes)
 
 This walkthrough gets asynchronous streaming replication working, but
 in many cases stronger consistency between the primary and replicas is
@@ -304,7 +302,7 @@ forward as long as a quorum of replicas have written the most recent WAL
 transaction. Replicas that were out of service will be able to reconnect and
 replay the missed WAL transactions asynchronously.
 
-## View Replication Diagnostics
+## View Replication Diagnostics [](view-replication-diagnostics)
 
 PostgreSQL provides a valuable view for getting information about each replica
 -- [pg_stat_replication][postgres-pg-stat-replication-docs].  Run `select * from
@@ -374,23 +372,23 @@ automatic failover.  Read more in the PostgreSQL [failover
 documentation][failover-docs]). [patroni][patroni-github] offers a configurable
 high availability solution with automatic failover functionality.
 
-[postgres-streaming-replication-docs][https://www.postgresql.org/docs/current/static/warm-standby.html#STREAMING-REPLICATION]
-[postgres-partition-limitations][https://www.postgresql.org/docs/10/static/logical-replication-restrictions.html]
-[postgres-logrep-docs][https://www.postgresql.org/docs/current/static/logical-replication.html]
-[timescale-docker][https://github.com/timescale/timescaledb-docker]
-[docker-postgres-scripts][https://docs.docker.com/samples/library/postgres/#how-to-extend-this-image]
-[timescale-streamrep-docker][https://github.com/timescale/streaming-replication-docker]
-[postgres-rslots-docs][https://www.postgresql.org/docs/current/static/warm-standby.html#STREAMING-REPLICATION-SLOTS]
-[postgres-archive-docs][https://www.postgresql.org/docs/current/static/continuous-archiving.html]
-[postgres-wal-docs][https://www.postgresql.org/docs/current/static/wal-intro.html]
-[postgres-scram-docs][https://www.postgresql.org/docs/current/static/sasl-authentication.html#SASL-SCRAM-SHA-256]
-[hba-docs][https://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html]
-[postgres-pgpass-docs][https://www.postgresql.org/docs/current/static/libpq-pgpass.html]
-[postgres-recovery-docs][https://www.postgresql.org/docs/current/static/recovery-config.html]
-[postgres-pgpass-docs][https://www.postgresql.org/docs/current/static/libpq-pgpass.html]
-[timescale-setup-docs][setup.md]
-[postgres-pg-stat-replication-docs][https://www.postgresql.org/docs/10/static/monitoring-stats.html#PG-STAT-REPLICATION-VIEW]
-[timescale-setup-docs][/getting-started/setup]
-[pgctl-docs][https://www.postgresql.org/docs/current/static/app-pg-ctl.html]
-[failover-docs][https://www.postgresql.org/docs/current/static/warm-standby-failover.html]
-[patroni-github][https://github.com/zalando/patroni]
+[postgres-streaming-replication-docs]: https://www.postgresql.org/docs/current/static/warm-standby.html#STREAMING-REPLICATION
+[postgres-partition-limitations]: https://www.postgresql.org/docs/10/static/logical-replication-restrictions.html
+[postgres-logrep-docs]: https://www.postgresql.org/docs/current/static/logical-replication.html
+[timescale-docker]: https://github.com/timescale/timescaledb-docker
+[docker-postgres-scripts]: https://docs.docker.com/samples/library/postgres/#how-to-extend-this-image
+[timescale-streamrep-docker]: https://github.com/timescale/streaming-replication-docker
+[postgres-rslots-docs]: https://www.postgresql.org/docs/current/static/warm-standby.html#STREAMING-REPLICATION-SLOTS
+[postgres-archive-docs]: https://www.postgresql.org/docs/current/static/continuous-archiving.html
+[postgres-wal-docs]: https://www.postgresql.org/docs/current/static/wal-intro.html
+[postgres-scram-docs]: https://www.postgresql.org/docs/current/static/sasl-authentication.html#SASL-SCRAM-SHA-256
+[hba-docs]: https://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html
+[postgres-pgpass-docs]: https://www.postgresql.org/docs/current/static/libpq-pgpass.html
+[postgres-recovery-docs]: https://www.postgresql.org/docs/current/static/recovery-config.html
+[postgres-pgpass-docs]: https://www.postgresql.org/docs/current/static/libpq-pgpass.html
+[timescale-setup-docs]: /getting-started/setup
+[postgres-pg-stat-replication-docs]: https://www.postgresql.org/docs/10/static/monitoring-stats.html#PG-STAT-REPLICATION-VIEW
+[timescale-setup-docs]: /getting-started/setup
+[pgctl-docs]: https://www.postgresql.org/docs/current/static/app-pg-ctl.html
+[failover-docs]: https://www.postgresql.org/docs/current/static/warm-standby-failover.html
+[patroni-github]: https://github.com/zalando/patroni
