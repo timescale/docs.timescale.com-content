@@ -20,7 +20,7 @@ PgTune may also be helpful.
 ## Disk-write settings [](disk-write)
 
 In order to increase write throughput, there are [multiple
-settings][async-commit] to adjust the behaviour that postgres uses to write data
+settings][async-commit] to adjust the behaviour that PostgreSQL uses to write data
 to disk. We find the performance to be good with the default (safest) settings. If
 you want a bit of additional performance, you can  set `synchronous_commit =
 'off'`([PostgreSQL docs][synchronous-commit]). Please note that when disabling
@@ -62,7 +62,55 @@ locks allocated for each transaction. For more information, please
 review the official PostgreSQL documentation on [lock
 management][lock-management].
 
+## Changing configuration with Docker
+
+When running TimescaleDB via a [Docker container][docker], there are
+two approaches to modifying your PostgreSQL configuration.  In the
+following example, we modify the size of the database instance's
+write-ahead-log (WAL) from 1GB to 2GB in a Docker container named
+`timescaledb`.
+
+### Modifying postgres.conf inside Docker
+
+1. Get into a shell in Docker in order to change the configuration on a running container.
+```
+docker start timescaledb
+docker exec -i -t timescaledb /bin/bash
+```
+
+2. Edit and then save the config file, modifying the setting for the desired configuration parameter (e.g., `max_wal_size`)
+```
+vi /var/lib/postgresql/data/postgresql.conf
+```
+
+3. Restart the container so the config gets reloaded
+```
+docker restart timescaledb
+```
+
+4. Test to see if the change worked.
+```
+docker exec -it timescaledb psql -U postgres
+
+postgres=# show max_wal_size;
+ max_wal_size
+--------------
+ 2GB
+```
+
+### Specify config parameters as boot options
+
+Alternatively, one or more parameters can be passed in to the `docker run` command via a `-c` option, as in the following.
+
+```
+docker run -i -t timescale/timescaledb:latest-pg10 postgres -cmax_wal_size=2GB
+```
+
+Additional examples of passing in arguments at boot can be found in our [discussion about using WAL-E][wale] for incremental backup.
+
 [pgtune]: http://pgtune.leopard.in.ua/
 [async-commit]: https://www.postgresql.org/docs/current/static/wal-async-commit.html
 [synchronous-commit]: https://www.postgresql.org/docs/current/static/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT
 [lock-management]: https://www.postgresql.org/docs/current/static/runtime-config-locks.html
+[docker]: /latest/getting-started/installation/linux/installation-docker
+[wale]: /latest/using-timescaledb/backup#docker-wale
