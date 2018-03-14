@@ -267,7 +267,7 @@ This matrix visualizes the level of consistency each mode provides:
 
 Mode | WAL Sent to OS (Primary) | WAL Persisted (Primary) | WAL Sent to OS (Primary + Replicas) | WAL Persisted (Primary + Replicas) | Transaction Applied (Primary + Replicas)
 --- | --- | --- | --- | --- | ---
-Off | X | | | | |
+Off | X | | | |
 Local | X | X | | |
 Remote Write | X | X | X | |
 On | X | X | X | X |
