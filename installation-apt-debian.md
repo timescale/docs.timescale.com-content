@@ -2,7 +2,7 @@
 
 This will install TimescaleDB via `apt` on Debian distros.
 
-**Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
+**Note: TimescaleDB requires PostgreSQL 9.6 or later+**
 
 #### Prerequisites
 
@@ -49,6 +49,8 @@ shared_preload_libraries = 'timescaledb'
 is `/etc/postgresql/9.6/main/postgresql.conf` for 9.6 and
 `/etc/postgresql/10/main/postgresql.conf` for 10, but this may vary
 depending on your setup.
+
+>ttt If you have other libraries you are preloading, they should be comma separated.
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):

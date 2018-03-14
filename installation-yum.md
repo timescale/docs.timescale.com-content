@@ -3,7 +3,7 @@
 This will install both TimescaleDB *and* PostgreSQL via `yum`
 (or `dnf` on Fedora).
 
-**Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
+**Note: TimescaleDB requires PostgreSQL 9.6 or later+**
 
 #### Prerequisites
 
@@ -54,6 +54,8 @@ shared_preload_libraries = 'timescaledb'
 is `/var/lib/pgsql/9.6/data/postgresql.conf` for PostgreSQL 9.6
 and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
 but this may vary depending on your setup.
+
+>ttt If you have other libraries you are preloading, they should be comma separated.
 
 To get started you'll need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs). Please

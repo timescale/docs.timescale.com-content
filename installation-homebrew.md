@@ -2,7 +2,7 @@
 
 This will install both TimescaleDB *and* PostgreSQL via Homebrew.
 
-**Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
+**Note: TimescaleDB requires PostgreSQL 9.6 or later+**
 
 #### Prerequisites
 
@@ -40,6 +40,8 @@ shared_preload_libraries = 'timescaledb'
 >ttt The usual location of `postgres.conf` is
 `/usr/local/var/postgres/postgresql.conf`, but this may vary depending on
 your setup.
+
+>ttt If you have other libraries you are preloading, they should be comma separated.
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
