@@ -242,7 +242,7 @@ with varying consitency/performance tradeoffs:
 * `on` - Default value. The server will not return "success" until the WAL
   transaction has been written to disk on the primary and any replicas.
 * `off` - The server will return "success" when the WAL transaction has been
-  sent to the operating system to write to the WAL on disk on the priamry, but
+  sent to the operating system to write to the WAL on disk on the primary, but
   will not wait for the operating system to actually write it. This can cause
   a small amount of data loss if the server crashes when some data has not been
   written, but it will not result in data corruption. Turning
