@@ -232,7 +232,11 @@ This query will then output data in the following form:
  2017-09-23 |      0
  2017-09-22 |   9855
 ```
-If you need to have custom time interval (for example 1080 datapoints for the last two week) you need to calculate the seconds for each datapoint and align the period to data using data_bucket in the period CTE query also. Also notice that your time is the type of timestamptz and value is null if no values in the bucket.
+If you need to have custom time interval (for example 1080 datapoints
+for the last two week) you need to calculate the seconds for each
+datapoint and align the period to data using data_bucket in the period
+CTE query also. Also notice that your time is the type of timestamptz
+and value is null if no values in the bucket.
 ```sql
 WITH 
   secs AS (
