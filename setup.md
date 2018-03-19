@@ -48,6 +48,7 @@ data.
 storing time-series data in Postgres, and want to move this data to a
 TimescaleDB hypertable.
 
+[setup illustration]: https://assets.iobeam.com/images/docs/illustration-setup.svg
 [installed]: /getting-started/installation
 [start-scratch]: /getting-started/creating-hypertables
 [migrate-postgres]: /getting-started/migrating-data
