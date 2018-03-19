@@ -160,8 +160,6 @@ on one or more other columns (i.e., space).
 All actions, such as `ALTER TABLE`, `SELECT`, etc.,
 still work on the resulting hypertable.
 
->vvv The `create_hypertable` command can only be executed on an empty table.
-
 #### Required Arguments
 
 |Name|Description|
@@ -180,6 +178,14 @@ still work on the resulting hypertable.
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
 | `partitioning_func` | The function to use for calculating a value's partition.|
 | `migrate_data` | Set to true to migrate any existing table data to sub-table chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false.|
+
+>vvv The use of the `migrate_data` argument to convert a non-empty table can
+lock the table for a significant amount of time, depending on how much data is
+in the table.
+>
+>If you would like finer control over index formation and other aspects
+    of your hypertable, [follow these migration instructions instead][migrate-from-postgresql].
+
 
 The time column currently only supports values with a data type of
 timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
@@ -1044,3 +1050,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
 [postgres-tablespaces]: https://www.postgresql.org/docs/9.6/static/manage-ag-tablespaces.html
 [postgres-createtablespace]: https://www.postgresql.org/docs/9.6/static/sql-createtablespace.html
+[migrate-from-postgresql]: /getting-started/migrating-data
