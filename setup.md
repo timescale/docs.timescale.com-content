@@ -4,6 +4,8 @@ Ok, you have [installed][] TimescaleDB, and now you are ready to work with some
 data.  The first thing to do is to create a new empty database or convert an
 existing PostgreSQL database to use TimescaleDB.
 
+<img class="main-content__illustration" style="margin: 0 5% 0 10%;" src="https://assets.iobeam.com/images/docs/illustration-setup.svg" alt="setup illustration"/>
+
 First connect to the PostgreSQL instance:
 
 ```bash
@@ -46,6 +48,7 @@ data.
 storing time-series data in Postgres, and want to move this data to a
 TimescaleDB hypertable.
 
+[setup illustration]: https://assets.iobeam.com/images/docs/illustration-setup.svg
 [installed]: /getting-started/installation
 [start-scratch]: /getting-started/creating-hypertables
 [migrate-postgres]: /getting-started/migrating-data

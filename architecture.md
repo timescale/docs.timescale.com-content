@@ -14,6 +14,8 @@ From a user perspective, TimescaleDB exposes what look like singular tables,
 called **hypertables**, that are actually an abstraction or a virtual view of
 many individual tables holding the data, called **chunks**.
 
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/illustration-hypertable-chunk.svg" alt="hypertable and chunks"/>
+
 Chunks are created by partitioning the hypertable's data into
 one or multiple dimensions: All hypertables are partitioned by a time interval,
 and can additionally be partitioned by a key such as device ID, location,
@@ -114,7 +116,6 @@ chunking, please see our [technical blog post][chunking].
 <!--- Picture of blog post -->
 
 **Next:** Benefits of this architecture design? [TimescaleDB vs. PostgreSQL](/introduction/timescaledb-vs-postgres)
-
 [data model]: /introduction/data-model
 [hypertables]: /introduction/architecture#hypertables-and-chunks
 [chunking]: https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
