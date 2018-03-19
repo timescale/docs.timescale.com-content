@@ -1,6 +1,6 @@
 ## From Source (Windows) [](installation-source)
 
-**Note: TimescaleDB only supports PostgreSQL 9.6 and 10+**
+**Note: TimescaleDB requires PostgreSQL 9.6 or later+**
 
 #### Prerequisites
 
@@ -44,10 +44,9 @@ MSBuild.exe /p:Configuration=Release INSTALL.vcxproj
 #### Update `postgresql.conf`
 
 Also, you will need to edit your `postgresql.conf` file to include
-necessary libraries, and then restart PostgreSQL.
+necessary libraries, and then restart PostgreSQL. First, locate your postgresql.conf file:
 
 ```bash
-# First, locate your postgresql.conf file
 psql -d postgres -c "SHOW config_file;"
 ```
 
@@ -58,6 +57,7 @@ Make sure to uncomment it when adding our library.
 ```bash
 shared_preload_libraries = 'timescaledb'
 ```
+>ttt If you have other libraries you are preloading, they should be comma separated.
 
 Then, restart the PostgreSQL instance.
 
