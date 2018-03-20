@@ -9,7 +9,7 @@
 
 #### Build & Install
 
-1. Download the [.zip file from here][windows-dl]
+1. Download the the .zip file for your PostgreSQL version: [PostgreSQL 9.6][windows-dl-pg9.6] or [PostgreSQL 10][windows-dl-pg10]
 
 1. Extract the zip file locally
 
@@ -46,4 +46,5 @@ Then, restart the PostgreSQL instance.
 [CMake]: https://cmake.org/
 [github-timescale]: https://github.com/timescale/timescaledb
 [github-releases]: https://github.com/timescale/timescaledb/releases
-[windows-dl]: https://timescalereleases.blob.core.windows.net/windows/timescaledb-x.y.z-windows-amd64.zip
+[windows-dl-pg9.6]:  https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-9.6_x.y.z-windows-amd64.zip
+[windows-dl-pg10]: https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-10_x.y.z-windows-amd64.zip
