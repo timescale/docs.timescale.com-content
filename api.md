@@ -228,14 +228,6 @@ the dimension's key space, which is then divided across the partitions.
  `create_hypertable` will automatically add this constraint on the
  table when it is executed.
 
-<!-- -->
->vvv Data migration (using the `migrate_data` option) is equivalent
-to copying data from the original table to hypertable chunks, followed
-by a `TRUNCATE` on the original table. This operation is transactional
-and requires an exclusive lock on the original table. Thus, with a lot
-of data, migration might lock the table for a considerable amount of
-time.
-
 #### Sample Usage [](create_hypertable-examples)
 
 Convert table `conditions` to hypertable with just time partitioning on column `time`:
