@@ -4,7 +4,7 @@
 
 #### Prerequisites
 
-- A standard **PostgreSQL 9.6 or 10** installation with development environment (header files) (e.g., `postgresql-server-dev-9.6` package for Linux, [Postgres.app][] for MacOS)
+- A standard **PostgreSQL 9.6 or 10** installation with development environment (header files) (see https://www.postgresql.org/download/ for the appropriate package)
 - C compiler (e.g., gcc or clang)
 - [CMake][] version 3.4 or greater
 
@@ -53,7 +53,6 @@ shared_preload_libraries = 'timescaledb'
 
 Then, restart the PostgreSQL instance.
 
-[Postgres.app]: https://postgresapp.com
 [CMake]: https://cmake.org/
 [github-timescale]: https://github.com/timescale/timescaledb
 [github-releases]: https://github.com/timescale/timescaledb/releases
