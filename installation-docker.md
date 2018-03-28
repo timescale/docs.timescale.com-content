@@ -27,7 +27,7 @@ explicitly `pull` the latest:
 
 #### More detailed instructions
 
-Our Docker image is derived from the [official Postgres image][] and
+Our Docker image is derived from the [official PostgreSQL image][official-image] and
 includes [alpine Linux][] as its OS.
 
 While the above `run` command will pull the Docker image on demand,
@@ -72,7 +72,7 @@ CREATE EXTENSION postgis;
 ```
 For more instructions on using PostGIS, [see our tutorial][tutorial-postgis].
 
-[official Postgres image]: https://github.com/docker-library/postgres/
+[official-image]: https://github.com/docker-library/postgres/
 [alpine Linux]: https://alpinelinux.org/
 [Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
 [docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh

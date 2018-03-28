@@ -9,7 +9,7 @@ or outage on the primary server. Replica nodes can also be used as read only
 databases (sometimes called "read replicas"), allowing reads to be horizontally
 scaled by spreading the read query volume across multiple nodes.
 
-Timescale supports replication using PostgreSQL's built-in [streaming replication][postgres-streaming-replication-docs].  Using 
+Timescale supports replication using PostgreSQL's built-in [streaming replication][postgres-streaming-replication-docs].  Using
 [logical replication][postgres-logrep-docs] with Timescale is *not recommended*, as it requires schema synchronization between the primary and
 replica nodes and replicating partition root tables, which are
 [not currently supported][postgres-partition-limitations].
@@ -18,7 +18,7 @@ This tutorial will outline the basic configuration needed to set up streaming
 replication on one or more replicas, covering both synchronous and asynchronous
 options. It assumes you have at least two separate instances of TimescaleDB
 running.  If you're using our [Docker Image][timescale-docker], we recommend
-using a [Postgres entrypoint script][docker-postgres-scripts] to run the
+using a [PostgreSQL entrypoint script][docker-postgres-scripts] to run the
 configuration. For our sample Docker configuration and run scripts, check out
 our [Streaming Replication Docker Repository][timescale-streamrep-docker].
 
@@ -76,7 +76,7 @@ you intend to have.
 
 ### Sample Replication Configuration
 
-The most common streaming replication use case is asynchronous replication with 
+The most common streaming replication use case is asynchronous replication with
 one or more replicas. We'll use that as that as our sample configuration.
 
 In cases where you need stronger consistency on the replicas or where your

@@ -44,9 +44,9 @@ following options:
 1. **[Start from scratch][start-scratch]**: You don't currently have
 any data, and just want to create an empty hypertable for inserting
 data.
-1. **[Migrate from Postgres][migrate-postgres]**: You are currently
-storing time-series data in Postgres, and want to move this data to a
-TimescaleDB hypertable.
+1. **[Migrate from PostgreSQL][migrate-postgres]**: You are currently
+storing time-series data in a PostgreSQL database, and want to move this data
+to a TimescaleDB hypertable.
 
 [setup illustration]: https://assets.iobeam.com/images/docs/illustration-setup.svg
 [installed]: /getting-started/installation
