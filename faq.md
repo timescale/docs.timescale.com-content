@@ -175,8 +175,8 @@ details on space partitioning, see [Best Practices][best-practices].  [[Top]](#t
 
 ### **Why would I use TimescaleDB over vanilla PostgreSQL?** [](vs-postgresql)
 Read our TimescaleDB-PostgreSQL benchmarks:
-* [TimescaleDB vs. PostgreSQL for time-series data][Postgres-benchmark]
-* [Problems with PostgreSQL 10 for time-series data][Postgres-problems-time-series]
+* [TimescaleDB vs. PostgreSQL for time-series data][PostgreSQL-benchmark]
+* [Problems with PostgreSQL 10 for time-series data][PostgreSQL-problems-time-series]
 
 To summarize, TimescaleDB offers:
 * Ease-of-use: TimescaleDB is far easier to use because creating partitions (or what we call
@@ -317,8 +317,8 @@ See our [updating documentation][update]. [[Top]](#top)
 [docs-architecture]: /introduction/architecture
 [hypertable-best-practices]: /using-timescaledb/hypertables#best-practices
 [best-practices]: /using-timescaledb/hypertables#best-practices
-[Postgres-benchmark]: https://blog.timescale.com/timescaledb-vs-6a696248104e
-[Postgres-problems-time-series]: https://blog.timescale.com/time-series-data-postgresql-10-vs-timescaledb-816ee808bac5
+[PostgreSQL-benchmark]: https://blog.timescale.com/timescaledb-vs-6a696248104e
+[PostgreSQL-problems-time-series]: https://blog.timescale.com/time-series-data-postgresql-10-vs-timescaledb-816ee808bac5
 [time_bucket]: /api#time_bucket
 [first]: /api#first
 [last]: /api#last

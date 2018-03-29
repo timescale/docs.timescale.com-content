@@ -18,7 +18,7 @@ If you wish to maintain your current version of PostgreSQL outside of `yum`,
 we recommend installing from source.  Otherwise please be
 sure to remove non-`yum` installations before using this method.
 
-You'll need to [download the correct PGDG from Postgres][pgdg] for
+You'll need to [download the correct PGDG from PostgreSQL][pgdg] for
 your operating system and architecture and install it:
 ```bash
 # Download PGDG for PostgreSQL 9.6, e.g. for Fedora 24:
