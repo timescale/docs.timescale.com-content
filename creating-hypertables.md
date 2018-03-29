@@ -38,6 +38,11 @@ SELECT create_hypertable('conditions', 'time');
 SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
+>ttt The 'time' column used in the `create_hypertable` function supports
+timestamp, date, or integer types, so you can use a parameter that is not
+explicitly time-based, as long as it can increment.  For example, a
+monotonically increasing id would work.
+
 ### Inserting & Querying [](inserting-querying)
 Inserting data into the hypertable is done via normal SQL `INSERT` commands,
 e.g. using millisecond timestamps:
