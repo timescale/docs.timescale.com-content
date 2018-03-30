@@ -4,8 +4,9 @@
 
 #### Prerequisites
 
-- A standard **PostgreSQL 9.6 or 10 64-bit** installation
-- Make sure all relevant binaries are in your PATH: `pg_config`
+- [Visual C++ Redistributable for Visual Studio 2015][c_plus] (included in VS 2015 and later)
+- A standard **PostgreSQL (9.6 or 10) 64-bit** installation
+- Make sure all relevant binaries are in your PATH: (use [pg_config][])
 
 #### Build & Install
 
@@ -43,8 +44,7 @@ shared_preload_libraries = 'timescaledb'
 
 Then, restart the PostgreSQL instance.
 
-[CMake]: https://cmake.org/
-[github-timescale]: https://github.com/timescale/timescaledb
-[github-releases]: https://github.com/timescale/timescaledb/releases
+[c_plus]: https://www.microsoft.com/en-us/download/details.aspx?id=48145
+[pg_config]: https://www.postgresql.org/docs/10/static/app-pgconfig.html
 [windows-dl-pg9.6]:  https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-9.6_x.y.z-windows-amd64.zip
 [windows-dl-pg10]: https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-10_x.y.z-windows-amd64.zip
