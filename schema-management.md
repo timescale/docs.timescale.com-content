@@ -1,12 +1,12 @@
-# Schema management
+# Table management
 
-Designing proper table schemas is a key part of using PostgreSQL. Creating the
-appropriate schema for a given workload can result in significant performance
-improvements (and conversely, designing the wrong schema can result in
-significant performance degradation).
+Designing proper table objects is a key part of using PostgreSQL. Creating the
+appropriate indexes and table schema for a given workload can result in
+significant performance improvements (and conversely, designing the wrong schema
+can result in significant performance degradation).
 
-TimescaleDB supports all schema elements supported within PostgreSQL, including
-data types, indexes, triggers, etc.
+TimescaleDB supports all table objects supported within PostgreSQL, including
+data types, indexes, and triggers.
 
 Note that sometimes it is useful to have a flexible schema, in particular when storing
 semi-structured data (e.g., storing readings from IoT sensors collecting
@@ -14,12 +14,11 @@ varying measurements). For these cases, TimescaleDB also supports the
 PostgreSQL JSON and JSONB datatypes.
 
 In this section, we provide detailed examples and best practices of how to
-create appropriate indexes, triggers, and constraints on your tables,
-as well as how to
-appropriately utilize the JSON and JSONB datatypes.
+create appropriate indexes, triggers, constraints, and tablespaces on your tables,
+as well as how to appropriately utilize the JSON and JSONB datatypes.
 
->ttt One of the most common ways of getting information about various aspects 
-of your database is through `psql`, the interactive terminal.  See the 
+>ttt One of the most common ways of getting information about various aspects
+of your database is through `psql`, the interactive terminal.  See the
 [PostgreSQL docs][psql-docs] for more information.
 
 ## Indexing Data [](indexing)
@@ -343,7 +342,7 @@ tablespaces can be viewed with the
 
 A hypertable can be partitioned in multiple dimensions, but only one
 of the dimensions is used to determine the tablespace assigned to a
-particular hypertable chunk. If a hypertable has one or more hash-partitioned 
+particular hypertable chunk. If a hypertable has one or more hash-partitioned
 ("space") dimensions, then the first hash-partitioned dimension
 is used. Otherwise, the first time dimension is used. This assignment
 strategy ensures that hash-partitioned hypertables will have chunks
@@ -351,13 +350,13 @@ colocated according to hash partition, as long as the list of
 tablespaces attached to the hypertable remains the same. Modulo
 calculation is used to pick a tablespace, so there can be more partitions
 than tablespaces (e.g., if there are two tablespaces, partition number
-three will use the first tablespace). 
+three will use the first tablespace).
 
->ttt Note that attaching more tablespaces than there are partitions for the 
-hypertable might leave some tablespaces unused until some of them are detached 
-or additional partitions are added. This is especially true for 
-hash-partitioned tables.  
- 
+>ttt Note that attaching more tablespaces than there are partitions for the
+hypertable might leave some tablespaces unused until some of them are detached
+or additional partitions are added. This is especially true for
+hash-partitioned tables.
+
 Hypertables that are only time-partitioned will add new
 partitions continuously, and will therefore have chunks assigned to
 tablespaces in a way similar to round-robin.
