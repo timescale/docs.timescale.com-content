@@ -1,5 +1,10 @@
 # Backup & Restore [](backup)
 
+Backing up TimescaleDB takes advantage of the reliable functionality already available
+through PostgreSQL.  We recommend using one of two methods depending on your setup:
+`pg_dump` with `pg_restore` or the Write-Ahead Log (WAL).
+
+
 ## Using `pg_dump` and `pg_restore` [](pg_dump-pg_restore)
 
 In this section, we cover how to backup and restore an entire
@@ -128,7 +133,7 @@ docker run​ \
 >ttt You can change the tag from `latest-pg9.6` to the one that best
 suits you, including `latest-pg10` for PostgreSQL 10.
 
-The values for `PGWAL` and `PGDATA` are up to you for your setup;  
+The values for `PGWAL` and `PGDATA` are up to you for your setup;
 remember these values since the WAL-E sidecar needs to know them
 (and share access to the directories) in order to coordinate the backups.
 
