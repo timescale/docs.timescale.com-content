@@ -856,7 +856,7 @@ SELECT chunk_table, table_size, index_size, total_size FROM chunk_relation_size_
 ```
 The expected output:
 ```
-                chunk_table                 | table_size | index_size | total_size
+                chunk_table                  | table_size | index_size | total_size
 ---------------------------------------------+------------+------------+------------
  "_timescaledb_internal"."_hyper_1_1_chunk"  | 28 MB      | 36 MB      | 64 MB
  "_timescaledb_internal"."_hyper_1_2_chunk"  | 57 MB      | 78 MB      | 134 MB
