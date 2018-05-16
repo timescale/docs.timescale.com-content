@@ -21,16 +21,20 @@ CREATE TABLE conditions (
 1. Then, execute the TimescaleDB `create_hypertable` command on this
 newly created table ([API docs][create_hypertable]).
 
->vvv The default for converting a plain PostgreSQL table into a
-  hypertable requires the table to be empty.  Otherwise,
-  the `create_hypertable` command will throw an error.  If you need
-  to *migrate* data from an existing table to a hypertable, 
-  set the `migrate_data` argument to `true` when calling the function.  
-  If you would like finer control over index formation and other aspects
-   of your hypertable, [follow these migration instructions instead][migrate-from-postgresql].
->
->The use of the `migrate_data` argument to convert a non-empty table can lock
- the table for a significant amount of time, depending on how much data is in the table.
+>ttt If you need to *migrate* data from an existing table to a hypertable, make
+sure to set the `migrate_data` argument to `true` when calling the function.
+If you would like finer control over index formation and other aspects
+of your hypertable, [follow these migration instructions instead][migrate-from-postgresql].
+
+<!-- -->
+>vvv The use of the `migrate_data` argument to convert a non-empty table can
+lock the table for a significant amount of time, depending on how much data is
+in the table.
+
+>ttt The 'time' column used in the `create_hypertable` function supports
+timestamp, date, or integer types, so you can use a parameter that is not
+explicitly time-based, as long as it can increment.  For example, a
+monotonically increasing id would work.
 
 ---
 
@@ -47,8 +51,8 @@ TimescaleDB will then automatically propagate these schema changes to
 the chunks that constitute this hypertable.
 
 >vvv Altering a table's schema is quite efficient provided that the default
- value for any additional column is set to NULL.  If the default is set to a 
- non-null value, TimescaleDB will need to fill in this value for all rows 
+ value for any additional column is set to NULL.  If the default is set to a
+ non-null value, TimescaleDB will need to fill in this value for all rows
  (of all chunks) belonging to this hypertable.
 
 ---

@@ -164,20 +164,20 @@ still work on the resulting hypertable.
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of table to convert to hypertable|
-| `time_column_name` | Name of the column containing time values|
+| `main_table` | Identifier of table to convert to hypertable |
+| `time_column_name` | Name of the column containing time values as well as the primary column to partition by. |
 
 #### Optional Arguments
 
 |Name|Description|
 |---|---|
-| `partitioning_column` | Name of an additional column to partition by. If provided, `number_partitions` must be set.
-| `number_partitions` | Number of hash partitions to use for `partitioning_column` when this optional argument is supplied. Must be > 0.
+| `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided.
+| `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0.
 | `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month.
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
 | `partitioning_func` | The function to use for calculating a value's partition.|
-| `migrate_data` | Set to true to migrate any existing table data to sub-table chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false.|
+| `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
 
 >vvv The use of the `migrate_data` argument to convert a non-empty table can
 lock the table for a significant amount of time, depending on how much data is
@@ -185,10 +185,18 @@ in the table.
 >
 >If you would like finer control over index formation and other aspects
     of your hypertable, [follow these migration instructions instead][migrate-from-postgresql].
+<!-- -->
+#### Units
 
+The 'time' column supports the following data types:
 
-The time column currently only supports values with a data type of
-timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
+| Types |
+|---|
+| Timestamp (TIMESTAMP, TIMESTAMPTZ) |
+| DATE |
+| Integer (SMALLINT, INT, BIGINT) |
+
+>ttt The type flexibility of the 'time' column allows the use of non-time-based values as the primary chunk partitioning column, as long as those values can increment.
 
 The units of `chunk_time_interval` should be set as follows:
 
