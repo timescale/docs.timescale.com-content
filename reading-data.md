@@ -1,6 +1,7 @@
 # Reading data
 
-TimescaleDB hypertables are designed to behave in the same manner as PostgreSQL database tables for reading data, using standard SQL commands.
+TimescaleDB hypertables are designed to behave in the same manner as
+PostgreSQL database tables for reading data, using standard SQL commands.
 
 ## SELECT Commands [](select)
 
@@ -12,17 +13,18 @@ user-defined functions (UDFs), `HAVING` clauses, and so on.
 From basic queries:
 
 ```sql
--- Return the last 100 entries written to the database
+-- Return the last 100 entries written to the 'conditions' hypertable
 SELECT * FROM conditions LIMIT 100;
 
--- Return the more recent 100 entries by time order
+-- Return the most recent 100 entries ordered newest to oldest
 SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
 
--- Number of data entries written in past 12 hours
+-- Return the number of data entries written in past 12 hours
 SELECT COUNT(*) FROM conditions
   WHERE time > NOW() - interval '12 hours';
 ```
 To more advanced SQL queries:
+
 ```sql
 -- Information about each 15-min period for each location
 -- over the past 3 hours, ordered by time and temperature
@@ -232,20 +234,20 @@ This query will then output data in the following form:
  2017-09-23 |      0
  2017-09-22 |   9855
 ```
-Unlike with date_trunc, we can use a custom time interval with the time_bucket function, 
+Unlike with date_trunc, we can use a custom time interval with the time_bucket function,
 but in order to do gap filling properly with it we will also need to use time_bucket on our generated series.
 For example, let's say you want 1080 data points in the last two weeks, and as many graphing
-libraries require time data points with null values to draw gaps in a graph, we need to 
-generate the correct timestamp for each of the data points even if there is no data there. 
-Note that we can do basic arithmetic operations on intervals easily in order to get the correct 
+libraries require time data points with null values to draw gaps in a graph, we need to
+generate the correct timestamp for each of the data points even if there is no data there.
+Note that we can do basic arithmetic operations on intervals easily in order to get the correct
 value to pass to time_bucket.
 ```sql
 WITH data AS (
     SELECT
-        time_bucket('2 weeks'::interval / 1080, time::timestamptz) as btime, 
+        time_bucket('2 weeks'::interval / 1080, time::timestamptz) as btime,
         avg(data_value) as avg_data
       FROM my_hypertable
-      WHERE 
+      WHERE
         time > now() - '2 weeks'::interval
       	AND meter_id = 1
       GROUP BY btime
@@ -254,7 +256,7 @@ period AS (
     SELECT time_bucket('2 weeks'::interval / 1080,  no_gaps) btime
       FROM  generate_series(now()-'2 weeks'::interval, now(), '2 weeks'::interval / 1080) no_gaps
   )
-SELECT period.btime, data.avg_data 
+SELECT period.btime, data.avg_data
   FROM period
   LEFT JOIN data using (btime)
   ORDER BY period.btime

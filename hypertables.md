@@ -1,9 +1,11 @@
-# Hypertables
+# Hypertable Basics
 
-Commands to create, alter, or delete schemas in TimescaleDB are
-identical to those in PostgreSQL.  Schema commands should be made to
-the hypertable name, and any changes are propagated to all chunks
-belonging to that hypertable.
+Hypertables in TimescaleDB are designed to be easy to manage and to behave
+predictibly to users familiar with standard PostgreSQL tables. Along those lines,
+SQL commands to create, alter, or delete (hyper)tables in TimescaleDB are
+identical to those in PostgreSQL.  Even though hypertables are comprised of many
+interlinked "chunk" tables, commands made to the hypertable automatically propagate
+changes down to all of the chunks belonging to that hypertable.
 
 ### Create a Hypertable [](create)
 
