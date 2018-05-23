@@ -232,7 +232,50 @@ This query will then output data in the following form:
  2017-09-23 |      0
  2017-09-22 |   9855
 ```
-
+Unlike with date_trunc, we can use a custom time interval with the time_bucket function, 
+but in order to do gap filling properly with it we will also need to use time_bucket on our generated series.
+For example, let's say you want 1080 data points in the last two weeks, and as many graphing
+libraries require time data points with null values to draw gaps in a graph, we need to 
+generate the correct timestamp for each of the data points even if there is no data there. 
+Note that we can do basic arithmetic operations on intervals easily in order to get the correct 
+value to pass to time_bucket.
+```sql
+WITH data AS (
+    SELECT
+        time_bucket('2 weeks'::interval / 1080, time::timestamptz) as btime, 
+        avg(data_value) as avg_data
+      FROM my_hypertable
+      WHERE 
+        time > now() - '2 weeks'::interval
+      	AND meter_id = 1
+      GROUP BY btime
+),
+period AS (
+    SELECT time_bucket('2 weeks'::interval / 1080,  no_gaps) btime
+      FROM  generate_series(now()-'2 weeks'::interval, now(), '2 weeks'::interval / 1080) no_gaps
+  )
+SELECT period.btime, data.avg_data 
+  FROM period
+  LEFT JOIN data using (btime)
+  ORDER BY period.btime
+```
+This query will output data of the form:
+```
+         btime          | avg_data
+------------------------+----------
+ 2018-03-09 17:28:00+00 |  1085.25
+ 2018-03-09 17:46:40+00 |  1020.42
+ 2018-03-09 18:05:20+00 |  NULL
+ 2018-03-09 18:24:00+00 |  1031.25
+ 2018-03-09 18:42:40+00 |  1049.09
+ 2018-03-09 19:01:20+00 |  1083.80
+ 2018-03-09 19:20:00+00 |  1092.66
+ 2018-03-09 19:38:40+00 |  NULL
+ 2018-03-09 19:57:20+00 |  1048.42
+ 2018-03-09 20:16:00+00 |  1063.17
+ 2018-03-09 20:34:40+00 |  1054.10
+ 2018-03-09 20:53:20+00 |  1037.78
+```
 ### Last Point [](last-point)
 
 A common query in many settings is to find the *last point* for each
