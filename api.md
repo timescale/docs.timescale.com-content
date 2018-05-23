@@ -12,6 +12,7 @@
 > - [drop_chunks](#drop_chunks)
 > - [first](#first)
 > - [histogram](#histogram)
+> - [hypertable_approximate_row_count](#hypertable_approximate_row_count)
 > - [hypertable_relation_size](#hypertable_relation_size)
 > - [hypertable_relation_size_pretty](#hypertable_relation_size_pretty)
 > - [indexes_relation_size](#indexes_relation_size)
@@ -871,6 +872,38 @@ The expected output:
  ...
 ```
 Where `chunk_table` is the table that contains the data, `table_size` is the size of that table, `index_size` is the size of the indexes of the table, and `total_size` is the size of the table with indexes.
+
+---
+
+# hypertable_approximate_row_count() [](hypertable_approximate_row_count)
+
+Get approximate row count for hypertable(s) based on catalog estimates.
+
+#### Optional Arguments
+
+|Name|Description|
+|---|---|
+| `main_table` | Hypertable to get row count for. If omitted, all hypertabls are returned. |
+
+#### Sample Usage
+
+Get the approximate row count for a single hypertable.
+
+```sql
+SELECT * FROM hypertable_approximate_row_count('conditions');
+```
+
+Get the approximate row count for all hypertables.
+```sql
+SELECT * FROM hypertable_approximate_row_count();
+```
+
+The expected output:
+```
+ schema_name | table_name | row_estimate
+-------------+------------+--------------
+  public     | conditions |      240000
+```
 
 ---
 
