@@ -46,7 +46,7 @@ your setup.
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
 >vvv If you are still on PostgreSQL 9.6 via Homebrew, you should
-replace `postgresql` with `postgresql@9.6`.
+replace `postgresql` with <code>postgresql&#64;9.6</code>.
 
 ```bash
 # Restart PostgreSQL instance
