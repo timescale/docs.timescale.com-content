@@ -52,15 +52,15 @@ be run only on an empty hypertable.
 |Name|Description|
 |---|---|
 | `number_partitions` | Number of hash partitions to use on `column_name`. Must be > 0.|
-| `interval_length` | Interval that each chunk covers. Must be > 0.|
+| `chunk_time_interval` | Interval that each chunk covers. Must be > 0.|
 | `partitioning_func` | The function to use for calculating a value's partition (see `create_hypertable` [instructions](#create_hypertable)).|
 | `if_not_exists` | Set to true to avoid throwing an error if a dimension for the column already exists. A notice is issued instead. Defaults to false. |
 
 When executing this function, either `number_partitions` or
-`interval_length` must be supplied, which will dictate if the
+`chunk_time_interval` must be supplied, which will dictate if the
 dimension will use hash or interval partitioning.
 
-The `interval_length` should be specified as follows:
+The `chunk_time_interval` should be specified as follows:
 
 - If the column to be partitioned is a TIMESTAMP, TIMESTAMPTZ, or
 DATE, this length should be specified either as an INTERVAL type or
@@ -69,7 +69,7 @@ an integer value in *microseconds*.
 - If the column is some other integer type, this length
 should be an integer that reflects
 the column's underlying semantics (e.g., the
-`interval_length` should be given in milliseconds if this column
+`chunk_time_interval` should be given in milliseconds if this column
 is the number of milliseconds since the UNIX epoch).
 
 >vvv Supporting more than **one** additional dimension is currently
@@ -91,7 +91,7 @@ space partitioning (2 partitions) on `location`, then add two additional dimensi
 
 ```sql
 SELECT create_hypertable('conditions', 'time', 'location', 2);
-SELECT add_dimension('conditions', 'time_received', interval_length => interval '1 day');
+SELECT add_dimension('conditions', 'time_received', chunk_time_interval => interval '1 day');
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_exists => true);
 ```
