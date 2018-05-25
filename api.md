@@ -553,15 +553,18 @@ inputted `min` and `max` values.
 The return value is an array containing `nbuckets`+2 buckets, with the
 middle `nbuckets` bins for values in the stated range, the first
 bucket at the head of the array for values under the lower `min` bound,
-and the last bucket for values above the `max` bound.
+and the last bucket for values greater than or equal to the `max` bound.
+Each bucket is inclusive on its lower bound, and exclusive on its upper
+bound. Therefore, values equal to the `min` are included in the bucket
+starting with `min`, but values equal to the `max` are in the last bucket.
 
 #### Required Arguments
 
 |Name|Description|
 |---|---|
 | `value` | A set of values to partition into a histogram |
-| `min` | The histogram’s lower bound used in bucketing |
-| `max` | The histogram’s upper bound used in bucketing |
+| `min` | The histogram’s lower bound used in bucketing (inclusive) |
+| `max` | The histogram’s upper bound used in bucketing (exclusive) |
 | `nbuckets` | The integer value for the number of histogram buckets (partitions) |
 
 #### Sample Usage
