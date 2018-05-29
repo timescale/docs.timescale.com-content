@@ -171,12 +171,14 @@ still work on the resulting hypertable.
 
 |Name|Description|
 |---|---|
-| `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided.
-| `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0.
-| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month.
-| `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE.
-| `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE.
+| `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
+| `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month. |
+| `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
+| `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
+| `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
+| `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
 
 >vvv The use of the `migrate_data` argument to convert a non-empty table can
@@ -507,6 +509,11 @@ not affected.
 |---|---|
 | `main_table` | Identifier of hypertable to update interval for.|
 | `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0.|
+
+#### Optional Arguments
+| Name | Description |
+|---|---|
+| `dimension_name` | The name of the time dimension to set the number of partitions for.  Only used when hypertable has multiple time dimensions. |
 
 The valid types for the `chunk_time_interval` depend on the type of
 hypertable time column:
@@ -977,7 +984,7 @@ The expected output:
 
 ---
 
-## indexes_relation_size_pretty() [](indexes_relation_size)
+## indexes_relation_size_pretty() [](indexes_relation_size_pretty)
 
 Get sizes of indexes on a hypertable.
 
