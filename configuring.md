@@ -12,7 +12,7 @@ from within psql.
 The settings `shared_buffers`, `effective_cache_size`, `work_mem`, and
 `maintenance_work_mem` need to be adjusted to match the machine's available
 memory.  We suggest getting the configuration values from the [PgTune][pgtune]
-website (suggeted DB Type: Data warehouse). You should also adjust the
+website (suggested DB Type: Data warehouse). You should also adjust the
 `max_connections` setting to match the ones given by PgTune since there is a
 connection between `max_connections` and memory settings. Other settings from
 PgTune may also be helpful.
@@ -59,8 +59,8 @@ number of chunks in the hypertable, or double that number if the query
 also uses an index. Also note that `max_locks_per_transaction` is not
 an exact setting; it only controls the *average* number of object
 locks allocated for each transaction. For more information, please
-review the official PostgreSQL documentation on [lock
-management][lock-management].
+review the official PostgreSQL documentation on
+[lock management][lock-management].
 
 ## Changing configuration with Docker
 
@@ -78,24 +78,24 @@ docker start timescaledb
 docker exec -i -t timescaledb /bin/bash
 ```
 
-2. Edit and then save the config file, modifying the setting for the desired configuration parameter (e.g., `max_wal_size`)
+2. Edit and then save the config file, modifying the setting for the desired configuration parameter (e.g., `max_wal_size`).
 ```
 vi /var/lib/postgresql/data/postgresql.conf
 ```
 
-3. Restart the container so the config gets reloaded
+3. Restart the container so the config gets reloaded.
 ```
 docker restart timescaledb
 ```
 
 4. Test to see if the change worked.
 ```
-docker exec -it timescaledb psql -U postgres
+    docker exec -it timescaledb psql -U postgres
 
-postgres=# show max_wal_size;
- max_wal_size
---------------
- 2GB
+    postgres=# show max_wal_size;
+     max_wal_size
+    --------------
+    2GB
 ```
 
 ### Specify config parameters as boot options
