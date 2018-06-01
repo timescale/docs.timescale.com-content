@@ -364,6 +364,27 @@ Alternatively, you can implement this functionality without a separate
 metadata table by performing a [loose index scan][] over the
 `location` hypertable, albeit at higher cost.
 
+### Aprroximate Row Count [](approximate-row-count)
+
+For large hypertables, getting the exact row count with `SELECT count()` can
+take an inordinate amount of time.  Getting the approximate row count can be
+much more performant.
+
+```sql
+SELECT h.schema_name,
+    h.table_name,
+    h.id AS table_id,
+    h.associated_table_prefix,
+    row_estimate.row_estimate
+  FROM _timescaledb_catalog.hypertable h
+    CROSS JOIN LATERAL ( SELECT sum(cl.reltuples) AS row_estimate
+      FROM _timescaledb_catalog.chunk c
+        JOIN pg_class cl ON cl.relname = c.table_name
+      WHERE c.hypertable_id = h.id
+      GROUP BY h.schema_name, h.table_name) row_estimate
+ORDER BY schema_name, table_name;
+```
+
 
 What analytic functions are we missing?  [Let us know on github][issues].
 
