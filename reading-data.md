@@ -364,7 +364,7 @@ Alternatively, you can implement this functionality without a separate
 metadata table by performing a [loose index scan][] over the
 `location` hypertable, albeit at higher cost.
 
-### Aprroximate Row Count [](approximate-row-count)
+### Approximate Row Count [](approximate-row-count)
 
 For large hypertables, getting the exact row count with `SELECT count()` can
 take an inordinate amount of time.  Getting the approximate row count can be
