@@ -9,7 +9,7 @@
 - [CMake][] version 3.4 or greater
 
 #### Build & Install with Local PostgreSQL
->ttt It is **highly recommended** that you checkout the latest
+>:TIP: It is **highly recommended** that you checkout the latest
 tagged commit to build from (see the repo's [Releases][github-releases] page for that)
 
 Clone the repository from [Github][github-timescale]:
@@ -28,7 +28,7 @@ cd build && make
 make install
 ```
 
->vvv Our build scripts use `pg_config` to find out where PostgreSQL
+>:WARNING: Our build scripts use `pg_config` to find out where PostgreSQL
 stores its extension files. If you have two versions of PostgreSQL
 installed, use `pg_config` to find out which version TimescaleDB was
 installed with.
@@ -49,7 +49,7 @@ Make sure to uncomment it when adding our library.
 ```bash
 shared_preload_libraries = 'timescaledb'
 ```
->ttt If you have other libraries you are preloading, they should be comma separated.
+>:TIP: If you have other libraries you are preloading, they should be comma separated.
 
 Then, restart the PostgreSQL instance.
 

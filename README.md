@@ -47,14 +47,14 @@ formatting within the docs.
 + Adding 'sss ' to the start of every list item in an ordered list will result in
   a switch to "steps" formatting which is used to denote instructional steps, as
   for a tutorial.
-+ Adding '>ttt ' to the start of a blockquote (using '>') will create a "tip" callout.
-+ Adding '>vvv ' to the start of a blockquote (using '>') will create a "warning" callout.
-+ Adding '>toplist ' (no spaces) as the first line of a blockquote (using '>') will create a fixed right-oriented box, useful for a table of contents or list of functions, etc.  See the FAQ page for an example.
++ Adding '>:TIP: ' to the start of a blockquote (using '>') will create a "tip" callout.
++ Adding '>:WARNING: ' to the start of a blockquote (using '>') will create a "warning" callout.
++ Adding '>:TOPLIST: ' (no spaces) as the first line of a blockquote (using '>') will create a fixed right-oriented box, useful for a table of contents or list of functions, etc.  See the FAQ page for an example.
     - The first headline in the toplist will act as the title and will be separated from the remainder of the content stylewise (on the FAQ page, it's the headline "Questions").
     - Everything else acts as a normal blockquote does.
 + Adding a text free link to a header with a text address (Ex. `## Important Header [](indexing)`) will create an anchor icon that links to that header with the hash name of the text.
-+ Adding 'fff ' to the start of a paragraph(line) will format it as a "footer link".
-+ Adding 'ddd ' to the start of a link will append a 'download link' icon to the end of the link inline.
++ Adding ':FOOTER_LINK: ' to the start of a paragraph(line) will format it as a "footer link".
++ Adding ':DOWNLOAD_LINK: ' to the start of a link will append a 'download link' icon to the end of the link inline.
 + Adding 'x.y.z' anywhere in the text will be replaced by the version number of the branch.  Ex. `look at file foo-x.y.z` >> `look at file foo-0.4.2`.
 
 _Make sure to include the space after the formatting command!_

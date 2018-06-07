@@ -1,6 +1,6 @@
 # FAQ [](top)
 
->toplist
+>:TOPLIST:
 > ### Questions
 > - [What is TimescaleDB?](#what)
 > - [Why build another time-series database?](#why-build)

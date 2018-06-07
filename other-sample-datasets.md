@@ -14,9 +14,9 @@ you are importing them to has already been [set up with the TimescaleDB extensio
 memory, network) collected from mobile devices. (Click on the name to
 download.)
 
-1. [ddd `devices_small`][devices-small] - 1,000 devices recorded over 1,000 time intervals
-1. [ddd `devices_med`][devices-medium] - 5,000 devices recorded over 2,000 time intervals
-1. [ddd `devices_big`][devices-big] - 3,000 devices recorded over 10,000 time intervals
+1. [:DOWNLOAD_LINK: `devices_small`][devices-small] - 1,000 devices recorded over 1,000 time intervals
+1. [:DOWNLOAD_LINK: `devices_med`][devices-medium] - 5,000 devices recorded over 2,000 time intervals
+1. [:DOWNLOAD_LINK: `devices_big`][devices-big] - 3,000 devices recorded over 10,000 time intervals
 
 For more details and example usage, see [In-depth: Device ops datasets](#in-depth-devices).
 
@@ -24,9 +24,9 @@ For more details and example usage, see [In-depth: Device ops datasets](#in-dept
 humidity data from a variety of locations. (Click on the name to
 download.)
 
-1. [ddd `weather_small`][weather-small] - 1,000 locations over 1,000 two-minute intervals
-1. [ddd `weather_med`][weather-medium] - 1,000 locations over 15,000 two-minute intervals
-1. [ddd `weather_big`][weather-big] - 2,000 locations over 20,000 two-minute intervals
+1. [:DOWNLOAD_LINK: `weather_small`][weather-small] - 1,000 locations over 1,000 two-minute intervals
+1. [:DOWNLOAD_LINK: `weather_med`][weather-medium] - 1,000 locations over 15,000 two-minute intervals
+1. [:DOWNLOAD_LINK: `weather_big`][weather-big] - 2,000 locations over 20,000 two-minute intervals
 
 For more details and example usage, see [In-depth: Weather datasets](#in-depth-weather).
 
@@ -64,7 +64,7 @@ psql -U postgres -d devices_small -c "\COPY device_info FROM devices_small_devic
 
 The data is now ready for you to use.
 
->ttt The standard `COPY` command in PostgreSQL is single threaded.
+>:TIP: The standard `COPY` command in PostgreSQL is single threaded.
  So to speed up importing the larger sample datasets, we recommend using
  our [parallel importer][] instead.
 

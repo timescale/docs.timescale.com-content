@@ -22,7 +22,7 @@ using a [PostgreSQL entrypoint script][docker-postgres-scripts] to run the
 configuration. For our sample Docker configuration and run scripts, check out
 our [Streaming Replication Docker Repository][timescale-streamrep-docker].
 
->ttt PostgreSQL achieves streaming replication by having replicas continuously
+>:TIP: PostgreSQL achieves streaming replication by having replicas continuously
 stream the WAL from the primary database.  See the official
 [replication documentation][postgres-streaming-replication-docs] for details. For more
 information about how PostgreSQL implements Write-Ahead Logging,
@@ -40,7 +40,7 @@ SET password_encryption = 'scram-sha-256';
 CREATE ROLE repuser WITH REPLICATION PASSWORD 'password' LOGIN;
 ```
 
->vvv [scram-sha-256][postgres-scram-docs] is PostgreSQL's most secure
+>:WARNING: [scram-sha-256][postgres-scram-docs] is PostgreSQL's most secure
 password based authentication, but it is only available in PostgreSQL 10 and
 above. If you are using an earlier version, consider using `md5` authentication
 by replacing the first line in the above SQL with `SET password_encryption = true;`
@@ -134,7 +134,7 @@ on the host of each replica.
 host       replication     repuser         <REPLICATION_HOST_IP>/32     scram-sha-256
 ```
 
->ttt The above settings will restrict replication connections to traffic coming
+>:TIP: The above settings will restrict replication connections to traffic coming
 from `REPLICATION_HOST_IP` as the PostgreSQL user `repuser` with a valid
 password.  `REPLICATION_HOST_IP` will be able to initiate streaming replication
 from that machine without additional credentials.  You may want to
@@ -166,7 +166,7 @@ along with the replication username.
 pg_basebackup -h <PRIMARY_IP> -D <DATA_DIRECTORY> -U repuser -vP -W
 ```
 
->vvv The -W flag will prompt you for a password on the command line. This may
+>:WARNING: The -W flag will prompt you for a password on the command line. This may
 cause problems for automated setups. If you are using password based
 authentication in an automated setup, you may need to make use of a
 [pgpass file][postgres-pgpass-docs].
@@ -205,7 +205,7 @@ max_replication_slots = 2
 synchronous_commit = off
 ```
 
->vvv In order to allow reads on the replica, `hot_standby` must be set to `on`.
+>:WARNING: In order to allow reads on the replica, `hot_standby` must be set to `on`.
 >This allows read-only queries on the replica. By default, this
 setting is set to `on` in PostgreSQL 10, but in earlier versions it defaults to
 `off`.
@@ -290,7 +290,7 @@ different formats:
   their priority/position in the list.  This is essentially a quorum
   function.
 
->vvv Any synchronous replication mode will force the primary to wait until all
+>:WARNING: Any synchronous replication mode will force the primary to wait until all
 required replicas have written the WAL or applied the database transaction,
 depending on the `synchronous_commit` level. This could cause the
 primary to hang indefinitely if a required replica crashes. When the replica

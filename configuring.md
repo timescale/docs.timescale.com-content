@@ -4,7 +4,7 @@ TimescaleDB works with the default PostgreSQL server configuration settings.
 However, we find that optimizing some settings increases performance. These
 settings can be adjusted in your machine's `postgresql.conf`.
 
->ttt You can determine the location of `postgresql.conf` by running `SHOW config_file;`
+>:TIP: You can determine the location of `postgresql.conf` by running `SHOW config_file;`
 from within psql.
 
 ## Memory settings [](memory)

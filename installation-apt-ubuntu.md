@@ -14,7 +14,7 @@ See [here for instructions][postgresql-apt] to install via `apt`.
 
 #### Build & Install
 
->vvv If you have another PostgreSQL installation not via `apt`,
+>:WARNING: If you have another PostgreSQL installation not via `apt`,
 this will likely cause problems.
 If you wish to maintain your current version of PostgreSQL outside
 of `apt`, we recommend installing from source.  Otherwise, please be
@@ -41,12 +41,12 @@ necessary libraries:
 shared_preload_libraries = 'timescaledb'
 ```
 
->ttt The usual location of `postgres.conf`
+>:TIP: The usual location of `postgres.conf`
 is `/etc/postgresql/9.6/main/postgresql.conf` for 9.6 and
 `/etc/postgresql/10/main/postgresql.conf` for 10, but this may vary
 depending on your setup.
 
->ttt If you have other libraries you are preloading, they should be comma separated.
+>:TIP: If you have other libraries you are preloading, they should be comma separated.
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):

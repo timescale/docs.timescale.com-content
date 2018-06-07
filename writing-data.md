@@ -28,7 +28,7 @@ INSERT INTO conditions
     (NOW(), 'garage', 77.0, 65.2);
 ```
 
->ttt The rows that belong to a single batch INSERT command do **not** need
+>:TIP: The rows that belong to a single batch INSERT command do **not** need
 to belong to the same chunk (by time interval or partitioning key).
 Upon receiving an `INSERT` command for multiple rows, the TimescaleDB
 engine will determine which rows (sub-batches) belong to which chunks,
@@ -66,7 +66,7 @@ UPDATE conditions SET temperature = temperature + 0.1
   WHERE time >= '2017-07-28 11:40' AND time < '2017-07-28 11:50';
 ```
 
->vvv TimescaleDB achieves much higher insert performance compared to
+>:WARNING: TimescaleDB achieves much higher insert performance compared to
  vanilla PostgreSQL when inserts are localized to the most recent time
  interval (or two).  If your workload is heavily based on `UPDATE`s to old
  time intervals instead, you may observe significantly lower write
@@ -148,7 +148,7 @@ INSERT INTO conditions
         humidity = excluded.humidity;
 ```
 
->ttt Unique constraints must include all partitioning keys as
+>:TIP: Unique constraints must include all partitioning keys as
  their prefix.  For example, if the table just uses time partitioning,
  the system requires `time` as the initial part of the
  constraint: `UNIQUE(time)`, `UNIQUE(time, location)`, etc.
@@ -161,7 +161,7 @@ INSERT INTO conditions
  a valid constraint.
 
 <!-- -->
->vvv TimescaleDB does not yet support using `ON CONFLICT ON CONSTRAINT` with
+>:WARNING: TimescaleDB does not yet support using `ON CONFLICT ON CONSTRAINT` with
  a named key (e.g., `conditions_time_location_idx`), but much of this
  functionality can be captured by specifying the same columns as above with
  a unique index/constraint. This limitation will be removed in a future version.
@@ -185,7 +185,7 @@ After running a large `DELETE` operation, users are recommended to
 `VACUUM` or `VACUUM FULL` the hypertable to reclaim storage occupied
 by deleted or obsoleted rows ([PostgreSQL docs][postgres-vacuum]).
 
->ttt For deleting old data, such as in the second example
+>:TIP: For deleting old data, such as in the second example
  above, we recommend using the TimescaleDB function
  [`drop_chunks`][drop_chunks] instead.  This feature is much more
  performant: it deletes entire *chunks* of data (basically, removing

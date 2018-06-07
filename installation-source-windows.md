@@ -10,7 +10,7 @@
 - Make sure all relevant binaries are in your PATH: `pg_config`, `cmake`, `MSBuild`
 
 #### Build & Install with Local PostgreSQL
->ttt It is **highly recommended** that you checkout the latest
+>:TIP: It is **highly recommended** that you checkout the latest
 tagged commit to build from (see the repo's [Releases][github-releases] page for that)
 
 Clone the repository from [Github][github-timescale]:
@@ -57,7 +57,7 @@ Make sure to uncomment it when adding our library.
 ```bash
 shared_preload_libraries = 'timescaledb'
 ```
->ttt If you have other libraries you are preloading, they should be comma separated.
+>:TIP: If you have other libraries you are preloading, they should be comma separated.
 
 Then, restart the PostgreSQL instance.
 

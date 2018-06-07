@@ -1,5 +1,5 @@
 # Migrating Data
->ttt First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
+>:TIP: First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
 
 There are two choices available to migrate data into TimescaleDB:
 
@@ -68,7 +68,7 @@ SELECT create_hypertable('new_table', 'time');
 INSERT INTO new_table SELECT * FROM old_table;
 ```
 
->vvv `create_hypertable` may fail if invalid UNIQUE or PRIMARY
+>:WARNING: `create_hypertable` may fail if invalid UNIQUE or PRIMARY
 KEY indexes existed on the old table (see
 this [note][unique_indexes]).
 In this case, you would have to reconfigure your indexes
@@ -214,7 +214,7 @@ timescaledb-parallel-copy --db-name new_db --table conditions \
 In addition to parallelizing the workload, the tool also offers flags
 to improve the copy experience. [See the repo on Github][parallel importer] for full details.
 
->ttt We recommend not setting the number of workers higher than
+>:TIP: We recommend not setting the number of workers higher than
 the number of available CPU cores on the machine.
 Above that, the workers tend to compete with each other for
 resources and reduce the performance improvements.

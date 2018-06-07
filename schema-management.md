@@ -17,7 +17,7 @@ In this section, we provide detailed examples and best practices of how to
 create appropriate indexes, triggers, constraints, and tablespaces on your tables,
 as well as how to appropriately utilize the JSON and JSONB datatypes.
 
->ttt One of the most common ways of getting information about various aspects
+>:TIP: One of the most common ways of getting information about various aspects
 of your database is through `psql`, the interactive terminal.  See the
 [PostgreSQL docs][psql-docs] for more information.
 
@@ -33,7 +33,7 @@ CREATE INDEX ON conditions (location, time DESC);
 ```
 This can be done before or after converting the table to a hypertable.
 
->ttt For sparse data where a column is often NULL, we suggest adding
+>:TIP: For sparse data where a column is often NULL, we suggest adding
 a `WHERE column IS NOT NULL` clause to the index (unless you are often
 searching for missing data). For example,
 ```sql
@@ -115,7 +115,7 @@ matching your predicate, but in each one, your query also grabs a
 (potentially large) subset of the values, rather than just one
 distinct one.
 
->ttt [](unique_indexes) To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
+>:TIP: [](unique_indexes) To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
 exists, the partitioning column **must** be the first (or first two)
 columns that comprise the index.  That is, using our running
 example, you can define a unique index on just the {time, location} fields,
@@ -248,7 +248,7 @@ efficient.
 2. We use the JSONB data type (that is, JSON stored in a binary format) and not the JSON data type. JSONB data types are
 are more efficient in both storage overhead and lookup performance.
 
->ttt [](sparse_json) Often, people use JSON for sparse data as opposed
+>:TIP: [](sparse_json) Often, people use JSON for sparse data as opposed
 to user-defined data. We do not recommend this usage inside TimescaleDB for most
 datasets (unless the data is extremely sparse, e.g., more than 95% of fields for
 a row are empty). Instead, we suggest using NULLable fields and, if possible,
@@ -352,7 +352,7 @@ calculation is used to pick a tablespace, so there can be more partitions
 than tablespaces (e.g., if there are two tablespaces, partition number
 three will use the first tablespace).
 
->ttt Note that attaching more tablespaces than there are partitions for the
+>:TIP: Note that attaching more tablespaces than there are partitions for the
 hypertable might leave some tablespaces unused until some of them are detached
 or additional partitions are added. This is especially true for
 hash-partitioned tables.

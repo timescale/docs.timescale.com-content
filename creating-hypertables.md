@@ -3,7 +3,7 @@
 The primary point of interaction with your data is a hypertable,
 the abstraction of a single continuous table across all space and time intervals, such that one can query it via vanilla SQL.
 
->ttt First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
+>:TIP: First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
 
 ### Creating a (Hyper)table [](create-hypertable)
 To create a hypertable, you start with a regular SQL table, and then convert
@@ -38,7 +38,7 @@ SELECT create_hypertable('conditions', 'time');
 SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
->ttt The 'time' column used in the `create_hypertable` function supports
+>:TIP: The 'time' column used in the `create_hypertable` function supports
 timestamp, date, or integer types, so you can use a parameter that is not
 explicitly time-based, as long as it can increment.  For example, a
 monotonically increasing id would work.

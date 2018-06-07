@@ -11,12 +11,12 @@ In this section, we cover how to backup and restore an entire
 database or individual hypertables using the native PostgreSQL
 [`pg_dump`][pg_dump] and [`pg_restore`][pg_restore] commands.
 
->ttt Upgrades between different versions of TimescaleDB can be done in place;
+>:TIP: Upgrades between different versions of TimescaleDB can be done in place;
  you don't need to backup/restore your data.
  Follow these [updating instructions][].
 
 <!-- -->
->vvv You must use `pg_dump` and `pg_restore` versions 9.6.2 and above.
+>:WARNING: You must use `pg_dump` and `pg_restore` versions 9.6.2 and above.
 
 ### Entire database
 
@@ -40,7 +40,7 @@ ALTER DATABASE tutorial SET timescaledb.restoring='on';
 ALTER DATABASE tutorial SET timescaledb.restoring='off';
 ```
 
->vvv PostgreSQL's `pg_dump` does not currently specify the *version* of
+>:WARNING: PostgreSQL's `pg_dump` does not currently specify the *version* of
  the extension in its backup, which leads to problems if you are
  restoring into a database instance with a more recent extension
  version installed.  (In particular, the backup could be for some
@@ -54,7 +54,7 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
  installed, and *then* upgrade the version.
 
 <!-- -->
->vvv These instructions do not work if you use flags to selectively
+>:WARNING: These instructions do not work if you use flags to selectively
  choose tables (`-t`) or schemas (`--schema`), and so cannot be used
  to backup only an individual hypertable.  In particular, even if you
  explicitly specify both the hypertable and all of its constituent
@@ -95,7 +95,7 @@ Recreate the hypertables:
 psql -d new_db -c "SELECT create_hypertable('conditions', 'time')"
 ```
 
->ttt The parameters to `create_hypertable` do not need to be
+>:TIP: The parameters to `create_hypertable` do not need to be
 the same as in the old db, so this is a good way to re-organize
 your hypertables (e.g., change partitioning key, number of
 partitions, chunk interval sizes, etc.).
@@ -105,7 +105,7 @@ Restore the data:
 psql -d new_db -c "\COPY conditions FROM data.csv CSV"
 ```
 
->ttt The standard `COPY` command in PostgreSQL is single threaded.
+>:TIP: The standard `COPY` command in PostgreSQL is single threaded.
  So to speed up importing larger amounts of data, we recommend using
  our [parallel importer][] instead.
 
@@ -130,7 +130,7 @@ docker run​ \
     ...  # other flags/arguments
     timescale/timescaledb:latest-pg9.6
 ```
->ttt You can change the tag from `latest-pg9.6` to the one that best
+>:TIP: You can change the tag from `latest-pg9.6` to the one that best
 suits you, including `latest-pg10` for PostgreSQL 10.
 
 The values for `PGWAL` and `PGDATA` are up to you for your setup;

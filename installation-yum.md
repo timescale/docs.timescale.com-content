@@ -12,7 +12,7 @@ This will install both TimescaleDB *and* PostgreSQL via `yum`
 
 #### Build & Install
 
->vvv If you have another PostgreSQL installation not
+>:WARNING: If you have another PostgreSQL installation not
 via `yum`, this will likely cause problems.
 If you wish to maintain your current version of PostgreSQL outside of `yum`,
 we recommend installing from source.  Otherwise please be
@@ -50,12 +50,12 @@ necessary libraries:
 shared_preload_libraries = 'timescaledb'
 ```
 
->ttt The usual location of `postgres.conf`
+>:TIP: The usual location of `postgres.conf`
 is `/var/lib/pgsql/9.6/data/postgresql.conf` for PostgreSQL 9.6
 and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
 but this may vary depending on your setup.
 
->ttt If you have other libraries you are preloading, they should be comma separated.
+>:TIP: If you have other libraries you are preloading, they should be comma separated.
 
 To get started you'll need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs). Please

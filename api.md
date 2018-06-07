@@ -1,6 +1,6 @@
 # TimescaleDB API Reference
 
->toplist
+>:TOPLIST:
 > ### Command List (A-Z)
 > - [add_dimension](#add_dimension)
 > - [attach_tablespace](#attach_tablespace)
@@ -31,12 +31,12 @@ Add an additional partitioning dimension to a TimescaleDB hypertable.
 The column selected as the dimension can either use interval
 partitioning (e.g., for a second time partition) or hash partitioning.
 
->vvv Before using this command, please see the hypertable [best practices][] discussion
+>:WARNING: Before using this command, please see the hypertable [best practices][] discussion
 and talk with us on [Slack](https://slack-login.timescale.com) about
 your use case. Users will *rarely* want or need to use this command.
 
 <!-- -->
->vvv The `add_dimension` command can only be executed after a table has been
+>:WARNING: The `add_dimension` command can only be executed after a table has been
 converted to a hypertable (via `create_hypertable`), but must similarly
 be run only on an empty hypertable.
 
@@ -72,7 +72,7 @@ the column's underlying semantics (e.g., the
 `chunk_time_interval` should be given in milliseconds if this column
 is the number of milliseconds since the UNIX epoch).
 
->vvv Supporting more than **one** additional dimension is currently
+>:WARNING: Supporting more than **one** additional dimension is currently
  experimental.  For any production environments, users are recommended
  to use at most one "space" dimension (in addition to the required
  time dimension specified in `create_hypertable`).
@@ -148,7 +148,7 @@ SELECT attach_tablespace('disk1', 'conditions');
 SELECT attach_tablespace('disk2', 'conditions', if_not_attached => true);
  ```
 
->vvv The management of tablespaces on hypertables is currently an
+>:WARNING: The management of tablespaces on hypertables is currently an
 experimental feature.
 
 ---
@@ -182,7 +182,7 @@ still work on the resulting hypertable.
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
 
->vvv The use of the `migrate_data` argument to convert a non-empty table can
+>:WARNING: The use of the `migrate_data` argument to convert a non-empty table can
 lock the table for a significant amount of time, depending on how much data is
 in the table.
 >
@@ -199,7 +199,7 @@ The 'time' column supports the following data types:
 | DATE |
 | Integer (SMALLINT, INT, BIGINT) |
 
->ttt The type flexibility of the 'time' column allows the use of non-time-based values as the primary chunk partitioning column, as long as those values can increment.
+>:TIP: The type flexibility of the 'time' column allows the use of non-time-based values as the primary chunk partitioning column, as long as those values can increment.
 
 The units of `chunk_time_interval` should be set as follows:
 
@@ -227,14 +227,14 @@ is _not_ a partition ID, but rather the inserted value's position in
 the dimension's key space, which is then divided across the partitions.
 
 <!-- -->
->ttt The `add_dimension` function can be used following hypertable
+>:TIP: The `add_dimension` function can be used following hypertable
  creation to add one or more additional partitioning dimensions (and
  as an alternative to specifying the optional argument
  in `create_hypertable`).  See [best practices][] before using any
  spatial partitioning.
 
 <!-- -->
->ttt The time column in `create_hypertable` must be defined as `NOT
+>:TIP: The time column in `create_hypertable` must be defined as `NOT
  NULL`.  If this is not already specified on table creation,
  `create_hypertable` will automatically add this constraint on the
  table when it is executed.
@@ -288,7 +288,7 @@ partitions) fit into memory.  As such, we typically recommend setting
 the interval so that these chunk(s) comprise no more than 25% of main
 memory.
 
->ttt Make sure that you are planning for recent chunks from _all_ active hypertables to fit into 25% of main memory, rather than 25% per hypertable.
+>:TIP: Make sure that you are planning for recent chunks from _all_ active hypertables to fit into 25% of main memory, rather than 25% per hypertable.
 
 To determine this, you roughly need to understand your data rate.  If
 you are writing roughly 2GB of data per day and have 64GB of memory,
@@ -302,7 +302,7 @@ While it's generally safer to make chunks smaller rather than too
 large, setting intervals too small can lead to *many* chunks, which
 corresponds to increased planning latency for some types of queries.
 
->ttt One caveat is that the total chunk size is actually dependent on
+>:TIP: One caveat is that the total chunk size is actually dependent on
 both the underlying data size *and* any indexes, so some care might be
 taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
@@ -605,7 +605,7 @@ SELECT device_id, first(temp, time)
   GROUP BY device_id;
 ```
 
->vvv The `last` and `first` commands do **not** use indexes, and instead
+>:WARNING: The `last` and `first` commands do **not** use indexes, and instead
  perform a sequential scan through their groups.  They are primarily used
  for ordered selection within a `GROUP BY` aggregate, and not as an
  alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
@@ -691,7 +691,7 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
   ORDER BY interval DESC;
 ```
 
->vvv The `last` and `first` commands do **not** use indexes, and instead
+>:WARNING: The `last` and `first` commands do **not** use indexes, and instead
  perform a sequential scan through their groups.  They are primarily used
  for ordered selection within a `GROUP BY` aggregate, and not as an
  alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
@@ -706,7 +706,7 @@ It allows for arbitrary time intervals instead of the second, minute, hour, etc.
 provided by `date_trunc`. The return value is the bucket's start time.
 Below is necessary information for using it effectively.
 
->ttt TIMESTAMPTZ arguments are
+>:TIP: TIMESTAMPTZ arguments are
 bucketed by the time at UTC. So the alignment of buckets is
 on UTC time. One consequence of this is that daily buckets are
 aligned to midnight UTC, not local time.

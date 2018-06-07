@@ -23,17 +23,17 @@ CREATE TABLE conditions (
 1. Then, execute the TimescaleDB `create_hypertable` command on this
 newly created table ([API docs][create_hypertable]).
 
->ttt If you need to *migrate* data from an existing table to a hypertable, make
+>:TIP: If you need to *migrate* data from an existing table to a hypertable, make
 sure to set the `migrate_data` argument to `true` when calling the function.
 If you would like finer control over index formation and other aspects
 of your hypertable, [follow these migration instructions instead][migrate-from-postgresql].
 
 <!-- -->
->vvv The use of the `migrate_data` argument to convert a non-empty table can
+>:WARNING: The use of the `migrate_data` argument to convert a non-empty table can
 lock the table for a significant amount of time, depending on how much data is
 in the table.
 
->ttt The 'time' column used in the `create_hypertable` function supports
+>:TIP: The 'time' column used in the `create_hypertable` function supports
 timestamp, date, or integer types, so you can use a parameter that is not
 explicitly time-based, as long as it can increment.  For example, a
 monotonically increasing id would work.
@@ -52,7 +52,7 @@ ALTER TABLE conditions
 TimescaleDB will then automatically propagate these schema changes to
 the chunks that constitute this hypertable.
 
->vvv Altering a table's schema is quite efficient provided that the default
+>:WARNING: Altering a table's schema is quite efficient provided that the default
  value for any additional column is set to NULL.  If the default is set to a
  non-null value, TimescaleDB will need to fill in this value for all rows
  (of all chunks) belonging to this hypertable.
@@ -87,7 +87,7 @@ partitions) fit into memory.  As such, we typically recommend setting
 the interval so that these chunk(s) comprise no more than 25% of main
 memory.
 
->ttt Make sure that you are planning for single chunks from _all_ active hypertables fit into 25% of main memory, rather than 25% per hypertable.
+>:TIP: Make sure that you are planning for single chunks from _all_ active hypertables fit into 25% of main memory, rather than 25% per hypertable.
 
 To determine this, you need to have a general idea of your data rate.  If
 you are writing roughly 2GB of data per day and have 64GB of memory,
@@ -101,7 +101,7 @@ While it's generally safer to make chunks smaller rather than too
 large, setting intervals too small can lead to *many* chunks, which
 corresponds to increased planning latency for some types of queries.
 
->ttt One caveat is that the total chunk size is actually dependent on
+>:TIP: One caveat is that the total chunk size is actually dependent on
 both the underlying data size *and* any indexes, so some care might be
 taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
