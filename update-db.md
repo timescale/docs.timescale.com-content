@@ -16,7 +16,7 @@ automated migration scripts that convert any internal state if necessary.
 Software upgrades use PostgreSQL's `ALTER EXTENSION` support to update to the
 latest version. Since 0.9.0, TimescaleDB supports having different extension
 versions on different databases within the same PostgreSQL instance. This
-allowss you to update extensions independently on different databases. The
+allows you to update extensions independently on different databases. The
 upgrade process is involves three-steps:
 
 1. Optionally, perform a [backup][] of your database via `pg_dump`.
