@@ -5,8 +5,28 @@
 Starting a TimescaleDB instance, pulling our Docker image from [Docker Hub][] if it has not been already installed.
 
 ```bash
-docker run -d --name timescaledb -p 5432:5432 timescale/timescaledb
+docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb
 ```
+
+>:WARNING: The -p flag binds the container port to the host port, meaning
+anything that can access the host port will be able to access your TimescaleDB
+container. This can be particularly dangerous if you do not set a Postgres
+password at runtime using the `POSTGRES_PASSWORD` environment variable as we
+do in the above command. Without that variable, the Docker container will disable
+password checks for all database users. If you want to access the container
+from the host but avoid exposing it to the outside world, you can explicitly
+have it bind to 127.0.0.1 instead of the public interface by using
+`-p 127.0.0.1:5432:5432`.
+>
+>Otherwise, you'll want to ensure that your host box is adequately locked down
+through security groups, IP Tables, or whatever you're using for acccess control.
+Note also that Docker binds the container by modifying your Linux IP Tables.
+For systems that use Linux UFW (Uncomplicated Firewall) for security rules,
+this means that Docker will potentially override any UFW settings that restrict
+the port you are binding to. If you are relying on UFW rules for network
+security, consider adding `DOCKER_OPTS="--iptables=false"` to `/etc/default/docker`
+to prevent Docker from overwriting IP Tables. See [this-writeup-on-the-vulnerability]
+for more details.
 
 If you have PostgreSQL client tools (e.g., `psql`) installed locally,
 you can use those to access the Timescale docker instance.  Otherwise,
@@ -73,6 +93,7 @@ CREATE EXTENSION postgis;
 For more instructions on using PostGIS, [see our tutorial][tutorial-postgis].
 
 [official Postgres image]: https://github.com/docker-library/postgres/
+[this-writeup-on-the-vulnerability]: https://www.techrepublic.com/article/how-to-fix-the-docker-and-ufw-security-flaw
 [alpine Linux]: https://alpinelinux.org/
 [Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
 [docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh
