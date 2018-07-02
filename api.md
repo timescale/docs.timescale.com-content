@@ -171,7 +171,6 @@ still work on the resulting hypertable.
 | `partitioning_func` | The function to use for calculating a value's partition.|
 | `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
-| `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
 
 The time column currently only supports values with a data type of
 timestamp (TIMESTAMP, TIMESTAMPTZ), DATE, or integer (SMALLINT, INT, BIGINT).
