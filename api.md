@@ -754,7 +754,7 @@ Get relation size of the chunks of an hypertable.
 |ranges|Partitioning ranges for each dimension|
 |table_bytes|Disk space used by main_table|
 |index_bytes|Disk space used by indexes|
-|toast_bytes|Disc space of toast tables|
+|toast_bytes|Disk space of toast tables|
 |total_bytes|Disk space used in total|
 
 #### Sample Usage
@@ -836,8 +836,8 @@ Get relation size of hypertable like `pg_relation_size(hypertable)`.
 |Column|Description|
 |---|---|
 |table_bytes|Disk space used by main_table (like pg_relation_size(main_table))|
-|index_bytes|Disc space used by indexes|
-|toast_bytes|Disc space of toast tables|
+|index_bytes|Disk space used by indexes|
+|toast_bytes|Disk space of toast tables|
 |total_bytes|Total disk space used by the specified table, including all indexes and TOAST data|
 
 #### Sample Usage
