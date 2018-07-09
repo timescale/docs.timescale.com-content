@@ -36,7 +36,7 @@ A hypertable is defined by a standard schema with column names and
 types, with at least one column specifying a time value, and
 one (optional) column specifying an additional partitioning key.
 
->ttt See our [data model][] for a further discussion of various
+>:TIP: See our [data model][] for a further discussion of various
 ways to organize data, depending on your use cases;
 the simplest and most natural is in a "wide-table" like many
 relational databases.

@@ -40,7 +40,7 @@ Make sure to uncomment it when adding our library.
 ```bash
 shared_preload_libraries = 'timescaledb'
 ```
->ttt If you have other libraries you are preloading, they should be comma separated.
+>:TIP: If you have other libraries you are preloading, they should be comma separated.
 
 Then, restart the PostgreSQL instance.
 

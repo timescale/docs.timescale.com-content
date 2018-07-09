@@ -5,7 +5,7 @@ TimescaleDB.  Since version 0.1, TimescaleDB supports **in-place updates**:
 you don't need to dump and restore your data, and versions are published with
 automated migration scripts that convert any internal state if necessary.
 
->ttt If you are looking to upgrade the version of the **PostgreSQL instance** (e.g. from 9.6 to 10) rather than the version of the TimescaleDB extension, you have two choices. Either use [`pg_upgrade`][pg_upgrade] with the command:
+>:TIP: If you are looking to upgrade the version of the **PostgreSQL instance** (e.g. from 9.6 to 10) rather than the version of the TimescaleDB extension, you have two choices. Either use [`pg_upgrade`][pg_upgrade] with the command:
 > ```
 > pg_upgrade -b oldbindir -B newbindir -d olddatadir -D newdatadir -O "-c timescaledb.restoring='on'"
 > ```
@@ -28,13 +28,13 @@ upgrade process is involves three-steps:
 ALTER EXTENSION timescaledb UPDATE;
 ```
 
->vvv When executing `ALTER EXTENSION`, you should connect using psql
+>:WARNING: When executing `ALTER EXTENSION`, you should connect using psql
 with the `-X` flag to prevent any .psqlrc commands from accidentally triggering
 the load of a previous DB version on session startup.
 
 <!-- -->
 
->vvv If upgrading from a TimescaleDB version older than 0.9.0,
+>:WARNING: If upgrading from a TimescaleDB version older than 0.9.0,
 you will need to restart your database before calling `ALTER EXTENSION`.
 Remember that restarting PostgreSQL is accomplished via different
 commands on different platforms:
@@ -74,7 +74,7 @@ Install the latest TimescaleDB image:
 ```bash
 docker pull timescale/timescaledb:latest-pg9.6
 ```
->ttt If you are using PostgreSQL 10 images, use the tag `latest-pg10`.
+>:TIP: If you are using PostgreSQL 10 images, use the tag `latest-pg10`.
 
 #### Step 2: Determine mount point used by old container [](update-docker-2)
 As you'll want to restart the new docker image pointing to a mount point

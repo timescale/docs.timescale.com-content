@@ -12,7 +12,7 @@ derive from your data.
 For this tutorial, we've put together a sample data set from real-life
 New York City taxicab data ([courtesy of the NYC Taxi and Limousine Commission][NYCTLC]).
 
->ttt For simplicity we'll assume that TimescaleDB is installed on a
+>:TIP: For simplicity we'll assume that TimescaleDB is installed on a
 PostgreSQL server at `localhost` on the default port, and that a user `postgres` exists
 with full superuser access. If your setup is different, please modify the
 examples accordingly.
@@ -324,7 +324,7 @@ EXPLAIN SELECT * FROM rides;
 This shows that the hypertable `rides` is split across four chunks
 (`_hyper_1_1_chunk`, `_hyper_1_2_chunk`, `_hyper_1_3_chunk`, `_hyper_1_4_chunk`).
 
->ttt This is the schema as of TimescaleDB 0.1.0.  Older versions of
+>:TIP: This is the schema as of TimescaleDB 0.1.0.  Older versions of
  the database had a slightly different internal schema.
 
 We can even query one of these chunks directly, accessing them via the
@@ -379,7 +379,7 @@ ALTER TABLE rides ADD COLUMN pickup_geom geometry(POINT,2163);
 ALTER TABLE rides ADD COLUMN dropoff_geom geometry(POINT,2163);
 ```
 
->ttt Note that with hypertables, ALTER just works. TimescaleDB transparently
+>:TIP: Note that with hypertables, ALTER just works. TimescaleDB transparently
 alters the schemas of all the hypertable's chunks. And the user doesn't
 need to worry about this: they can just think of their hypertable as an
 ordinary table.

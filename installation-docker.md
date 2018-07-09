@@ -38,7 +38,7 @@ container (NOTE: for Windows this is _necessary_):
 docker exec -it timescaledb psql -U postgres
 ```
 
->ttt The `run` command will only pull an image from Docker Hub if one
+>:TIP: The `run` command will only pull an image from Docker Hub if one
 does not exist locally.  If you have previously pulled an image and
 want instead to *upgrade* to the latest version, you need to
 explicitly `pull` the latest:
