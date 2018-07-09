@@ -25,7 +25,7 @@ For systems that use Linux UFW (Uncomplicated Firewall) for security rules,
 this means that Docker will potentially override any UFW settings that restrict
 the port you are binding to. If you are relying on UFW rules for network
 security, consider adding `DOCKER_OPTS="--iptables=false"` to `/etc/default/docker`
-to prevent Docker from overwriting IP Tables. See [this-writeup-on-the-vulnerability]
+to prevent Docker from overwriting IP Tables. See [this writeup on the vulnerability][docker-vulnerability]
 for more details.
 
 If you have PostgreSQL client tools (e.g., `psql`) installed locally,
@@ -93,7 +93,7 @@ CREATE EXTENSION postgis;
 For more instructions on using PostGIS, [see our tutorial][tutorial-postgis].
 
 [official Postgres image]: https://github.com/docker-library/postgres/
-[this-writeup-on-the-vulnerability]: https://www.techrepublic.com/article/how-to-fix-the-docker-and-ufw-security-flaw
+[docker-vulnerability]: https://www.techrepublic.com/article/how-to-fix-the-docker-and-ufw-security-flaw
 [alpine Linux]: https://alpinelinux.org/
 [Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
 [docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh
