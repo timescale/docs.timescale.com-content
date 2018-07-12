@@ -354,7 +354,7 @@ Note that above SQL query is taking advantage of the `time_bucket` function only
 
 **Check whether system performance was impacted by a Linux kernel update:**
 
-If we have an additional table in TimescaleDB containing information about Linux kernel updates per host we could easily join that data with metrics from Prometheus and figure out if maybe some kernel patch decreases system performances (hint: https://www.zdnet.com/article/linux-meltdown-patch-up-to-800-percent-cpu-overhead-netflix-tests-show/).
+If we have an additional table in TimescaleDB containing information about Linux kernel updates per host we could easily join that data with metrics from Prometheus and figure out if maybe a kernel patch decreases system performances ([for example][]).
 
 PromQL: not a good fit because you would need metadata in Prometheus
 
@@ -386,3 +386,4 @@ Integrating your Prometheus instance(s) with TimescaleDB is simple and risk-free
 [docker image]: https://hub.docker.com/r/timescale/prometheus-postgresql-adapter
 [Node Exporter]: https://github.com/prometheus/node_exporter
 [first steps]: https://prometheus.io/docs/introduction/first_steps/
+[for example]: https://www.zdnet.com/article/linux-meltdown-patch-up-to-800-percent-cpu-overhead-netflix-tests-show/
