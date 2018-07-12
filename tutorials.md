@@ -7,9 +7,9 @@ database has to offer.
 - **[Advanced][postGIS]**: If you want to delve into the further potential of
 TimescaleDB, we have guidance for more advanced topics
 like PostGIS integration.
+- **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers
 - **[Data Sets][]**: And if you want to explore on your own
 with some sample data, we have some ready-made data sets for you to explore.
-- **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers
 
 [Hello NYC]: /tutorials/tutorial-hello-nyc
 [PostGIS]: /tutorials/tutorial-hello-nyc#tutorial-postgis
