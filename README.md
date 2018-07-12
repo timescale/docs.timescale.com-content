@@ -37,8 +37,18 @@ Otherwise the code highlighter may be disrupted.
 ### General formatting conventions
 
 To maintain consistency, please follow these general rules.
-1. All functions, commands and standalone function arguments (ex. `SELECT`, `time_bucket`) should be set as inline code within backticks ("\`command\`").
-1. Functions should not be written with parentheses unless the function is being written with arguments within the parentheses.
+1. Make sure to add line breaks to your paragraphs so that your PRs are readable
+in the browser.
+1. All links should be reference-style links where the link address is at the
+bottom of the page.  The only exceptions are links to anchors on the same page
+as the link itself.
+1. All functions, commands and standalone function arguments (ex. `SELECT`,
+`time_bucket`) should be set as inline code within backticks ("\`command\`").
+1. Functions should not be written with parentheses unless the function is
+being written with arguments within the parentheses.
+1. "PostgreSQL" is the way to write the elephant database name, rather than
+"Postgres".  "TimescaleDB" refers to the database, "Timescale" refers to the
+company.
 
 ### Special rules
 There are some custom modifications to the markdown parser to allow for special
@@ -49,7 +59,9 @@ formatting within the docs.
   for a tutorial.
 + Adding '>:TIP: ' to the start of a blockquote (using '>') will create a "tip" callout.
 + Adding '>:WARNING: ' to the start of a blockquote (using '>') will create a "warning" callout.
-+ Adding '>:TOPLIST: ' (no spaces) as the first line of a blockquote (using '>') will create a fixed right-oriented box, useful for a table of contents or list of functions, etc.  See the FAQ page for an example.
++ Adding '>:TOPLIST: ' as the first line of a blockquote (using '>') will
+create a fixed right-oriented box, useful for a table of contents or list of
+functions, etc.  See the FAQ page (faq.md) for an example.
     - The first headline in the toplist will act as the title and will be separated from the remainder of the content stylewise (on the FAQ page, it's the headline "Questions").
     - Everything else acts as a normal blockquote does.
 + Adding a text free link to a header with a text address (Ex. `## Important Header [](indexing)`) will create an anchor icon that links to that header with the hash name of the text.
