@@ -259,18 +259,24 @@ To avoid running each docker container separately, here is the `docker-compose.y
 spin up all the docker containers together (Make sure you have `prometheus.yml` config file in the same folder as `docker-compose.yml`)
 
 ```
-version: '3'
+version: '2.1'
 services:
  pg_prometheus:
    image: timescale/pg_prometheus:master
    command: -c synchronous_commit=OFF
    container_name: pg_prometheus
+   healthcheck:
+     test: ["CMD-SHELL", "pg_isready -U postgres"]
+     interval: 1s
+     timeout: 5s  
+     retries: 10
  prometheus_postgresql_adapter:
    image: timescale/prometheus-postgresql-adapter:master
    ports:
      - "9201:9201"
    depends_on:
-     - pg_prometheus
+     pg_prometheus:
+       condition: service_healthy
    command: "-pg.host=pg_prometheus -pg.prometheus-log-samples"
  node_exporter:
    image: quay.io/prometheus/node-exporter
