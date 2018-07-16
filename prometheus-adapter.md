@@ -370,10 +370,12 @@ Clearly, enriching and correlated your data from different sources is pretty sim
 could look like:
 
 ```sql
-SELECT time_bucket('1 hour', time) AS hour_bucket, h.host, h.kernel_update, AVG(value)
-FROM metrics m JOIN hosts h on h.host = m.labels->>'instance'
-WHERE name='node_load5' AND time > NOW() - interval '7 days'
-GROUP BY hour_bucket, h.host, h.kernel_update
+SELECT time_bucket('1 hour', m.time) AS hour_bucket, 
+       m.labels->>'host', h.kernel_updated, AVG(value)
+FROM metrics m LEFT JOIN hosts h on h.host = m.labels->>'host' 
+AND  time_bucket('1 hour', m.time) = time_bucket('1 hour', h.kernel_updated) 
+WHERE m.name='node_load5' AND m.time > NOW() - interval '7 days'
+GROUP BY hour_bucket, m.labels->>'host', h.kernel_updated
 ORDER BY hour_bucket;
 ```
 
