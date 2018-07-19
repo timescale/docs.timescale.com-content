@@ -6,6 +6,10 @@ pages using a bash script and markdown parser.
 
 All files are written in standard markdown.
 
+### A note on page links
+
+None of the internal page links within these files will work on Github.  They are designed to function within the code for the documentation site at [docs.timescale.com](http://docs.timescale.com).  All external links should work.
+
 ### A note on anchors
 
 If you want to link to a specific part of the page from the docs sidebar, you
