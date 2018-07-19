@@ -1,5 +1,4 @@
 # README #
-for version 0.4.0
 
 This is the source for content for docs.timescaledb.com.
 The docs site uses this repo as a submodule and converts the files directly into
