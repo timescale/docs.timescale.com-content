@@ -3,7 +3,7 @@
 This will install both TimescaleDB *and* PostgreSQL via `yum`
 (or `dnf` on Fedora).
 
-**Note: TimescaleDB requires PostgreSQL 9.6 or later+**
+**Note: TimescaleDB requires PostgreSQL 9.6.3+ or 10.2+**
 
 #### Prerequisites
 
