@@ -94,6 +94,29 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
   WHERE location = 'garage' and time > NOW() - interval '1 day'
   ORDER BY time DESC;
 ```
+
+### Rate [](rate)
+
+To calculate the rate of monotonically increasing counters like bytes sent
+of a host or container you need to account for counter resets caused for
+example by host reboots or container restarts.  The following query calculates
+bytes per second sent while taking counter resets into account.
+
+```sql
+SELECT
+  time,
+  (
+    CASE
+      WHEN bytes_sent >= lag(bytes_sent) OVER (ORDER BY time)
+        THEN bytes_sent - lag(bytes_sent) OVER (ORDER BY time)
+      ELSE bytes_sent
+    END
+  ) / extract(epoch from time - lag(time) OVER (ORDER BY time)) AS "bytes_per_second"
+  FROM net
+  WHERE time > NOW() - interval '1 day'
+  ORDER BY 1
+```
+
 ### Time Bucket :timescale_function: [](time-bucket)
 
 TimescaleDB's [`time_bucket`][time_bucket] acts as a more powerful version of the PostgreSQL function [`date_trunc`][date_trunc].  It accepts arbitrary time intervals as well as optional offsets and returns the bucket start time.
