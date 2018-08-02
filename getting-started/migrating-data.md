@@ -187,24 +187,10 @@ SELECT create_hypertable('conditions', 'time');
 
 ### 2. Inserting data into the hypertable [](csv-import)
 
-#### Using PostgreSQL's `COPY`
+#### Recommended: Using `timescaledb-parallel-copy`
 
-To put the data into the new table, we can use PostgreSQL's bulk insert
-command `COPY` to copy data from the `.csv` into our new db:
-
-```bash
-psql -d new_db -c "\COPY conditions FROM old_db.csv CSV"
-```
-
-This method is straightforward and requires no extra tools, but for
-large datasets it can be impractical and time-consuming because
-`COPY` is single-threaded. For a faster method that can utilize more
-of the CPU, use the next method.
-
-#### Using `timescaledb-parallel-copy`
-
-We have [open sourced a Go program][parallel importer] that can be
-used to speed up large data migrations by running multiple `COPY`s
+To bulk insert data into the new table, we recommend using our
+[open sourced Go program][parallel importer] that can speed up large data migrations by running multiple `COPY`s
 concurrently. For example, to use 4 workers:
 ```bash
 timescaledb-parallel-copy --db-name new_db --table conditions \
@@ -218,6 +204,21 @@ to improve the copy experience. [See the repo on Github][parallel importer] for 
 the number of available CPU cores on the machine.
 Above that, the workers tend to compete with each other for
 resources and reduce the performance improvements.
+
+#### Using PostgreSQL's `COPY`
+
+Although we recommend our [open sourced Go program][parallel importer]
+for better bulk insert performance, we can also use PostgreSQL's bulk insert command `COPY` to copy data
+from the `.csv` into our new db:
+
+```bash
+psql -d new_db -c "\COPY conditions FROM old_db.csv CSV"
+```
+
+This method is straightforward and requires no extra tools, but for
+large datasets it can be impractical and time-consuming because
+`COPY` is single-threaded. For a faster method that can utilize more
+of the CPU, use the previous method.
 
 Now check out some common [hypertable commands][] for exploring your data.
 
