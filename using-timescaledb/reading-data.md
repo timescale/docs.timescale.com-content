@@ -95,12 +95,36 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
   ORDER BY time DESC;
 ```
 
+### Increase[](increase)
+
+To calculate the increase from monotonically increasing counters like bytes sent
+of a host or container you need to account for counter resets caused, for
+example by host reboots or container restarts.  The following query calculates
+bytes sent while taking counter resets into account.
+
+```sql
+SELECT
+  time,
+  (
+    CASE
+      WHEN bytes_sent >= lag(bytes_sent) OVER (ORDER BY time)
+        THEN bytes_sent - lag(bytes_sent) OVER (ORDER BY time)
+      ELSE bytes_sent
+    END
+  ) AS "bytes_per_second"
+  FROM net
+  WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
+  ORDER BY 1
+```
+
 ### Rate [](rate)
 
-To calculate the rate of monotonically increasing counters like bytes sent
-of a host or container you need to account for counter resets caused for
-example by host reboots or container restarts.  The following query calculates
-bytes per second sent while taking counter resets into account.
+Like [increase](#increase), rate applies to a situation with monotonically
+increasing counters. If your sample interval is variable or you use different
+sampling intervals between different series it is helpful to normalize the
+values to a common time interval to make the calcaluted values comparable.
+The following query calculates bytes per second sent while taking counter
+resets into account.
 
 ```sql
 SELECT
@@ -113,7 +137,7 @@ SELECT
     END
   ) / extract(epoch from time - lag(time) OVER (ORDER BY time)) AS "bytes_per_second"
   FROM net
-  WHERE time > NOW() - interval '1 day'
+  WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
   ORDER BY 1
 ```
 
