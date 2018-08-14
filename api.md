@@ -18,6 +18,7 @@
 > - [indexes_relation_size](#indexes_relation_size)
 > - [indexes_relation_size_pretty](#indexes_relation_size_pretty)
 > - [last](#last)
+> - [set_adaptive_chunking](#set_adaptive_chunking)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
 > - [show_tablespaces](#show_tablespaces)
@@ -174,13 +175,15 @@ still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
 | `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
-| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month. |
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month unless [adaptive chunking][adaptive-chunking] is enabled, in which case it starts at 1 day. |
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
 | `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
+| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
+| `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
 
 >:WARNING: The use of the `migrate_data` argument to convert a non-empty table can
 lock the table for a significant amount of time, depending on how much data is
@@ -214,6 +217,22 @@ millisecond, nanosecond, etc.).  So if your time column is the number
 of milliseconds since the UNIX epoch, and you wish to each chunk to
 cover 1 day, you should specify `chunk_time_interval => 86400000`.
 
+The units of `chunk_target_size` follow the format of a ["Numeric with
+Unit"][memory-units] memory settings parameter in PostgreSQL. Note
+that this size includes indexes when using the default adaptive
+chunking algorithm. Be careful with specifying a plain number
+(`100000000`) rather than one with units (`100MB`), as the base unit
+is the size of a disk block (typically 8k, in which case 100,000,000 *
+8k ~ 800GB).
+
+<!-- -->
+>:TIP: Setting a reasonable initial `chunk_time_interval` is important
+even with adaptive chunking enabled, because it allows the adaptive
+algorithm to more quickly reach the target chunk size. It is better to
+set a too small `chunk_time_interval` as opposed to a too large
+one. If no `chunk_time_interval` is set with adaptive chunking, the
+default initial interval is 1 day.
+
 In case of hash partitioning (i.e., `number_partitions` is greater
 than zero), it is possible to optionally specify a custom partitioning
 function. If no custom partitioning function is specified, the default
@@ -225,6 +244,15 @@ partitioning function should take a single `anyelement` type argument
 and return a positive `integer` hash value. Note that this hash value
 is _not_ a partition ID, but rather the inserted value's position in
 the dimension's key space, which is then divided across the partitions.
+
+[Adaptive chunking][adaptive-chunking] can be enabled by setting the
+`chunk_target_size` to a non-zero human-readable value, e.g.,
+`2GB`. The `chunk_target_size` should ideally not exceed the setting
+of `shared_buffers`. It is also possible to set `chunk_target_size` to
+`estimate`, in which case the system determines a suitable chunk
+target size based on the PostgreSQL `shared_buffers` setting.
+Optionally, `chunk_sizing_func` can also be set to use a custom
+algorithm for adapting the chunk size.
 
 <!-- -->
 >:TIP: The `add_dimension` function can be used following hypertable
@@ -270,6 +298,12 @@ if `conditions` is already a hypertable:
 SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 ```
 
+Convert table `conditions` to hypertable with adaptive chunking
+enabled and a chunk target size of `2GB`:
+```sql
+SELECT create_hypertable('conditions', 'time', chunk_target_size => '2GB');
+```
+
 #### Best Practices [](create_hypertable-best-practices)
 
 Users of TimescaleDB often have two common questions:
@@ -277,11 +311,21 @@ Users of TimescaleDB often have two common questions:
 1. How large should I configure my intervals for time partitioning?
 1. Should I use space partitioning, and how many space partitions should I use?
 
-**Time intervals**: The current release of TimescaleDB does not
-perform adaptive time intervals (although this is in the works).
-So, users must configure it when creating their hypertable by
-setting the `chunk_time_interval` (or use the default of 1 month).
-The interval used for new chunks can be changed by calling `set_chunk_time_interval`.
+**Time intervals**: The current release of TimescaleDB enables both
+the manual and automated adaption of its time intervals. With
+manually-set intervals, users should specify a `chunk_time_interval`
+when creating their hypertable (the default value is 1 week). The
+interval used for new chunks can be changed by calling
+[`set_chunk_time_interval()`](#set_chunk_time_interval). With
+automatically adapted intervals (which are not enabled by default),
+the user should specify a `chunk_target_size` and the chunk interval
+will be adapted for future chunks with the specified
+`chunk_time_interval` as a starting point, or 1 day if not
+specified. The settings for adaptive chunking can be changed by
+calling [`set_adaptive_chunking()`](#set_adaptive_chunking).
+
+The following instructions apply if users are choosing to configure
+time intervals manually.
 
 The key property of choosing the time interval is that the chunk (including indexes) belonging to the most recent interval (or chunks if using space
 partitions) fit into memory.  As such, we typically recommend setting
@@ -542,6 +586,61 @@ For a time column expressed as the number of milliseconds since the
 UNIX epoch, set `chunk_time_interval` to 24 hours.
 ```sql
 SELECT set_chunk_time_interval('conditions', 86400000);
+```
+
+---
+
+## set_adaptive_chunking() [](set_adaptive_chunking)
+Changes the settings for [adaptive chunking][adaptive-chunking]. The
+function returns the configured chunk sizing function and the target
+chunk size in bytes. This change will impact how and when new chunks
+are created; it does not modify the intervals of existing chunks.
+
+#### Required Arguments
+
+|Name|Description|
+|---|---|
+| `hypertable` | Identifier of hypertable to update the settings for.|
+| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
+
+#### Optional Arguments
+| Name | Description |
+|---|---|
+| `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function. |
+
+
+#### Sample Usage
+
+Enable adaptive chunking on hypertable `conditions` and estimate the
+target chunk size based on system information:
+
+```sql
+SELECT * FROM set_adaptive_chunking('conditions', 'estimate');
+               chunk_sizing_func                | chunk_target_size
+------------------------------------------------+-------------------
+ _timescaledb_internal.calculate_chunk_interval |         536870912
+```
+
+Set the target chunk size to `1GB` on the `conditions` hypertable, using
+a custom chunk sizing function (enabling adaptive chunking if
+previously disabled):
+
+```sql
+SELECT * FROM set_adaptive_chunking('conditions', '1GB', 'custom_calculate_chunk_interval');
+    chunk_sizing_func            | chunk_target_size
+---------------------------------+-------------------
+ custom_calculate_chunk_interval |        1073741824
+
+```
+
+Disable adaptive chunking on the `conditions` hypertable, staying with the
+current chunk time interval.
+
+```sql
+SELECT * FROM set_adaptive_chunking('conditions', 'off');
+               chunk_sizing_func                | chunk_target_size
+------------------------------------------------+-------------------
+ _timescaledb_internal.calculate_chunk_interval |                 0
 ```
 
 ---
@@ -1094,3 +1193,5 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [postgres-tablespaces]: https://www.postgresql.org/docs/9.6/static/manage-ag-tablespaces.html
 [postgres-createtablespace]: https://www.postgresql.org/docs/9.6/static/sql-createtablespace.html
 [migrate-from-postgresql]: /getting-started/migrating-data
+[adaptive-chunking]: /using-timescaledb/adaptive-chunking
+[memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
