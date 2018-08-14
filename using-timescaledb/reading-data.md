@@ -113,7 +113,7 @@ SELECT
         THEN bytes_sent - lag(bytes_sent) OVER (ORDER BY time)
       ELSE bytes_sent
     END
-  ) AS "bytes_per_second"
+  ) AS "bytes"
   FROM net
   WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
   ORDER BY 1
