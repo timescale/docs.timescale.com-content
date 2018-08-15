@@ -175,7 +175,7 @@ still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
 | `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
-| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. Default is 1 month unless [adaptive chunking][adaptive-chunking] is enabled, in which case it starts at 1 day. |
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of Timescale v0.11.0, default is 7 days, unless [adaptive chunking][adaptive-chunking] is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
