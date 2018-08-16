@@ -79,7 +79,8 @@ Users of TimescaleDB often have two common questions:
 **Time intervals**: The current release of TimescaleDB does not
 perform adaptive time intervals (although this is in the works).
 So, users must configure it when creating their hypertable by
-setting the `chunk_time_interval` (or use the default of 1 month).
+setting the `chunk_time_interval`. Users can alternatively use the default of 7 days,
+only valid starting v0.11.0. Prior to v0.11.0, the default was 1 month.
 The interval used for new chunks can be changed by calling `set_chunk_time_interval`.
 
 The key property of choosing the time interval is that the chunk (including indexes) belonging to the most recent interval (or chunks if using space
