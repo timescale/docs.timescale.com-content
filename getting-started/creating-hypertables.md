@@ -41,7 +41,8 @@ SELECT create_hypertable('conditions', 'time', 'location', 4);
 >:TIP: The 'time' column used in the `create_hypertable` function supports
 timestamp, date, or integer types, so you can use a parameter that is not
 explicitly time-based, as long as it can increment.  For example, a
-monotonically increasing id would work.
+monotonically increasing id would work. You must specify a chunk time interval
+when creating a hypertable if you use a monotonically increasing id.  
 
 ### Inserting & Querying [](inserting-querying)
 Inserting data into the hypertable is done via normal SQL `INSERT` commands,
