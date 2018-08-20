@@ -247,25 +247,21 @@ following query, which joins data from the prices table (akin to the
 query above) with a generated stream of dates.
 
 ```sql
-WITH
-  data AS (
+
+SELECT
+  period AS date,
+  coalesce(volume,0) AS volume
+FROM
+  generate_series(date '2017-09-01',date '2017-09-30',interval '1d') AS period
+  LEFT JOIN (
     SELECT
-        time_bucket('1 day', time)::date AS date,
-        sum(volume) AS volume
-      FROM trades
-      WHERE asset_code = 'TIMS'
-        AND time >= '2017-09-01' AND time < '2017-10-01'
-      GROUP BY date
-  ),
-  period AS (
-    SELECT date::date
-      FROM generate_series(date '2017-09-01', date '2017-10-01', interval '1 day') date
-  )
-SELECT period.date, coalesce(sum(data.volume), 0) AS volume
-  FROM period
-  LEFT JOIN data ON period.date = data.date
-  GROUP BY period.date
-  ORDER BY period.date DESC;
+      time_bucket('1d',time)::date AS date,
+      sum(volume) as volume
+    FROM trades
+    WHERE asset_code = 'TIMS'
+      AND time >= '2017-09-01' AND time < '2017-10-01'
+    GROUP BY 1
+  ) t ON t.date = period;
 ```
 This query will then output data in the following form:
 ```
