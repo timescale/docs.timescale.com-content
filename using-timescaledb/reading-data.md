@@ -277,9 +277,9 @@ This query will then output data in the following form:
  2017-09-22 |   9855
 ```
 Unlike with date_trunc, we can use a custom time interval with the time_bucket function,
-but in order for the generates times to align with the subselect we need use time_bucket on
+but in order for the generated times to align with the subselect we need to use time_bucket on
 the first argument to generate_series.
-For example, let's say you want 1080 data points in the last two weeks, and as many graphing
+For example, let's say you want 1080 data points in the last two weeks and, as many graphing
 libraries require time data points with null values to draw gaps in a graph, we need to
 generate the correct timestamp for each of the data points even if there is no data there.
 Note that we can do basic arithmetic operations on intervals easily in order to get the correct
