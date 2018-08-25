@@ -48,7 +48,13 @@ data.
 storing time-series data in a PostgreSQL database, and want to move this data
 to a TimescaleDB hypertable.
 
+---
+
+Note: Starting in v0.12.0, TimescaleDB will by default enable [telemetry
+reporting][].
+
 [setup illustration]: https://assets.iobeam.com/images/docs/illustration-setup.svg
 [installed]: /getting-started/installation
 [start-scratch]: /getting-started/creating-hypertables
 [migrate-postgres]: /getting-started/migrating-data
+[telemetry reporting]: /api#get_report
