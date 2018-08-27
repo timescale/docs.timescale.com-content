@@ -890,7 +890,7 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
-# hypertable_approximate_row_count() [](hypertable_approximate_row_count)
+## hypertable_approximate_row_count() [](hypertable_approximate_row_count)
 
 Get approximate row count for hypertable(s) based on catalog estimates.
 
