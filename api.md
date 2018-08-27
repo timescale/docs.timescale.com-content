@@ -191,6 +191,11 @@ in the table.
 >
 >If you would like finer control over index formation and other aspects
     of your hypertable, [follow these migration instructions instead][migrate-from-postgresql].
+>
+>When converting a normal SQL table to a hypertable, pay attention
+to how you handle constraints. A hypertable can contain foreign keys to normal SQL table
+columns, but the reverse is not allowed. UNIQUE and PRIMARY constraints must include the
+partitioning key.
 <!-- -->
 #### Units
 
