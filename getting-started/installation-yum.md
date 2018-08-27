@@ -42,6 +42,14 @@ sudo yum install timescaledb
 
 #### Update `postgresql.conf`
 
+>:TIP: The usual location of `postgres.conf`
+is `/var/lib/pgsql/9.6/data/postgresql.conf` for PostgreSQL 9.6
+and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
+but this may vary depending on your setup. If you are unsure where your `postgresql.conf` file
+is located, you can query PostgreSQL through the psql interface using `SHOW config_file;`.
+Please note that you must have created a `postgres` superuser so that you can access the psql
+interface.
+
 You will need to edit your `postgresql.conf` file to include
 necessary libraries:
 ```bash
@@ -50,12 +58,7 @@ necessary libraries:
 shared_preload_libraries = 'timescaledb'
 ```
 
->ttt The usual location of `postgres.conf`
-is `/var/lib/pgsql/9.6/data/postgresql.conf` for PostgreSQL 9.6
-and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
-but this may vary depending on your setup.
-
->ttt If you have other libraries you are preloading, they should be comma separated.
+>:TIP: If you have other libraries you are preloading, they should be comma separated.
 
 To get started you'll need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs). Please
