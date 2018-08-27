@@ -29,6 +29,13 @@ brew install timescaledb
 
 #### Update Postgresql.conf
 
+>:TIP: The usual location of `postgresql.conf` is
+`/usr/local/var/postgres/postgresql.conf`, but this may vary depending on
+your setup. If you are unsure where your `postgresql.conf` file is located, you
+can query PostgreSQL through the psql interface using `SHOW config_file;`. Please note
+that you must have created a `postgres` superuser so that you can access the psql
+interface.
+
 Also, you will need to edit your `postgresql.conf` file to include
 necessary libraries:
 
@@ -37,9 +44,6 @@ necessary libraries:
 # For example:
 shared_preload_libraries = 'timescaledb'
 ```
->:TIP: The usual location of `postgres.conf` is
-`/usr/local/var/postgres/postgresql.conf`, but this may vary depending on
-your setup.
 
 >:TIP: If you have other libraries you are preloading, they should be comma separated.
 
