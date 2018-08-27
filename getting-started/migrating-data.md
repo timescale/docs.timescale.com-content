@@ -18,6 +18,10 @@ altogether, [follow these instructions][different-db].
 ### 2. Importing data from `.csv`
 If you have a dataset stored in a `.csv` file, you can import it into an empty TimescaleDB hypertable. [follow these instructions][import-data]
 
+>:TIP: When converting a normal SQL table to a hypertable, pay attention to how you handle constraints.
+A hypertable can contain foreign keys to normal SQL table columns, but the reverse is not allowed.
+UNIQUE and PRIMARY constraints must include the partitioning key. 
+
 ---
 
 ## Migrate from the Same Database [](same-db)
