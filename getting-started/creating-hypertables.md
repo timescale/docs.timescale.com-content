@@ -30,12 +30,18 @@ Next, transform it into a hypertable with `create_hypertable`:
 --   using the values in the `time` column.
 
 SELECT create_hypertable('conditions', 'time');
+```
 
--- OR you can additionally partition the data on another
---   dimension (what we call 'space partitioning').
--- E.g., to partition `location` into 4 partitions:
+You can additionally partition data on another dimension (what we call
+'space partitioning'). However, we typically do not recommend users to start with
+space partitioning turned on, and it should only be utilized in very specific
+scenarios. You can read more about our suggestions in our [best practices][]
+documentation.
 
-SELECT create_hypertable('conditions', 'time', 'location', 4);
+```sql
+-- This creates a hypertable partitioned on both time and `location`. In this example,
+-- the hypertable will partition `location` into 4 partitions.
+ SELECT create_hypertable('conditions', 'time', 'location', 4);
 ```
 
 >ttt The 'time' column used in the `create_hypertable` function supports
@@ -65,3 +71,4 @@ examples of using TimescaleDB's standard SQL interface, please see our
 [setup]: /getting-started/setup
 [API Reference]: /api#create_hypertable
 [use pages]: /using-timescaledb
+[best practices]: /using-timescaledb/hypertables#best-practices
