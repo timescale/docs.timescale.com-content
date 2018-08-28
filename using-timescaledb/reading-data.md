@@ -247,25 +247,20 @@ following query, which joins data from the prices table (akin to the
 query above) with a generated stream of dates.
 
 ```sql
-WITH
-  data AS (
+SELECT
+  period AS date,
+  coalesce(volume,0) AS volume
+FROM
+  generate_series(date '2017-09-01',date '2017-09-30',interval '1d') AS period
+  LEFT JOIN (
     SELECT
-        time_bucket('1 day', time)::date AS date,
-        sum(volume) AS volume
-      FROM trades
-      WHERE asset_code = 'TIMS'
-        AND time >= '2017-09-01' AND time < '2017-10-01'
-      GROUP BY date
-  ),
-  period AS (
-    SELECT date::date
-      FROM generate_series(date '2017-09-01', date '2017-10-01', interval '1 day') date
-  )
-SELECT period.date, coalesce(sum(data.volume), 0) AS volume
-  FROM period
-  LEFT JOIN data ON period.date = data.date
-  GROUP BY period.date
-  ORDER BY period.date DESC;
+      time_bucket('1d',time)::date AS date,
+      sum(volume) as volume
+    FROM trades
+    WHERE asset_code = 'TIMS'
+      AND time >= '2017-09-01' AND time < '2017-10-01'
+    GROUP BY 1
+  ) t ON t.date = period;
 ```
 This query will then output data in the following form:
 ```
@@ -282,31 +277,33 @@ This query will then output data in the following form:
  2017-09-22 |   9855
 ```
 Unlike with date_trunc, we can use a custom time interval with the time_bucket function,
-but in order to do gap filling properly with it we will also need to use time_bucket on our generated series.
-For example, let's say you want 1080 data points in the last two weeks, and as many graphing
+but in order for the generated times to align with the subselect we need to use time_bucket on
+the first argument to generate_series.
+For example, let's say you want 1080 data points in the last two weeks and, as many graphing
 libraries require time data points with null values to draw gaps in a graph, we need to
 generate the correct timestamp for each of the data points even if there is no data there.
 Note that we can do basic arithmetic operations on intervals easily in order to get the correct
 value to pass to time_bucket.
 ```sql
-WITH data AS (
+SELECT
+  period AS time,
+  avg_data
+FROM
+  generate_series(
+    time_bucket(interval '2 weeks' / 1080, now() - interval '2 weeks'),
+    now(),
+    interval '2 weeks' / 1080
+  ) AS period
+  LEFT JOIN (
     SELECT
-        time_bucket('2 weeks'::interval / 1080, time::timestamptz) as btime,
-        avg(data_value) as avg_data
-      FROM my_hypertable
-      WHERE
-        time > now() - '2 weeks'::interval
-      	AND meter_id = 1
-      GROUP BY btime
-),
-period AS (
-    SELECT time_bucket('2 weeks'::interval / 1080,  no_gaps) btime
-      FROM  generate_series(now()-'2 weeks'::interval, now(), '2 weeks'::interval / 1080) no_gaps
-  )
-SELECT period.btime, data.avg_data
-  FROM period
-  LEFT JOIN data using (btime)
-  ORDER BY period.btime
+      time_bucket(interval '2 weeks' / 1080, time::timestamptz) as btime,
+      avg(data_value) as avg_data
+    FROM my_hypertable
+    WHERE
+      time > now() - interval '2 weeks'
+      AND meter_id = 1
+    GROUP BY 1
+  ) t ON t.btime = period;
 ```
 This query will output data of the form:
 ```
