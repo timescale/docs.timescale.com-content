@@ -17,6 +17,28 @@ website (suggested DB Type: Data warehouse). You should also adjust the
 connection between `max_connections` and memory settings. Other settings from
 PgTune may also be helpful.
 
+## Worker settings [](workers)
+
+PostgreSQL utilizes worker pools to provide the required workers needed to support
+both live queries and background jobs. If you do not configure these settings,
+you may observe performance degradation on both queries and background jobs.
+
+TimescaleDB background workers are configured using the `timescaledb.max_background_workers`
+setting. You should configure this setting to the sum of your total number of databases and the
+total number of concurrent background workers you want running at any given point in time.
+You need a background worker allocated to each database to run a lightweight scheduler
+that schedules jobs. On top of that, any additional workers you allocate here will run
+background jobs when needed.
+
+For larger queries, PostgreSQL automatically uses parallel workers if they are available. 
+To configure this, use the `max_parallel_workers` setting. Increasing this setting will
+improve query performance for larger queries. Smaller queries may not trigger parallel
+workers.
+
+Finally, you must configure `max_worker_processes` to be at least the sum of `timescaledb.max_background_workers` and `max_parallel_workers`. `max_worker_processes` is the
+total pool of workers available to both background and parallel workers (as well as a handful of
+built-in PostgreSQL workers).
+
 ## Disk-write settings [](disk-write)
 
 In order to increase write throughput, there are [multiple
