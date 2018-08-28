@@ -289,14 +289,18 @@ SELECT
   period AS time,
   avg_data
 FROM
-  generate_series(time_bucket(interval '2 weeks' / 1080, now()-'2 weeks'::interval), now(), '2 weeks'::interval / 1080) AS period
+  generate_series(
+    time_bucket(interval '2 weeks' / 1080, now() - interval '2 weeks'),
+    now(),
+    interval '2 weeks' / 1080
+  ) AS period
   LEFT JOIN (
     SELECT
-      time_bucket('2 weeks'::interval / 1080, time::timestamptz) as btime,
+      time_bucket(interval '2 weeks' / 1080, time::timestamptz) as btime,
       avg(data_value) as avg_data
     FROM my_hypertable
     WHERE
-      time > now() - '2 weeks'::interval
+      time > now() - interval '2 weeks'
       AND meter_id = 1
     GROUP BY 1
   ) t ON t.btime = period;
