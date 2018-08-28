@@ -325,6 +325,38 @@ This query will output data of the form:
  2018-03-09 20:34:40+00 |  1054.10
  2018-03-09 20:53:20+00 |  1037.78
 ```
+
+### Last Observation Carried Forward [](locf)
+
+If your data collections only records rows when the actual value changes,
+your visualizations might still need all data points to properly display
+your results. In this situation you want to carry forward the last observed
+value.
+
+```sql
+SELECT
+  period AS time,
+  coalesce(
+    data_value,
+    (
+      SELECT data_value FROM my_hypertable m WHERE m.time < period AND m.meter_id = t.meter_id ORDER BY time DESC LIMIT 1
+    )
+  ) AS data_value
+FROM
+  generate_series(time_bucket(interval '2 weeks' / 1080, now()-'2 weeks'::interval), now(), '2 weeks'::interval / 1080) AS period
+  LEFT JOIN (
+    SELECT
+      time_bucket('2 weeks'::interval / 1080, time::timestamptz) as btime,
+      meter_id,
+      avg(data_value) AS data_value
+    FROM my_hypertable
+    WHERE
+      time > now() - '2 weeks'::interval
+      AND meter_id IN (1,2,3,4)
+    GROUP BY 1,2
+  ) t ON t.btime = period;
+```
+
 ### Last Point [](last-point)
 
 A common query in many settings is to find the *last point* for each
