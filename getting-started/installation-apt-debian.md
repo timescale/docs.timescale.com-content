@@ -26,11 +26,11 @@ wget https://timescalereleases.blob.core.windows.net/debian/timescaledb-postgres
 sudo dpkg -i timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
 
 # Alternate file names to wget:
-# - timescaledb-postgresql-9.6_x.y.z~debian8_amd64
-# - timescaledb-postgresql-9.6_x.y.z~debian9_amd64
-# - timescaledb-postgresql-10_x.y.z~debian7_amd64
-# - timescaledb-postgresql-10_x.y.z~debian8_amd64
-# - timescaledb-postgresql-10_x.y.z~debian9_amd64
+# - timescaledb-postgresql-9.6_x.y.z~debian8_amd64.deb
+# - timescaledb-postgresql-9.6_x.y.z~debian9_amd64.deb
+# - timescaledb-postgresql-10_x.y.z~debian7_amd64.deb
+# - timescaledb-postgresql-10_x.y.z~debian8_amd64.deb
+# - timescaledb-postgresql-10_x.y.z~debian9_amd64.deb
 ```
 >:TIP: If the `dpkg` command fails with dependency issues, you can resolve
 them with `sudo apt install -f` and then re-run the `dpkg` command.
@@ -40,7 +40,7 @@ them with `sudo apt install -f` and then re-run the `dpkg` command.
 >:TIP: The usual location of `postgres.conf`
 is `/etc/postgresql/9.6/main/postgresql.conf` for 9.6 and
 `/etc/postgresql/10/main/postgresql.conf` for 10, but this may vary
-depending on your setup. If you are unsure where your `postgresql.conf` file 
+depending on your setup. If you are unsure where your `postgresql.conf` file
 is located, you can query PostgreSQL through the psql interface using `SHOW config_file;`.
 Please note that you must have created a `postgres` superuser so that you can access the psql
 interface.
