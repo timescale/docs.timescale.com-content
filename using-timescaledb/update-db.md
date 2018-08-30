@@ -57,6 +57,10 @@ After executing the command, the psql `\dx` command should show the latest versi
 (1 row)
 ```
 
+>:TIP: Beginning in v0.12.0, [telemetry][] reporting will also enable automatic
+>version checking. If you have enabled telemetry, TimescaleDB will
+>periodically notify you via server logs if there is a new version of TimescaleDB
+>available.
 
 ### Example: Migrating docker installations [](update-docker)
 
@@ -144,3 +148,4 @@ latest version of TimescaleDB installed.
 [install]: /getting-started/installation
 [bind-mounts]: https://docs.docker.com/engine/admin/volumes/bind-mounts/
 [volumes]: https://docs.docker.com/engine/admin/volumes/volumes/
+[telemetry]: /using-timescaledb/telemetry

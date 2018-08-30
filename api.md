@@ -11,6 +11,7 @@
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
 > - [first](#first)
+> - [get_report](#get_report)
 > - [histogram](#histogram)
 > - [hypertable_approximate_row_count](#hypertable_approximate_row_count)
 > - [hypertable_relation_size](#hypertable_relation_size)
@@ -989,7 +990,20 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
-## hypertable_approximate_row_count() [](hypertable_approximate_row_count)
+## get_report() [](get_report)
+
+This function prints out the JSON that is sent to our servers if
+background [telemetry][] is enabled. It takes no arguments.
+
+#### Sample Usage
+
+```sql
+SELECT get_report()
+```
+
+---
+
+# hypertable_approximate_row_count() [](hypertable_approximate_row_count)
 
 Get approximate row count for hypertable(s) based on catalog estimates.
 
@@ -1200,3 +1214,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [migrate-from-postgresql]: /getting-started/migrating-data
 [adaptive-chunking]: /using-timescaledb/adaptive-chunking
 [memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
+[telemetry]: /using-timescaledb/telemetry
