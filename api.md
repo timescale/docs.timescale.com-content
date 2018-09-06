@@ -11,7 +11,7 @@
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
 > - [first](#first)
-> - [get_report](#get_report)
+> - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
 > - [hypertable_approximate_row_count](#hypertable_approximate_row_count)
 > - [hypertable_relation_size](#hypertable_relation_size)
@@ -990,15 +990,15 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
-## get_report() [](get_report)
+## get_telemetry_report() [](get_telemetry_report)
 
-This function prints out the JSON that is sent to our servers if
+This function returns the text string that is sent to our servers if
 background [telemetry][] is enabled. It takes no arguments.
 
 #### Sample Usage
 
 ```sql
-SELECT get_report()
+SELECT get_telemetry_report()
 ```
 
 ---
