@@ -30,7 +30,7 @@ You need a background worker allocated to each database to run a lightweight sch
 that schedules jobs. On top of that, any additional workers you allocate here will run
 background jobs when needed.
 
-For larger queries, PostgreSQL automatically uses parallel workers if they are available. 
+For larger queries, PostgreSQL automatically uses parallel workers if they are available.
 To configure this, use the `max_parallel_workers` setting. Increasing this setting will
 improve query performance for larger queries. Smaller queries may not trigger parallel
 workers.
@@ -74,11 +74,13 @@ some growth. For most use cases we recommend the following setting:
 max_locks_per_transaction = 2 * num_chunks
 ```
 
-where `num_chunks` is the upper bound on the number of chunks that
-will exist in a hypertable. This setting takes into account that the
-number of locks taken by a hypertable query is roughly equal to the
+where `num_chunks` is the maximum number of chunks you expect to have in a hypertable.
+This setting takes into account that the number of locks taken by a hypertable query
+is roughly equal to the
 number of chunks in the hypertable, or double that number if the query
-also uses an index. Also note that `max_locks_per_transaction` is not
+also uses an index. You can see how many chunks you currently have using the
+`chunk_relation_size_pretty()` ([chunk_relation_size_pretty][]) command.
+ Also note that `max_locks_per_transaction` is not
 an exact setting; it only controls the *average* number of object
 locks allocated for each transaction. For more information, please
 review the official PostgreSQL documentation on
@@ -136,3 +138,4 @@ Additional examples of passing in arguments at boot can be found in our [discuss
 [lock-management]: https://www.postgresql.org/docs/current/static/runtime-config-locks.html
 [docker]: /getting-started/installation/linux/installation-docker
 [wale]: /using-timescaledb/backup#docker-wale
+[chunk_relation_size_pretty]: /api#chunk_relation_size_pretty
