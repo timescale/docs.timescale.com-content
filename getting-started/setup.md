@@ -56,9 +56,3 @@ to a TimescaleDB hypertable.
 [installed]: /getting-started/installation
 [start-scratch]: /getting-started/creating-hypertables
 [migrate-postgres]: /getting-started/migrating-data
-<<<<<<< HEAD
-=======
-[telemetry reporting]: /api#get_report
-[configure]: /getting-started/configuring
-[pgtune]: http://pgtune.leopard.in.ua/
->>>>>>> e1201d4... Highlight that TimescaleDB needs to be configured (#28)
