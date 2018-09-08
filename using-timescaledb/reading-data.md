@@ -109,13 +109,15 @@ SELECT
   time,
   (
     CASE
-      WHEN bytes_sent >= lag(bytes_sent) OVER (ORDER BY time)
-        THEN bytes_sent - lag(bytes_sent) OVER (ORDER BY time)
+      WHEN bytes_sent >= lag(bytes_sent) OVER w
+        THEN bytes_sent - lag(bytes_sent) OVER w
+      WHEN lag(bytes_sent) OVER w IS NULL THEN NULL
       ELSE bytes_sent
     END
   ) AS "bytes"
   FROM net
   WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
+  WINDOW w AS (ORDER BY time)
   ORDER BY 1
 ```
 
@@ -133,13 +135,15 @@ SELECT
   time,
   (
     CASE
-      WHEN bytes_sent >= lag(bytes_sent) OVER (ORDER BY time)
-        THEN bytes_sent - lag(bytes_sent) OVER (ORDER BY time)
+      WHEN bytes_sent >= lag(bytes_sent) OVER w
+        THEN bytes_sent - lag(bytes_sent) OVER w
+      WHEN lag(bytes_sent) OVER w IS NULL THEN NULL
       ELSE bytes_sent
     END
-  ) / extract(epoch from time - lag(time) OVER (ORDER BY time)) AS "bytes_per_second"
+  ) / extract(epoch from time - lag(time) OVER w) AS "bytes_per_second"
   FROM net
   WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
+  WINDOW w AS (ORDER BY time)
   ORDER BY 1
 ```
 
