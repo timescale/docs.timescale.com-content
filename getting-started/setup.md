@@ -56,3 +56,5 @@ to a TimescaleDB hypertable.
 [installed]: /getting-started/installation
 [start-scratch]: /getting-started/creating-hypertables
 [migrate-postgres]: /getting-started/migrating-data
+[configure]: /getting-started/configuring
+[pgtune]: http://pgtune.leopard.in.ua/
