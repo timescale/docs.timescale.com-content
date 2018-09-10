@@ -1,12 +1,12 @@
 # Data Model
 
-TimescaleDB utilizes a "wide-table" data model, which is quite common in the world of
-relational databases. This makes Timescale somewhat different than most other time-series
-databases, which typically use a "narrow-table" model.
+As a relational database supporting full SQL, TimescaleDB supports flexible data models
+that can be optimized for different use cases. This makes Timescale somewhat different from
+most other time-series databases, which typically use "narrow-table" models.
 
-Here we discuss why we chose the wide-table model,
-and how we recommend using it for time-series data, using an Internet
-of Things (IoT) example.
+Specifically, TimescaleDB can support both wide-table and narrow-table models. Here, we discuss
+the different performance trade-offs and implications of these two models using an Internet of
+Things (IoT) example.
 
 Imagine a distributed group of 1,000 IoT devices designed to collect
 environmental data at various intervals. This data could include:
@@ -56,30 +56,30 @@ Using our example above, this approach would result in 9 different "time series"
 ```
 The number of such time series scales with the cross-product of the
 cardinality of each tag, i.e., (# names) &times; (# device ids) &times; (#
-location ids) &times; (device types).
+location ids) &times; (device types). Some time-series databases struggle as
+cardinality increases, ultimately limiting the number of device types and devices
+you can store in a single database.
 
-And each of these "time series" then has its own set of time/value sequences.
+TimescaleDB supports narrow models and does not suffer from the same cardinality limitations
+as other time-series databases do. A narrow model makes sense if you collect each metric
+independently. It allows you to add new metrics as you go by adding a new tag without
+requiring a formal schema change.
 
-Now, this approach may make sense if you collect each of your metrics
-independently, with little to no metadata.
-
-But in general, we believe that this approach is limiting. It loses the
-inherent structure in the data, making it
-harder to ask a variety of useful questions. For example:
-- What was the state of the system when `free_mem` went to 0?
-- How does `cpu_1m_avg` correlate with `free_mem`?
-- What is the average `temperature` by `location_id`?
-
-We also find this approach cognitively confusing. Are we really collecting
-9 different time-series, or just one collection of data with a variety
-of metadata and metrics readings?
+However, a narrow model is not as performant if you are collecting many metrics with the
+same timestamp, since it requires writing a timestamp for each metric. This ultimately
+results in higher storage and ingest requirements. Further, queries that correlate different metrics
+are also more complex, since each additional metric you want to correlate requires another
+JOIN. If you typically query multiple metrics together, it is both faster and easier to store them
+in a wide table format, which we will cover in the following section.
 
 ## Wide-table Model
 
-In contrast, TimescaleDB uses a wide-table model, which reflects the inherent
-structure in the data.
+TimescaleDB easily supports wide-table models. Queries across multiple metrics are
+easier in this model, since they do not require JOINs. Also, ingest is faster
+since only one timestamp is written for multiple metrics.
 
-Our wide-table model actually looks exactly the same as the initial data stream:
+A typical wide-table model would match
+a typical data stream in which multiple metrics are collected at a given timestamp:
 
 timestamp | device_id | cpu_1m_avg | free_mem | temperature | location_id | dev_type
 ---:|---:|---:|---:|---:|---:|---:
@@ -95,7 +95,7 @@ given time. This allows us to preserve relationships within the data, and
 ask more interesting or exploratory questions than before.
 
 Of course, this is not a new format: it's what one would commonly find within
-a relational database. Which is also why we find this format more intuitive.
+a relational database.
 
 ## JOINs with Relational Data
 
