@@ -37,7 +37,7 @@ wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postg
 # wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-10-0.x86_64.rpm
 
 # To install
-sudo yum install timescaledb
+sudo yum install <name of file you downloaded with wget>
 ```
 
 #### Update `postgresql.conf`
