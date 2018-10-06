@@ -22,8 +22,8 @@ sure to remove non-`apt` installations before using this method.
 # Fetch the correct .deb (e.g., Debian 7 and PostgreSQL 9.6)
 wget https://timescalereleases.blob.core.windows.net/debian/timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
 
-# Install via dpkg
-sudo dpkg -i timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
+# Install via apt-get
+sudo apt-get install ./timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
 
 # Alternate file names to wget:
 # - timescaledb-postgresql-9.6_x.y.z~debian8_amd64.deb
@@ -32,8 +32,6 @@ sudo dpkg -i timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
 # - timescaledb-postgresql-10_x.y.z~debian8_amd64.deb
 # - timescaledb-postgresql-10_x.y.z~debian9_amd64.deb
 ```
->:TIP: If the `dpkg` command fails with dependency issues, you can resolve
-them with `sudo apt install -f` and then re-run the `dpkg` command.
 
 #### Update `postgresql.conf`
 
