@@ -16,8 +16,8 @@ Queries run through Grafana will continue to benefit from the performance improv
 built into TimescaleDB. In fact, this data source was built by TimescaleDB engineers,
 and it is designed to take advantage of the databases' time-series capabilities.
 
->:WARNING: Grafana expects data received to come in timestamp order. When querying
-Grafana using SQL, you must include the `ORDER BY timestamp` statement so that
+>:WARNING: Grafana expects data received to be ordered by time. When querying
+Grafana using SQL, you must include the `ORDER BY time` statement so that
 results are guaranteed to be ordered. Grafana draws the points as they appear
 in the returned query. If data comes in unordered, you may observe
 inconsistencies in both graphs and Grafana functions.
