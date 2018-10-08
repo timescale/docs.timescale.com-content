@@ -19,18 +19,18 @@ of `apt`, we recommend installing from source.  Otherwise, please be
 sure to remove non-`apt` installations before using this method.
 
 ```bash
-# Fetch the correct .deb (e.g., Debian 7 and PostgreSQL 9.6)
-wget https://timescalereleases.blob.core.windows.net/debian/timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
+# Fetch the correct .deb (e.g., Debian 9 and PostgreSQL 9.6)
+wget https://timescalereleases.blob.core.windows.net/debian/timescaledb-postgresql-9.6_x.y.z~debian9_amd64.deb
 
 # Install via apt-get
-sudo apt-get install ./timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
+sudo apt-get install ./timescaledb-postgresql-9.6_x.y.z~debian9_amd64.deb
 
 # Alternate file names to wget:
-# - timescaledb-postgresql-9.6_x.y.z~debian8_amd64
-# - timescaledb-postgresql-9.6_x.y.z~debian9_amd64
-# - timescaledb-postgresql-10_x.y.z~debian7_amd64
-# - timescaledb-postgresql-10_x.y.z~debian8_amd64
-# - timescaledb-postgresql-10_x.y.z~debian9_amd64
+# - timescaledb-postgresql-9.6_x.y.z~debian8_amd64.deb
+# - timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
+# - timescaledb-postgresql-10_x.y.z~debian9_amd64.deb
+# - timescaledb-postgresql-10_x.y.z~debian8_amd64.deb
+# - timescaledb-postgresql-10_x.y.z~debian7_amd64.deb
 ```
 
 #### Update `postgresql.conf`
@@ -38,7 +38,7 @@ sudo apt-get install ./timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
 >:TIP: The usual location of `postgres.conf`
 is `/etc/postgresql/9.6/main/postgresql.conf` for 9.6 and
 `/etc/postgresql/10/main/postgresql.conf` for 10, but this may vary
-depending on your setup. If you are unsure where your `postgresql.conf` file 
+depending on your setup. If you are unsure where your `postgresql.conf` file
 is located, you can query PostgreSQL through the psql interface using `SHOW config_file;`.
 Please note that you must have created a `postgres` superuser so that you can access the psql
 interface.
