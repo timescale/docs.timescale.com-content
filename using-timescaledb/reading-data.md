@@ -290,7 +290,7 @@ last price of each security, etc.
 Yet the standard approach for minimizing the amount of data one needs
 to search -- using a time predicate to tightly bound the amount of
 time (number of chunks) one needs to traverse -- is not sound if you
-can't guarantee that all items has at least one record within that
+can't guarantee that all items have at least one record within that
 period.
 
 Instead, a last point query effectively determines, for each unique
