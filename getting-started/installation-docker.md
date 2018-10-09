@@ -78,7 +78,7 @@ until explicitly removed. Use `docker volume ls` to list the existing
 docker volumes.
 ([More information on data volumes][docker-data-volumes])
 
-## Prebuilt with PostGIS
+## Prebuilt with PostGIS [](postgis-docker)
 
 We have also published a Docker image that comes prebuilt with
 PostGIS.  This image is published under the
@@ -92,7 +92,7 @@ CREATE EXTENSION postgis;
 ```
 For more instructions on using PostGIS, [see our tutorial][tutorial-postgis].
 
-## Prebuilt with Prometheus adapter
+## Prebuilt with Prometheus adapter [](prometheus-docker)
 
 We have a Prometheus adapter and extension that, when used together, allow you to
 both query and write to TimescaleDB as a long-term store for Prometheus. This
