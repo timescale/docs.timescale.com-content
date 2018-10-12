@@ -186,6 +186,17 @@ still work on the resulting hypertable.
 | `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
 | `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
 
+#### Returns
+
+|Column|Description|
+|---|---|
+| `hypertable_id` | ID of the hypertable in TimescaleDB's internal catalog. |
+| `schema_name` | Schema name of the table converted to hypertable. |
+| `table_name` | Table name of the table converted to hypertable. |
+
+>:TIP: If you use `SELECT * FROM create_hypertable(...)` you will get the return value formatted
+as a table with column headings.
+
 >:WARNING: The use of the `migrate_data` argument to convert a non-empty table can
 lock the table for a significant amount of time, depending on how much data is
 in the table.
