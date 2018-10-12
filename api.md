@@ -39,14 +39,14 @@ your use case. Users will *rarely* want or need to use this command.
 converted to a hypertable (via `create_hypertable`), but must similarly
 be run only on an empty hypertable.
 
-#### Required Arguments
+#### Required Arguments [](add_dimension-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to add the dimension to.|
 | `column_name` | Name of the column to partition by.|
 
-#### Optional Arguments
+#### Optional Arguments [](add_dimension-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -116,7 +116,7 @@ may also change the placement behavior. A hypertable with no attached
 tablespaces will have its chunks placed in the database's default
 tablespace.
 
-#### Required Arguments
+#### Required Arguments [](attach_tablespace-required-arguments)
 
 |Name|Description|
 |---|---|
@@ -131,7 +131,7 @@ using the `TABLESPACE` option to `CREATE TABLE`, prior to calling
 `create_hypertable`, will have the same effect as calling
 `attach_tablespace` immediately following `create_hypertable`.
 
-#### Optional Arguments
+#### Optional Arguments [](attach_tablespace-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -160,14 +160,14 @@ on one or more other columns (i.e., space).
 All actions, such as `ALTER TABLE`, `SELECT`, etc.,
 still work on the resulting hypertable.
 
-#### Required Arguments
+#### Required Arguments [](create_hypertable-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of table to convert to hypertable |
 | `time_column_name` | Name of the column containing time values as well as the primary column to partition by. |
 
-#### Optional Arguments
+#### Optional Arguments [](create_hypertable-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -188,7 +188,8 @@ in the table.
 >If you would like finer control over index formation and other aspects
     of your hypertable, [follow these migration instructions instead][migrate-from-postgresql].
 <!-- -->
-#### Units
+
+#### Units [](create_hypertable-units)
 
 The 'time' column supports the following data types:
 
@@ -370,7 +371,7 @@ detached tablespace since existing data is not cleared from a detached
 tablespace. A detached tablespace can be reattached if desired to once
 again be considered for chunk placement.
 
-#### Required Arguments
+#### Required Arguments [](detach_tablespace-required-arguments)
 
 |Name|Description|
 |---|---|
@@ -383,7 +384,7 @@ the tablespace may still receive new chunks after this command
 is issued.
 
 
-#### Optional Arguments
+#### Optional Arguments [](detach_tablespace-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -420,7 +421,7 @@ on a hypertable, it will no longer have any tablespaces attached to
 it. New chunks will instead be placed in the database's default
 tablespace.
 
-#### Required Arguments
+#### Required Arguments [](detach_tablespaces-required-arguments)
 
 |Name|Description|
 |---|---|
@@ -443,13 +444,13 @@ hypertables or a specific one. Chunks are removed only if _all_ of their data is
 beyond the cut-off point, so the remaining data may contain timestamps that
 are before the cut-off point, but only one chunk's worth.
 
-#### Required Arguments
+#### Required Arguments [](drop_chunks-required-arguments)
 
 |Name|Description|
 |---|---|
 | `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed.|
 
-#### Optional Arguments
+#### Optional Arguments [](drop_chunks-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -469,7 +470,7 @@ The `older_than` parameter can be specified in two ways:
     SMALLINT / INT / BIGINT. The choice of timestamp or integer should
     generally follow the type of the hypertable's time column.
 
-#### Sample Usage
+#### Sample Usage [](drop_chunks-examples)
 
 Drop all chunks older than 3 months:
 ```sql
@@ -503,14 +504,14 @@ Sets the chunk_time_interval on a hypertable. The new interval is used
 when new chunks are created but the time intervals on existing chunks are
 not affected.
 
-#### Required Arguments
+#### Required Arguments [](set_chunk_time_interval-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to update interval for.|
 | `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0.|
 
-#### Optional Arguments
+#### Optional Arguments [](set_chunk_time_interval-optional-arguments)
 | Name | Description |
 |---|---|
 | `dimension_name` | The name of the time dimension to set the number of partitions for.  Only used when hypertable has multiple time dimensions. |
@@ -529,7 +530,7 @@ hypertable time column:
     milliseconds if the time column is expressed in milliseconds
     (see `create_hypertable` [instructions](#create_hypertable)).
 
-#### Sample Usage
+#### Sample Usage [](set_chunk_time_interval-examples)
 
 For a TIMESTAMP column, set `chunk_time_interval` to 24 hours.
 ```sql
@@ -545,18 +546,76 @@ SELECT set_chunk_time_interval('conditions', 86400000);
 
 ---
 
+<<<<<<< HEAD
+=======
+## set_adaptive_chunking() [](set_adaptive_chunking)
+Changes the settings for [adaptive chunking][adaptive-chunking]. The
+function returns the configured chunk sizing function and the target
+chunk size in bytes. This change will impact how and when new chunks
+are created; it does not modify the intervals of existing chunks.
+
+#### Required Arguments [](set_adaptive_chunking-required-arguments)
+
+|Name|Description|
+|---|---|
+| `hypertable` | Identifier of hypertable to update the settings for.|
+| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
+
+#### Optional Arguments [](set_adaptive_chunking-optional-arguments)
+| Name | Description |
+|---|---|
+| `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function. |
+
+
+#### Sample Usage [](set_adaptive_chunking-examples)
+
+Enable adaptive chunking on hypertable `conditions` and estimate the
+target chunk size based on system information:
+
+```sql
+SELECT * FROM set_adaptive_chunking('conditions', 'estimate');
+               chunk_sizing_func                | chunk_target_size
+------------------------------------------------+-------------------
+ _timescaledb_internal.calculate_chunk_interval |         536870912
+```
+
+Set the target chunk size to `1GB` on the `conditions` hypertable, using
+a custom chunk sizing function (enabling adaptive chunking if
+previously disabled):
+
+```sql
+SELECT * FROM set_adaptive_chunking('conditions', '1GB', 'custom_calculate_chunk_interval');
+    chunk_sizing_func            | chunk_target_size
+---------------------------------+-------------------
+ custom_calculate_chunk_interval |        1073741824
+
+```
+
+Disable adaptive chunking on the `conditions` hypertable, staying with the
+current chunk time interval.
+
+```sql
+SELECT * FROM set_adaptive_chunking('conditions', 'off');
+               chunk_sizing_func                | chunk_target_size
+------------------------------------------------+-------------------
+ _timescaledb_internal.calculate_chunk_interval |                 0
+```
+
+---
+
+>>>>>>> d229961... Add anchors to api entries
 ## set_number_partitions() [](set_number_partitions)
 Sets the number of partitions (slices) of a space dimension on a
 hypertable. The new partitioning only affects new chunks.
 
-#### Required Arguments
+#### Required Arguments [](set_number_partitions-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to update the number of partitions for.|
 | `number_partitions` | The new number of partitions for the dimension. Must be greater than 0 and less than 32,768.|
 
-#### Optional Arguments
+#### Optional Arguments [](set_number_partitions-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -566,7 +625,7 @@ The `dimension_name` needs to be explicitly specified only if the
 hypertable has more than one space dimension. An error will be thrown
 otherwise.
 
-#### Sample Usage
+#### Sample Usage [](set_number_partition-examples)
 
 For a table with a single space dimension:
 ```sql
@@ -588,14 +647,14 @@ The `first` aggregate allows you to get the value of one column
 as ordered by another. For example, `first(temperature, time)` will return the
 earliest temperature value based on time within an aggregate group.
 
-#### Required Arguments
+#### Required Arguments [](first-required-arguments)
 
 |Name|Description|
 |---|---|
 | `value` | The value to return (anyelement) |
 | `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
 
-#### Examples
+#### Examples [](first-examples)
 
 Get the earliest temperature by device_id:
 ```sql
@@ -627,7 +686,7 @@ Each bucket is inclusive on its lower bound, and exclusive on its upper
 bound. Therefore, values equal to the `min` are included in the bucket
 starting with `min`, but values equal to the `max` are in the last bucket.
 
-#### Required Arguments
+#### Required Arguments [](histogram-required-arguments)
 
 |Name|Description|
 |---|---|
@@ -636,7 +695,7 @@ starting with `min`, but values equal to the `max` are in the last bucket.
 | `max` | The histogram’s upper bound used in bucketing (exclusive) |
 | `nbuckets` | The integer value for the number of histogram buckets (partitions) |
 
-#### Sample Usage
+#### Sample Usage [](histogram-examples)
 
 A simple bucketing of device's battery levels from the `readings` dataset:
 
@@ -671,14 +730,14 @@ The `last` aggregate allows you to get the value of one column
 as ordered by another. For example, `last(temperature, time)` will return the
 latest temperature value based on time within an aggregate group.
 
-#### Required Arguments
+#### Required Arguments [](last-required-arguments)
 
 |Name|Description|
 |---|---|
 | `value` | The value to return (anyelement) |
 | `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
 
-#### Examples
+#### Sample Usage [](last-examples)
 
 Get the temperature every 5 minutes for each device over the past day:
 ```sql
@@ -718,14 +777,14 @@ irregular: for example if the bucket_width is 2 hours, the number of UTC hours
 bucketed by local time on daylight savings time boundaries can be either 3 hours
 or 1 hour.
 
-#### Required Arguments
+#### Required Arguments [](time_bucket-required-arguments)
 
 |Name|Description|
 |---|---|
 | `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
 | `time` | The timestamp to bucket (timestamp/timestamptz/date)|
 
-#### Optional Arguments
+#### Optional Arguments [](time_bucket-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -733,21 +792,21 @@ or 1 hour.
 
 ### For Integer Time Inputs
 
-#### Required Arguments
+#### Required Arguments [](time_bucket-integer-required-arguments)
 
 |Name|Description|
 |---|---|
 | `bucket_width` | The bucket width (integer) |
 | `time` | The timestamp to bucket (integer) |
 
-#### Optional Arguments
+#### Optional Arguments [](time_bucket-integer-optional-arguments)
 
 |Name|Description|
 |---|---|
 | `offset` | The amount to offset all buckets by (integer) |
 
 
-#### Sample Usage
+#### Sample Usage [](time_bucket-examples)
 
 Simple 5-minute averaging:
 
@@ -798,13 +857,13 @@ to the server's timezone setting.
 
 Get relation size of the chunks of an hypertable.
 
-#### Required Arguments
+#### Required Arguments [](chunk_relation_size-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to get chunk relation sizes for.|
 
-#### Returns
+#### Returns [](chunk_relation_size-returns)
 |Column|Description|
 |---|---|
 |chunk_id|Timescaledb id of a chunk|
@@ -819,7 +878,7 @@ Get relation size of the chunks of an hypertable.
 |toast_bytes|Disk space of toast tables|
 |total_bytes|Disk space used in total|
 
-#### Sample Usage
+#### Sample Usage [](chunk_relation_size-examples)
 ```sql
 SELECT * FROM chunk_relation_size('conditions');
 ```
@@ -844,13 +903,13 @@ Where `chunk_table` is the table that contains the data, `table_bytes` is the si
 
 Get relation size of the chunks of an hypertable.
 
-#### Required Arguments
+#### Required Arguments [](chunk_relation_size_pretty-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to get chunk relation sizes for.|
 
-#### Returns
+#### Returns [](chunk_relation_size_pretty-returns)
 |Column|Description|
 |---|---|
 |chunk_id|Timescaledb id of a chunk|
@@ -864,7 +923,7 @@ Get relation size of the chunks of an hypertable.
 |toast_size|Pretty output of toast_bytes|
 |total_size|Pretty output of total_bytes|
 
-#### Sample Usage
+#### Sample Usage [](chunk_relation_size_pretty-examples)
 ```sql
 SELECT * FROM chunk_relation_size_pretty('conditions');
 ```
@@ -884,17 +943,65 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
+<<<<<<< HEAD
+=======
+## get_telemetry_report() [](get_telemetry_report)
+
+This function returns the text string that is sent to our servers if
+background [telemetry][] is enabled. It takes no arguments.
+
+#### Sample Usage [](get_telemetry_report-examples)
+
+```sql
+SELECT get_telemetry_report()
+```
+
+---
+
+# hypertable_approximate_row_count() [](hypertable_approximate_row_count)
+
+Get approximate row count for hypertable(s) based on catalog estimates.
+
+#### Optional Arguments [](hypertable_approximate_row_count-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `main_table` | Hypertable to get row count for. If omitted, all hypertabls are returned. |
+
+#### Sample Usage [](hypertable_approximate_row_count-examples)
+
+Get the approximate row count for a single hypertable.
+
+```sql
+SELECT * FROM hypertable_approximate_row_count('conditions');
+```
+
+Get the approximate row count for all hypertables.
+```sql
+SELECT * FROM hypertable_approximate_row_count();
+```
+
+The expected output:
+```
+ schema_name | table_name | row_estimate
+-------------+------------+--------------
+  public     | conditions |      240000
+```
+
+---
+
+>>>>>>> d229961... Add anchors to api entries
 ## hypertable_relation_size() [](hypertable_relation_size)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
-#### Required Arguments
+#### Required Arguments [](hypertable_relation_size-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to get relation size for.|
 
-#### Returns
+#### Returns [](hypertable_relation_size-returns)
 |Column|Description|
 |---|---|
 |table_bytes|Disk space used by main_table (like pg_relation_size(main_table))|
@@ -902,7 +1009,7 @@ Get relation size of hypertable like `pg_relation_size(hypertable)`.
 |toast_bytes|Disk space of toast tables|
 |total_bytes|Total disk space used by the specified table, including all indexes and TOAST data|
 
-#### Sample Usage
+#### Sample Usage [](hypertable_relation_size-examples)
 ```sql
 SELECT * FROM hypertable_relation_size('conditions');
 ```
@@ -922,13 +1029,13 @@ The expected output:
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
-#### Required Arguments
+#### Required Arguments [](hypertable_relation_size_pretty-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to get relation size for.|
 
-#### Returns
+#### Returns [](hypertable_relation_size_pretty-returns)
 |Column|Description|
 |---|---|
 |table_size|Pretty output of table_bytes|
@@ -936,7 +1043,7 @@ Get relation size of hypertable like `pg_relation_size(hypertable)`.
 |toast_size|Pretty output of toast_bytes|
 |total_size|Pretty output of total_bytes|
 
-#### Sample Usage
+#### Sample Usage [](hypertable_relation_size_pretty-examples)
 ```sql
 SELECT * FROM hypertable_relation_size_pretty('conditions');
 ```
@@ -957,19 +1064,19 @@ The expected output:
 
 Get sizes of indexes on a hypertable.
 
-#### Required Arguments
+#### Required Arguments [](hypertable_relation_size_pretty-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to get indexes size for.|
 
-#### Returns
+#### Returns [](hypertable_relation_size_pretty-returns)
 |Column|Description|
 |---|---|
 |index_name|Index on hyper table|
 |total_bytes|Size of index on disk|
 
-#### Sample Usage
+#### Sample Usage [](hypertable_relation_size_pretty-examples)
 ```sql
 SELECT * FROM indexes_relation_size('conditions');
 ```
@@ -988,19 +1095,19 @@ The expected output:
 
 Get sizes of indexes on a hypertable.
 
-#### Required Arguments
+#### Required Arguments [](indexes_relation_size_pretty-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to get indexes size for.|
 
-#### Returns
+#### Returns [](indexes_relation_size_pretty-returns)
 |Column|Description|
 |---|---|
 |index_name|Index on hyper table|
 |total_size|Pretty output of total_bytes|
 
-#### Sample Usage
+#### Sample Usage [](indexes_relation_size_pretty-examples)
 ```sql
 SELECT * FROM indexes_relation_size_pretty('conditions');
 ```
@@ -1020,14 +1127,14 @@ The expected output:
 
 Show the tablespaces attached to a hypertable.
 
-#### Required Arguments
+#### Required Arguments [](show_tablespaces-required-arguments)
 
 |Name|Description|
 |---|---|
 | `hypertable` | Identifier of hypertable to show attached tablespaces for.|
 
 
-#### Sample Usage
+#### Sample Usage [](show_tablespaces-examples)
 
 ```sql
 SELECT * FROM show_tablespaces('conditions');
