@@ -34,6 +34,21 @@ the load of a previous DB version on session startup.
 
 <!-- -->
 
+>:WARNING: If you are upgrading from a version before 0.11.0 make sure your 
+root table does not contain data otherwise the update will fail.
+Data can be migrated as follows:
+```sql
+BEGIN;
+SET timescaledb.restoring = 'off';
+INSERT INTO hypertable SELECT * FROM ONLY hypertable;
+SET timescaledb.restoring = 'on';
+TRUNCATE ONLY hypertable;
+SET timescaledb.restoring = 'off';
+COMMIT;
+```
+
+<!-- -->
+
 >:WARNING: If upgrading from a TimescaleDB version older than 0.9.0,
 you will need to restart your database before calling `ALTER EXTENSION`.
 Remember that restarting PostgreSQL is accomplished via different
