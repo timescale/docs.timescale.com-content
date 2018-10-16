@@ -58,6 +58,15 @@ be run only on an empty hypertable.
 | `partitioning_func` | The function to use for calculating a value's partition (see `create_hypertable` [instructions](#create_hypertable)).|
 | `if_not_exists` | Set to true to avoid throwing an error if a dimension for the column already exists. A notice is issued instead. Defaults to false. |
 
+#### Returns
+
+|Column|Description|
+|---|---|
+| `dimension_id` | ID of the dimension in TimescaleDB's internal catalog. |
+| `schema_name` | Schema name of the hypertable.|
+| `table_name` | Table name of the hypertable. |
+| `column_name` | Column name of the column to partition by. |
+
 When executing this function, either `number_partitions` or
 `chunk_time_interval` must be supplied, which will dictate if the
 dimension will use hash or interval partitioning.
