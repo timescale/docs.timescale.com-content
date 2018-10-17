@@ -47,7 +47,7 @@ explicitly `pull` the latest:
 
 #### More detailed instructions
 
-Our Docker image is derived from the [official Postgres image][] and
+Our Docker image is derived from the [official Postgres image][official-image] and
 includes [alpine Linux][] as its OS.
 
 While the above `run` command will pull the Docker image on demand,
@@ -92,9 +92,6 @@ CREATE EXTENSION postgis;
 ```
 For more instructions on using PostGIS, [see our tutorial][tutorial-postgis].
 
-<<<<<<< HEAD
-[official Postgres image]: https://github.com/docker-library/postgres/
-=======
 ## Prebuilt with Prometheus adapter
 
 We have a Prometheus adapter and extension that, when used together, allow you to
@@ -110,7 +107,6 @@ GitHub links for more information.
 For more instructions on using our Prometheus adapter, [see our tutorial][tutorial-prometheus].
 
 [official-image]: https://github.com/docker-library/postgres/
->>>>>>> d52598f... Add in packaged prometheus adapter in installation instructions (#30)
 [docker-vulnerability]: https://www.techrepublic.com/article/how-to-fix-the-docker-and-ufw-security-flaw
 [alpine Linux]: https://alpinelinux.org/
 [Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
