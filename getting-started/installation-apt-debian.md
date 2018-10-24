@@ -6,9 +6,7 @@ This will install TimescaleDB via `apt` on Debian distros.
 
 #### Prerequisites
 
-- Debian 7, 8, or 9.
-- A standard PostgreSQL installation.
-See [here for instructions][postgresql-apt] to install via `apt`.
+- Debian 7 (wheezy), 8 (jessie), or 9 (stretch).
 
 #### Build & Install
 
@@ -18,19 +16,27 @@ If you wish to maintain your current version of PostgreSQL outside
 of `apt`, we recommend installing from source.  Otherwise, please be
 sure to remove non-`apt` installations before using this method.
 
+**If you don't already have PostgreSQL installed**, add PostgreSQL's third
+party repository to get the latest PostgreSQL packages:
 ```bash
-# Fetch the correct .deb (e.g., Debian 9 and PostgreSQL 9.6)
-wget https://timescalereleases.blob.core.windows.net/debian/timescaledb-postgresql-9.6_x.y.z~debian9_amd64.deb
+# `lsb_release -c -s` should return the correct codename of your OS
+sudo sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -c -s`-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+```
 
-# Install via apt-get
-sudo apt-get install ./timescaledb-postgresql-9.6_x.y.z~debian9_amd64.deb
+Add TimescaleDB's third party repository and install TimescaleDB (will download
+any dependencies it needs from the PostgreSQL repo):
+```bash
+# Add our repository
+sudo sh -c "echo 'deb https://packagecloud.io/timescale/timescaledb/debian/ `lsb_release -c -s` main' > /etc/apt/sources.list.d/timescaledb.list"
+wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | sudo apt-key add -
+sudo apt-get update
 
-# Alternate file names to wget:
-# - timescaledb-postgresql-9.6_x.y.z~debian8_amd64.deb
-# - timescaledb-postgresql-9.6_x.y.z~debian7_amd64.deb
-# - timescaledb-postgresql-10_x.y.z~debian9_amd64.deb
-# - timescaledb-postgresql-10_x.y.z~debian8_amd64.deb
-# - timescaledb-postgresql-10_x.y.z~debian7_amd64.deb
+# To install for PG 10.2+
+sudo apt-get install timescaledb-postgresql-10
+# To install for PG 9.6.3+
+sudo apt-get install timescaledb-postgresql-9.6
 ```
 >ttt If the `dpkg` command fails with dependency issues, you can resolve
 them with `sudo apt install -f` and then re-run the `dpkg` command.
@@ -65,4 +71,3 @@ sudo service postgresql restart
 [Here are some instructions to create the `postgres` superuser][createuser].
 
 [createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
-[postgresql-apt]: https://www.postgresql.org/download/linux/debian/
