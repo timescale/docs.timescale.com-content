@@ -857,6 +857,7 @@ or 1 hour.
 |Name|Description|
 |---|---|
 | `offset` | The time interval to offset all buckets by (interval) |
+| `origin` | Buckets are aligned relative to this timestamp (timestamp/timestamptz/date) |
 
 ### For Integer Time Inputs
 
@@ -905,6 +906,23 @@ SELECT time_bucket('5 minutes', time, '-2.5 minutes') + '2.5 minutes'
   ORDER BY five_min DESC LIMIT 10;
 ```
 
+To shift the alignment of the buckets you can use the origin parameter.
+In this example, we shift the start of the week to a Sunday (the default is a Monday).
+```sql
+SELECT time_bucket('1 week', timetz, TIMESTAMPTZ '2017-12-31') AS one_week,
+    avg(cpu)
+  FROM metrics
+  GROUP BY one_week
+  WHERE time > TIMESTAMPTZ '2017-12-01'  AND time < TIMESTAMPTZ '2018-01-03'
+  ORDER BY one_week DESC LIMIT 10;
+```
+
+The value of the origin parameter we used in this example was `2017-12-31`, a Sunday within the
+period being analyzed. However, The origin provided to the function can be before, during, or
+after the data being analyzed. All buckets are calculated relative to this origin. So, in this example,
+any Sunday could have been used. Note that because `time < TIMESTAMPTZ '2018-01-03'` in this example,
+the last bucket would have only 4 days of data.
+
 Bucketing a TIMESTAMPTZ at local time instead of UTC(see note above):
 ```sql
 SELECT time_bucket('2 hours', timetz::TIMESTAMP) AS five_min,
@@ -917,6 +935,12 @@ SELECT time_bucket('2 hours', timetz::TIMESTAMP) AS five_min,
 Note that the above cast to TIMESTAMP converts the time to local time according
 to the server's timezone setting.
 
+>:WARNING: For users upgrading from a version before 1.0.0, please note
+ that the default origin was moved from 2000-01-01 (Saturday) to 2000-01-03 (Monday)
+ between versions 0.12.1 and 1.0.0. This change was made  to make time_bucket compliant
+ with the ISO standard for Monday as the start of a week. This should only affect
+ multi-day calls to time_bucket. The old behavior can be reproduced by passing
+ 2000-01-01 as the origin parameter to time_bucket.
 ---
 
 ## Utilities/Statistics [](utilities)
