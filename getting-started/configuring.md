@@ -57,7 +57,7 @@ time-series workloads, which has implications for [lock
 management][lock-management]. A hypertable needs to acquire locks on
 many chunks (sub-tables) during queries, which can exhaust the default
 limits for the number of allowed locks held. This might result in a
-warning like follows:
+warning like the following:
 
 ```sql
 psql: FATAL:  out of shared memory
