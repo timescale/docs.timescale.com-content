@@ -6,6 +6,15 @@ pages using a bash script and markdown parser.
 
 All files are written in standard markdown.
 
+## Docs versions
+
+There is a version of the docs for each supported version of the database, stored in
+a separate git branch.  Our docs site parses those branches to allow users to choose
+what version of the docs they want to see.  When submitting pull requests, you should determine
+what versions of the docs your changes will apply to and attach a label to the pull request
+that denotes the earliest version that your changes should apply to (`0.9`, `0.10`, `1.0`, etc.)
+The admin for the docs will use that as a guide when updating version branches.
+
 ### A note on page links
 
 None of the internal page links within these files will work on Github.  They are designed to function within the code for the documentation site at [docs.timescale.com](http://docs.timescale.com).  All external links should work.
