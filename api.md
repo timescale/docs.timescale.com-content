@@ -66,6 +66,7 @@ be run only on an empty hypertable.
 | `schema_name` | Schema name of the hypertable.|
 | `table_name` | Table name of the hypertable. |
 | `column_name` | Column name of the column to partition by. |
+| `created` | True if the dimension was added, false when `if_not_exists` is true and no dimension was added. |
 
 When executing this function, either `number_partitions` or
 `chunk_time_interval` must be supplied, which will dictate if the
@@ -202,6 +203,7 @@ still work on the resulting hypertable.
 | `hypertable_id` | ID of the hypertable in TimescaleDB's internal catalog. |
 | `schema_name` | Schema name of the table converted to hypertable. |
 | `table_name` | Table name of the table converted to hypertable. |
+| `created` | True if the hypertable was created, false when `if_not_exists` is true and no hypertable was created. |
 
 >:TIP: If you use `SELECT * FROM create_hypertable(...)` you will get the return value formatted
 as a table with column headings.
