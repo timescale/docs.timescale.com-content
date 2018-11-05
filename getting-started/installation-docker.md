@@ -10,7 +10,7 @@ docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password time
 
 >:WARNING: The -p flag binds the container port to the host port, meaning
 anything that can access the host port will be able to access your TimescaleDB
-container. This can be particularly dangerous if you do not set a Postgres
+container. This can be particularly dangerous if you do not set a PostgreSQL
 password at runtime using the `POSTGRES_PASSWORD` environment variable as we
 do in the above command. Without that variable, the Docker container will disable
 password checks for all database users. If you want to access the container
