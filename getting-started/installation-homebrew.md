@@ -27,7 +27,7 @@ brew install timescaledb
 /usr/local/bin/timescaledb_move.sh
 ```
 
-#### Update Postgresql.conf
+#### Update `postgresql.conf`
 
 >:TIP: The usual location of `postgresql.conf` is
 `/usr/local/var/postgres/postgresql.conf`, but this may vary depending on
