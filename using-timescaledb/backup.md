@@ -109,151 +109,212 @@ psql -d new_db -c "\COPY conditions FROM data.csv CSV"
  So to speed up importing larger amounts of data, we recommend using
  our [parallel importer][] instead.
 
-## Using Docker & WAL-E [](docker-wale)
+## Continuous archiving and recovery with Docker & WAL-E [](docker-wale)
 
-If you're using TimescaleDB in a containerized environment, we provide
-images that allow you hook your TimescaleDB container with a WAL-E
-"sidecar" container (i.e., a container that runs alongside the main
-container). Our [official Docker image][docker image] supports this
-functionality, and we provide a reference implementation of the
-[WAL-E sidecar image][wale image].
+When using TimescaleDB in a containerized environment, it is possible
+to do [continuous archiving][pg archiving] using a [WAL-E][wale
+official] "sidecar" container (i.e., a container that runs alongside
+the main container). For this purpose, we provide a [WAL-E sidecar
+image][wale image] that works with TimescaleDB as well as regular
+PostgreSQL. In the following example, we will setup archiving to the
+local filesystem using one main TimescaleDB container called
+`timescaledb`, and one WAL-E sidecar called `wale`. For production
+deployments, this example can be adapted to do archiving against,
+e.g., AWS S3, and run in an orchestration framework like Kubernetes.
 
-To get started, you'll first need to start up your Docker TimescaleDB
-database regularly to have it create the necessary directories for
-PostgreSQL:
+### Running the TimescaleDB container
+
+To make TimescaleDB use the WAL-E sidecar for archiving, the two
+containers need to share a network. Create a Docker network like so:
+
 ```bash
-docker run​ \
-    -v /host/path/to/wal:/data/wal \
-    -v /host/path/to/data:/var/lib/postgresql/data \
-    -e PGWAL=/data/wal \
-    -e PGDATA=/var/lib/postgresql/data/pgdata \
-    ...  # other flags/arguments
-    timescale/timescaledb:latest-pg9.6
+docker network create timescaledb-net
 ```
->:TIP: You can change the tag from `latest-pg9.6` to the one that best
-suits you, including `latest-pg10` for PostgreSQL 10.
 
-The values for `PGWAL` and `PGDATA` are up to you for your setup;
-remember these values since the WAL-E sidecar needs to know them
-(and share access to the directories) in order to coordinate the backups.
+Then launch TimescaleDB with archiving turned on, using the newly
+created network:
 
-### Backup [](docker-wale-backup)
-
-#### TimescaleDB container
-
-Once PostgreSQL starts up, you'll need to stop the container and restart
-with WAL-E support enabled:
 ```bash
 docker run​ \
-    -v /host/path/to/wal:/data/wal \
-    -v /host/path/to/data:/var/lib/postgresql/data \
-    -e PGWAL=/data/wal \
-    -e PGDATA=/var/lib/postgresql/data/pgdata \
-    -e USE_WALE_SIDECAR=true \
-    ...  # other docker flags
-    timescale/timescaledb:latest-pg9.6 postgres \
+    --name timescaledb \
+    --network timescaledb-net \
+    -e POSTGRES_PASSWORD=insecure \
+    -e POSTGRES_INITDB_WALDIR=/var/lib/postgresql/data/pg_wal \
+    -e PGDATA=/var/lib/postgresql/data/pg_data \
+    timescale/timescaledb:latest-pg10 postgres \
     -cwal_level=archive \
     -carchive_mode=on \
-    -carchive_command="/usr/bin/wget localhost:5000/wal-push/%f -O -" \
+    -carchive_command="/usr/bin/wget wale/wal-push/%f -O -" \
     -carchive_timeout=600 \
     -ccheckpoint_timeout=700 \
-    -cmax_wal_senders=1 \
-    ...  # other flags/arguments
+    -cmax_wal_senders=1
 ```
 
-This new environment variable `USE_WALE_SIDECAR` tells the container to
-look for and use the WAL-E sidecar. This flag causes a
-a synchronization file called `wale_init_lockfile` to be created
-in `PGDATA`. The WAL-E sidecar, upon starting, needs to remove this file
-so the database can start (i.e., TimescaleDB blocks on startup until
-the file is gone). The `-c` flags are needed to tell the container how
-to properly archive the WAL.
+We explicitly set the location of the write-ahead log
+(`POSTGRES_INITDB_WALDIR`) and data directory (`PGDATA`) so that we
+can share these with the WAL-E sidecar. Both must reside in a Docker
+volume (a volume is created for `/var/lib/postgresql/data` by
+default).
 
+It is now possible to log into the database and create tables and
+data:
 
-#### WAL-E sidecar
+```bash
+docker exec -it timescaledb psql -U postgres
+```
 
-You can use our [reference implementation of the WAL-E sidecar][wale image]
-and follow the instructions on [its Github][wale github] for more
-advanced usage. This implementation creates a small REST HTTP server
-to handle archiving and restoring. It needs to know the same location of
-`PGWAL` and `PGDATA` as the TimescaleDB container. To launch:
+### Running the WAL-E sidecar
+
+Our [WAL-E Docker image][wale image] runs a small Web endpoint that
+accepts WAL-E commands via a HTTP API. This allows PostgreSQL to
+communicate with the WAL-E sidecar over the internal network to
+trigger archiving. It is, of course, also possible to use the
+container to invoke WAL-E directly. The Docker image accepts the
+standard WAL-E environment variables to configure the archiving
+backend (e.g., AWS S3) and more. See [WAL-E's documentation][wale
+official] for more details.
+
+To enable the WAL-E docker image to perform archiving, it needs to use
+the network and data volume(s) of the TimescaleDB container. It also
+needs to know the location of the write-ahead log and data
+directories. Thus, launch the WAL-E sidecar as follows:
+
 ```bash
 docker run​ \
-    -v /host/path/to/wal:/data/wal \
-    -v /host/path/to/data:/var/lib/postgresql/data \
-    -e START_MODE=BACKUP_PUSH \
-    -e PGWAL=/data/wal \
-    -e PGDATA=/var/lib/postgresql/data/pgdata \
-    ...  # other flags/arguments
+    --name wale \
+    --network timescaledb-net \
+    --volumes-from timescaledb \
+    -v ~/backups:/backups \
+    -e WALE_LOG_DESTINATION=stderr \
+    -e PGWAL=/var/lib/postgresql/data/pg_wal \
+    -e PGDATA=/var/lib/postgresql/data/pg_data \
+    -e PGHOST=timescaledb \
+    -e PGPASSWORD=insecure \
+    -e PGUSER=postgres \
+    -e WALE_FILE_PREFIX=file://localhost/backups \
     timescale/timescaledb-wale:latest
 ```
 
-You will likely need other environmental variables set based on where
-you store your WAL-E backups (e.g., AWS S3);
-see [WAL-E's documentation][wale official] for more details.
-To do the initial base backup, run the `backup_push.sh`
-script in the container:
+This will make the WAL-E image listen on commands on port 80 on the
+`timescaledb-net` internal network and write backups to `~/backups` on
+the Docker host.
+
+To do the initial base backup, execute the following command in the
+running WAL-E container (assuming the container's name is
+`timescaledb-wale`):
+
 ```bash
-docker exec timescaledb-wale ./backup_push.sh
+docker exec wale wal-e backup-push /var/lib/postgresql/data/pg_data
 ```
 
-Afterwards, a base backup will occur once a day, unless you change it
-via setting `CRON_TIMING` (see our [WAL-E Github][wale github] for
-more info). WAL backups will be handled by the TimescaleDB container
-running the given `archive_command`, which communicates via HTTP with
-the WAL-E sidecar.
+Alternatively, do it via the sidecar's HTTP endpoint (this requires
+exposing the sidecar's port `80` on the Docker host by mapping it to,
+e.g., port `8080`):
 
-### Restore [](docker-wale-restore)
-
-The restoration process is very similar to the backup process. First
-you'll need to setup an empty TimescaleDB/PostgreSQL instance without
-WAL-E sidecar behavior enabled ([see above](#docker-wale)).
-
-#### TimescaleDB container
-After setting up the empty instance, stop the container. Now,
-restart the TimescaleDB container like so:
 ```bash
-docker run​ \
-    -v /host/path/to/wal:/data/wal \
-    -v /host/path/to/data:/var/lib/postgresql/data \
-    -e PGWAL=/data/wal \
-    -e PGDATA=/var/lib/postgresql/data/pgdata \
-    -e USE_WALE_SIDECAR=true \
-    ...  # other docker flags
-    timescale/timescaledb:latest-pg9.6 postgres \
-    -cwal_level=archive \
-    -carchive_mode=on \
-    -carchive_command="/usr/bin/wget localhost:5000/wal-push/%f -O -" \
-    -crestore_command="/usr/bin/wget localhost:5000/wal-fetch/%f -O -" \
-    -carchive_timeout=600 \
-    -ccheckpoint_timeout=700 \
-    -cmax_wal_senders=1 \
-    ...  # other flags/arguments
+curl http://localhost:8080/backup-push
 ```
 
-Note the addition of the `-crestore_command` flag compared to backup;
-this tells PostgreSQL how to restore properly.
+Base backups should be done at regular intervals (e.g., every day) to
+minimize the amount of WAL replay, making recoveries faster. To make
+new base backups, simply re-trigger a base backup as shown above,
+either manually or on a schedule (e.g., via a CRON job). If you run
+TimescaleDB on Kubernetes, there is built-in support for scheduling
+cron jobs that can invoke base backups via, e.g., the WAL-E
+container's HTTP API.
 
-#### WAL-E sidecar
+### Recovery [](docker-wale-restore)
 
-Setup is similar to backup, except this time `START_MODE` is set to
-`RESTORE`:
+To recover the database instance from the backup archive, create a new
+TimescaleDB container:
+
 ```bash
-docker run​ \
-    -v /host/path/to/wal:/data/wal \
-    -v /host/path/to/data:/var/lib/postgresql/data \
-    -e START_MODE=RESTORE \
-    -e PGWAL=/data/wal \
-    -e PGDATA=/var/lib/postgresql/data/pgdata \
-    ...  # other flags/arguments
+docker create \
+    --name timescaledb-recovered \
+    --network timescaledb-net \
+    -e POSTGRES_PASSWORD=insecure \
+    -e POSTGRES_INITDB_WALDIR=/var/lib/postgresql/data/pg_wal \
+    -e PGDATA=/var/lib/postgresql/data/pg_data \
+    timescale/timescaledb:latest-pg10 postgres
+```
+
+Now restore the database files from the base backup:
+
+```bash
+docker run -it --rm \
+    -v ~/backups:/backups \
+    --volumes-from timescaledb-recovered \
+    -e WALE_LOG_DESTINATION=stderr \
+    -e WALE_FILE_PREFIX=file://localhost/backups \
+    timescale/timescaledb-wale:latest \wal-e \
+    backup-fetch /var/lib/postgresql/data/pg_data LATEST
+```
+
+Recreate some configuration files (normally, these are backed up
+configuration files from the old database instance):
+
+```bash
+docker run -it --rm  \
+    --volumes-from timescaledb-recovered \
+    timescale/timescaledb:latest-pg10 \
+    cp /usr/local/share/postgresql/pg_ident.conf.sample /var/lib/postgresql/data/pg_data/pg_ident.conf
+
+docker run -it --rm  \
+    --volumes-from timescaledb-recovered \
+    timescale/timescaledb:latest-pg10 \
+    cp /usr/local/share/postgresql/postgresql.conf.sample /var/lib/postgresql/data/pg_data/postgresql.conf
+
+docker run -it --rm  \
+    --volumes-from timescaledb-recovered \
+    timescale/timescaledb:latest-pg10 \
+    sh -c 'echo "local all postgres trust" > /var/lib/postgresql/data/pg_data/pg_hba.conf'
+```
+
+Now create a `recovery.conf` that tells PostgreSQL how to recover:
+
+```bash
+docker run -it --rm  \
+    --volumes-from timescaledb-recovered \
+    timescale/timescaledb:latest-pg10 \
+    sh -c 'echo "restore_command='\''/usr/bin/wget wale/wal-fetch/%f -O -'\''" > /var/lib/postgresql/data/pg_data/recovery.conf'
+```
+
+Then run the WAL-E sidecar again (you may have to remove the old one
+first). It will be used to replay the last WAL segments that may not
+be reflected in the base backup:
+
+```bash
+docker run \
+    --name wale \
+    --network timescaledb-net \
+    -v ~/backups:/backups \
+    --volumes-from timescaledb-recovered \
+    -e WALE_LOG_DESTINATION=stderr \
+    -e PGWAL=/var/lib/postgresql/data/pg_wal \
+    -e PGDATA=/var/lib/postgresql/data/pg_data \
+    -e PGHOST=timescaledb \
+    -e PGPASSWORD=insecure \
+    -e PGUSER=postgres \
+    -e WALE_FILE_PREFIX=file://localhost/backups \
     timescale/timescaledb-wale:latest
 ```
 
-Again you'll need to consult the [WAL-E documentation][wale official] for
-variables you need to set to access, e.g., your AWS S3 bucket.
+Finally, launch the TimescaleDB docker container:
 
-Once restored, you'll want to restart the containers using the backup
-instructions so that they can start creating a new backup.
+```bash
+docker start timescaledb-recovered
+```
+
+Verify that the database started up and recovered successfully:
+
+```bash
+docker logs timescaledb-recovered
+```
+
+Note that it is normal to see some archive recovery "errors" at the
+end as the recovery will be complete when no further files can be
+found in the archive. See the PostgreSQL documentation on [continuous
+archiving][pg archiving] for more information.
 
 [updating instructions]: /api/update-db
 [pg_dump]: https://www.postgresql.org/docs/current/static/app-pgdump.html
@@ -263,3 +324,4 @@ instructions so that they can start creating a new backup.
 [wale image]: https://hub.docker.com/r/timescale/timescaledb-wale
 [wale github]: https://github.com/timescale/timescaledb-wale
 [wale official]: https://github.com/wal-e/wal-e
+[pg archiving]: https://www.postgresql.org/docs/current/continuous-archiving.html#BACKUP-PITR-RECOVERY
