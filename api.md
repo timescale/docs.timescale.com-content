@@ -891,24 +891,9 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
-<<<<<<< HEAD
+
 ## hypertable_approximate_row_count() [](hypertable_approximate_row_count)
-=======
-## get_telemetry_report() [](get_telemetry_report)
 
-This function returns the text string that is sent to our servers if
-background [telemetry][] is enabled. It takes no arguments.
-
-#### Sample Usage [](get_telemetry_report-examples)
-
-```sql
-SELECT get_telemetry_report()
-```
-
----
-
-# hypertable_approximate_row_count() [](hypertable_approximate_row_count)
->>>>>>> d229961... Add anchors to api entries
 
 Get approximate row count for hypertable(s) based on catalog estimates.
 
