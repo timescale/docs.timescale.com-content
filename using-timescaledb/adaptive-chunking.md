@@ -1,4 +1,4 @@
-# Adaptive chunking [](adaptive-chunking)
+# Adaptive chunking [](adaptive-chunking) (BETA)
 
 One secret behind TimescaleDB's excellent performance with time-series
 data is its automatic partitioning scheme that splits the data across
