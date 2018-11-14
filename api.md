@@ -546,64 +546,6 @@ SELECT set_chunk_time_interval('conditions', 86400000);
 
 ---
 
-<<<<<<< HEAD
-=======
-## set_adaptive_chunking() [](set_adaptive_chunking)
-Changes the settings for [adaptive chunking][adaptive-chunking]. The
-function returns the configured chunk sizing function and the target
-chunk size in bytes. This change will impact how and when new chunks
-are created; it does not modify the intervals of existing chunks.
-
-#### Required Arguments [](set_adaptive_chunking-required-arguments)
-
-|Name|Description|
-|---|---|
-| `hypertable` | Identifier of hypertable to update the settings for.|
-| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
-
-#### Optional Arguments [](set_adaptive_chunking-optional-arguments)
-| Name | Description |
-|---|---|
-| `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function. |
-
-
-#### Sample Usage [](set_adaptive_chunking-examples)
-
-Enable adaptive chunking on hypertable `conditions` and estimate the
-target chunk size based on system information:
-
-```sql
-SELECT * FROM set_adaptive_chunking('conditions', 'estimate');
-               chunk_sizing_func                | chunk_target_size
-------------------------------------------------+-------------------
- _timescaledb_internal.calculate_chunk_interval |         536870912
-```
-
-Set the target chunk size to `1GB` on the `conditions` hypertable, using
-a custom chunk sizing function (enabling adaptive chunking if
-previously disabled):
-
-```sql
-SELECT * FROM set_adaptive_chunking('conditions', '1GB', 'custom_calculate_chunk_interval');
-    chunk_sizing_func            | chunk_target_size
----------------------------------+-------------------
- custom_calculate_chunk_interval |        1073741824
-
-```
-
-Disable adaptive chunking on the `conditions` hypertable, staying with the
-current chunk time interval.
-
-```sql
-SELECT * FROM set_adaptive_chunking('conditions', 'off');
-               chunk_sizing_func                | chunk_target_size
-------------------------------------------------+-------------------
- _timescaledb_internal.calculate_chunk_interval |                 0
-```
-
----
-
->>>>>>> d229961... Add anchors to api entries
 ## set_number_partitions() [](set_number_partitions)
 Sets the number of partitions (slices) of a space dimension on a
 hypertable. The new partitioning only affects new chunks.
@@ -943,54 +885,6 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
-<<<<<<< HEAD
-=======
-## get_telemetry_report() [](get_telemetry_report)
-
-This function returns the text string that is sent to our servers if
-background [telemetry][] is enabled. It takes no arguments.
-
-#### Sample Usage [](get_telemetry_report-examples)
-
-```sql
-SELECT get_telemetry_report()
-```
-
----
-
-# hypertable_approximate_row_count() [](hypertable_approximate_row_count)
-
-Get approximate row count for hypertable(s) based on catalog estimates.
-
-#### Optional Arguments [](hypertable_approximate_row_count-optional-arguments)
-
-|Name|Description|
-|---|---|
-| `main_table` | Hypertable to get row count for. If omitted, all hypertabls are returned. |
-
-#### Sample Usage [](hypertable_approximate_row_count-examples)
-
-Get the approximate row count for a single hypertable.
-
-```sql
-SELECT * FROM hypertable_approximate_row_count('conditions');
-```
-
-Get the approximate row count for all hypertables.
-```sql
-SELECT * FROM hypertable_approximate_row_count();
-```
-
-The expected output:
-```
- schema_name | table_name | row_estimate
--------------+------------+--------------
-  public     | conditions |      240000
-```
-
----
-
->>>>>>> d229961... Add anchors to api entries
 ## hypertable_relation_size() [](hypertable_relation_size)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
