@@ -908,7 +908,8 @@ SELECT time_bucket('5 minutes', time, '-2.5 minutes') + '2.5 minutes'
   ORDER BY five_min DESC LIMIT 10;
 ```
 
-To shift the alignment of the buckets you can use the origin parameter.
+To shift the alignment of the buckets you can use the origin parameter
+(passed as a timestamp, timestamptz, or date type).
 In this example, we shift the start of the week to a Sunday (the default is a Monday).
 ```sql
 SELECT time_bucket('1 week', timetz, TIMESTAMPTZ '2017-12-31') AS one_week,
@@ -920,7 +921,7 @@ SELECT time_bucket('1 week', timetz, TIMESTAMPTZ '2017-12-31') AS one_week,
 ```
 
 The value of the origin parameter we used in this example was `2017-12-31`, a Sunday within the
-period being analyzed. However, The origin provided to the function can be before, during, or
+period being analyzed. However, the origin provided to the function can be before, during, or
 after the data being analyzed. All buckets are calculated relative to this origin. So, in this example,
 any Sunday could have been used. Note that because `time < TIMESTAMPTZ '2018-01-03'` in this example,
 the last bucket would have only 4 days of data.
@@ -943,6 +944,8 @@ to the server's timezone setting.
  with the ISO standard for Monday as the start of a week. This should only affect
  multi-day calls to time_bucket. The old behavior can be reproduced by passing
  2000-01-01 as the origin parameter to time_bucket.
+
+
 ---
 
 ## Utilities/Statistics [](utilities)
