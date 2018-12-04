@@ -30,12 +30,12 @@ Depending on your user/permission needs, you will also need to set up a postgres
 database by following these [postgres instructions]. Another possibility is using the operating system's
 `ubuntu` user and modifying the [pg_hba].
 
->:WARNING AMIs do not know what instance type you are using beforehand. Therefore
+>:WARNING: AMIs do not know what instance type you are using beforehand. Therefore
 the PostgreSQL configuration (postgresql.conf) that comes with our AMI uses the default
 settings, which are not optimal for most systems. See our [configuration] section for tips on
 optimally configuring postgresql.conf for your particular setup.
 
->:TIP These AMIs are made for EBS attached volumes. This allows for snapshots, protection of
+>:TIP: These AMIs are made for EBS attached volumes. This allows for snapshots, protection of
 data if the EC2 instance goes down, and dynamic IOPS configuration. You should choose an
 EC2 instance type that is optimized for EBS attached volumes. For information on choosing the right
 EBS optimized EC2 instance type, see the AWS [instance configuration page].
