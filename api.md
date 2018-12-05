@@ -22,6 +22,7 @@
 > - [set_adaptive_chunking](#set_adaptive_chunking)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
+> - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 
@@ -949,6 +950,47 @@ to the server's timezone setting.
 ---
 
 ## Utilities/Statistics [](utilities)
+
+## timescaledb_information.hypertable [](timescaledb_information-hypertable)
+
+Get information about hypertables.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+| `schema_name` | Schema name of the hypertable. |
+| `table_name` | Table name of the hypertable. |
+| `table_owner` | Owner of the hypertable. |
+| `num_dimensions` | Number of dimensions. |
+| `num_chunks` | Number of chunks. |
+| `table_bytes` |Disk space used by hypertable |
+| `index_bytes` |Disk space used by indexes|
+| `toast_bytes` |Disk space of toast tables|
+| `total_bytes` |Total disk space used by the specified table, including all indexes and TOAST data|
+
+#### Sample Usage
+
+Get information about all hypertables.
+
+```sql
+SELECT * FROM timescaledb_information.hypertable;
+ table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size
+--------------+------------+-------------+----------------+------------+------------+------------+------------+------------
+ public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
+ public       | devices    | postgres    |              1 |          1 | 8192 bytes | 16 kB      |            | 24 kB
+(2 rows)
+```
+
+Check whether a table is a hypertable.
+
+```sql
+SELECT * FROM timescaledb_information.hypertable WHERE table_schema='public' AND table_name='metrics';
+ table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size 
+--------------+------------+-------------+----------------+------------+------------+------------+------------+------------
+ public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
+(1 row)
+```
 
 ## chunk_relation_size() [](chunk_relation_size)
 
