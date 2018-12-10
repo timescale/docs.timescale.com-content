@@ -66,25 +66,26 @@ company.
 There are some custom modifications to the markdown parser to allow for special
 formatting within the docs.
 
-+ Adding 'sss ' to the start of every list item in an ordered list will result in
++ Adding `sss ` to the start of every list item in an ordered list will result in
   a switch to "steps" formatting which is used to denote instructional steps, as
   for a tutorial.
-+ Adding '>:TIP: ' to the start of a blockquote (using '>') will create a "tip" callout.
-+ Adding '>:WARNING: ' to the start of a blockquote (using '>') will create a "warning" callout.
-+ Adding '>:TOPLIST: ' as the first line of a blockquote (using '>') will
++ Adding `>:TIP: ` to the start of a blockquote (using '>') will create a "tip" callout.
++ Adding `>:WARNING: ` to the start of a blockquote (using '>') will create a "warning" callout.
++ Adding `>:TOPLIST: ` as the first line of a blockquote (using '>') will
 create a fixed right-oriented box, useful for a table of contents or list of
 functions, etc.  See the FAQ page (faq.md) for an example.
     - The first headline in the toplist will act as the title and will be separated from the remainder of the content stylewise (on the FAQ page, it's the headline "Questions").
     - Everything else acts as a normal blockquote does.
 + Adding a text free link to a header with a text address (Ex. `## Important Header [](indexing)`) will create an anchor icon that links to that header with the hash name of the text.
-+ Adding ':FOOTER_LINK: ' to the start of a paragraph(line) will format it as a "footer link".
-+ Adding ':DOWNLOAD_LINK: ' to the start of a link will append a 'download link' icon to the end of the link inline.
-+ Adding 'x.y.z' anywhere in the text will be replaced by the version number of the branch.  Ex. `look at file foo-x.y.z` >> `look at file foo-0.4.2`.
++ Adding `:FOOTER_LINK: ` to the start of a paragraph(line) will format it as a "footer link".
++ Adding `:DOWNLOAD_LINK: ` to the start of a link will append a 'download link' icon to the end of the link inline.
++ Adding `x.y.z` anywhere in the text will be replaced by the version number of the branch.  Ex. `look at file foo-x.y.z` >> `look at file foo-0.4.2`.
++ Adding `:pg_version:` to text displayed in an installation section (i.e. any page with a filename beginning `installation-`) will display the PostgreSQL version number.  This is primarily to be used for displayed filenames in install instructions that need to be modular based on the version.
 
 _Make sure to include the space after the formatting command!_
 
 **Warning**: Note the single space required in the special formats before adding
-normal text. Adding 'ttt' or 'vvv' to the start of any standard paragraph will
+normal text. Adding ':TIP:' or ':WARNING:' to the start of any standard paragraph will
 result in non-optimal html.  The characters will end up on the outside of the
 paragraph tag.  This is due to the way that the markdown parser interprets
 blockquotes with the new modifications.
@@ -94,14 +95,15 @@ anticipate that.
 ### Editing the API section
 
 There is a specific format for the API section which consists of:
-- Function name with empty parentheses (if function takes arguments). Ex. `add_dimension()`
-- Brief, specific description of the function
+- **Function name** with empty parentheses (if function takes arguments). Ex. `add_dimension()`
+- A brief, specific description of the function
 - Any warnings necessary
-- Required Arguments
+- **Required Arguments**
     - A table with columns for "Name" and "Description"
-- Optional Arguments
+- **Optional Arguments**
     - A table with columns for "Name" and "Description"
 - Any specific instructions about the arguments, including valid types
-- Sample Usage: one or two literal examples of the function being used to demonstrate argument syntax.
+- **Sample Usage**
+    - One or two literal examples of the function being used to demonstrate argument syntax.
 
 See the API file to get an idea.
