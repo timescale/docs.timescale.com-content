@@ -3,7 +3,7 @@
 This will install both TimescaleDB *and* PostgreSQL via `yum`
 (or `dnf` on Fedora).
 
-**Note: TimescaleDB requires PostgreSQL 9.6.3+ or 10.2+**
+**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.2+, or [BETA] 11.0+**
 
 #### Prerequisites
 
@@ -36,6 +36,9 @@ wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postg
 # For PostgreSQL 10:
 wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-10-0.x86_64.rpm
 
+# For PostgreSQL 11. PG 11 support is currently in BETA:
+wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-11-0.x86_64.rpm
+
 # To install
 sudo yum install <name of file you downloaded with wget>
 ```
@@ -48,7 +51,7 @@ and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
 but this may vary depending on your setup. If you are unsure where your `postgresql.conf` file
 is located, you can query PostgreSQL through the psql interface using `SHOW config_file;`.
 Please note that you must have created a `postgres` superuser so that you can access the psql
-interface. 
+interface.
 
 You will need to edit your `postgresql.conf` file to include
 necessary libraries:

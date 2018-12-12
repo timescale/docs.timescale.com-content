@@ -2,7 +2,7 @@
 
 This will install TimescaleDB via `apt` on Ubuntu distros.
 
-**Note: TimescaleDB requires PostgreSQL 9.6.3+ or 10.2+**
+**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.2+, or [BETA] 11.0+**
 
 #### Prerequisites
 
@@ -38,6 +38,9 @@ sudo apt-get update
 sudo apt install timescaledb-postgresql-10
 # To install for PG 9.6.3+
 sudo apt install timescaledb-postgresql-9.6
+
+# PG 11 support is currently in BETA. To install for PG 11.0+
+sudo apt install timescaledb-postgresql-11
 ```
 
 #### Update `postgresql.conf`
