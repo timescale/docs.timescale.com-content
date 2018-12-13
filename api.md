@@ -23,6 +23,7 @@
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
+> - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 
@@ -520,9 +521,13 @@ are before the cut-off point, but only one chunk's worth.
 
 #### Required Arguments [](drop_chunks-required-arguments)
 
+Function requires at least one of the following arguments. These arguments have
+the same semantics as the `show_chunks` [function][show chunks].
+
 |Name|Description|
 |---|---|
-| `older_than` | Timestamp of cut-off point for data to be dropped, i.e., anything older than this should be removed.|
+| `older_than` | Specification of cut-off point where any full chunks older than this timestamp should be removed. |
+| `newer_than` | Specification of cut-off point where any full chunks newer than this timestamp should be removed. |
 
 #### Optional Arguments [](drop_chunks-optional-arguments)
 
@@ -532,23 +537,42 @@ are before the cut-off point, but only one chunk's worth.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 | `cascade` | Boolean on whether to `CASCADE` the drop on chunks, therefore removing dependent objects on chunks to be removed. Defaults to `FALSE`.
 
-The `older_than` parameter can be specified in two ways:
+The `older_than` and `newer_than` parameters can be specified in two ways:
 
 - **interval type**: The cut-off point is computed as `now() -
-    older_than`.  An error will be returned if an INTERVAL is supplied
+    older_than` and similarly `now() - newer_than`.  An error will be returned if an INTERVAL is supplied
     and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
     DATE.
 
 - **timestamp, date, or integer type**: The cut-off point is
     explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
-    SMALLINT / INT / BIGINT. The choice of timestamp or integer should
-    generally follow the type of the hypertable's time column.
+    SMALLINT / INT / BIGINT. The choice of timestamp or integer must follow the type of the hypertable's time column.
+
+When both arguments are used, the function returns the intersection of the resulting two ranges. For example,
+specifying `newer_than => 4 months` and `older_than => 3 months` will drop all full chunks that are between 3 and
+4 months old. Similarly, specifying `newer_than => '2017-01-01'` and `older_than => '2017-02-01'` will drop
+all full chunks between '2017-01-01' and '2017-02-01'. Specifying parameters that do not result in an overlapping
+intersection between two ranges will result in an error.
 
 #### Sample Usage [](drop_chunks-examples)
 
 Drop all chunks older than 3 months:
 ```sql
 SELECT drop_chunks(interval '3 months');
+```
+
+The expected output:
+
+```sql
+ drop_chunks  
+-------------
+
+(1 row)
+```
+
+Drop all chunks more than 3 months in the future. This is useful for correcting data ingested with incorrect clocks:
+```sql
+SELECT drop_chunks(newer_than => now() + interval '3 months');
 ```
 
 Drop all chunks from hypertable `conditions` older than 3 months:
@@ -569,6 +593,16 @@ SELECT drop_chunks(1483228800000, 'conditions');
 Drop all chunks from hypertable `conditions` older than 3 months, including dependent objects (e.g., views):
 ```sql
 SELECT drop_chunks(interval '3 months', 'conditions', cascade => TRUE);
+```
+
+Drop all chunks newer than 3 months:
+```sql
+SELECT drop_chunks(newer_than => interval '3 months');
+```
+
+Drop all chunks older than 3 months and newer than 4 months:
+```sql
+SELECT drop_chunks(older_than => interval '3 months', newer_than => interval '4 months', table_name => 'conditions')
 ```
 
 ---
@@ -706,6 +740,96 @@ SELECT set_number_partitions('conditions', 2);
 For a table with more than one space dimension:
 ```sql
 SELECT set_number_partitions('conditions', 2, 'device_id');
+```
+
+---
+
+## show_chunks() [](show_chunks)
+Get list of chunks associated with hypertables.
+
+#### Optional Arguments [](show_chunks-optional-arguments)
+
+Function accepts the following arguments. These arguments have
+the same semantics as the `drop_chunks` [function][drop chunks].
+
+|Name|Description|
+|---|---|
+| `hypertable` | Hypertable name from which to select chunks. If not supplied, all chunks are shown. |
+| `older_than` | Specification of cut-off point where any full chunks older than this timestamp should be shown. |
+| `newer_than` | Specification of cut-off point where any full chunks newer than this timestamp should be shown. |
+
+The `older_than` and `newer_than` parameters can be specified in two ways:
+
+- **interval type**: The cut-off point is computed as `now() -
+    older_than` and similarly `now() - newer_than`.  An error will be returned if an INTERVAL is supplied
+    and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
+    DATE.
+
+- **timestamp, date, or integer type**: The cut-off point is
+    explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
+    SMALLINT / INT / BIGINT. The choice of timestamp or integer must follow the type of the hypertable's time column.
+
+When both arguments are used, the function returns the intersection of the resulting two ranges. For example,
+specifying `newer_than => 4 months` and `older_than => 3 months` will show all full chunks that are between 3 and
+4 months old. Similarly, specifying `newer_than => '2017-01-01'` and `older_than => '2017-02-01'` will show
+all full chunks between '2017-01-01' and '2017-02-01'. Specifying parameters that do not result in an overlapping
+intersection between two ranges will result in an error.
+
+#### Sample Usage [](show_chunks-examples)
+
+Get list of all chunks. Returns 0 if there are no hypertables:
+```sql
+SELECT show_chunks();
+```
+
+The expected output:
+```sql
+ show_chunks  
+---------------------------------------
+ _timescaledb_internal._hyper_1_10_chunk
+ _timescaledb_internal._hyper_1_11_chunk
+ _timescaledb_internal._hyper_1_12_chunk
+ _timescaledb_internal._hyper_1_13_chunk
+ _timescaledb_internal._hyper_1_14_chunk
+ _timescaledb_internal._hyper_1_15_chunk
+ _timescaledb_internal._hyper_1_16_chunk
+ _timescaledb_internal._hyper_1_17_chunk
+ _timescaledb_internal._hyper_1_18_chunk
+```
+
+Get list of all chunks associated with a table:
+```sql
+SELECT show_chunks('conditions');
+```
+
+Get all chunks older than 3 months:
+```sql
+SELECT show_chunks(older_than => interval '3 months');
+```
+
+Get all chunks more than 3 months in the future. This is useful for showing data ingested with incorrect clocks:
+```sql
+SELECT show_chunks(newer_than => now() + interval '3 months');
+```
+
+Get all chunks from hypertable `conditions` older than 3 months:
+```sql
+SELECT show_chunks('conditions', older_than => interval '3 months');
+```
+
+Get all chunks from hypertable `conditions` before 2017:
+```sql
+SELECT show_chunks('conditions', older_than => '2017-01-01'::date);
+```
+
+Get all chunks newer than 3 months:
+```sql
+SELECT show_chunks(newer_than => interval '3 months');
+```
+
+Get all chunks older than 3 months and newer than 4 months:
+```sql
+SELECT show_chunks(older_than => interval '3 months', newer_than => interval '4 months');
 ```
 
 ---
@@ -986,7 +1110,7 @@ Check whether a table is a hypertable.
 
 ```sql
 SELECT * FROM timescaledb_information.hypertable WHERE table_schema='public' AND table_name='metrics';
- table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size 
+ table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size
 --------------+------------+-------------+----------------+------------+------------+------------+------------+------------
  public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
 (1 row)
@@ -1307,3 +1431,5 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [adaptive-chunking]: /using-timescaledb/adaptive-chunking
 [memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
 [telemetry]: /using-timescaledb/telemetry
+[drop chunks]: #drop_chunks
+[show chunks]: #show_chunks
