@@ -38,23 +38,20 @@ container (NOTE: for Windows this is _necessary_):
 docker exec -it timescaledb psql -U postgres
 ```
 
->:TIP: The `run` command will only pull an image from Docker Hub if one
-does not exist locally.  If you have previously pulled an image and
-want instead to *upgrade* to the latest version, you need to
-explicitly `pull` the latest:
-`docker pull timescale/timescaledb:latest-pg9.6` (PostgreSQL 9.6) or
-`docker pull timescale/timescaledb:latest-pg10` (PostgreSQL 10).
-
 #### More detailed instructions
 
 Our Docker image is derived from the [official PostgreSQL image][official-image] and
 includes [alpine Linux][] as its OS.
 
 While the above `run` command will pull the Docker image on demand,
-you can also explicitly pull our image from [Docker Hub][],
+you can also -- and for upgrades, **need to** -- explicitly pull our image from [Docker Hub][]:
 
 ```bash
-docker pull timescale/timescaledb:latest
+docker pull timescale/timescaledb:latest-pg10  # for PostgreSQL 10
+docker pull timescale/timescaledb:latest-pg9.6 # for PostgreSQL 9.6
+
+# PG 11 support is currently in BETA
+docker pull timescale/timescaledb:latest-pg11  # for PostgreSQL 11
 ```
 
 When running a Docker image, if one prefers to store the data in a
