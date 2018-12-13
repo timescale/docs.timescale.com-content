@@ -1219,7 +1219,7 @@ SELECT get_telemetry_report()
 
 ---
 
-# hypertable_approximate_row_count() [](hypertable_approximate_row_count)
+## hypertable_approximate_row_count() [](hypertable_approximate_row_count)
 
 Get approximate row count for hypertable(s) based on catalog estimates.
 
