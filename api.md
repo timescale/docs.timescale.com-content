@@ -175,15 +175,15 @@ still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
 | `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
-| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of Timescale v0.11.0, default is 7 days, unless [adaptive chunking][adaptive-chunking] is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of Timescale v0.11.0, default is 7 days, unless [adaptive chunking (BETA)][adaptive-chunking] is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
 | `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
-| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
-| `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
+| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking (BETA)][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
+| `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking (BETA)][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
 
 >:WARNING: The use of the `migrate_data` argument to convert a non-empty table can
 lock the table for a significant amount of time, depending on how much data is
@@ -226,14 +226,14 @@ cover 1 day, you should specify `chunk_time_interval => 86400000`.
 The units of `chunk_target_size` follow the format of a ["Numeric with
 Unit"][memory-units] memory settings parameter in PostgreSQL. Note
 that this size includes indexes when using the default adaptive
-chunking algorithm. Be careful with specifying a plain number
+chunking (BETA) algorithm. Be careful with specifying a plain number
 (`100000000`) rather than one with units (`100MB`), as the base unit
 is the size of a disk block (typically 8k, in which case 100,000,000 *
 8k ~ 800GB).
 
 <!-- -->
 >:TIP: Setting a reasonable initial `chunk_time_interval` is important
-even with adaptive chunking enabled, because it allows the adaptive
+even with adaptive chunking (BETA) enabled, because it allows the adaptive
 algorithm to more quickly reach the target chunk size. It is better to
 set a too small `chunk_time_interval` as opposed to a too large
 one. If no `chunk_time_interval` is set with adaptive chunking, the
@@ -251,7 +251,7 @@ and return a positive `integer` hash value. Note that this hash value
 is _not_ a partition ID, but rather the inserted value's position in
 the dimension's key space, which is then divided across the partitions.
 
-[Adaptive chunking][adaptive-chunking] can be enabled by setting the
+[Adaptive chunking (BETA)][adaptive-chunking] can be enabled by setting the
 `chunk_target_size` to a non-zero human-readable value, e.g.,
 `2GB`. The `chunk_target_size` should ideally not exceed the setting
 of `shared_buffers`. It is also possible to set `chunk_target_size` to
@@ -327,7 +327,7 @@ automatically adapted intervals (which are not enabled by default),
 the user should specify a `chunk_target_size` and the chunk interval
 will be adapted for future chunks with the specified
 `chunk_time_interval` as a starting point, or 1 day if not
-specified. The settings for adaptive chunking can be changed by
+specified. The settings for adaptive chunking (BETA) can be changed by
 calling [`set_adaptive_chunking()`](#set_adaptive_chunking).
 
 The following instructions apply if users are choosing to configure
@@ -597,7 +597,7 @@ SELECT set_chunk_time_interval('conditions', 86400000);
 ---
 
 ## set_adaptive_chunking() [](set_adaptive_chunking)
-Changes the settings for [adaptive chunking][adaptive-chunking]. The
+Changes the settings for [adaptive chunking (BETA)][adaptive-chunking]. The
 function returns the configured chunk sizing function and the target
 chunk size in bytes. This change will impact how and when new chunks
 are created; it does not modify the intervals of existing chunks.
@@ -607,12 +607,12 @@ are created; it does not modify the intervals of existing chunks.
 |Name|Description|
 |---|---|
 | `hypertable` | Identifier of hypertable to update the settings for.|
-| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
+| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable [adaptive chunking (BETA)][adaptive-chunking]. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
 
 #### Optional Arguments [](set_adaptive_chunking-optional-arguments)
 | Name | Description |
 |---|---|
-| `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function. |
+| `chunk_sizing_func` | Allows setting a custom chunk sizing function for [adaptive chunking (BETA)][adaptive-chunking]. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function. |
 
 
 #### Sample Usage [](set_adaptive_chunking-examples)
