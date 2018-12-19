@@ -10,7 +10,7 @@
 
 #### Build & Install
 
-1. Download the the .zip file for your PostgreSQL version: [PostgreSQL 9.6][windows-dl-pg9.6] or [PostgreSQL 10][windows-dl-pg10]
+1. Download the the [.zip file for your PostgreSQL version][windows-dl].
 
 1. Extract the zip file locally
 
@@ -26,8 +26,9 @@ Go ahead and press ENTER to close the window
 
 #### Update `postgresql.conf`
 
-You will need to edit your `postgresql.conf` file to include
-necessary libraries, and then restart PostgreSQL. First, locate your postgresql.conf file:
+You will need to edit your `postgresql.conf` file to include necessary
+libraries, and then restart PostgreSQL. First, locate your `postgresql.conf`
+file:
 
 ```bash
 psql -d postgres -c "SHOW config_file;"
@@ -46,5 +47,4 @@ Then, restart the PostgreSQL instance.
 
 [c_plus]: https://www.microsoft.com/en-us/download/details.aspx?id=48145
 [pg_config]: https://www.postgresql.org/docs/10/static/app-pgconfig.html
-[windows-dl-pg9.6]:  https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-9.6_x.y.z-windows-amd64.zip
-[windows-dl-pg10]: https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-10_x.y.z-windows-amd64.zip
+[windows-dl]:  https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-:pg_version:_x.y.z-windows-amd64.zip
