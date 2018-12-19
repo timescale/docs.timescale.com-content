@@ -34,30 +34,22 @@ any dependencies it needs from the PostgreSQL repo):
 sudo add-apt-repository ppa:timescale/timescaledb-ppa
 sudo apt-get update
 
-# To install for PG 10.2+
-sudo apt install timescaledb-postgresql-10
-# To install for PG 9.6.3+
-sudo apt install timescaledb-postgresql-9.6
-
-# PG 11 support is currently in BETA. To install for PG 11.0+
-sudo apt install timescaledb-postgresql-11
+# Now install appropriate package for PG version
+sudo apt install timescaledb-postgresql-:pg_version:
 ```
 
 #### Update `postgresql.conf`
 
 >:TIP: The usual location of `postgres.conf`
-is `/etc/postgresql/9.6/main/postgresql.conf` for 9.6 and
-`/etc/postgresql/10/main/postgresql.conf` for 10, but this may vary
+is `/etc/postgresql/:pg_version:/main/postgresql.conf`, but this may vary
 depending on your setup. If you are unsure where your `postgresql.conf` file
-is located, you can query PostgreSQL through the psql interface using `SHOW config_file;`.
-Please note that you must have created a `postgres` superuser so that you can access the psql
-interface.
+is located, you can query PostgreSQL with any database client (e.g., `psql`)
+using `SHOW config_file;`.
 
 You will need to edit your `postgresql.conf` file to include
 necessary libraries:
 ```bash
 # Modify postgresql.conf to uncomment this line and add required libraries.
-# For example:
 shared_preload_libraries = 'timescaledb'
 ```
 

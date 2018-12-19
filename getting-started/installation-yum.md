@@ -7,8 +7,7 @@ This will install both TimescaleDB *and* PostgreSQL via `yum`
 
 #### Prerequisites
 
-- Fedora 24 or later, or
-- CentOS 7 or later
+- CentOS 7 (or Fedora/RHEL equivalent) or later
 
 #### Build & Install
 
@@ -31,13 +30,8 @@ Further setup instructions [are found here][yuminstall].
 
 Then, fetch our RPM and install it:
 ```bash
-# Fetch our RPM (for PostgreSQL 9.6)
-wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-9.6-0.x86_64.rpm
-# For PostgreSQL 10:
-wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-10-0.x86_64.rpm
-
-# For PostgreSQL 11. PG 11 support is currently in BETA:
-wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-11-0.x86_64.rpm
+# Fetch our RPM
+wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-:pg_version:-0.x86_64.rpm
 
 # To install
 sudo yum install <name of file you downloaded with wget>
@@ -45,19 +39,16 @@ sudo yum install <name of file you downloaded with wget>
 
 #### Update `postgresql.conf`
 
->:TIP: The usual location of `postgres.conf`
-is `/var/lib/pgsql/9.6/data/postgresql.conf` for PostgreSQL 9.6
-and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
-but this may vary depending on your setup. If you are unsure where your `postgresql.conf` file
-is located, you can query PostgreSQL through the psql interface using `SHOW config_file;`.
-Please note that you must have created a `postgres` superuser so that you can access the psql
-interface.
+>:TIP: The usual location of `postgres.conf` is
+`/var/lib/pgsql/:pg_version:/data/postgresql.conf`, but this may vary depending
+on your setup. If you are unsure where your `postgresql.conf` file
+is located, you can query PostgreSQL with any database client (e.g., `psql`)
+using `SHOW config_file;`.
 
 You will need to edit your `postgresql.conf` file to include
 necessary libraries:
 ```bash
 # Modify postgresql.conf to uncomment this line and add required libraries.
-# For example:
 shared_preload_libraries = 'timescaledb'
 ```
 

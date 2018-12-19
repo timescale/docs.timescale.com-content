@@ -31,10 +31,9 @@ brew install timescaledb
 
 >:TIP: The usual location of `postgresql.conf` is
 `/usr/local/var/postgres/postgresql.conf`, but this may vary depending on
-your setup. If you are unsure where your `postgresql.conf` file is located, you
-can query PostgreSQL through the psql interface using `SHOW config_file;`. Please note
-that you must have created a `postgres` superuser so that you can access the psql
-interface.
+your setup. If you are unsure where your `postgresql.conf` file
+is located, you can query PostgreSQL with any database client (e.g., `psql`)
+using `SHOW config_file;`.
 
 Also, you will need to edit your `postgresql.conf` file to include
 necessary libraries:
@@ -49,8 +48,9 @@ shared_preload_libraries = 'timescaledb'
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
->:WARNING: If you are still on PostgreSQL 9.6 via Homebrew, you should
-replace `postgresql` with <code>postgresql&#64;9.6</code>.
+>:WARNING: If you are still on PostgreSQL 9.6 or 10 via Homebrew, you should
+replace `postgresql` with <code>postgresql&#64;9.6</code> for 9.6 or
+<code>postgresql&#64;10</code> for 10.
 
 ```bash
 # Restart PostgreSQL instance

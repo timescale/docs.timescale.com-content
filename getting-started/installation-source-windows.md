@@ -7,7 +7,7 @@
 - A standard **PostgreSQL 9.6 or 10 64-bit** installation
 - Visual Studio 2017 (with [CMake][] and Git components)  
   **or** Visual Studio 2015/2016 (with [CMake][] version 3.4+ and Git components)
-- Make sure all relevant binaries are in your PATH: `pg_config`, `cmake`, `MSBuild`
+- Make sure all relevant binaries are in your PATH: `pg_config` and `cmake`
 
 #### Build & Install with Local PostgreSQL
 >:TIP: It is **highly recommended** that you checkout the latest
@@ -28,14 +28,13 @@ care of the rest.
 If you are using an earlier version of Visual Studio:
 ```bash
 # Bootstrap the build system
-./bootstrap.bat
+bootstrap.bat
 
 # To build the extension from command line
-cd build
-MSBuild.exe timescaledb.sln
+cmake --build ./build --config Release
 
 # To install
-MSBuild.exe /p:Configuration=Release INSTALL.vcxproj
+cmake --build ./build --config Release --target install
 
 # Alternatively, open build/timescaledb.sln in Visual Studio and build,
 # then open & build build/INSTALL.vcxproj
