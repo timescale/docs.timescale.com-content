@@ -252,32 +252,26 @@ query above) with a generated stream of dates.
 
 ```sql
 SELECT
-  period AS date,
-  coalesce(volume,0) AS volume
-FROM
-  generate_series(date '2017-09-01',date '2017-09-30',interval '1d') AS period
-  LEFT JOIN (
-    SELECT
-      time_bucket('1d',time)::date AS date,
-      sum(volume) as volume
-    FROM trades
-    WHERE asset_code = 'TIMS'
-      AND time >= '2017-09-01' AND time < '2017-10-01'
-    GROUP BY 1
-  ) t ON t.date = period;
+  time_bucket_gapfill('1 day', time, '2017-09-01', '2017-10-01')::date AS date,
+  sum(volume) AS volume
+FROM trades
+WHERE asset_code = 'TIMS'
+  AND time >= '2017-09-01' AND time < '2017-10-01'
+GROUP BY date
+ORDER BY date DESC;
 ```
 This query will then output data in the following form:
 ```
     date    | volume
 ------------+--------
- 2017-09-30 |      0
+ 2017-09-30 |
  2017-09-29 |  11315
  2017-09-28 |   8216
  2017-09-27 |   5591
  2017-09-26 |   9182
  2017-09-25 |  14359
- 2017-09-24 |      0
- 2017-09-23 |      0
+ 2017-09-24 |
+ 2017-09-23 |
  2017-09-22 |   9855
 ```
 Unlike with date_trunc, we can use a custom time interval with the time_bucket function,
@@ -290,24 +284,13 @@ Note that we can do basic arithmetic operations on intervals easily in order to 
 value to pass to time_bucket.
 ```sql
 SELECT
-  period AS time,
-  avg_data
-FROM
-  generate_series(
-    time_bucket(interval '2 weeks' / 1080, now() - interval '2 weeks'),
-    now(),
-    interval '2 weeks' / 1080
-  ) AS period
-  LEFT JOIN (
-    SELECT
-      time_bucket(interval '2 weeks' / 1080, time::timestamptz) as btime,
-      avg(data_value) as avg_data
-    FROM my_hypertable
-    WHERE
-      time > now() - interval '2 weeks'
-      AND meter_id = 1
-    GROUP BY 1
-  ) t ON t.btime = period;
+  time_bucket_gapfill(interval '2 weeks' / 1080, now() - interval '2 weeks', '2017-09-01', '2017-10-01'),
+  sum(volume) AS volume
+FROM trades
+WHERE asset_code = 'TIMS'
+  AND time >= '2017-09-01' AND time < '2017-10-01'
+GROUP BY date
+ORDER BY date DESC;
 ```
 This query will output data of the form:
 ```
@@ -336,26 +319,14 @@ value.
 
 ```sql
 SELECT
-  period AS time,
-  coalesce(
-    data_value,
-    (
-      SELECT data_value FROM my_hypertable m WHERE m.time < period AND m.meter_id = t.meter_id ORDER BY time DESC LIMIT 1
-    )
-  ) AS data_value
-FROM
-  generate_series(time_bucket(interval '2 weeks' / 1080, now()-'2 weeks'::interval), now(), '2 weeks'::interval / 1080) AS period
-  LEFT JOIN (
-    SELECT
-      time_bucket('2 weeks'::interval / 1080, time::timestamptz) as btime,
-      meter_id,
-      avg(data_value) AS data_value
-    FROM my_hypertable
-    WHERE
-      time > now() - '2 weeks'::interval
-      AND meter_id IN (1,2,3,4)
-    GROUP BY 1,2
-  ) t ON t.btime = period;
+  time_bucket_gapfill('5 min'::interval, time, now() - '2 weeks'::interval, now()) as time,
+  meter_id,
+  locf(avg(data_value)) AS data_value
+FROM my_hypertable
+WHERE
+  time > now() - '2 weeks'::interval
+  AND meter_id IN (1,2,3,4)
+GROUP BY 1,2
 ```
 
 ### Last Point [](last-point)

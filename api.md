@@ -18,7 +18,9 @@
 > - [hypertable_relation_size_pretty](#hypertable_relation_size_pretty)
 > - [indexes_relation_size](#indexes_relation_size)
 > - [indexes_relation_size_pretty](#indexes_relation_size_pretty)
+> - [interpolate](#interpolate)
 > - [last](#last)
+> - [locf](#locf)
 > - [set_adaptive_chunking](#set_adaptive_chunking)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
@@ -26,6 +28,7 @@
 > - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
+> - [time_bucket_gapfill](#time_bucket_gapfill)
 
 ## Hypertable management [](hypertable-management)
 
@@ -919,6 +922,48 @@ The expected output:
 
 ---
 
+## interpolate() [](interpolate)
+
+The `interpolate` does linear interpolation for missing values.
+The `interpolate` function can only be used in an aggregation query with `time_bucket_gapfill`.
+
+#### Required Arguments [](interpolate-required-arguments)
+
+|Name|Description|
+|---|---|
+| `value` | The value to carry forward (anyelement) |
+| `prev` | The lookup expression for values before the gapfill time range |
+| `next` | The lookup expression for values after the gapfill time range |
+
+#### Sample Usage [](interpolate-examples)
+
+Get the temperature every 5 minutes for each device over the 2 weeks interpolating for missing readings:
+```sql
+SELECT
+  time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
+  device_id,
+  interpolate(avg(temperature))
+FROM metrics
+  WHERE time > now () - interval '2 week'
+GROUP BY 1,2
+ORDER BY 1 DESC;
+```
+
+Get the temperature every 5 minutes for each device over the 2 weeks interpolating for missing readings with lookup queries for values before and after the gapfill time range:
+```sql
+SELECT
+  time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
+  device_id,
+  interpolate(avg(temperature,
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id),
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id)
+  )
+FROM metrics
+  WHERE time > now () - interval '2 week'
+GROUP BY 1,2
+ORDER BY 1 DESC;
+```
+
 ## last() [](last)
 
 The `last` aggregate allows you to get the value of one column
@@ -949,6 +994,47 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
  for ordered selection within a `GROUP BY` aggregate, and not as an
  alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
  latest value (which will use indexes).
+
+## locf() [](locf)
+
+The `locf` function allows you to carry the last seen value in an aggregation group forward.
+The `locf` function can only be used in an aggregation query with `time_bucket_gapfill`.
+
+#### Required Arguments [](locf-required-arguments)
+
+|Name|Description|
+|---|---|
+| `value` | The value to carry forward (anyelement) |
+| `prev` | The lookup expression for values outside of the gapfill time range |
+
+#### Sample Usage [](locf-examples)
+
+Get the temperature every 5 minutes for each device over the 2 weeks carrying forward the last value for missing readings:
+```sql
+SELECT
+  time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
+  device_id,
+  locf(avg(temperature))
+FROM metrics
+  WHERE time > now () - interval '2 week'
+GROUP BY 1,2
+ORDER BY 1 DESC;
+```
+
+Get the temperature every 5 minutes for each device over the 2 weeks carrying forward the last value for missing readings with out of bounds lookup
+```sql
+SELECT
+  time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
+  device_id,
+  locf(
+    avg(temperature),
+    (SELECT temperature FROM metrics m2 WHERE m2.time < now( - interval '2 week') AND m.device_id = m2.device_id)
+  )
+FROM metrics m
+  WHERE time > now () - interval '2 week'
+GROUP BY 1,2
+ORDER BY 1 DESC;
+```
 
 ---
 
@@ -1070,6 +1156,66 @@ to the server's timezone setting.
  multi-day calls to time_bucket. The old behavior can be reproduced by passing
  2000-01-01 as the origin parameter to time_bucket.
 
+## time_bucket_gapfill() [](time_bucket_gapfill)
+
+>:TIP: TIMESTAMPTZ arguments are
+bucketed by the time at UTC. So the alignment of buckets is
+on UTC time. One consequence of this is that daily buckets are
+aligned to midnight UTC, not local time.
+>
+
+#### Required Arguments [](time_bucket_gapfill-required-arguments)
+
+|Name|Description|
+|---|---|
+| `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
+| `time` | The timestamp to bucket (timestamp/timestamptz/date)|
+| `start` | The start of the gapfill period (timestamp/timestamptz/date)|
+| `end` | The end of the gapfill period (timestamp/timestamptz/date)|
+
+#### Required Arguments [](time_bucket_gapfill-integer-required-arguments)
+
+|Name|Description|
+|---|---|
+| `bucket_width` | integer interval for how long each bucket is (int2/int4/int8) |
+| `time` | The timestamp to bucket (int2/int4/int8)|
+| `start` | The start of the gapfill period (int2/int4/int8)|
+| `end` | The end of the gapfill period (int2/int4/int8)|
+
+#### Sample Usage [](time_bucket_gapfill-examples)
+
+Simple gap fill query with 5 minute interval:
+
+```sql
+SELECT
+  time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS time,
+  avg(value)
+FROM metrics
+GROUP BY 1
+ORDER BY 1;
+```
+
+Simple gap fill query with 5 minute interval with LOCF:
+
+```sql
+SELECT
+  time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS time,
+  locf(avg(value))
+FROM metrics
+GROUP BY 1
+ORDER BY 1;
+```
+
+Simple gap fill query with 5 minute interval and interpolation:
+
+```sql
+SELECT
+  time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS time,
+  interpolate(avg(value))
+FROM metrics
+GROUP BY 1
+ORDER BY 1;
+```
 
 ---
 
