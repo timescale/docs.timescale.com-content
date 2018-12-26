@@ -61,10 +61,6 @@ volume should be stored/mounted via the `-v` flag.  In particular, the
 above `docker run` command should now include some additional argument
 such as `-v /your/data/dir:/var/lib/postgresql/data`.
 
-This command is also included as [docker-run.sh][] in the `scripts/`
-of our github repo, which saves the data to `$PWD/data` and also
-includes additional `-c` flags we recommend for memory settings, etc.
-
 Note that creating a new container (`docker run`) will also create a new
 volume unless an existing data volume is reused by reference via the
 -v parameter (e.g., `-v VOLUME_ID:/var/lib/postgresql/data`). Existing
