@@ -924,20 +924,24 @@ The expected output:
 
 ## interpolate() [](interpolate)
 
-The `interpolate` does linear interpolation for missing values.
-The `interpolate` function can only be used in an aggregation query with `time_bucket_gapfill`.
+The `interpolate` function does linear interpolation for missing values. It can only be used in an aggregation query with `time_bucket_gapfill`.
 
 #### Required Arguments [](interpolate-required-arguments)
 
 |Name|Description|
 |---|---|
 | `value` | The value to carry forward (anyelement) |
-| `prev` | The lookup expression for values before the gapfill time range |
-| `next` | The lookup expression for values after the gapfill time range |
+
+#### Optional Arguments [](interpolate-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `prev` | The lookup expression for values before the gapfill time range (record) |
+| `next` | The lookup expression for values after the gapfill time range (record) |
 
 #### Sample Usage [](interpolate-examples)
 
-Get the temperature every 5 minutes for each device over the 2 weeks interpolating for missing readings:
+Get the temperature every 5 minutes for each device over the last 2 weeks interpolating for missing readings:
 ```sql
 SELECT
   time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
@@ -954,7 +958,7 @@ Get the temperature every 5 minutes for each device over the 2 weeks interpolati
 SELECT
   time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
   device_id,
-  interpolate(avg(temperature,
+  interpolate(avg(temperature),
     (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id),
     (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id)
   )
@@ -998,14 +1002,19 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
 ## locf() [](locf)
 
 The `locf` function allows you to carry the last seen value in an aggregation group forward.
-The `locf` function can only be used in an aggregation query with `time_bucket_gapfill`.
+It can only be used in an aggregation query with `time_bucket_gapfill`.
 
 #### Required Arguments [](locf-required-arguments)
 
 |Name|Description|
 |---|---|
 | `value` | The value to carry forward (anyelement) |
-| `prev` | The lookup expression for values outside of the gapfill time range |
+
+#### Optional Arguments [](locf-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `prev` | The lookup expression for values outside of the gapfill time range (anyelement) |
 
 #### Sample Usage [](locf-examples)
 
