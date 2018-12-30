@@ -924,7 +924,9 @@ The expected output:
 
 ## interpolate() [](interpolate)
 
-The `interpolate` function does linear interpolation for missing values. It can only be used in an aggregation query with `time_bucket_gapfill`.
+The `interpolate` function does linear interpolation for missing values.
+It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
+The `interpolate` function call cannot be nested inside other function calls.
 
 #### Required Arguments [](interpolate-required-arguments)
 
@@ -1002,7 +1004,8 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
 ## locf() [](locf)
 
 The `locf` function allows you to carry the last seen value in an aggregation group forward.
-It can only be used in an aggregation query with `time_bucket_gapfill`.
+It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
+The `locf` function call cannot be nested inside other function calls.
 
 #### Required Arguments [](locf-required-arguments)
 
@@ -1037,7 +1040,7 @@ SELECT
   device_id,
   locf(
     avg(temperature),
-    (SELECT temperature FROM metrics m2 WHERE m2.time < now( - interval '2 week') AND m.device_id = m2.device_id)
+    (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id)
   )
 FROM metrics m
   WHERE time > now () - interval '2 week'
@@ -1167,11 +1170,9 @@ to the server's timezone setting.
 
 ## time_bucket_gapfill() [](time_bucket_gapfill)
 
->:TIP: TIMESTAMPTZ arguments are
-bucketed by the time at UTC. So the alignment of buckets is
-on UTC time. One consequence of this is that daily buckets are
-aligned to midnight UTC, not local time.
->
+The `time_bucket_gapfill` function works similar to `time_bucket` but also activates gap
+filling for the interval between `start` and `end`. It can only be used with an aggregation
+query.
 
 #### Required Arguments [](time_bucket_gapfill-required-arguments)
 
