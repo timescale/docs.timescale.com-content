@@ -34,7 +34,9 @@ CREATE DATABASE nyc_data;
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 ```
 
-Now, download the file [`nyc_data.tar.gz`][nyc_data].
+Next, download the file from the below link:
+
+[:DOWNLOAD_LINK: `nyc_data.tar.gz`][nyc_data]
 
 Then, follow these steps:
 
