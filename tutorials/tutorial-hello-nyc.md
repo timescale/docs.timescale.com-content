@@ -348,14 +348,16 @@ behind the curtain and see what's going on backstage.
 ```sql
 \dn
 
-         List of schemas
-         Name          |  Owner
------------------------+----------
- _timescaledb_cache    | postgres
- _timescaledb_catalog  | postgres
- _timescaledb_internal | postgres
- public                | postgres
-(4 rows)
+          List of schemas
+          Name           |  Owner
+-------------------------+----------
+ _timescaledb_cache      | postgres
+ _timescaledb_catalog    | postgres
+ _timescaledb_config     | postgres
+ _timescaledb_internal   | postgres
+ public                  | postgres
+ timescaledb_information | postgres
+(6 rows)
 ```
 
 ### 5. Bonus! Geospatial Queries via PostGIS [](tutorial-postgis)
