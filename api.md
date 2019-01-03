@@ -1003,7 +1003,7 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
 
 ## locf() [](locf)
 
-The `locf` function allows you to carry the last seen value in an aggregation group forward.
+The `locf` function (last observation carried forward) allows you to carry the last seen value in an aggregation group forward.
 It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
 The `locf` function call cannot be nested inside other function calls.
 
@@ -1183,6 +1183,8 @@ query.
 | `start` | The start of the gapfill period (timestamp/timestamptz/date)|
 | `end` | The end of the gapfill period (timestamp/timestamptz/date)|
 
+### For Integer Time Inputs
+
 #### Required Arguments [](time_bucket_gapfill-integer-required-arguments)
 
 |Name|Description|
@@ -1194,7 +1196,7 @@ query.
 
 #### Sample Usage [](time_bucket_gapfill-examples)
 
-Simple gap fill query with 5 minute interval:
+Get the metric value every 5 minutes over the last week:
 
 ```sql
 SELECT
@@ -1205,7 +1207,7 @@ GROUP BY 1
 ORDER BY 1;
 ```
 
-Simple gap fill query with 5 minute interval with LOCF:
+Get the metric value every 5 minutes over the last week carrying forward the previous seen value if none is available in an interval:
 
 ```sql
 SELECT
@@ -1216,7 +1218,7 @@ GROUP BY 1
 ORDER BY 1;
 ```
 
-Simple gap fill query with 5 minute interval and interpolation:
+Get the metric value every 5 minutes over the last week interpolating missing values:
 
 ```sql
 SELECT
