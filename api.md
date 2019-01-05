@@ -941,6 +941,7 @@ The `interpolate` function call cannot be nested inside other function calls.
 | `prev` | The lookup expression for values before the gapfill time range (record) |
 | `next` | The lookup expression for values after the gapfill time range (record) |
 
+The `prev` and `next` expression will only be evaluated when no suitable value is returned by the outer query.
 The returned record for `prev` and `next` needs to be a time, value tuple.
 The datatype of time needs to be the same as the time datatype in the `time_bucket_gapfill` call.
 The datatype of value needs to be the same as the `value` datatype of the `interpolate` call.
@@ -1021,7 +1022,9 @@ The `locf` function call cannot be nested inside other function calls.
 
 |Name|Description|
 |---|---|
-| `prev` | The lookup expression for values outside of the gapfill time range (anyelement) |
+| `prev` | The lookup expression for values before gapfill start (anyelement) |
+
+The `prev` expression will only be evaluated when no previous value is returned by the outer query.
 
 #### Sample Usage [](locf-examples)
 
