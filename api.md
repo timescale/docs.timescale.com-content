@@ -932,7 +932,7 @@ The `interpolate` function call cannot be nested inside other function calls.
 
 |Name|Description|
 |---|---|
-| `value` | The value to carry forward (anyelement) |
+| `value` | The value to interpolate (int2/int4/int8/float4/float8) |
 
 #### Optional Arguments [](interpolate-optional-arguments)
 
@@ -940,6 +940,10 @@ The `interpolate` function call cannot be nested inside other function calls.
 |---|---|
 | `prev` | The lookup expression for values before the gapfill time range (record) |
 | `next` | The lookup expression for values after the gapfill time range (record) |
+
+The returned record for `prev` and `next` needs to be a time, value tuple.
+The datatype of time needs to be the same as the time datatype in the `time_bucket_gapfill` call.
+The datatype of value needs to be the same as the `value` datatype of the `interpolate` call.
 
 #### Sample Usage [](interpolate-examples)
 
