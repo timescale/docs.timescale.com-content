@@ -1,10 +1,10 @@
 ## From Source [](installation-source)
 
-**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.2+, or [BETA] 11.0+**
+**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.2+, or 11.0+**
 
 #### Prerequisites
 
-- A standard **PostgreSQL 9.6, 10, or [BETA] 11** installation with development environment (header files) (see https://www.postgresql.org/download/ for the appropriate package)
+- A standard **PostgreSQL 9.6, 10, or 11** installation with development environment (header files) (see https://www.postgresql.org/download/ for the appropriate package)
 - C compiler (e.g., gcc or clang)
 - [CMake][] version 3.4 or greater
 
