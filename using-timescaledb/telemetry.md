@@ -1,5 +1,5 @@
 # Telemetry and Version Checking
-Starting in 0.12.0, we enable anonymous usage sharing to help us better
+We enable anonymous usage sharing to help us better
 understand and assist Timescale users, as well as provide automated version
 checks. We emphasize that privacy of our users is paramount, so we do not
 collect any personally-identifying information. The following is an example of
@@ -8,8 +8,17 @@ the JSON that is sent to our servers about a specific deployment:
 ```javascript
 {
 	"db_uuid": "26917841-2fc0-48fd-b096-ba19b3fda98f",
+	"license": {
+        "id": "490FB260-A292-4AD9-9AA2-0360835791B8",
+        "kind": "trial",
+        "edition": "enterprise",
+        "end_time": "2018-09-30 20:00:00-04",
+        "start_time": "2018-08-31 20:00:00-04"
+    },
 	"exported_db_uuid": "8dd4543c-f44e-43c9-a666-02d23bb09b90",
 	"installed_time": "2000-04-17 10:56:59.427738-04",
+	"last_tuned_time": "2001-02-03T04:05:06-0300",
+	"last_tuned_version": "1.0.0",
 	"install_method": "source",
 	"os_name": "Darwin",
 	"os_version": "Darwin Kernel Version 17.5.0: Mon Mar  5 22:24:32 PST 2018",
