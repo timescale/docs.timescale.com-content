@@ -115,13 +115,11 @@ matching your predicate, but in each one, your query also grabs a
 (potentially large) subset of the values, rather than just one
 distinct one.
 
->ttt [](unique_indexes) To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
-exists, the partitioning column **must** be the first (or first two)
-columns that comprise the index.  That is, using our running
-example, you can define a unique index on just the {time, location} fields,
-or to include a third column (say, temperature), the index
-must be specified as {time, location, temperature}.  That said, we
-find UNIQUE indexes in time-series data to be much less prevalent than
+>:TIP: [](unique_indexes) To define an index as UNIQUE or PRIMARY KEY, the time column and, if it
+exists, the partitioning column **must** be part of the index.
+That is, using our running example, you can define a unique index on just the
+{time, location} fields, or to include additional columns (say, temperature).
+That said, we find UNIQUE indexes in time-series data to be much less prevalent than
 in traditional relational data models.
 
 
