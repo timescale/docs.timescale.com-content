@@ -18,8 +18,8 @@ create appropriate indexes, triggers, and constraints on your tables,
 as well as how to
 appropriately utilize the JSON and JSONB datatypes.
 
->ttt One of the most common ways of getting information about various aspects 
-of your database is through `psql`, the interactive terminal.  See the 
+>ttt One of the most common ways of getting information about various aspects
+of your database is through `psql`, the interactive terminal.  See the
 [PostgreSQL docs][psql-docs] for more information.
 
 ## Indexing Data [](indexing)
@@ -116,13 +116,11 @@ matching your predicate, but in each one, your query also grabs a
 (potentially large) subset of the values, rather than just one
 distinct one.
 
->ttt [](unique_indexes) To a define an index as UNIQUE or PRIMARY KEY, the time column and, if it
-exists, the partitioning column **must** be the first (or first two)
-columns that comprise the index.  That is, using our running
-example, you can define a unique index on just the {time, location} fields,
-or to include a third column (say, temperature), the index
-must be specified as {time, location, temperature}.  That said, we
-find UNIQUE indexes in time-series data to be much less prevalent than
+>:TIP: [](unique_indexes) To define an index as UNIQUE or PRIMARY KEY, the time column and, if it
+exists, the partitioning column **must** be part of the index.
+That is, using our running example, you can define a unique index on just the
+{time, location} fields, or to include additional columns (say, temperature).
+That said, we find UNIQUE indexes in time-series data to be much less prevalent than
 in traditional relational data models.
 
 
@@ -343,7 +341,7 @@ tablespaces can be viewed with the
 
 A hypertable can be partitioned in multiple dimensions, but only one
 of the dimensions is used to determine the tablespace assigned to a
-particular hypertable chunk. If a hypertable has one or more hash-partitioned 
+particular hypertable chunk. If a hypertable has one or more hash-partitioned
 ("space") dimensions, then the first hash-partitioned dimension
 is used. Otherwise, the first time dimension is used. This assignment
 strategy ensures that hash-partitioned hypertables will have chunks
@@ -351,13 +349,13 @@ colocated according to hash partition, as long as the list of
 tablespaces attached to the hypertable remains the same. Modulo
 calculation is used to pick a tablespace, so there can be more partitions
 than tablespaces (e.g., if there are two tablespaces, partition number
-three will use the first tablespace). 
+three will use the first tablespace).
 
->ttt Note that attaching more tablespaces than there are partitions for the 
-hypertable might leave some tablespaces unused until some of them are detached 
-or additional partitions are added. This is especially true for 
+>ttt Note that attaching more tablespaces than there are partitions for the
+hypertable might leave some tablespaces unused until some of them are detached
+or additional partitions are added. This is especially true for
 hash-partitioned tables.  
- 
+
 Hypertables that are only time-partitioned will add new
 partitions continuously, and will therefore have chunks assigned to
 tablespaces in a way similar to round-robin.

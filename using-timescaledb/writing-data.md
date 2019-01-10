@@ -142,10 +142,10 @@ INSERT INTO conditions
         humidity = excluded.humidity;
 ```
 
->ttt Unique constraints must include all partitioning keys as
- their prefix.  For example, if the table just uses time partitioning,
- the system requires `time` as the initial part of the
- constraint: `UNIQUE(time)`, `UNIQUE(time, location)`, etc.
+>:TIP: Unique constraints must include all partitioning keys.
+ For example, if the table just uses time partitioning,
+ the system requires `time` as part of the
+ constraint: `UNIQUE(time)`, `UNIQUE(time, location)`, `UNIQUE(location, time)`, etc.
  On the other hand, `UNIQUE(location)` is *not* a valid constraint.
 >
 >If the schema were to have an additional column like `device` that is used
