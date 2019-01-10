@@ -1,10 +1,10 @@
 ## From Source (Windows) [](installation-source)
 
-**Note: TimescaleDB requires PostgreSQL 9.6.3+ or 10.2+**
+**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.2+, or 11.0+**
 
 #### Prerequisites
 
-- A standard **PostgreSQL 9.6 or 10 64-bit** installation
+- A standard **PostgreSQL 9.6, 10, or 11 64-bit** installation
 - Visual Studio 2017 (with [CMake][] and Git components)  
   **or** Visual Studio 2015/2016 (with [CMake][] version 3.4+ and Git components)
 - Make sure all relevant binaries are in your PATH: `pg_config` and `cmake`
