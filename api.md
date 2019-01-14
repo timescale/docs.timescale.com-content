@@ -1031,28 +1031,52 @@ The `prev` expression will only be evaluated when no previous value is returned 
 Get the temperature every 5 minutes for each device over the 2 weeks carrying forward the last value for missing readings:
 ```sql
 SELECT
-  time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as time,
   device_id,
+  avg(temperature) AS value,
   locf(avg(temperature))
 FROM metrics
-  WHERE time > now () - interval '2 week'
+  WHERE time > now () - interval '1 week'
 GROUP BY 1,2
 ORDER BY 1 DESC;
+
+          time          | device_id | value | locf
+------------------------+-----------+-------+------
+ 2019-01-10 01:00:00+01 |         1 |       |
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |  5.0
+ 2019-01-12 01:00:00+01 |         1 |       |  5.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |  7.0
+ 2019-01-14 01:00:00+01 |         1 |       |  7.0
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |  8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |  9.0
+(7 row)
 ```
 
-Get the temperature every 5 minutes for each device over the 2 weeks carrying forward the last value for missing readings with out of bounds lookup
+Get the temperature every 5 minutes for each device over the 2 weeks carrying forward the last value for missing readings with out-of-bounds lookup
 ```sql
 SELECT
-  time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as time,
   device_id,
+  avg(temperature) AS value,
   locf(
     avg(temperature),
     (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id)
   )
 FROM metrics m
-  WHERE time > now () - interval '2 week'
+  WHERE time > now () - interval '1 week'
 GROUP BY 1,2
 ORDER BY 1 DESC;
+
+          time          | device_id | value | locf
+------------------------+-----------+-------+------
+ 2019-01-10 01:00:00+01 |         1 |       |  1.0
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |  5.0
+ 2019-01-12 01:00:00+01 |         1 |       |  5.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |  7.0
+ 2019-01-14 01:00:00+01 |         1 |       |  7.0
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |  8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |  9.0
+(7 row)
 ```
 
 ---
