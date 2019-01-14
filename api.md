@@ -948,31 +948,54 @@ The datatype of value needs to be the same as the `value` datatype of the `inter
 
 #### Sample Usage [](interpolate-examples)
 
-Get the temperature every 5 minutes for each device over the last 2 weeks interpolating for missing readings:
+Get the temperature every day for each device over the last week interpolating for missing readings:
 ```sql
 SELECT
-  time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as time,
   device_id,
+  avg(temperature) AS value,
   interpolate(avg(temperature))
 FROM metrics
-  WHERE time > now () - interval '2 week'
+WHERE time > now () - interval '1 week'
 GROUP BY 1,2
 ORDER BY 1 DESC;
+
+          time          | device_id | value | interpolate
+------------------------+-----------+-------+-------------
+ 2019-01-10 01:00:00+01 |         1 |       |
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |         5.0
+ 2019-01-12 01:00:00+01 |         1 |       |         6.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |         7.0
+ 2019-01-14 01:00:00+01 |         1 |       |         6.5
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |         8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |         9.0
+(7 row)
 ```
 
-Get the temperature every 5 minutes for each device over the 2 weeks interpolating for missing readings with lookup queries for values before and after the gapfill time range:
+Get the average temperature every day for each device over the last 7 days interpolating for missing readings with lookup queries for values before and after the gapfill time range:
 ```sql
 SELECT
-  time_bucket_gapfill('5 minutes', time, now() - interval '2 week', now()) as time,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as time,
   device_id,
-  interpolate(avg(temperature),
-    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id),
+  interpolate(avg(temperature) AS value,
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id),
     (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id)
   )
 FROM metrics
-  WHERE time > now () - interval '2 week'
+WHERE time > now () - interval '1 week'
 GROUP BY 1,2
 ORDER BY 1 DESC;
+
+          time          | device_id | value | interpolate
+------------------------+-----------+-------+-------------
+ 2019-01-10 01:00:00+01 |         1 |       |         3.0
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |         5.0
+ 2019-01-12 01:00:00+01 |         1 |       |         6.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |         7.0
+ 2019-01-14 01:00:00+01 |         1 |       |         7.5
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |         8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |         9.0
+(7 row)
 ```
 
 ## last() [](last)
@@ -1028,7 +1051,7 @@ The `prev` expression will only be evaluated when no previous value is returned 
 
 #### Sample Usage [](locf-examples)
 
-Get the temperature every 5 minutes for each device over the 2 weeks carrying forward the last value for missing readings:
+Get the average temperature every day for each device over the last 7 days carrying forward the last value for missing readings:
 ```sql
 SELECT
   time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as time,
@@ -1036,7 +1059,7 @@ SELECT
   avg(temperature) AS value,
   locf(avg(temperature))
 FROM metrics
-  WHERE time > now () - interval '1 week'
+WHERE time > now () - interval '1 week'
 GROUP BY 1,2
 ORDER BY 1 DESC;
 
@@ -1052,7 +1075,7 @@ ORDER BY 1 DESC;
 (7 row)
 ```
 
-Get the temperature every 5 minutes for each device over the 2 weeks carrying forward the last value for missing readings with out-of-bounds lookup
+Get the average temperature every day for each device over the last 7 days carrying forward the last value for missing readings with out-of-bounds lookup
 ```sql
 SELECT
   time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as time,
@@ -1063,7 +1086,7 @@ SELECT
     (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id)
   )
 FROM metrics m
-  WHERE time > now () - interval '1 week'
+WHERE time > now () - interval '1 week'
 GROUP BY 1,2
 ORDER BY 1 DESC;
 
@@ -1227,37 +1250,73 @@ query.
 
 #### Sample Usage [](time_bucket_gapfill-examples)
 
-Get the metric value every 5 minutes over the last week:
+Get the metric value every day over the last 7 days:
 
 ```sql
 SELECT
-  time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS time,
-  avg(value)
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS time,
+  device_id,
+  avg(value) AS value
 FROM metrics
+WHERE time > now() - interval '1 week'
 GROUP BY 1
 ORDER BY 1;
+
+          time          | device_id | value
+------------------------+-----------+-------
+ 2019-01-10 01:00:00+01 |         1 |
+ 2019-01-11 01:00:00+01 |         1 |   5.0
+ 2019-01-12 01:00:00+01 |         1 |
+ 2019-01-13 01:00:00+01 |         1 |   7.0
+ 2019-01-14 01:00:00+01 |         1 |
+ 2019-01-15 01:00:00+01 |         1 |   8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0
+(7 row)
 ```
 
-Get the metric value every 5 minutes over the last week carrying forward the previous seen value if none is available in an interval:
+Get the metric value every day over the last 7 days carrying forward the previous seen value if none is available in an interval:
 
 ```sql
 SELECT
-  time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS time,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS time,
+  avg(value) AS value,
   locf(avg(value))
 FROM metrics
+WHERE time > now() - interval '1 week'
 GROUP BY 1
 ORDER BY 1;
+
+          time          | device_id | value | locf
+------------------------+-----------+-------+------
+ 2019-01-10 01:00:00+01 |         1 |       |
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |  5.0
+ 2019-01-12 01:00:00+01 |         1 |       |  5.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |  7.0
+ 2019-01-14 01:00:00+01 |         1 |       |  7.0
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |  8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |  9.0
 ```
 
-Get the metric value every 5 minutes over the last week interpolating missing values:
+Get the metric value every day over the last 7 days interpolating missing values:
 
 ```sql
 SELECT
   time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS time,
+  avg(value) AS value,
   interpolate(avg(value))
 FROM metrics
 GROUP BY 1
 ORDER BY 1;
+
+          time          | device_id | value | interpolate
+------------------------+-----------+-------+-------------
+ 2019-01-10 01:00:00+01 |         1 |       |
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |         5.0
+ 2019-01-12 01:00:00+01 |         1 |       |         6.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |         7.0
+ 2019-01-14 01:00:00+01 |         1 |       |         7.5
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |         8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |         9.0
 ```
 
 ---
