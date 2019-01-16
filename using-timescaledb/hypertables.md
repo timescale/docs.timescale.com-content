@@ -82,8 +82,6 @@ and 1 month prior to v0.11.0.
 Alternatively, users can explicitly configure time intervals by
 setting `chunk_time_interval` when creating a hypertable.
 After the hypertable has been created, the interval used for new chunks can be changed by calling `set_chunk_time_interval`.
-Furthermore, as of v0.11.0, users can enable [adaptive chunking (BETA)][adaptive-chunking],
-which will automatically set chunk sizes under-the-hood, based on insert patterns.
 
 The key property of choosing the time interval is that the chunk (including indexes) belonging to the most recent interval (or chunks if using space
 partitions) fit into memory.  As such, we typically recommend setting
@@ -160,4 +158,3 @@ queries.
 [postgres-createtable]: https://www.postgresql.org/docs/9.6/static/sql-createtable.html
 [create_hypertable]: /api#create_hypertable
 [migrate-from-postgresql]: /getting-started/migrating-data
-[adaptive-chunking]: /using-timescaledb/adaptive-chunking
