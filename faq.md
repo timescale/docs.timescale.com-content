@@ -180,8 +180,7 @@ Read our TimescaleDB-PostgreSQL benchmarks:
 
 To summarize, TimescaleDB offers:
 * Ease-of-use: TimescaleDB is far easier to use because creating partitions (or what we call
-"chunks") is automatically performed for the user. Chunks will also be adaptively sized by
-the system as data rates and volumes fluctuate. All of the complexity of automatic, adaptive
+"chunks") is automatically performed for the user.  All of the complexity of automatic
 partitioning is abstracted away behind a "hypertable", which users interact with just as
 they would with a PostgreSQL table.
 * Much higher ingest scale: TimescaleDB sees throughput more than 20X that of
@@ -192,7 +191,7 @@ when running on a single server. In particular, vanilla PostgreSQL has poor writ
 for moderate tables, and this problem only becomes worse over time as data volume grows
 linearly in time. These problems emerge when table indexes can no longer fit in memory,
 as each insert will translate to many disk fetches to swap in portions of the indexes'
-B-Trees. TimescaleDB solves this through its heavy (and adaptive) utilization of
+B-Trees. TimescaleDB solves this through its heavy utilization of
 time-space partitioning, even when running _on a single machine_. So all writes
 to recent time intervals are only to tables that remain in memory, and updating any
 secondary indexes is also fast as a result.
