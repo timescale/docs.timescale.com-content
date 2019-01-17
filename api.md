@@ -23,6 +23,8 @@
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
+> - [timescaledb_information.license](#timescaledb_information-license)
+> - [timescaledb.license_key](#timescaledb_license-key)
 > - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
@@ -1114,6 +1116,40 @@ SELECT * FROM timescaledb_information.hypertable WHERE table_schema='public' AND
 --------------+------------+-------------+----------------+------------+------------+------------+------------+------------
  public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
 (1 row)
+```
+
+## timescaledb_information.license [](timescaledb_information-license)
+
+Get information about current license.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+| `edition` | License key type (apache_only, community, enterprise) |
+| `expired` | Expiration status of license key (bool) |
+| `expiration_time` | Time of license key expiration |
+
+#### Sample Usage
+
+Get information about current license.
+
+```sql
+SELECT * FROM timescaledb_information.license;
+edition   | expired |    expiration_time
+------------+---------+------------------------
+enterprise | f       | 2019-02-15 13:44:53-05
+(1 row)
+```
+
+## timescaledb.license_key [](timescaledb_license-key)
+
+#### Sample Usage
+
+View current license key.
+
+```sql 
+SHOW timescaledb.license_key;
 ```
 
 ## chunk_relation_size() [](chunk_relation_size)
