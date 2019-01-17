@@ -118,7 +118,7 @@ SELECT
   FROM net
   WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
   WINDOW w AS (ORDER BY time)
-  ORDER BY 1
+  ORDER BY time
 ```
 
 ### Rate [](rate)
@@ -144,7 +144,7 @@ SELECT
   FROM net
   WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
   WINDOW w AS (ORDER BY time)
-  ORDER BY 1
+  ORDER BY time
 ```
 
 ### Time Bucket :timescale_function: [](time-bucket)
@@ -319,14 +319,14 @@ value.
 
 ```sql
 SELECT
-  time_bucket_gapfill('5 min'::interval, time, now() - '2 weeks'::interval, now()) as time,
+  time_bucket_gapfill('5 min'::interval, time, now() - '2 weeks'::interval, now()) as 5min,
   meter_id,
   locf(avg(data_value)) AS data_value
 FROM my_hypertable
 WHERE
   time > now() - '2 weeks'::interval
   AND meter_id IN (1,2,3,4)
-GROUP BY 1,2
+GROUP BY 5min, meter_id
 ```
 
 ### Last Point [](last-point)
