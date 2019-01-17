@@ -9,11 +9,7 @@ the JSON that is sent to our servers about a specific deployment:
 {
 	"db_uuid": "26917841-2fc0-48fd-b096-ba19b3fda98f",
 	"license": {
-		"id": "490FB260-A292-4AD9-9AA2-0360835791B8",
-		"kind": "trial",
-		"edition": "enterprise",
-		"end_time": "2018-09-30 20:00:00-04",
-		"start_time": "2018-08-31 20:00:00-04"
+		"edition": "community"
 	},
 	"exported_db_uuid": "8dd4543c-f44e-43c9-a666-02d23bb09b90",
 	"installed_time": "2000-04-17 10:56:59.427738-04",
@@ -44,6 +40,24 @@ PostgreSQL available. In older versions of PostgreSQL (e.g., 9.6),
 the `UUID`s contain the current timestamp. For full transparency, we expose a
 new API function, [`get_telemetry_report`][get_telemetry_report], that returns
 a text string of the exact JSON that is sent to our servers.
+
+Notably, telemetry reports a different set of values depending on the license 
+that your TimescaleDB instance is running under. If you are using OSS or Community, 
+we only send an "edition" field, which could have a value of either "apache_only" or "community", 
+as relevant.
+
+If you are using an Enterprise license, we report a few more relevant items, a sample 
+of which is below. 
+
+```javascript
+"license": {
+	"id": "490FB260-A292-4AD9-9AA2-0360835791B8",
+	"kind": "trial",
+	"edition": "enterprise",
+	"end_time": "2018-09-30 20:00:00-04",
+	"start_time": "2018-08-31 20:00:00-04"
+}
+```
 
 ## Version Checking
 The database sends telemetry reports periodically in the background.
