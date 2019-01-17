@@ -950,8 +950,8 @@ time bucket period, yet the query's outer time predicate WHERE time > ...
 normally restricts the function to only evaluate values within this time range.
 Thus, the `prev` and `next` expression tell the function how to look for
 values outside of the range specified by the time predicate.
-These expressions will only be evaluated when no suitable value is returned by the outer query.
-This happens when the first and / or last bucket in the queried time range is empty.
+These expressions will only be evaluated when no suitable value is returned by the outer query
+(i.e., the first and/or last bucket in the queried time range is empty).
 The returned record for `prev` and `next` needs to be a time, value tuple.
 The datatype of time needs to be the same as the time datatype in the `time_bucket_gapfill` call.
 The datatype of value needs to be the same as the `value` datatype of the `interpolate` call.
@@ -1065,8 +1065,8 @@ time bucket period, yet the query's outer time predicate WHERE time > ...
 normally restricts the function to only evaluate values within this time range.
 Thus, the `prev` expression tell the function how to look for
 values outside of the range specified by the time predicate.
-The `prev` expression will only be evaluated when no previous value is returned by the outer query.
-This happens when the first bucket in the queried time range is empty.
+The `prev` expression will only be evaluated when no previous value is returned
+by the outer query (i.e., the first bucket in the queried time range is empty).
 
 #### Sample Usage [](locf-examples)
 
