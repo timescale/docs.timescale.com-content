@@ -59,6 +59,14 @@ a `postgres` superuser (used in the rest of the docs). Please
 refer to your distribution for how to restart services and
 [these instructions for adding a `postgres` user][createuser].
 
+>:TIP: Our standard binary releases are licensed under the Timescale License. This means that you can use all of our free Community capabilities and seamlessly 
+activate Enterprise capabilities.  
+To build a version of this software that contains 
+source code that is only licensed under Apache License 2.0, pass `-DAPACHE_ONLY=1` 
+to `bootstrap`.   
+For more information about licensing, please read our [blog post][blog-post] about the subject.
+
 [createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 [pgdg]: https://yum.postgresql.org/repopackages.php
 [yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation
+[blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480

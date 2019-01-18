@@ -17,7 +17,7 @@ To upgrade or obtain a full Enterprise license key, please [contact sales][conta
 ## Activating TimescaleDB Enterprise
 
 Before you can activate TimescaleDB Enterprise, you must have a Timescale-Licensed version of 
-TimescaleDB up and running. Note that our standard binary releases are by default Timescale-Licensed. 
+TimescaleDB up and running. Note, the standard binaries we make available are released under the Timescale License. 
 
 >:WARNING: If you explicitly built or downloaded an Apache 2.0 binary, you will not be able to 
 directly activate TimescaleDB Enterprise. You must upgrade to a Timescale-Licensed binary first. 
