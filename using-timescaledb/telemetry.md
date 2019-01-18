@@ -18,6 +18,7 @@ the JSON that is sent to our servers about a specific deployment:
 	"install_method": "source",
 	"os_name": "Darwin",
 	"os_version": "Darwin Kernel Version 17.5.0: Mon Mar  5 22:24:32 PST 2018",
+	"os_name_pretty":"Debian GNU/Linux 8 (jessie)",
 	"os_release": "17.5.0",
 	"postgresql_version": "10.4",
 	"timescaledb_version": "0.12.0",
