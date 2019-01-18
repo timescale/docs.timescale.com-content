@@ -23,13 +23,6 @@ TimescaleDB up and running. Note that our standard binary releases are by defaul
 directly activate TimescaleDB Enterprise. You must upgrade to a Timescale-Licensed binary first. 
 Please note that this also applies to any TimescaleDB versions prior to v1.2.0.
 
->:TIP: You can also set your license key prior to starting TimescaleDB by including 
-`timescaledb.license_key = '<license_key>'` in your `postgresql.conf` file. 
-The usual location of `postgresql.conf` is `/usr/local/var/postgres/postgresql.conf`, 
-but this may vary depending on your setup. If you are unsure where your `postgresql.conf` file
-is located, you can query PostgreSQL with any database client (e.g., `psql`)
-using `SHOW config_file;`.
-
 First connect to the PostgreSQL instance:
 
 ```bash
@@ -45,6 +38,13 @@ ALTER SYSTEM SET timescaledb.license_key='<license_key';
 -- Reload your PostgreSQL configs
 SELECT pg_reload_conf();
 ```
+
+>:TIP: You can alternatively set your license key prior to starting TimescaleDB by including 
+`timescaledb.license_key = '<license_key>'` in your `postgresql.conf` file. 
+The usual location of `postgresql.conf` is `/usr/local/var/postgres/postgresql.conf`, 
+but this may vary depending on your setup. If you are unsure where your `postgresql.conf` file
+is located, you can query PostgreSQL with any database client (e.g., `psql`)
+using `SHOW config_file;`. If you already used `ALTER SYSTEM SET`, this method will not work.
 
 Now make sure that your license key was set correctly:
 
