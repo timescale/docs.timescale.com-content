@@ -20,7 +20,6 @@ the JSON that is sent to our servers about a specific deployment:
 	"os_release": "4.9.125-linuxkit",
 	"os_version": "#1 SMP Fri Sep 7 08:20:28 UTC 2018",
 	"os_name_pretty": "Debian GNU/Linux 8 (jessie)",
-	"os_release": "17.5.0",
 	"postgresql_version": "10.4",
 	"timescaledb_version": "0.12.0",
 	"build_os_name": "Linux",
