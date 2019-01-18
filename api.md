@@ -18,7 +18,9 @@
 > - [hypertable_relation_size_pretty](#hypertable_relation_size_pretty)
 > - [indexes_relation_size](#indexes_relation_size)
 > - [indexes_relation_size_pretty](#indexes_relation_size_pretty)
+> - [interpolate](#interpolate)
 > - [last](#last)
+> - [locf](#locf)
 > - [set_adaptive_chunking](#set_adaptive_chunking)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
@@ -26,6 +28,7 @@
 > - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
+> - [time_bucket_gapfill](#time_bucket_gapfill)
 
 ## Hypertable management [](hypertable-management)
 
@@ -919,6 +922,92 @@ The expected output:
 
 ---
 
+## interpolate() [](interpolate)
+
+The `interpolate` function does linear interpolation for missing values.
+It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
+The `interpolate` function call cannot be nested inside other function calls.
+
+#### Required Arguments [](interpolate-required-arguments)
+
+|Name|Description|
+|---|---|
+| `value` | The value to interpolate (int2/int4/int8/float4/float8) |
+
+#### Optional Arguments [](interpolate-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `prev` | The lookup expression for values before the gapfill time range (record) |
+| `next` | The lookup expression for values after the gapfill time range (record) |
+
+Because the interpolation function relies on having values before and after
+each bucketed period to compute the interpolated value, it might not have
+enough data to calculate the interpolation for the first and last time bucket
+if those buckets do not otherwise contain valid values.
+For example, the interpolation would require looking before this first
+time bucket period, yet the query's outer time predicate WHERE time > ...
+normally restricts the function to only evaluate values within this time range.
+Thus, the `prev` and `next` expression tell the function how to look for
+values outside of the range specified by the time predicate.
+These expressions will only be evaluated when no suitable value is returned by the outer query
+(i.e., the first and/or last bucket in the queried time range is empty).
+The returned record for `prev` and `next` needs to be a time, value tuple.
+The datatype of time needs to be the same as the time datatype in the `time_bucket_gapfill` call.
+The datatype of value needs to be the same as the `value` datatype of the `interpolate` call.
+
+#### Sample Usage [](interpolate-examples)
+
+Get the temperature every day for each device over the last week interpolating for missing readings:
+```sql
+SELECT
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as day,
+  device_id,
+  avg(temperature) AS value,
+  interpolate(avg(temperature))
+FROM metrics
+WHERE time > now () - interval '1 week'
+GROUP BY day, device_id
+ORDER BY day;
+
+           day          | device_id | value | interpolate
+------------------------+-----------+-------+-------------
+ 2019-01-10 01:00:00+01 |         1 |       |
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |         5.0
+ 2019-01-12 01:00:00+01 |         1 |       |         6.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |         7.0
+ 2019-01-14 01:00:00+01 |         1 |       |         6.5
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |         8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |         9.0
+(7 row)
+```
+
+Get the average temperature every day for each device over the last 7 days interpolating for missing readings with lookup queries for values before and after the gapfill time range:
+```sql
+SELECT
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as day,
+  device_id,
+  interpolate(avg(temperature) AS value,
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id),
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id)
+  )
+FROM metrics
+WHERE time > now () - interval '1 week'
+GROUP BY day, device_id
+ORDER BY day;
+
+           day          | device_id | value | interpolate
+------------------------+-----------+-------+-------------
+ 2019-01-10 01:00:00+01 |         1 |       |         3.0
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |         5.0
+ 2019-01-12 01:00:00+01 |         1 |       |         6.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |         7.0
+ 2019-01-14 01:00:00+01 |         1 |       |         7.5
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |         8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |         9.0
+(7 row)
+```
+
 ## last() [](last)
 
 The `last` aggregate allows you to get the value of one column
@@ -949,6 +1038,88 @@ SELECT device_id, time_bucket('5 minutes', time) as interval,
  for ordered selection within a `GROUP BY` aggregate, and not as an
  alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
  latest value (which will use indexes).
+
+## locf() [](locf)
+
+The `locf` function (last observation carried forward) allows you to carry the last seen value in an aggregation group forward.
+It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
+The `locf` function call cannot be nested inside other function calls.
+
+#### Required Arguments [](locf-required-arguments)
+
+|Name|Description|
+|---|---|
+| `value` | The value to carry forward (anyelement) |
+
+#### Optional Arguments [](locf-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `prev` | The lookup expression for values before gapfill start (anyelement) |
+
+Because the locf function relies on having values before each bucketed period
+to carry forward, it might not have enough data to fill in a value for the first
+bucket if it does not contain a value.
+For example, the function would need to look before this first
+time bucket period, yet the query's outer time predicate WHERE time > ...
+normally restricts the function to only evaluate values within this time range.
+Thus, the `prev` expression tell the function how to look for
+values outside of the range specified by the time predicate.
+The `prev` expression will only be evaluated when no previous value is returned
+by the outer query (i.e., the first bucket in the queried time range is empty).
+
+#### Sample Usage [](locf-examples)
+
+Get the average temperature every day for each device over the last 7 days carrying forward the last value for missing readings:
+```sql
+SELECT
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as day,
+  device_id,
+  avg(temperature) AS value,
+  locf(avg(temperature))
+FROM metrics
+WHERE time > now () - interval '1 week'
+GROUP BY day, device_id
+ORDER BY day;
+
+           day          | device_id | value | locf
+------------------------+-----------+-------+------
+ 2019-01-10 01:00:00+01 |         1 |       |
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |  5.0
+ 2019-01-12 01:00:00+01 |         1 |       |  5.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |  7.0
+ 2019-01-14 01:00:00+01 |         1 |       |  7.0
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |  8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |  9.0
+(7 row)
+```
+
+Get the average temperature every day for each device over the last 7 days carrying forward the last value for missing readings with out-of-bounds lookup
+```sql
+SELECT
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as day,
+  device_id,
+  avg(temperature) AS value,
+  locf(
+    avg(temperature),
+    (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id)
+  )
+FROM metrics m
+WHERE time > now () - interval '1 week'
+GROUP BY day, device_id
+ORDER BY day;
+
+           day          | device_id | value | locf
+------------------------+-----------+-------+------
+ 2019-01-10 01:00:00+01 |         1 |       |  1.0
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |  5.0
+ 2019-01-12 01:00:00+01 |         1 |       |  5.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |  7.0
+ 2019-01-14 01:00:00+01 |         1 |       |  7.0
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |  8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |  9.0
+(7 row)
+```
 
 ---
 
@@ -1070,6 +1241,105 @@ to the server's timezone setting.
  multi-day calls to time_bucket. The old behavior can be reproduced by passing
  2000-01-01 as the origin parameter to time_bucket.
 
+## time_bucket_gapfill() [](time_bucket_gapfill)
+
+The `time_bucket_gapfill` function works similar to `time_bucket` but also activates gap
+filling for the interval between `start` and `end`. It can only be used with an aggregation
+query. Values outside of `start` and `end` will pass through but no gap filling will be
+done outside of the specified range.
+
+#### Required Arguments [](time_bucket_gapfill-required-arguments)
+
+|Name|Description|
+|---|---|
+| `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
+| `time` | The timestamp to bucket (timestamp/timestamptz/date)|
+| `start` | The start of the gapfill period (timestamp/timestamptz/date)|
+| `end` | The end of the gapfill period (timestamp/timestamptz/date)|
+
+### For Integer Time Inputs
+
+#### Required Arguments [](time_bucket_gapfill-integer-required-arguments)
+
+|Name|Description|
+|---|---|
+| `bucket_width` | integer interval for how long each bucket is (int2/int4/int8) |
+| `time` | The timestamp to bucket (int2/int4/int8)|
+| `start` | The start of the gapfill period (int2/int4/int8)|
+| `end` | The end of the gapfill period (int2/int4/int8)|
+
+#### Sample Usage [](time_bucket_gapfill-examples)
+
+Get the metric value every day over the last 7 days:
+
+```sql
+SELECT
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  device_id,
+  avg(value) AS value
+FROM metrics
+WHERE time > now() - interval '1 week'
+GROUP BY day, device_id
+ORDER BY day;
+
+           day          | device_id | value
+------------------------+-----------+-------
+ 2019-01-10 01:00:00+01 |         1 |
+ 2019-01-11 01:00:00+01 |         1 |   5.0
+ 2019-01-12 01:00:00+01 |         1 |
+ 2019-01-13 01:00:00+01 |         1 |   7.0
+ 2019-01-14 01:00:00+01 |         1 |
+ 2019-01-15 01:00:00+01 |         1 |   8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0
+(7 row)
+```
+
+Get the metric value every day over the last 7 days carrying forward the previous seen value if none is available in an interval:
+
+```sql
+SELECT
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  device_id,
+  avg(value) AS value,
+  locf(avg(value))
+FROM metrics
+WHERE time > now() - interval '1 week'
+GROUP BY day, device_id
+ORDER BY day;
+
+           day          | device_id | value | locf
+------------------------+-----------+-------+------
+ 2019-01-10 01:00:00+01 |         1 |       |
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |  5.0
+ 2019-01-12 01:00:00+01 |         1 |       |  5.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |  7.0
+ 2019-01-14 01:00:00+01 |         1 |       |  7.0
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |  8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |  9.0
+```
+
+Get the metric value every day over the last 7 days interpolating missing values:
+
+```sql
+SELECT
+  time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS day,
+  device_id,
+  avg(value) AS value,
+  interpolate(avg(value))
+FROM metrics
+GROUP BY day, device_id
+ORDER BY day;
+
+           day          | device_id | value | interpolate
+------------------------+-----------+-------+-------------
+ 2019-01-10 01:00:00+01 |         1 |       |
+ 2019-01-11 01:00:00+01 |         1 |   5.0 |         5.0
+ 2019-01-12 01:00:00+01 |         1 |       |         6.0
+ 2019-01-13 01:00:00+01 |         1 |   7.0 |         7.0
+ 2019-01-14 01:00:00+01 |         1 |       |         7.5
+ 2019-01-15 01:00:00+01 |         1 |   8.0 |         8.0
+ 2019-01-16 01:00:00+01 |         1 |   9.0 |         9.0
+```
 
 ---
 
