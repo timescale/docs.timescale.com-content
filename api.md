@@ -514,10 +514,16 @@ SELECT detach_tablespaces('conditions');
 
 ## drop_chunks() [](drop_chunks)
 
-Removes data chunks that are older than a given time interval across all
-hypertables or a specific one. Chunks are removed only if _all_ of their data is
-beyond the cut-off point, so the remaining data may contain timestamps that
-are before the cut-off point, but only one chunk's worth.
+Removes data chunks whose time range falls completely before (or after) a
+specified time, operating either across all hypertables or for a specific one.
+
+Chunks are defined by a certain start and end time.  If `older_than` is
+specified, a chunk is dropped if its end time is older than the specified
+timestamp. Alternatively, if `newer_than` is specified, a chunk is dropped if
+its start time is newer than the specified timestamp.  Note that, because
+chunks are removed if and only if their time range falls fully before (or
+after) the specified timestamp, the remaining data may still contain timestamps
+that are before (or after) the specified one.
 
 #### Required Arguments [](drop_chunks-required-arguments)
 
