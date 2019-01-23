@@ -27,8 +27,8 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 sudo apt-get update
 ```
 
-Add TimescaleDB's third party PPA and install TimescaleDB (will download
-any dependencies it needs from the PostgreSQL repo):
+Add TimescaleDB's third party repository and install TimescaleDB,
+which will download any dependencies it needs from the PostgreSQL repo:
 ```bash
 # Add our PPA
 sudo add-apt-repository ppa:timescale/timescaledb-ppa
