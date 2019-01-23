@@ -7,8 +7,7 @@ This will install both TimescaleDB *and* PostgreSQL via `yum`
 
 #### Prerequisites
 
-- Fedora 24 or later, or
-- CentOS 7 or later
+- RHEL/CentOS 7 (or Fedora equivalent) or later
 
 #### Build & Install
 
@@ -21,23 +20,34 @@ sure to remove non-`yum` installations before using this method.
 You'll need to [download the correct PGDG from PostgreSQL][pgdg] for
 your operating system and architecture and install it:
 ```bash
-# Download PGDG for PostgreSQL 9.6, e.g. for Fedora 24:
-sudo yum install -y https://download.postgresql.org/pub/repos/yum/9.6/fedora/fedora-24-x86_64/pgdg-fedora96-9.6-3.noarch.rpm
+# Download PGDG for PostgreSQL 11, e.g. for CentOS 7:
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
 
 ## Follow the initial setup instructions found below:
 ```
 
 Further setup instructions [are found here][yuminstall].
 
-Then, fetch our RPM and install it:
+Add TimescaleDB's third party repository and install TimescaleDB,
+which will download any dependencies it needs from the PostgreSQL repo:
 ```bash
-# Fetch our RPM (for PostgreSQL 9.6)
-wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-9.6-0.x86_64.rpm
-# For PostgreSQL 10:
-wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-10-0.x86_64.rpm
+# Add our repo
+sudo cat > /etc/yum.repos.d/timescale_timescaledb.repo <<EOL
+[timescale_timescaledb]
+name=timescale_timescaledb
+baseurl=https://packagecloud.io/timescale/timescaledb/el/7/\$basearch
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+EOL
+sudo yum update -y
 
-# To install
-sudo yum install <name of file you downloaded with wget>
+# Now install appropriate package for PG version
+sudo yum install -y timescaledb-postgresql-:pg_version:
 ```
 
 #### Update `postgresql.conf`
@@ -48,7 +58,7 @@ and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
 but this may vary depending on your setup. If you are unsure where your `postgresql.conf` file
 is located, you can query PostgreSQL through the psql interface using `SHOW config_file;`.
 Please note that you must have created a `postgres` superuser so that you can access the psql
-interface. 
+interface.
 
 You will need to edit your `postgresql.conf` file to include
 necessary libraries:

@@ -25,8 +25,8 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 sudo apt-get update
 ```
 
-Add TimescaleDB's third party repository and install TimescaleDB (will download
-any dependencies it needs from the PostgreSQL repo):
+Add TimescaleDB's third party repository and install TimescaleDB,
+which will download any dependencies it needs from the PostgreSQL repo:
 ```bash
 # Add our repository
 sudo sh -c "echo 'deb https://packagecloud.io/timescale/timescaledb/debian/ `lsb_release -c -s` main' > /etc/apt/sources.list.d/timescaledb.list"
