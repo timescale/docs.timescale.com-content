@@ -7,7 +7,7 @@ This will install both TimescaleDB *and* PostgreSQL via `yum`
 
 #### Prerequisites
 
-- CentOS 7 (or Fedora/RHEL equivalent) or later
+- RHEL/CentOS 7 (or Fedora equivalent) or later
 
 #### Build & Install
 
@@ -20,21 +20,34 @@ sure to remove non-`yum` installations before using this method.
 You'll need to [download the correct PGDG from PostgreSQL][pgdg] for
 your operating system and architecture and install it:
 ```bash
-# Download PGDG for PostgreSQL 9.6, e.g. for Fedora 24:
-sudo yum install -y https://download.postgresql.org/pub/repos/yum/9.6/fedora/fedora-24-x86_64/pgdg-fedora96-9.6-3.noarch.rpm
+# Download PGDG for PostgreSQL 11, e.g. for CentOS 7:
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-centos11-11-2.noarch.rpm
 
 ## Follow the initial setup instructions found below:
 ```
 
 Further setup instructions [are found here][yuminstall].
 
-Then, fetch our RPM and install it:
+Add TimescaleDB's third party repository and install TimescaleDB,
+which will download any dependencies it needs from the PostgreSQL repo:
 ```bash
-# Fetch our RPM
-wget https://timescalereleases.blob.core.windows.net/rpm/timescaledb-x.y.z-postgresql-:pg_version:-0.x86_64.rpm
+# Add our repo
+sudo cat > /etc/yum.repos.d/timescale_timescaledb.repo <<EOL
+[timescale_timescaledb]
+name=timescale_timescaledb
+baseurl=https://packagecloud.io/timescale/timescaledb/el/7/\$basearch
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+EOL
+sudo yum update -y
 
-# To install
-sudo yum install <name of file you downloaded with wget>
+# Now install appropriate package for PG version
+sudo yum install -y timescaledb-postgresql-:pg_version:
 ```
 
 #### Update `postgresql.conf`
