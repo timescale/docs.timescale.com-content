@@ -1188,8 +1188,8 @@ to the server's timezone setting.
 ## time_bucket_gapfill() [](time_bucket_gapfill)
 
 The `time_bucket_gapfill` function works similar to `time_bucket` but also activates gap
-filling for the interval between `start` and `end`. It can only be used with an aggregation
-query. Values outside of `start` and `end` will pass through but no gap filling will be
+filling for the interval between `start` and `finish`. It can only be used with an aggregation
+query. Values outside of `start` and `finish` will pass through but no gap filling will be
 done outside of the specified range.
 
 #### Required Arguments [](time_bucket_gapfill-required-arguments)
@@ -1199,7 +1199,7 @@ done outside of the specified range.
 | `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
 | `time` | The timestamp to bucket (timestamp/timestamptz/date)|
 | `start` | The start of the gapfill period (timestamp/timestamptz/date)|
-| `end` | The end of the gapfill period (timestamp/timestamptz/date)|
+| `finish` | The end of the gapfill period (timestamp/timestamptz/date)|
 
 ### For Integer Time Inputs
 
@@ -1210,7 +1210,7 @@ done outside of the specified range.
 | `bucket_width` | integer interval for how long each bucket is (int2/int4/int8) |
 | `time` | The timestamp to bucket (int2/int4/int8)|
 | `start` | The start of the gapfill period (int2/int4/int8)|
-| `end` | The end of the gapfill period (int2/int4/int8)|
+| `finish` | The end of the gapfill period (int2/int4/int8)|
 
 #### Sample Usage [](time_bucket_gapfill-examples)
 
