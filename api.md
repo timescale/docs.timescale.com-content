@@ -3,6 +3,9 @@
 >:TOPLIST:
 > ### Command List (A-Z)
 > - [add_dimension](#add_dimension)
+> - [add_drop_chunks_policy](#add_drop_chunks_policy)
+> - [add_reorder_policy](#add_reorder_policy)
+> - [alter_policy_schedule](#alter_policy_schedule)
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
@@ -26,7 +29,13 @@
 > - [set_number_partitions](#set_number_partitions)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
+> - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
+> - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
+> - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
 > - [timescaledb.license_key](#timescaledb_license-key)
+> - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
+> - [remove_reorder_policy](#remove_reorder_policy)
+> - [reorder_chunk](#reorder_chunk)
 > - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
@@ -779,7 +788,252 @@ Get all chunks older than 3 months and newer than 4 months:
 SELECT show_chunks(older_than => interval '3 months', newer_than => interval '4 months');
 ```
 
+## reorder_chunk() [](reorder_chunk)
+Reorder a single chunk's heap to follow the order of an index. This function
+acts similarly to the [PostgreSQL CLUSTER command][postgres-cluster] , however
+it uses lower lock levels so that, unlike with the CLUSTER command,  the chunk
+and hypertable are able to be read for most of the process. It does use a bit
+more disk space during the operation. 
+
+This command can be particularly useful when data is often queried in an order
+different from that in which it was originally inserted. For example, data is
+commonly inserted into a hypertable in loose time order (e.g., many devices
+concurrently sending their current state), but one might typically query the
+hypertable about a _specific_ device. In such cases, reordering a chunk using an
+index on `(device_id, time)` can lead to significant performance improvement for
+these types of queries.
+
+One can call this function directly on individual chunks of a hypertable, but
+using [add_reorder_policy](#add_reorder_policy) is often much more convenient.
+
+#### Required Arguments [](reorder_chunk-required-arguments)
+
+|Name|Description|
+|---|---|
+| `chunk` | (REGCLASS) Name of the chunk to reorder. |
+
+#### Optional Arguments [](reorder_chunk-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `index` | (REGCLASS) The name of the index (on either the hypertable or chunk) to order by.|
+| `verbose` | (BOOLEAN) Setting to true will display messages about the progress of the reorder command. Defaults to false.|
+
+#### Returns [](reorder_chunk-returns)
+
+This function returns void. 
+
+
+#### Sample Usage [](reorder_chunk-examples)
+
+
+```sql
+SELECT reorder_chunk('_timescaledb_internal._hyper_1_10_chunk', 'conditions_device_id_time_idx');
+```
+
+runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the `conditions_device_id_time_idx` index. 
+
 ---
+
+## Policies [](policies)
+TimescaleDB includes an automation framework for allowing background tasks to
+run inside the database, controllable by user-supplied policies. These tasks
+currently include capabilities around data retention and data reordering for
+improving query performance.
+
+The following functions allow the administrator to create/remove/alter policies
+that schedule administrative actions to take place on a hypertable. The actions
+are meant to implement data retention or perform tasks that will improve query
+performance on older chunks. Each policy is assigned a scheduled job
+which will be run in the background to enforce it. 
+
+
+
+## add_drop_chunks_policy() [](add_drop_chunks_policy)
+Create a policy to drop chunks older than a given interval of a particular
+hypertable on a schedule in the background. (See [drop_chunks](#drop_chunks)).
+This implements a data retention policy and will remove data on a schedule. Only
+one drop_chunks policy may exist per hypertable. 
+
+#### Required Arguments [](add_drop_chunks_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `hypertable` | (REGCLASS) Name of the hypertable to create the policy for. |
+| `older_than` | (INTERVAL) Chunks fully older than this interval when the policy is run will be dropped|
+
+#### Optional Arguments [](add_drop_chunks_policy-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `cascade` | (BOOLEAN) Set to true to drop objects dependent upon chunks being dropped. Defaults to false.|
+| `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the drop_chunks_policy already exists. A notice is issued instead. Defaults to false. |
+
+#### Returns [](add_drop_chunks_policy-returns)
+
+|Column|Description|
+|---|---|
+|`job_id`| (INTEGER)  Timescaledb background job id created to implement this policy|
+
+
+#### Sample Usage [](add_drop_chunks_policy-examples)
+
+
+```sql
+SELECT add_drop_chunks_policy('conditions', INTERVAL '6 months');
+```
+
+creates a data retention policy to discard chunks greater than 6 months old.
+
+
+## remove_drop_chunks_policy() [](remove_drop_chunks_policy)
+Remove a policy to drop chunks of a particular hypertable.
+
+#### Required Arguments [](remove_drop_chunks_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `hypertable` | (REGCLASS) Name of the hypertable to create the policy for. |
+
+
+#### Optional Arguments [](remove_drop_chunks_policy-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the drop_chunks_policy does not exist. Defaults to false.|
+
+
+#### Sample Usage [](remove_drop_chunks_policy-examples)
+
+
+```sql
+SELECT remove_drop_chunks_policy('conditions');
+```
+
+removes the existing data retention policy for the `conditions` table.
+
+
+---
+## add_reorder_policy() [](add_reorder_policy)
+Create a policy to reorder chunks older on a given hypertable index in the
+background. (See [reorder_chunk](#reorder_chunk)). Only one reorder policy may
+exist per hypertable. Only chunks that are the 3rd from the most recent will be
+reordered to avoid reordering chunks that are still being inserted into. 
+
+>:TIP: Once a chunk has been reordered by the background worker it will not be
+reordered again. So if one were to insert significant amounts of data in to
+older chunks that have already been reordered, it might be necessary to manually
+re-run the [reorder_chunk](#reorder_chunk) function on older chunks, or to drop
+and re-create the policy if many older chunks have been affected. 
+
+#### Required Arguments [](add_reorder_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `hypertable` | (REGCLASS) Name of the hypertable to create the policy for. |
+| `index_name` | (NAME) Existing index by which to order rows on disk. |
+
+#### Optional Arguments [](add_reorder_policy-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `if_not_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the reorder_policy already exists. A notice is issued instead. Defaults to false. |
+
+#### Returns [](add_reorder_policy-returns)
+
+|Column|Description|
+|---|---|
+|`job_id`| (INTEGER) Timescaledb background job id created to implement this policy|
+
+
+#### Sample Usage [](add_reorder_policy-examples)
+
+
+```sql
+SELECT add_reorder_policy('conditions', 'conditions_device_id_time_idx');
+```
+
+creates a policy to reorder completed chunks by the existing `(device_id, time)` index. (See [reorder_chunk](#reorder_chunk)).
+
+---
+## remove_reorder_policy() [](remove_reorder_policy)
+Remove a policy to reorder a particular hypertable.
+
+#### Required Arguments [](remove_reorder_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `hypertable` | (REGCLASS) Name of the hypertable from which to remove the policy. |
+
+
+#### Optional Arguments [](remove_reorder_policy-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the reorder_policy does not exist. A notice is issued instead. Defaults to false. |
+
+
+#### Sample Usage [](remove_reorder_policy-examples)
+
+
+```sql
+SELECT remove_reorder_policy('conditions', if_exists => true);
+```
+
+removes the existing reorder policy for the `conditions` table if it exists.
+
+---
+
+
+## alter_job_schedule() [](alter_job_schedule)
+
+Policy jobs are scheduled to run periodically via a job run in a background
+worker. You can change the schedule using `alter_job_schedule`. To alter an
+existing job, you must refer to it by `job_id`. The `job_id` which implements a
+given policy and its current schedule can be found in views in the
+`timescaledb_information` schema corresponding to different types of policies or
+in the general `timescaledb_information.policy_stats` view. This view
+additionally contains information about when each job was last run and other
+useful statistics for deciding what the new schedule should be.
+
+>:TIP: Altering the schedule will only change the frequency at which the
+background worker checks the policy. If you need to change the data retention
+interval or reorder by a different index, you'll need to remove the policy and
+add a new one.
+
+#### Required Arguments [](alter_job_schedule-required-arguments)
+
+|Name|Description|
+|---|---|
+| `job_id` | (INTEGER) the id of the policy job being modified | 
+
+
+#### Optional Arguments [](alter_job_schedule-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `schedule_interval` | (INTERVAL)  The interval at which the job runs |
+| `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
+| `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
+| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure | 
+| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the job does not exist, a notice will be issued instead. Defaults to false. | 
+
+#### Returns [](alter_job_schedule-returns)
+
+|Column|Description|
+|---|---|
+| `schedule_interval` | (INTERVAL)  The interval at which the job runs |
+| `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
+| `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
+| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure | 
+
+#### Sample Usage [](alter_job_schedule-examples)
+
+```sql
+SELECT alter_job_schedule(job_id, schedule_interval => INTERVAL '2 days') FROM timescaledb_information.reorder_policies WHERE hypertable = 'conditions';
+```
+reschedules the reorder policy job for the `conditions` table so that it runs every two days.
+
 
 ## Analytics [](analytics)
 
@@ -1354,6 +1608,101 @@ enterprise | f       | 2019-02-15 13:44:53-05
 (1 row)
 ```
 
+---
+## timescaledb_information.drop_chunks_policies[](timescaledb_information-drop_chunks_policies)
+Shows information about drop_chunks policies that have been created by the user.
+(See [add_drop_chunks_policy](#add_drop_chunks_policy) for more information
+about drop_chunks policies). 
+
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+| `hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
+| `older_than` | (INTERVAL) Chunks fully older than this amount of time will be dropped when the policy is run |
+| `cascade` | (BOOLEAN) Whether the policy will be run with the cascade option turned on, which will cause dependent objects to be dropped as well as chunks. |
+| `job_id` | (INTEGER) The id of the background job set up to implement the drop_chunks policy|
+| `schedule_interval` | (INTERVAL)  The interval at which the job runs |
+| `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
+| `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
+| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
+
+#### Sample Usage
+
+Get information about drop_chunks policies.
+```sql
+SELECT * FROM timescaledb_information.drop_chunks_policies;
+       hypertable       | older_than | cascade | job_id | schedule_interval | max_runtime | max_retries | retry_period 
+------------------------+------------+---------+--------+-------------------+-------------+-------------+--------------
+       conditions       | @ 4 mons   | t       |   1001 | @ 1 sec           | @ 5 mins    |          -1 | @ 12 hours
+(1 row)
+```
+
+--
+## timescaledb_information.reorder_policies[](timescaledb_information-reorder_policies)
+Shows information about reorder policies that have been created by the user.
+(See [add_reorder_policy](#add_reorder_policy) for more information about
+reorder policies).
+
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+| `hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
+| `index` | (NAME) Chunks fully older than this amount of time will be dropped when the policy is run |
+| `job_id` | (INTEGER) The id of the background job set up to implement the reorder policy|
+| `schedule_interval` | (INTERVAL)  The interval at which the job runs |
+| `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
+| `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
+| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
+
+#### Sample Usage
+
+Get information about reorder policies.
+```sql
+SELECT * FROM timescaledb_information.reorder_policies;
+     hypertable   |     hypertable_index_name     | job_id | schedule_interval | max_runtime | max_retries | retry_period 
+--------------------+-----------------------------+--------+-------------------+-------------+-------------+--------------
+     conditions   | conditions_device_id_time_idx |   1000 | @ 4 days          | @ 0         |          -1 | @ 1 day
+(1 row)
+```
+
+---
+## timescaledb_information.policy_stats[](timescaledb_information-policy_stats)
+
+Shows information and statistics about policies created to manage data retention
+and other administrative tasks on hypertables. (See [policies](#policies)). The
+statistics include information useful for administering jobs and determining
+whether they ought be rescheduled, such as: when and whether the background job
+used to implement the policy succeeded and when it is scheduled to run next.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+| `hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
+| `job_id` | (INTEGER) The id of the background job created to implement the policy |
+| `job_type` | (TEXT) The type of policy the job was created to implement |
+| `last_run_success` | (BOOLEAN) Whether the last run succeeded or failed |
+| `last_finish` | (TIMESTAMPTZ) The time the last run finished |
+| `last_start` | (TIMESTAMPTZ) The time the last run started |
+| `next_start` | (TIMESTAMPTZ) The time the next run will start |
+| `total_runs` | (INTEGER) The total number of runs of this job |
+| `total_failures` | (INTEGER) The total number of times this job failed |
+
+#### Sample Usage 
+
+Get information about statistics on created policies. 
+```sql
+SELECT * FROM timescaledb_information.policy_stats;
+       hypertable       | job_id |  job_type   | last_run_success |         last_finish          |          last_start          |          next_start          | total_runs | total_failures 
+------------------------+--------+-------------+------------------+------------------------------+------------------------------+------------------------------+------------+----------------
+ conditions             |   1001 | drop_chunks | t                | Fri Dec 31 16:00:01 1999 PST | Fri Dec 31 16:00:01 1999 PST | Fri Dec 31 16:00:02 1999 PST |          2 |              0
+(1 row)
+```
+
 ## timescaledb.license_key [](timescaledb_license-key)
 
 #### Sample Usage
@@ -1363,6 +1712,7 @@ View current license key.
 ```sql 
 SHOW timescaledb.license_key;
 ```
+---
 
 ## chunk_relation_size() [](chunk_relation_size)
 
@@ -1673,8 +2023,9 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [chunk relation size]: #chunk_relation_size
 [best practices]: #create_hypertable-best-practices
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
-[postgres-tablespaces]: https://www.postgresql.org/docs/9.6/static/manage-ag-tablespaces.html
-[postgres-createtablespace]: https://www.postgresql.org/docs/9.6/static/sql-createtablespace.html
+[postgres-tablespaces]: https://www.postgresql.org/docs/current/manage-ag-tablespaces.html
+[postgres-createtablespace]: https://www.postgresql.org/docs/current/sql-createtablespace.html
+[postgres-cluster]: https://www.postgresql.org/docs/current/sql-cluster.html
 [migrate-from-postgresql]: /getting-started/migrating-data
 [memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
 [telemetry]: /using-timescaledb/telemetry
