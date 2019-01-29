@@ -22,7 +22,7 @@ Go environment, you can also `go get` the repository to install it.
 
 `timescaledb-tune` reads your system's `postgresql.conf` file and offers
 interactive suggestions for updating your settings:
-```text
+```bash
 Using postgresql.conf at this path:
 /usr/local/var/postgres/postgresql.conf
 
