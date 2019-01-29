@@ -119,7 +119,7 @@ distinct one.
 >:TIP: [](unique_indexes) To define an index as UNIQUE or PRIMARY KEY, the time column and, if it
 exists, the partitioning column **must** be part of the index.
 That is, using our running example, you can define a unique index on just the
-{time, location} fields, or to include additional columns (say, temperature).
+(time, location) fields, or to include additional columns (say, temperature).
 That said, we find UNIQUE indexes in time-series data to be much less prevalent than
 in traditional relational data models.
 
