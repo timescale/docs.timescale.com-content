@@ -1,6 +1,6 @@
 ## Installing from an Amazon AMI (Ubuntu) [](installation-ubuntu-ami)
 
-TimescaleDB is currently available as an Ubuntu 16.04 Amazon EBS-backed AMI. AMIs are
+TimescaleDB is currently available as an Ubuntu 18.04 Amazon EBS-backed AMI. AMIs are
 distributed by region, and our AMI is currently available in `us-east-1`, `us-east-2`,
 `us-west-1`, and `us-west-2`. Note that this image is built to use an EBS attached volume
 rather than the default disk that comes with EC2 instances.
@@ -9,10 +9,10 @@ See below for the image id corresponding to each region for the most recent Time
 
 Region | Image ID
 --- | ---
-us-east-1 (North Virginia) | ami-0ab121611cef19a43
-us-east-2 (Ohio) | ami-0a074614d665d4034
-us-west-1 (North California) | ami-0347656384a08abb3
-us-west-2 (Oregon) | ami-044ad6ff43f78205b
+us-east-1 (North Virginia) | ami-03bb950779cc8550e
+us-east-2 (Ohio) | ami-07423150150f68e39
+us-west-1 (North California) | ami-015f2547b9c09523b
+us-west-2 (Oregon) | us-west-2: ami-0b7d8abe718a3cc43
 
 
 To launch the AMI, go to the `AMIs` section of your AWS EC2 Dashboard run the following steps:
@@ -32,8 +32,9 @@ database by following these [postgres instructions]. Another possibility is usin
 
 >:WARNING: AMIs do not know what instance type you are using beforehand. Therefore
 the PostgreSQL configuration (postgresql.conf) that comes with our AMI uses the default
-settings, which are not optimal for most systems. See our [configuration] section for tips on
-optimally configuring postgresql.conf for your particular setup.
+settings, which are not optimal for most systems. Our AMI is packaged with `timescaledb-tune`,
+which you can use to tune postgresql.conf based on the underlying system resources of your instance.
+See our [configuration] section for details.
 
 >:TIP: These AMIs are made for EBS attached volumes. This allows for snapshots, protection of
 data if the EC2 instance goes down, and dynamic IOPS configuration. You should choose an
