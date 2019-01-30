@@ -1,7 +1,5 @@
 ## Windows ZIP Installer [](installation-windows)
 
-**Note: TimescaleDB requires PostgreSQL 9.6.3+,  10.2+, or 11.0+**
-
 #### Prerequisites
 
 - [Visual C++ Redistributable for Visual Studio 2015][c_plus] (included in VS 2015 and later)
@@ -45,10 +43,10 @@ shared_preload_libraries = 'timescaledb'
 
 Then, restart the PostgreSQL instance.
 
->:TIP: Our standard binary releases are licensed under the Timescale License. This means that you can use all of our free Community capabilities and seamlessly 
+>:TIP: Our standard binary releases are licensed under the Timescale License. This means that you can use all of our free Community capabilities and seamlessly
 activate Enterprise capabilities.  
-To build a version of this software that contains 
-source code that is only licensed under Apache License 2.0, pass `-DAPACHE_ONLY=1` 
+To build a version of this software that contains
+source code that is only licensed under Apache License 2.0, pass `-DAPACHE_ONLY=1`
 to `bootstrap`.   
 For more information about licensing, please read our [blog post][blog-post] about the subject.
 
