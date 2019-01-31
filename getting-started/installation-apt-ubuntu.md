@@ -38,22 +38,20 @@ sudo apt-get update
 sudo apt install timescaledb-postgresql-:pg_version:
 ```
 
-#### Update `postgresql.conf`
+#### Configure your database
 
->:TIP: The usual location of `postgres.conf`
-is `/etc/postgresql/:pg_version:/main/postgresql.conf`, but this may vary
-depending on your setup. If you are unsure where your `postgresql.conf` file
-is located, you can query PostgreSQL with any database client (e.g., `psql`)
-using `SHOW config_file;`.
-
-You will need to edit your `postgresql.conf` file to include
-necessary libraries:
+There are a [variety of settings that can be configured][config] for your
+new database. At a minimum, you will need to update your `postgresql.conf` file
+to include our library to the parameter `shared_preload_libraries`.
+The easiest way to get started is to run `timescaledb-tune`, which is
+installed by default when using `apt`:
 ```bash
-# Modify postgresql.conf to uncomment this line and add required libraries.
-shared_preload_libraries = 'timescaledb'
+sudo timescaledb-tune
 ```
 
->:TIP: If you have other libraries you are preloading, they should be comma separated.
+This will ensure that our extension is properly added to the parameter
+`shared_preload_libraries` as well as offer suggestions for tuning memory,
+parallelism, and other settings.
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
@@ -72,6 +70,7 @@ about the subject.
 
 [Here are some instructions to create the `postgres` superuser][createuser].
 
+[config]: /getting-started/configuring
 [createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 [ubuntu-releases]: http://releases.ubuntu.com/
 [blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
