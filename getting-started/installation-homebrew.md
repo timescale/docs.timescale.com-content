@@ -27,24 +27,20 @@ brew install timescaledb
 /usr/local/bin/timescaledb_move.sh
 ```
 
-#### Update `postgresql.conf`
+#### Configure your database
 
->:TIP: The usual location of `postgresql.conf` is
-`/usr/local/var/postgres/postgresql.conf`, but this may vary depending on
-your setup. If you are unsure where your `postgresql.conf` file
-is located, you can query PostgreSQL with any database client (e.g., `psql`)
-using `SHOW config_file;`.
-
-Also, you will need to edit your `postgresql.conf` file to include
-necessary libraries:
-
+There are a [variety of settings that can be configured][config] for your
+new database. At a minimum, you will need to update your `postgresql.conf` file
+to include our library to the parameter `shared_preload_libraries`.
+The easiest way to get started is to run `timescaledb-tune`, which is
+installed as a dependency when you install via Homebrew:
 ```bash
-# Modify postgresql.conf to uncomment this line and add required libraries.
-# For example:
-shared_preload_libraries = 'timescaledb'
+timescaledb-tune
 ```
 
->:TIP: If you have other libraries you are preloading, they should be comma separated.
+This will ensure that our extension is properly added to the parameter
+`shared_preload_libraries` as well as offer suggestions for tuning memory,
+parallelism, and other settings.
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
@@ -68,5 +64,6 @@ code, you should use `brew install timescaledb --with-oss-only`.
 For more information about licensing, please read our [blog post][blog-post]
 about the subject.
 
+[config]: /getting-started/configuring
 [Homebrew]: https://brew.sh/
 [blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
