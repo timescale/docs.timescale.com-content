@@ -5,7 +5,7 @@
 > - [add_dimension](#add_dimension)
 > - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
-> - [alter_policy_schedule](#alter_policy_schedule)
+> - [alter_job_schedule](#alter_job_schedule)
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
@@ -277,7 +277,7 @@ is _not_ a partition ID, but rather the inserted value's position in
 the dimension's key space, which is then divided across the partitions.
 
 The adaptive chunking feature is now deprecated and so we strongly
-discourage people from using the `chunk_target_size` and 
+discourage people from using the `chunk_target_size` and
 `chunk_sizing_func` parameters. These may be removed altogether in
 the future.
 
@@ -793,7 +793,7 @@ Reorder a single chunk's heap to follow the order of an index. This function
 acts similarly to the [PostgreSQL CLUSTER command][postgres-cluster] , however
 it uses lower lock levels so that, unlike with the CLUSTER command,  the chunk
 and hypertable are able to be read for most of the process. It does use a bit
-more disk space during the operation. 
+more disk space during the operation.
 
 This command can be particularly useful when data is often queried in an order
 different from that in which it was originally inserted. For example, data is
@@ -821,7 +821,7 @@ using [add_reorder_policy](#add_reorder_policy) is often much more convenient.
 
 #### Returns [](reorder_chunk-returns)
 
-This function returns void. 
+This function returns void.
 
 
 #### Sample Usage [](reorder_chunk-examples)
@@ -831,7 +831,7 @@ This function returns void.
 SELECT reorder_chunk('_timescaledb_internal._hyper_1_10_chunk', 'conditions_device_id_time_idx');
 ```
 
-runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the `conditions_device_id_time_idx` index. 
+runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the `conditions_device_id_time_idx` index.
 
 ---
 
@@ -845,7 +845,7 @@ The following functions allow the administrator to create/remove/alter policies
 that schedule administrative actions to take place on a hypertable. The actions
 are meant to implement data retention or perform tasks that will improve query
 performance on older chunks. Each policy is assigned a scheduled job
-which will be run in the background to enforce it. 
+which will be run in the background to enforce it.
 
 
 
@@ -853,7 +853,7 @@ which will be run in the background to enforce it.
 Create a policy to drop chunks older than a given interval of a particular
 hypertable on a schedule in the background. (See [drop_chunks](#drop_chunks)).
 This implements a data retention policy and will remove data on a schedule. Only
-one drop_chunks policy may exist per hypertable. 
+one drop_chunks policy may exist per hypertable.
 
 #### Required Arguments [](add_drop_chunks_policy-required-arguments)
 
@@ -918,13 +918,13 @@ removes the existing data retention policy for the `conditions` table.
 Create a policy to reorder chunks older on a given hypertable index in the
 background. (See [reorder_chunk](#reorder_chunk)). Only one reorder policy may
 exist per hypertable. Only chunks that are the 3rd from the most recent will be
-reordered to avoid reordering chunks that are still being inserted into. 
+reordered to avoid reordering chunks that are still being inserted into.
 
 >:TIP: Once a chunk has been reordered by the background worker it will not be
 reordered again. So if one were to insert significant amounts of data in to
 older chunks that have already been reordered, it might be necessary to manually
 re-run the [reorder_chunk](#reorder_chunk) function on older chunks, or to drop
-and re-create the policy if many older chunks have been affected. 
+and re-create the policy if many older chunks have been affected.
 
 #### Required Arguments [](add_reorder_policy-required-arguments)
 
@@ -1005,7 +1005,7 @@ add a new one.
 
 |Name|Description|
 |---|---|
-| `job_id` | (INTEGER) the id of the policy job being modified | 
+| `job_id` | (INTEGER) the id of the policy job being modified |
 
 
 #### Optional Arguments [](alter_job_schedule-optional-arguments)
@@ -1015,8 +1015,8 @@ add a new one.
 | `schedule_interval` | (INTERVAL)  The interval at which the job runs |
 | `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
 | `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
-| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure | 
-| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the job does not exist, a notice will be issued instead. Defaults to false. | 
+| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
+| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the job does not exist, a notice will be issued instead. Defaults to false. |
 
 #### Returns [](alter_job_schedule-returns)
 
@@ -1025,7 +1025,7 @@ add a new one.
 | `schedule_interval` | (INTERVAL)  The interval at which the job runs |
 | `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
 | `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
-| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure | 
+| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
 
 #### Sample Usage [](alter_job_schedule-examples)
 
@@ -1612,7 +1612,7 @@ enterprise | f       | 2019-02-15 13:44:53-05
 ## timescaledb_information.drop_chunks_policies[](timescaledb_information-drop_chunks_policies)
 Shows information about drop_chunks policies that have been created by the user.
 (See [add_drop_chunks_policy](#add_drop_chunks_policy) for more information
-about drop_chunks policies). 
+about drop_chunks policies).
 
 
 #### Available Columns
@@ -1633,7 +1633,7 @@ about drop_chunks policies).
 Get information about drop_chunks policies.
 ```sql
 SELECT * FROM timescaledb_information.drop_chunks_policies;
-       hypertable       | older_than | cascade | job_id | schedule_interval | max_runtime | max_retries | retry_period 
+       hypertable       | older_than | cascade | job_id | schedule_interval | max_runtime | max_retries | retry_period
 ------------------------+------------+---------+--------+-------------------+-------------+-------------+--------------
        conditions       | @ 4 mons   | t       |   1001 | @ 1 sec           | @ 5 mins    |          -1 | @ 12 hours
 (1 row)
@@ -1663,7 +1663,7 @@ reorder policies).
 Get information about reorder policies.
 ```sql
 SELECT * FROM timescaledb_information.reorder_policies;
-     hypertable   |     hypertable_index_name     | job_id | schedule_interval | max_runtime | max_retries | retry_period 
+     hypertable   |     hypertable_index_name     | job_id | schedule_interval | max_runtime | max_retries | retry_period
 --------------------+-----------------------------+--------+-------------------+-------------+-------------+--------------
      conditions   | conditions_device_id_time_idx |   1000 | @ 4 days          | @ 0         |          -1 | @ 1 day
 (1 row)
@@ -1692,12 +1692,12 @@ used to implement the policy succeeded and when it is scheduled to run next.
 | `total_runs` | (INTEGER) The total number of runs of this job |
 | `total_failures` | (INTEGER) The total number of times this job failed |
 
-#### Sample Usage 
+#### Sample Usage
 
-Get information about statistics on created policies. 
+Get information about statistics on created policies.
 ```sql
 SELECT * FROM timescaledb_information.policy_stats;
-       hypertable       | job_id |  job_type   | last_run_success |         last_finish          |          last_start          |          next_start          | total_runs | total_failures 
+       hypertable       | job_id |  job_type   | last_run_success |         last_finish          |          last_start          |          next_start          | total_runs | total_failures
 ------------------------+--------+-------------+------------------+------------------------------+------------------------------+------------------------------+------------+----------------
  conditions             |   1001 | drop_chunks | t                | Fri Dec 31 16:00:01 1999 PST | Fri Dec 31 16:00:01 1999 PST | Fri Dec 31 16:00:02 1999 PST |          2 |              0
 (1 row)
@@ -1709,7 +1709,7 @@ SELECT * FROM timescaledb_information.policy_stats;
 
 View current license key.
 
-```sql 
+```sql
 SHOW timescaledb.license_key;
 ```
 ---
