@@ -26,6 +26,9 @@ you should be able to open the folder in Visual Studio, which will take
 care of the rest.
 
 If you are using an earlier version of Visual Studio:
+
+>:WARNING: This install step has to be made as admin.
+
 ```bash
 # Bootstrap the build system
 ./bootstrap.bat
