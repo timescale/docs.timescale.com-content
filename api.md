@@ -1030,7 +1030,9 @@ add a new one.
 #### Sample Usage [](alter_job_schedule-examples)
 
 ```sql
-SELECT alter_job_schedule(job_id, schedule_interval => INTERVAL '2 days') FROM timescaledb_information.reorder_policies WHERE hypertable = 'conditions';
+SELECT alter_job_schedule(job_id, schedule_interval => INTERVAL '2 days')
+FROM timescaledb_information.reorder_policies
+WHERE hypertable = 'conditions';
 ```
 reschedules the reorder policy job for the `conditions` table so that it runs every two days.
 
@@ -1055,8 +1057,8 @@ earliest temperature value based on time within an aggregate group.
 Get the earliest temperature by device_id:
 ```sql
 SELECT device_id, first(temp, time)
-  FROM metrics
-  GROUP BY device_id;
+FROM metrics
+GROUP BY device_id;
 ```
 
 >:WARNING: The `last` and `first` commands do **not** use indexes, and instead
@@ -1097,9 +1099,9 @@ A simple bucketing of device's battery levels from the `readings` dataset:
 
 ```sql
 SELECT device_id, histogram(battery_level, 20, 60, 5)
-  FROM readings
-  GROUP BY device_id
-  LIMIT 10;
+FROM readings
+GROUP BY device_id
+LIMIT 10;
 ```
 
 The expected output:
@@ -1159,7 +1161,7 @@ The datatype of value needs to be the same as the `value` datatype of the `inter
 Get the temperature every day for each device over the last week interpolating for missing readings:
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as day,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
   device_id,
   avg(temperature) AS value,
   interpolate(avg(temperature))
@@ -1183,7 +1185,7 @@ ORDER BY day;
 Get the average temperature every day for each device over the last 7 days interpolating for missing readings with lookup queries for values before and after the gapfill time range:
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as day,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
   device_id,
   interpolate(avg(temperature) AS value,
     (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id),
@@ -1223,12 +1225,12 @@ latest temperature value based on time within an aggregate group.
 
 Get the temperature every 5 minutes for each device over the past day:
 ```sql
-SELECT device_id, time_bucket('5 minutes', time) as interval,
+SELECT device_id, time_bucket('5 minutes', time) AS interval,
   last(temp, time)
-  FROM metrics
-  WHERE time > now () - interval '1 day'
-  GROUP BY device_id, interval
-  ORDER BY interval DESC;
+FROM metrics
+WHERE time > now () - interval '1 day'
+GROUP BY device_id, interval
+ORDER BY interval DESC;
 ```
 
 >:WARNING: The `last` and `first` commands do **not** use indexes, and instead
@@ -1271,7 +1273,7 @@ by the outer query (i.e., the first bucket in the queried time range is empty).
 Get the average temperature every day for each device over the last 7 days carrying forward the last value for missing readings:
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as day,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
   device_id,
   avg(temperature) AS value,
   locf(avg(temperature))
@@ -1295,7 +1297,7 @@ ORDER BY day;
 Get the average temperature every day for each device over the last 7 days carrying forward the last value for missing readings with out-of-bounds lookup
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) as day,
+  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
   device_id,
   avg(temperature) AS value,
   locf(
@@ -1376,42 +1378,41 @@ or 1 hour.
 Simple 5-minute averaging:
 
 ```sql
-SELECT time_bucket('5 minutes', time)
-    AS five_min, avg(cpu)
-  FROM metrics
-  GROUP BY five_min
-  ORDER BY five_min DESC LIMIT 10;
+SELECT time_bucket('5 minutes', time) AS five_min, avg(cpu)
+FROM metrics
+GROUP BY five_min
+ORDER BY five_min DESC LIMIT 10;
 ```
 
 To report the middle of the bucket, instead of the left edge:
 ```sql
 SELECT time_bucket('5 minutes', time) + '2.5 minutes'
-    AS five_min, avg(cpu)
-  FROM metrics
-  GROUP BY five_min
-  ORDER BY five_min DESC LIMIT 10;
+  AS five_min, avg(cpu)
+FROM metrics
+GROUP BY five_min
+ORDER BY five_min DESC LIMIT 10;
 ```
 
 For rounding, move the alignment so that the middle of the bucket is at the
 5 minute mark (and report the middle of the bucket):
 ```sql
 SELECT time_bucket('5 minutes', time, '-2.5 minutes') + '2.5 minutes'
-    AS five_min, avg(cpu)
-  FROM metrics
-  GROUP BY five_min
-  ORDER BY five_min DESC LIMIT 10;
+  AS five_min, avg(cpu)
+FROM metrics
+GROUP BY five_min
+ORDER BY five_min DESC LIMIT 10;
 ```
 
 To shift the alignment of the buckets you can use the origin parameter
 (passed as a timestamp, timestamptz, or date type).
 In this example, we shift the start of the week to a Sunday (the default is a Monday).
 ```sql
-SELECT time_bucket('1 week', timetz, TIMESTAMPTZ '2017-12-31') AS one_week,
-    avg(cpu)
-  FROM metrics
-  GROUP BY one_week
-  WHERE time > TIMESTAMPTZ '2017-12-01'  AND time < TIMESTAMPTZ '2018-01-03'
-  ORDER BY one_week DESC LIMIT 10;
+SELECT time_bucket('1 week', timetz, TIMESTAMPTZ '2017-12-31')
+  AS one_week, avg(cpu)
+FROM metrics
+GROUP BY one_week
+WHERE time > TIMESTAMPTZ '2017-12-01'  AND time < TIMESTAMPTZ '2018-01-03'
+ORDER BY one_week DESC LIMIT 10;
 ```
 
 The value of the origin parameter we used in this example was `2017-12-31`, a Sunday within the
@@ -1422,11 +1423,11 @@ the last bucket would have only 4 days of data.
 
 Bucketing a TIMESTAMPTZ at local time instead of UTC(see note above):
 ```sql
-SELECT time_bucket('2 hours', timetz::TIMESTAMP) AS five_min,
-    avg(cpu)
-  FROM metrics
-  GROUP BY five_min
-  ORDER BY five_min DESC LIMIT 10;
+SELECT time_bucket('2 hours', timetz::TIMESTAMP)
+  AS five_min, avg(cpu)
+FROM metrics
+GROUP BY five_min
+ORDER BY five_min DESC LIMIT 10;
 ```
 
 Note that the above cast to TIMESTAMP converts the time to local time according
@@ -1567,6 +1568,7 @@ Get information about all hypertables.
 
 ```sql
 SELECT * FROM timescaledb_information.hypertable;
+
  table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size
 --------------+------------+-------------+----------------+------------+------------+------------+------------+------------
  public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
@@ -1577,7 +1579,9 @@ SELECT * FROM timescaledb_information.hypertable;
 Check whether a table is a hypertable.
 
 ```sql
-SELECT * FROM timescaledb_information.hypertable WHERE table_schema='public' AND table_name='metrics';
+SELECT * FROM timescaledb_information.hypertable
+WHERE table_schema='public' AND table_name='metrics';
+
  table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size
 --------------+------------+-------------+----------------+------------+------------+------------+------------+------------
  public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
@@ -1602,6 +1606,7 @@ Get information about current license.
 
 ```sql
 SELECT * FROM timescaledb_information.license;
+
 edition   | expired |    expiration_time
 ------------+---------+------------------------
 enterprise | f       | 2019-02-15 13:44:53-05
@@ -1633,6 +1638,7 @@ about drop_chunks policies).
 Get information about drop_chunks policies.
 ```sql
 SELECT * FROM timescaledb_information.drop_chunks_policies;
+
        hypertable       | older_than | cascade | job_id | schedule_interval | max_runtime | max_retries | retry_period
 ------------------------+------------+---------+--------+-------------------+-------------+-------------+--------------
        conditions       | @ 4 mons   | t       |   1001 | @ 1 sec           | @ 5 mins    |          -1 | @ 12 hours
@@ -1663,6 +1669,7 @@ reorder policies).
 Get information about reorder policies.
 ```sql
 SELECT * FROM timescaledb_information.reorder_policies;
+
      hypertable   |     hypertable_index_name     | job_id | schedule_interval | max_runtime | max_retries | retry_period
 --------------------+-----------------------------+--------+-------------------+-------------+-------------+--------------
      conditions   | conditions_device_id_time_idx |   1000 | @ 4 days          | @ 0         |          -1 | @ 1 day
@@ -1697,6 +1704,7 @@ used to implement the policy succeeded and when it is scheduled to run next.
 Get information about statistics on created policies.
 ```sql
 SELECT * FROM timescaledb_information.policy_stats;
+
        hypertable       | job_id |  job_type   | last_run_success |         last_finish          |          last_start          |          next_start          | total_runs | total_failures
 ------------------------+--------+-------------+------------------+------------------------------+------------------------------+------------------------------+------------+----------------
  conditions             |   1001 | drop_chunks | t                | Fri Dec 31 16:00:01 1999 PST | Fri Dec 31 16:00:01 1999 PST | Fri Dec 31 16:00:02 1999 PST |          2 |              0
@@ -1745,7 +1753,8 @@ SELECT * FROM chunk_relation_size('conditions');
 ```
 or, to reduce the output, a common use is:
 ```sql
-SELECT chunk_table, table_bytes, index_bytes, total_bytes FROM chunk_relation_size('conditions');
+SELECT chunk_table, table_bytes, index_bytes, total_bytes
+FROM chunk_relation_size('conditions');
 ```
 The expected output:
 ```
@@ -1790,7 +1799,8 @@ SELECT * FROM chunk_relation_size_pretty('conditions');
 ```
 or, to reduce the output, a common use is:
 ```sql
-SELECT chunk_table, table_size, index_size, total_size FROM chunk_relation_size_pretty('conditions');
+SELECT chunk_table, table_size, index_size, total_size
+FROM chunk_relation_size_pretty('conditions');
 ```
 The expected output:
 ```
@@ -1810,7 +1820,6 @@ This function returns the text string that is sent to our servers if
 background [telemetry][] is enabled. It takes no arguments.
 
 #### Sample Usage [](get_telemetry_report-examples)
-
 ```sql
 SELECT get_telemetry_report()
 ```
@@ -1830,7 +1839,6 @@ Get approximate row count for hypertable(s) based on catalog estimates.
 #### Sample Usage [](hypertable_approximate_row_count-examples)
 
 Get the approximate row count for a single hypertable.
-
 ```sql
 SELECT * FROM hypertable_approximate_row_count('conditions');
 ```
@@ -1873,7 +1881,8 @@ SELECT * FROM hypertable_relation_size('conditions');
 ```
 or, to reduce the output, a common use is:
 ```sql
-SELECT table_bytes, index_bytes, toast_bytes, total_bytes FROM hypertable_relation_size('conditions');
+SELECT table_bytes, index_bytes, toast_bytes, total_bytes
+FROM hypertable_relation_size('conditions');
 ```
 The expected output:
 ```
@@ -1907,7 +1916,8 @@ SELECT * FROM hypertable_relation_size_pretty('conditions');
 ```
 or, to reduce the output, a common use is:
 ```sql
-SELECT table_size, index_size, toast_size, total_size FROM hypertable_relation_size_pretty('conditions');
+SELECT table_size, index_size, toast_size, total_size
+FROM hypertable_relation_size_pretty('conditions');
 ```
 The expected output:
 ```
@@ -1996,6 +2006,7 @@ Show the tablespaces attached to a hypertable.
 
 ```sql
 SELECT * FROM show_tablespaces('conditions');
+
  show_tablespaces
 ------------------
  disk1
