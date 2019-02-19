@@ -1122,7 +1122,7 @@ The expected output:
 
 ---
 
-## interpolate() [](interpolate)
+## interpolate() :community_function: [](interpolate)
 
 The `interpolate` function does linear interpolation for missing values.
 It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
@@ -1239,7 +1239,7 @@ ORDER BY interval DESC;
  alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
  latest value (which will use indexes).
 
-## locf() [](locf)
+## locf() :community_function: [](locf)
 
 The `locf` function (last observation carried forward) allows you to carry the last seen value in an aggregation group forward.
 It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
@@ -1441,7 +1441,7 @@ to the server's timezone setting.
  multi-day calls to time_bucket. The old behavior can be reproduced by passing
  2000-01-01 as the origin parameter to time_bucket.
 
-## time_bucket_gapfill() [](time_bucket_gapfill)
+## time_bucket_gapfill() :community_function: [](time_bucket_gapfill)
 
 The `time_bucket_gapfill` function works similar to `time_bucket` but also activates gap
 filling for the interval between `start` and `finish`. It can only be used with an aggregation
