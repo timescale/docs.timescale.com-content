@@ -535,6 +535,11 @@ The `older_than` and `newer_than` parameters can be specified in two ways:
     explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
     SMALLINT / INT / BIGINT. The choice of timestamp or integer must follow the type of the hypertable's time column.
 
+
+>:WARNING: When using just an interval type, the function assumes that
+you are are removing things _in the past_. If you want to remove data
+in the future (i.e., erroneous entries), use a timestamp.
+
 When both arguments are used, the function returns the intersection of the resulting two ranges. For example,
 specifying `newer_than => 4 months` and `older_than => 3 months` will drop all full chunks that are between 3 and
 4 months old. Similarly, specifying `newer_than => '2017-01-01'` and `older_than => '2017-02-01'` will drop
@@ -543,7 +548,7 @@ intersection between two ranges will result in an error.
 
 #### Sample Usage [](drop_chunks-examples)
 
-Drop all chunks older than 3 months:
+Drop all chunks older than 3 months ago:
 ```sql
 SELECT drop_chunks(interval '3 months');
 ```
@@ -582,12 +587,12 @@ Drop all chunks from hypertable `conditions` older than 3 months, including depe
 SELECT drop_chunks(interval '3 months', 'conditions', cascade => TRUE);
 ```
 
-Drop all chunks newer than 3 months:
+Drop all chunks newer than 3 months ago:
 ```sql
 SELECT drop_chunks(newer_than => interval '3 months');
 ```
 
-Drop all chunks older than 3 months and newer than 4 months:
+Drop all chunks older than 3 months ago and newer than 4 months ago:
 ```sql
 SELECT drop_chunks(older_than => interval '3 months', newer_than => interval '4 months', table_name => 'conditions')
 ```
