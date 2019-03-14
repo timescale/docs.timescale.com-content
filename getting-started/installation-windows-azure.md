@@ -2,9 +2,9 @@
 
 TimescaleDB is currently available on [Azure Database for PostgreSQL][azure-postgresql] versions 9.6 and 10. To install TimescaleDB, you need to include it in the server’s shared preloaded libraries. A change to PostgreSQL’s shared preloaded libraries requires a restart to take effect.
 
-*Note: TimescaleDB is only available in version 1.1 from Azure Database for PostgreSQL*
+*Note: Only TimescaleDB v1.1.1 is available on Azure Database for PostgreSQL*
 
->:TIP: Azure Database for PostgreSQL currently only runs the OSS version of TimescaleDB. This means that advanced features included in TimescaleDB Community and Enterprise are not available on Azure Database for PostgreSQL. For more information on how to choose the right option for you, please view our feature matrix.
+>:TIP: Azure Database for PostgreSQL currently only runs the OSS version of TimescaleDB. This means that advanced features included in TimescaleDB Community and Enterprise are not available on Azure Database for PostgreSQL. For more information on how to choose the right option for you, please view our [feature matrix][matrix].
 
 ### Using the Azure Portal
 1. Select your Azure Database for PostgreSQL server.
@@ -28,3 +28,4 @@ Next you can [set up][setup] the database either by [creating a hypertable][crea
 [setup]: /getting-started/setup
 [create-hypertable]: /getting-started/creating-hypertables
 [migrate-data]: /getting-started/migrating-data
+[matrix]: https://www.timescale.com/pricing
