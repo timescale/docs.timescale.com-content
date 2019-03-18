@@ -202,7 +202,7 @@ timescaledb-parallel-copy --db-name new_db --table conditions \
 ```
 
 In addition to parallelizing the workload, the tool also offers flags
-to improve the copy experience. [See the repo on Github][parallel importer] for full details.
+to improve the copy experience. [See the repo on GitHub][parallel importer] for full details.
 
 >:TIP: We recommend not setting the number of workers higher than
 the number of available CPU cores on the machine.
