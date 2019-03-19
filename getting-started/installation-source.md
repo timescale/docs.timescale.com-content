@@ -12,7 +12,7 @@
 >ttt It is **highly recommended** that you checkout the latest
 tagged commit to build from (see the repo's [Releases][github-releases] page for that)
 
-Clone the repository from [Github][github-timescale]:
+Clone the repository from [GitHub][github-timescale]:
 ```bash
 git clone https://github.com/timescale/timescaledb.git
 cd timescaledb
