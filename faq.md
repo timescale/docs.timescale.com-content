@@ -323,7 +323,7 @@ See our [updating documentation][update]. [[Top]](#top)
 [last]: /api#last
 [data-retention]: http://docs.timescale.com/using-timescaledb/data-retention
 [postgis]: /tutorials/tutorial-hello-nyc#tutorial-postgis
-[Github]: https://github.com/timescale/timescaledb/issues
+[GitHub]: https://github.com/timescale/timescaledb/issues
 [joining our Slack group]: https://slack-login.timescale.com/
 [install]: /getting-started/installation
 [update]: /using-timescaledb/update-db

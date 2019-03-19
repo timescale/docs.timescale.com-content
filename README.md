@@ -17,7 +17,7 @@ The admin for the docs will use that as a guide when updating version branches.
 
 ### A note on page links
 
-None of the internal page links within these files will work on Github.  They are designed to function within the code for the documentation site at [docs.timescale.com](http://docs.timescale.com).  All external links should work.
+None of the internal page links within these files will work on GitHub.  They are designed to function within the code for the documentation site at [docs.timescale.com](http://docs.timescale.com).  All external links should work.
 
 ### A note on anchors
 
