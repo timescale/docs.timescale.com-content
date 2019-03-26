@@ -1459,8 +1459,16 @@ done outside of the specified range.
 |---|---|
 | `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
 | `time` | The timestamp to bucket (timestamp/timestamptz/date)|
+
+#### Optional Arguments [](time_bucket_gapfill-optional-arguments)
+
+|Name|Description|
+|---|---|
 | `start` | The start of the gapfill period (timestamp/timestamptz/date)|
 | `finish` | The end of the gapfill period (timestamp/timestamptz/date)|
+
+Starting with version 1.3.0 `start` and `finish` are optional arguments and will
+be inferred from the WHERE clause if not supplied as arguments.
 
 ### For Integer Time Inputs
 
@@ -1470,8 +1478,16 @@ done outside of the specified range.
 |---|---|
 | `bucket_width` | integer interval for how long each bucket is (int2/int4/int8) |
 | `time` | The timestamp to bucket (int2/int4/int8)|
+
+#### Optional Arguments [](time_bucket_gapfill-integer-optional-arguments)
+
+|Name|Description|
+|---|---|
 | `start` | The start of the gapfill period (int2/int4/int8)|
 | `finish` | The end of the gapfill period (int2/int4/int8)|
+
+Starting with version 1.3.0 `start` and `finish` are optional arguments and will
+be inferred from the WHERE clause if not supplied as arguments.
 
 #### Sample Usage [](time_bucket_gapfill-examples)
 
@@ -1479,11 +1495,11 @@ Get the metric value every day over the last 7 days:
 
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('1 day', time) AS day,
   device_id,
   avg(value) AS value
 FROM metrics
-WHERE time > now() - interval '1 week'
+WHERE time > now() - interval '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1503,12 +1519,12 @@ Get the metric value every day over the last 7 days carrying forward the previou
 
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('1 day', time) AS day,
   device_id,
   avg(value) AS value,
   locf(avg(value))
 FROM metrics
-WHERE time > now() - interval '1 week'
+WHERE time > now() - interval '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1527,11 +1543,12 @@ Get the metric value every day over the last 7 days interpolating missing values
 
 ```sql
 SELECT
-  time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('5 minutes', time) AS day,
   device_id,
   avg(value) AS value,
   interpolate(avg(value))
 FROM metrics
+WHERE time > now() - interval '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
