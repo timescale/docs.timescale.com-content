@@ -1192,10 +1192,10 @@ Get the average temperature every day for each device over the last 7 days inter
 SELECT
   time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
   device_id,
-  interpolate(avg(temperature) AS value,
-    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id),
-    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id)
-  )
+  interpolate(avg(temperature),
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id) ORDER BY time DESC LIMIT 1,
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1)
+  ) AS value
 FROM metrics
 WHERE time > now () - interval '1 week'
 GROUP BY day, device_id
@@ -1308,7 +1308,7 @@ SELECT
   avg(temperature) AS value,
   locf(
     avg(temperature),
-    (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id)
+    (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1)
   )
 FROM metrics m
 WHERE time > now () - interval '1 week'
