@@ -24,6 +24,7 @@ UNIQUE and PRIMARY constraints must include the partitioning key.
 
 ### 3. Migrating from InfluxDB
 If you want to migrate data from InfluxDB, [follow these instructions][outflux]
+
 ---
 
 ## Migrate from the Same PostgreSQL Database [](same-db)
