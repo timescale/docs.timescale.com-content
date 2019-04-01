@@ -1,9 +1,9 @@
 # Migrating Data
 >:TIP: First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
 
-There are two choices available to migrate data into TimescaleDB:
+There are a number of choices available to migrate data into TimescaleDB:
 
-### 1. Migration from the PostgreSQL instance
+### 1. Migrating from an existing PostgreSQL instance
 Depending on where your data is currently stored,
 the steps to migrate it to TimescaleDB are slightly different.
 
@@ -20,11 +20,13 @@ If you have a dataset stored in a `.csv` file, you can import it into an empty T
 
 >:TIP: When converting a normal SQL table to a hypertable, pay attention to how you handle constraints.
 A hypertable can contain foreign keys to normal SQL table columns, but the reverse is not allowed.
-UNIQUE and PRIMARY constraints must include the partitioning key. 
+UNIQUE and PRIMARY constraints must include the partitioning key.
 
+### 3. Migrating from InfluxDB
+If you want to migrate data from InfluxDB, [follow these instructions][outflux]
 ---
 
-## Migrate from the Same Database [](same-db)
+## Migrate from the Same PostgreSQL Database [](same-db)
 
 For this example we'll assume that you have a table named `old_table` that you
 want to migrate to a table named `new_table`.  The steps are:
@@ -96,7 +98,7 @@ our [schema management][indexing] section.
 
 ---
 
-## Migrating from a Different Database [](different-db)
+## Migrating from a Different PostgreSQL Database [](different-db)
 
 To migrate your database from PostgreSQL to TimescaleDB, you
 need `pg_dump` for exporting your schema and data.
@@ -161,7 +163,7 @@ Follow the [instructions below][csv-import] to insert data into your hypertable.
 
 ---
 
-## Import data into TimescaleDB [](import-data)
+## Import data into TimescaleDB from .csv [](import-data)
 
 If you have data stored in an external `.csv` file, you can import it into TimescaleDB:
 
@@ -224,6 +226,19 @@ large datasets it can be impractical and time-consuming because
 `COPY` is single-threaded. For a faster method that can utilize more
 of the CPU, use the previous method.
 
+## Migration from InfluxDB to TimescaleDB using Outflux [](outflux)
+
+Outflux is an open-source tool that users can use to batch migrate data from
+InfluxDB to TimescaleDB. Anyone who is currently running an InfluxDB instance
+can migrate their workload to TimescaleDB with a single command: `outflux migrate`.
+You must also have [TimescaleDB installed][installed] and a means to connect to it.
+
+With Outflux, users can pipe exported data directly into TimescaleDB.
+Outflux manages schema discovery, validation, and creation.
+
+For more information on how to get started, please follow [this tutorial][outflux-tutorial].
+
+
 Now check out some common [hypertable commands][] for exploring your data.
 
 [installed]: /getting-started/installation
@@ -231,9 +246,11 @@ Now check out some common [hypertable commands][] for exploring your data.
 [same-db]: #same-db
 [different-db]: #different-db
 [import-data]: #import-data
+[outflux]: #outflux
 [create_hypertable]: /api#create_hypertable
 [unique_indexes]: /using-timescaledb/schema-management#unique_indexes
 [indexing]: /using-timescaledb/schema-management#indexing
 [csv-import]: #csv-import
 [parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
+[outflux-tutorial]: /tutorials/outflux
 [hypertable commands]: /using-timescaledb/hypertables
