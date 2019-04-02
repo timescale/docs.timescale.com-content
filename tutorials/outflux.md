@@ -55,7 +55,7 @@ $ influx -import -path=outflux_taxit.txt -database=outflux_tutorial
 ```
 
 The data in the file is without a timestamp so the current time of the Influx server will be used at the time of insert. 
-All the data points belong to one measurement `taxi`. The points are tagged with location, rating and vendor. Four fields are recorded: fare, mta_tax, tip and tolls.
+All the data points belong to one measurement `taxi`. The points are tagged with location, rating, and vendor. Four fields are recorded: fare, mta_tax, tip, and tolls.
 The `influx` client assumes the server is available at `http://localhost:8086` by default.
 
 ## Schema Discovery, Validation and Transfer [](schema)
@@ -65,7 +65,7 @@ One of Outflux’s features is the ability to discover the schema of an InfluxDB
 We can now create a TimescaleDB hypertable ready to receive the demo data we inserted into the InfluxDB instance. If you followed the tutorial and inserted the data from the example, there should be a `taxi` measurement in the `outflux_tutorial` database in the InfluxDB instance.
 
 The `schema-transfer` command of Outflux can work with 4 schema strategies:
-* `ValidateOnly`: checks if a the TimescaleDB extension is installed, a specified database has a hypertable with the proper columns, and if it’s partitioned properly, but will not perform modifications
+* `ValidateOnly`: checks if the TimescaleDB extension is installed, a specified database has a hypertable with the proper columns, and if it’s partitioned properly, but will not perform modifications
 * `CreateIfMissing`: runs all checks that `ValidateOnly` does and creates and properly partitions any missing hypertables
 * `DropAndCreate`: drops any existing table with the same name as the measurement, and creates a new hypertable and partitions it properly
 * `DropCascadeAndCreate`: performs the same action as DropAndCreate with the additional strength of executing a cascade table drop if there is an existing table with the same name as the measurement
@@ -119,7 +119,7 @@ CREATE EXTENSION IF NOT EXISTS timescaledb
 ## Data Migration [](migration)
 
 Schema transfer is useful, but it’s not what we built Outflux for. 
-You can do schema-transfer and data migration in one with the `migrate` command. 
+You can do schema-transfer *and* data migration in one with the `migrate` command. 
 The connection options available are the same (and you can check them out on the [public repo][outflux-connection]). 
 You can transfer a complete InfluxDB database with each measurement being exported as a separate table, or you can select which measurements to export.
 
@@ -132,9 +132,9 @@ $ outflux migrate outflux_tutorial taxi \
  --schema-strategy=DropAndCreate
 ```
 
-Here we’re using the DropAndCreate strategy that will drop any previous table named “cpu” and create it before piping the data. 
+Here we’re using the DropAndCreate strategy that will drop any previous table named `cpu` and create it before piping the data. 
 The migrate command supports several flags that offer the user flexibility in the selection of data to be migrated. 
-One of them is the --limit flag that will only export the first N rows from the InfluxDB database ordered by time. 
+One of them is the `--limit` flag that will only export the first N rows from the InfluxDB database ordered by time. 
 The output of the migrate command with a N=10 limit should look like this:
 
 ```
