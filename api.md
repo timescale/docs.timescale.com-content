@@ -24,22 +24,22 @@
 > - [interpolate](#interpolate)
 > - [last](#last)
 > - [locf](#locf)
+> - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
+> - [remove_reorder_policy](#remove_reorder_policy)
+> - [reorder_chunk](#reorder_chunk)
 > - [set_adaptive_chunking](#set_adaptive_chunking)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
+> - [show_chunks](#show_chunks)
+> - [show_tablespaces](#show_tablespaces)
+> - [time_bucket](#time_bucket)
+> - [time_bucket_gapfill](#time_bucket_gapfill)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
 > - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
 > - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
 > - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
 > - [timescaledb.license_key](#timescaledb_license-key)
-> - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
-> - [remove_reorder_policy](#remove_reorder_policy)
-> - [reorder_chunk](#reorder_chunk)
-> - [show_chunks](#show_chunks)
-> - [show_tablespaces](#show_tablespaces)
-> - [time_bucket](#time_bucket)
-> - [time_bucket_gapfill](#time_bucket_gapfill)
 
 ## Hypertable management [](hypertable-management)
 
@@ -793,7 +793,7 @@ Get all chunks older than 3 months and newer than 4 months:
 SELECT show_chunks(older_than => interval '3 months', newer_than => interval '4 months');
 ```
 
-## reorder_chunk() [](reorder_chunk)
+## reorder_chunk() :community_function: [](reorder_chunk)
 Reorder a single chunk's heap to follow the order of an index. This function
 acts similarly to the [PostgreSQL CLUSTER command][postgres-cluster] , however
 it uses lower lock levels so that, unlike with the CLUSTER command,  the chunk
