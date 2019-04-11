@@ -840,7 +840,7 @@ runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the 
 
 ---
 
-## Policies :enterprise_function: [](policies)
+## Automation policies :enterprise_function: [](automation-policies)
 TimescaleDB includes an automation framework for allowing background tasks to
 run inside the database, controllable by user-supplied policies. These tasks
 currently include capabilities around data retention and data reordering for
@@ -1685,7 +1685,7 @@ SELECT * FROM timescaledb_information.reorder_policies;
 ## timescaledb_information.policy_stats[](timescaledb_information-policy_stats)
 
 Shows information and statistics about policies created to manage data retention
-and other administrative tasks on hypertables. (See [policies](#policies)). The
+and other administrative tasks on hypertables. (See [policies](#automation-policies)). The
 statistics include information useful for administering jobs and determining
 whether they ought be rescheduled, such as: when and whether the background job
 used to implement the policy succeeded and when it is scheduled to run next.
