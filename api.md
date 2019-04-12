@@ -22,10 +22,10 @@
 > - [set_adaptive_chunking](#set_adaptive_chunking)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
-> - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
+> - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 
 ## Hypertable management [](hypertable-management)
 
@@ -263,7 +263,7 @@ is _not_ a partition ID, but rather the inserted value's position in
 the dimension's key space, which is then divided across the partitions.
 
 The adaptive chunking feature is now deprecated and so we strongly
-discourage people from using the `chunk_target_size` and 
+discourage people from using the `chunk_target_size` and
 `chunk_sizing_func` parameters. These may be removed altogether in
 the future.
 
