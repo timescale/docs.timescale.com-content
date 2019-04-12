@@ -236,8 +236,12 @@ in many cases stronger consistency between the primary and replicas is
 required. Under heavy workloads, replicas can lag far behind the primary,
 providing stale data to clients reading from the replicas. Moreover, in cases
 where any data loss is fatal, asynchronous replication may not provide enough
-of a durability guarantee. Luckily `synchronous_commit` has several options
-with varying consitency/performance tradeoffs:
+of a durability guarantee. Luckily [`synchronous_commit`][postgres-synchronous-commit-docs] has several options
+with varying consistency/performance tradeoffs:
+
+>:WARNING: If `synchronous_standby_names` is empty, the settings `on`, `remote_apply`,
+>`remote_write` and `local` all provide the same synchronization level:
+>transaction commits only wait for local flush to disk.
 
 * `on` - Default value. The server will not return "success" until the WAL
   transaction has been written to disk on the primary and any replicas.
@@ -276,8 +280,7 @@ Remote Apply | X | X | X | X | X
 An important complementary setting to `synchronous_commit` is
 `synchronous_standby_names`. This setting lists the names of all replicas the
 primary database will support for synchronous replication, and configures *how*
-the primary database will wait for them. This setting is required for
-`synchronous_commit` mode that isn't `off`. The setting supports several
+the primary database will wait for them. The setting supports several
 different formats:
 
 * `FIRST num_sync (replica_name_1, replica_name_2)` - This will wait for
@@ -381,6 +384,7 @@ high availability solution with automatic failover functionality.
 [postgres-rslots-docs]: https://www.postgresql.org/docs/current/static/warm-standby.html#STREAMING-REPLICATION-SLOTS
 [postgres-archive-docs]: https://www.postgresql.org/docs/current/static/continuous-archiving.html
 [postgres-wal-docs]: https://www.postgresql.org/docs/current/static/wal-intro.html
+[postgres-synchronous-commit-docs]: https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT
 [postgres-scram-docs]: https://www.postgresql.org/docs/current/static/sasl-authentication.html#SASL-SCRAM-SHA-256
 [hba-docs]: https://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html
 [postgres-pgpass-docs]: https://www.postgresql.org/docs/current/static/libpq-pgpass.html
