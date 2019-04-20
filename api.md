@@ -125,7 +125,6 @@ SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_e
 ```
 
 ---
-
 ## attach_tablespace() [](attach_tablespace)
 
 Attach a tablespace to a hypertable and use it to store chunks. A
@@ -793,7 +792,9 @@ Get all chunks older than 3 months and newer than 4 months:
 SELECT show_chunks(older_than => interval '3 months', newer_than => interval '4 months');
 ```
 
+---
 ## reorder_chunk() :community_function: [](reorder_chunk)
+
 Reorder a single chunk's heap to follow the order of an index. This function
 acts similarly to the [PostgreSQL CLUSTER command][postgres-cluster] , however
 it uses lower lock levels so that, unlike with the CLUSTER command,  the chunk
@@ -852,8 +853,6 @@ are meant to implement data retention or perform tasks that will improve query
 performance on older chunks. Each policy is assigned a scheduled job
 which will be run in the background to enforce it.
 
-
-
 ## add_drop_chunks_policy() :enterprise_function: [](add_drop_chunks_policy)
 Create a policy to drop chunks older than a given interval of a particular
 hypertable on a schedule in the background. (See [drop_chunks](#drop_chunks)).
@@ -890,7 +889,7 @@ SELECT add_drop_chunks_policy('conditions', INTERVAL '6 months');
 
 creates a data retention policy to discard chunks greater than 6 months old.
 
-
+---
 ## remove_drop_chunks_policy() :enterprise_function: [](remove_drop_chunks_policy)
 Remove a policy to drop chunks of a particular hypertable.
 
@@ -1041,7 +1040,7 @@ WHERE hypertable = 'conditions';
 ```
 reschedules the reorder policy job for the `conditions` table so that it runs every two days.
 
-
+---
 ## Analytics [](analytics)
 
 ## first() [](first)
@@ -1213,6 +1212,7 @@ ORDER BY day;
 (7 row)
 ```
 
+---
 ## last() [](last)
 
 The `last` aggregate allows you to get the value of one column
@@ -1244,6 +1244,7 @@ ORDER BY interval DESC;
  alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
  latest value (which will use indexes).
 
+---
 ## locf() :community_function: [](locf)
 
 The `locf` function (last observation carried forward) allows you to carry the last seen value in an aggregation group forward.
@@ -1446,6 +1447,7 @@ to the server's timezone setting.
  multi-day calls to time_bucket. The old behavior can be reproduced by passing
  2000-01-01 as the origin parameter to time_bucket.
 
+---
 ## time_bucket_gapfill() :community_function: [](time_bucket_gapfill)
 
 The `time_bucket_gapfill` function works similar to `time_bucket` but also activates gap
@@ -1668,7 +1670,7 @@ SELECT * FROM timescaledb_information.drop_chunks_policies;
 (1 row)
 ```
 
---
+---
 ## timescaledb_information.reorder_policies[](timescaledb_information-reorder_policies)
 Shows information about reorder policies that have been created by the user.
 (See [add_reorder_policy](#add_reorder_policy) for more information about
@@ -1734,6 +1736,7 @@ SELECT * FROM timescaledb_information.policy_stats;
 (1 row)
 ```
 
+---
 ## timescaledb.license_key [](timescaledb_license-key)
 
 #### Sample Usage
