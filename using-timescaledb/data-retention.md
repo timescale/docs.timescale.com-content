@@ -20,16 +20,39 @@ the `conditions` hypertable will still have data stretching back 36 hours.
 For more information on the `drop_chunks` function and related
 parameters, please review the [API documentation][drop_chunks].
 
-### Automatic Data Retention Policies
+### Automatic Data Retention Policies :enterprise_function:
 
-The `drop_chunks` command can be combined with an external tool for
-job scheduling, like `crontab` or `systemd`, to implement automatic
-data retention policies. Below we give some examples of how to
-implement such policies.
+TimescaleDB includes a background job scheduling framework for automating data
+management tasks, such as enabling easy data retention policies.
 
-Note that the path to `psql` and the parameters to connect to the
-database might differ depending on setup and need to be modified
-accordingly in the examples below.
+To add such data retention policies, a database administrator can create,
+remove, or alter policies that cause `drop_chunks` to be automatically executed
+according to some defined schedule.
+
+To add such a policy on a hypertable, continually causing chunks older than 24
+hours to be deleted, simply execute the command:
+```sql
+SELECT add_drop_chunks_policy('conditions', interval '24 hours');
+```
+
+To subsequently remove the policy:
+```sql
+SELECT remove_drop_chunks_policy('conditions');
+```
+
+The scheduler framework also allows one to view scheduled jobs:
+```sql
+SELECT * FROM timescaledb_information.drop_chunks_policies;
+```
+
+For more information, please see the [API documentation][add_drop_chunks_policy].
+
+
+### Using External Job Schedulers
+
+While the built-in scheduling framework automates data retention, the
+`drop_chunks` command can be combined with an external tool for job scheduling,
+like `crontab` or `systemd`, to schedule such commands.
 
 #### Using Crontab
 
@@ -39,14 +62,8 @@ The following cron job will drop chunks every day at 3am:
 0 3 * * * /usr/bin/psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT drop_chunks(interval '24 hours', 'conditions');" >/dev/null 2>&1
 ```
 
-The above cron job can easily be installed by running
+The above cron job can easily be installed by running `crontab -e`.
 
-```bash
-crontab -e
-```
-
-to edit the current user's crontab with the user's default editor, and
-then saving and exiting.
 
 #### Using a Systemd Timer
 
@@ -90,24 +107,7 @@ To make systemd load the timer unit, enable it by default on bootup,
 and immediately start it.
 
 
-#### Deploying in the Cloud or Orchestration Frameworks
-
-If your database is a cloud-hosted instance or runs in a container
-orchestration framework (such as Kubernetes), it might not be possible
-to schedule cron jobs or systemd timers on the database host. In such
-circumstances, it is entirely possible to schedule a job on a
-different host or a "sidecar" container that remotely calls the
-database by changing `localhost` in the `psql` command to the hostname
-of the database instance, and potentially adding parameters for
-authentication.
-
-Alternatively, the cloud provider might provide other means of
-scheduling jobs or tasks. For instance, Kubernetes allows you to
-easily run [cron jobs][kube_cronjob] that are managed by Kubernetes
-itself.
-
-
 [drop_chunks]: /api#drop_chunks
 [unit]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 [timer]: https://www.freedesktop.org/software/systemd/man/systemd.timer.html
-[kube_cronjob]: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+[add_drop_chunks_policy]: /api#add_drop_chunks_policy
