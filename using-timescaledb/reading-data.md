@@ -203,7 +203,7 @@ This query will output data in the following form:
  garage     | 10080 | {0,2679,957,2420,2150,1874,0}
 ```
 
-### Gap Filling [](gap-filling)
+### Gap Filling :timescale_function: :community_function: [](gap-filling)
 
 Some time-series analyses or visualizations want to display records for
 each selected time period, even if no data was recorded during that
@@ -303,7 +303,7 @@ This query will output data of the form:
  2018-03-09 20:53:20+00 |  1037.78
 ```
 
-### Last Observation Carried Forward [](locf)
+### Last Observation Carried Forward :timescale_function: :community_function: [](locf)
 
 If your data collections only records rows when the actual value changes,
 your visualizations might still need all data points to properly display
