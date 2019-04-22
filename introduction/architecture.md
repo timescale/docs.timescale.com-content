@@ -2,8 +2,8 @@
 
 ## Overview [](overview)
 
-TimescaleDB is implemented as an extension on PostgreSQL, which means that a
-Timescale database runs within an overall PostgreSQL instance.  The extension
+TimescaleDB is implemented as an extension on PostgreSQL, which means that it
+runs within an overall PostgreSQL instance.  The extension
 model allows the database to take advantage of many of the attributes of
 PostgreSQL such as reliability, security, and connectivity to a wide range of
 third-party tools.  At the same time, TimescaleDB leverages the high degree of
