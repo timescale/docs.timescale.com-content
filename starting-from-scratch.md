@@ -4,7 +4,7 @@ One of the core ideas of our time-series database is the time-series optimized d
 table we call a **hypertable**.
 
 ### Creating a (Hyper)table
->:TIP: First make sure that you have properly [installed][] **AND [setup][]** your Timescale database within your PostgreSQL instance.
+>:TIP: First make sure that you have properly [installed][] **AND [setup][]** TimescaleDB within your PostgreSQL instance.
 
 To create a hypertable, you start with a regular SQL table, and then convert
 it into a hypertable via the function `create_hypertable()` ([API reference][]).

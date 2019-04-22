@@ -78,7 +78,7 @@ be run only on an empty hypertable.
 
 |Column|Description|
 |---|---|
-| `dimension_id` | ID of the dimension in TimescaleDB's internal catalog. |
+| `dimension_id` | ID of the dimension in the TimescaleDB internal catalog. |
 | `schema_name` | Schema name of the hypertable.|
 | `table_name` | Table name of the hypertable. |
 | `column_name` | Column name of the column to partition by. |
@@ -202,7 +202,7 @@ still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
 | `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
-| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of Timescale v0.11.0, default is 7 days, unless adaptive chunking (DEPRECATED)  is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of TimescaleDB v0.11.0, default is 7 days, unless adaptive chunking (DEPRECATED)  is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
@@ -216,7 +216,7 @@ still work on the resulting hypertable.
 
 |Column|Description|
 |---|---|
-| `hypertable_id` | ID of the hypertable in TimescaleDB's internal catalog. |
+| `hypertable_id` | ID of the hypertable in TimescaleDB. |
 | `schema_name` | Schema name of the table converted to hypertable. |
 | `table_name` | Table name of the table converted to hypertable. |
 | `created` | True if the hypertable was created, false when `if_not_exists` is true and no hypertable was created. |
@@ -878,7 +878,7 @@ one drop_chunks policy may exist per hypertable.
 
 |Column|Description|
 |---|---|
-|`job_id`| (INTEGER)  Timescaledb background job id created to implement this policy|
+|`job_id`| (INTEGER)  TimescaleDB background job id created to implement this policy|
 
 
 #### Sample Usage [](add_drop_chunks_policy-examples)
@@ -948,7 +948,7 @@ and re-create the policy if many older chunks have been affected.
 
 |Column|Description|
 |---|---|
-|`job_id`| (INTEGER) Timescaledb background job id created to implement this policy|
+|`job_id`| (INTEGER) TimescaleDB background job id created to implement this policy|
 
 
 #### Sample Usage [](add_reorder_policy-examples)
@@ -1740,7 +1740,7 @@ Get relation size of the chunks of an hypertable.
 #### Returns [](chunk_relation_size-returns)
 |Column|Description|
 |---|---|
-|chunk_id|Timescaledb id of a chunk|
+|chunk_id|TimescaleDB id of a chunk|
 |chunk_table|Table used for the chunk|
 |partitioning_columns|Partitioning column names|
 |partitioning_column_types|Types of partitioning columns|
@@ -1787,7 +1787,7 @@ Get relation size of the chunks of an hypertable.
 #### Returns [](chunk_relation_size_pretty-returns)
 |Column|Description|
 |---|---|
-|chunk_id|Timescaledb id of a chunk|
+|chunk_id|TimescaleDB id of a chunk|
 |chunk_table|Table used for the chunk|
 |partitioning_columns|Partitioning column names|
 |partitioning_column_types|Types of partitioning columns|
