@@ -1,6 +1,6 @@
 # Telemetry and Version Checking
 We enable anonymous usage sharing to help us better
-understand and assist Timescale users, as well as provide automated version
+understand and assist TimescaleDB users, as well as provide automated version
 checks. We emphasize that privacy of our users is paramount, so we do not
 collect any personally-identifying information. The following is an example of
 the JSON that is sent to our servers about a specific deployment:
@@ -42,13 +42,13 @@ the `UUID`s contain the current timestamp. For full transparency, we expose a
 new API function, [`get_telemetry_report`][get_telemetry_report], that returns
 a text string of the exact JSON that is sent to our servers.
 
-Notably, telemetry reports a different set of values depending on the license 
-that your TimescaleDB instance is running under. If you are using OSS or Community, 
-we only send an "edition" field, which could have a value of either "apache_only" or "community", 
+Notably, telemetry reports a different set of values depending on the license
+that your TimescaleDB instance is running under. If you are using OSS or Community,
+we only send an "edition" field, which could have a value of either "apache_only" or "community",
 as relevant.
 
-If you are using an Enterprise license, we report a few more relevant items, a sample 
-of which is below. 
+If you are using an Enterprise license, we report a few more relevant items, a sample
+of which is below.
 
 ```javascript
 "license": {

@@ -9,8 +9,8 @@ or outage on the primary server. Replica nodes can also be used as read only
 databases (sometimes called "read replicas"), allowing reads to be horizontally
 scaled by spreading the read query volume across multiple nodes.
 
-Timescale supports replication using PostgreSQL's built-in [streaming replication][postgres-streaming-replication-docs].  Using
-[logical replication][postgres-logrep-docs] with Timescale is *not recommended*, as it requires schema synchronization between the primary and
+TimescaleDB supports replication using PostgreSQL's built-in [streaming replication][postgres-streaming-replication-docs].  Using
+[logical replication][postgres-logrep-docs] with TimescaleDB is *not recommended*, as it requires schema synchronization between the primary and
 replica nodes and replicating partition root tables, which are
 [not currently supported][postgres-partition-limitations].
 
