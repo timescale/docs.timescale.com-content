@@ -1,7 +1,7 @@
 # Data Model
 
 As a relational database supporting full SQL, TimescaleDB supports flexible data models
-that can be optimized for different use cases. This makes Timescale somewhat different from
+that can be optimized for different use cases. This makes TimescaleDB somewhat different from
 most other time-series databases, which typically use "narrow-table" models.
 
 Specifically, TimescaleDB can support both wide-table and narrow-table models. Here, we discuss

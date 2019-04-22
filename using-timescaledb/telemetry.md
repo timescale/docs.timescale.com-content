@@ -1,6 +1,6 @@
 # Telemetry and Version Checking
-Starting in 0.12.0, we enable anonymous usage sharing to help us better
-understand and assist Timescale users, as well as provide automated version
+We enable anonymous usage sharing to help us better
+understand and assist TimescaleDB users, as well as provide automated version
 checks. We emphasize that privacy of our users is paramount, so we do not
 collect any personally-identifying information. The following is an example of
 the JSON that is sent to our servers about a specific deployment:

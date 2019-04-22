@@ -25,7 +25,7 @@ You can also use the image id to build an instance using Cloudformation, Terrafo
 the AWS CLI, or any other AWS deployment tool that supports building from public AMIs.
 
 TimescaleDB is installed on the AMI, but you will still need to follow the steps for
-initializing a database with the Timescale extension. See our [setup] section for details.
+initializing a database with the TimescaleDB extension. See our [setup] section for details.
 Depending on your user/permission needs, you will also need to set up a postgres superuser for your
 database by following these [postgres instructions]. Another possibility is using the operating system's
 `ubuntu` user and modifying the [pg_hba].
