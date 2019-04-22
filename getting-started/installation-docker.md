@@ -29,7 +29,7 @@ to prevent Docker from overwriting IP Tables. See [this writeup on the vulnerabi
 for more details.
 
 If you have PostgreSQL client tools (e.g., `psql`) installed locally,
-you can use those to access the Timescale docker instance.  Otherwise,
+you can use those to access the TimescaleDB docker instance.  Otherwise,
 and probably simpler given default PostgreSQL access-control settings,
 you can connect using the instance's version of `psql` within the
 container (NOTE: for Windows this is _necessary_):
