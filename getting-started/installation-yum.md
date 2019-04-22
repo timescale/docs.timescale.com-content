@@ -3,7 +3,7 @@
 This will install both TimescaleDB *and* PostgreSQL via `yum`
 (or `dnf` on Fedora).
 
-**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.2+, or [BETA] 11.0+**
+**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.2+, or 11.0+**
 
 #### Prerequisites
 
@@ -20,8 +20,8 @@ sure to remove non-`yum` installations before using this method.
 You'll need to [download the correct PGDG from PostgreSQL][pgdg] for
 your operating system and architecture and install it:
 ```bash
-# Download PGDG for PostgreSQL 11, e.g. for CentOS 7:
-sudo yum install -y https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
+# Download PGDG for PostgreSQL 11, e.g. for RHEL 7:
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
 ## Follow the initial setup instructions found below:
 ```
