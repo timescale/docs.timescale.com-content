@@ -745,7 +745,7 @@ Get relation size of the chunks of an hypertable.
 #### Returns
 |Column|Description|
 |---|---|
-|chunk_id|Timescaledb id of a chunk|
+|chunk_id|TimescaleDB id of a chunk|
 |chunk_table|Table used for the chunk|
 |partitioning_columns|Partitioning column names|
 |partitioning_column_types|Types of partitioning columns|
@@ -791,7 +791,7 @@ Get relation size of the chunks of an hypertable.
 #### Returns
 |Column|Description|
 |---|---|
-|chunk_id|Timescaledb id of a chunk|
+|chunk_id|TimescaleDB id of a chunk|
 |chunk_table|Table used for the chunk|
 |partitioning_columns|Partitioning column names|
 |partitioning_column_types|Types of partitioning columns|

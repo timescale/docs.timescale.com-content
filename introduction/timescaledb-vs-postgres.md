@@ -49,7 +49,7 @@ PostgreSQL's performance begins to drop precipitously.  Its average
 over the last 100M rows is only 5K rows/s, while TimescaleDB retains its
 throughput of 111K rows/s.
 
-In short, Timescale loads the one billion row database in
+In short, TimescaleDB loads the one billion row database in
 **one-fifteenth** the total time of PostgreSQL, and sees throughput
 more than **20x** that of PostgreSQL at these larger sizes.
 

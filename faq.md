@@ -130,10 +130,10 @@ a normal table in PostgreSQL does. For more information, see this blog post:
 ### **Is there a clustered version and how can I try it?** [](clustered)
 We often find that there may be a few different things people are looking for when they ask
 about support for "clustering":
-* High availability: As a PostgreSQL extension, hot standbys of Timescale can be set
+* High availability: As a PostgreSQL extension, hot standbys of TimescaleDB can be set
 up using streaming replication. This is done just as one would do setting up read replicas
 with vanilla PostgreSQL (although we do not recommend using logical replication).
-* Scale the amount of available storage: Timescale allows you to elastically add disks
+* Scale the amount of available storage: TimescaleDB allows you to elastically add disks
 to scale-up the capacity on a single hypertable.
 * Increase insert rates: Depending on your use case, we have users inserting 100-400K
 row inserts / second on a single node.

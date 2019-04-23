@@ -1,7 +1,7 @@
 # Data Model
 
 TimescaleDB utilizes a "wide-table" data model, which is quite common in the world of
-relational databases. This makes Timescale somewhat different than most other time-series
+relational databases. This makes TimescaleDB somewhat different than most other time-series
 databases, which typically use a "narrow-table" model.
 
 Here we discuss why we chose the wide-table model,
