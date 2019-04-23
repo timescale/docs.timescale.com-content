@@ -21,8 +21,8 @@ sure to remove non-`yum` installations before using this method.
 You'll need to [download the correct PGDG from PostgreSQL][pgdg] for
 your operating system and architecture and install it:
 ```bash
-# Download PGDG for PostgreSQL 9.6, e.g. for Fedora 24:
-sudo yum install -y https://download.postgresql.org/pub/repos/yum/9.6/fedora/fedora-24-x86_64/pgdg-fedora96-9.6-3.noarch.rpm
+# Download PGDG for PostgreSQL 9.6, e.g. for Fedora 30:
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/9.6/fedora/fedora-30-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 
 ## Follow the initial setup instructions found below:
 ```
@@ -48,7 +48,7 @@ and `/var/lib/pgsql/10/data/postgresql.conf` for PostgreSQL 10,
 but this may vary depending on your setup. If you are unsure where your `postgresql.conf` file
 is located, you can query PostgreSQL through the psql interface using `SHOW config_file;`.
 Please note that you must have created a `postgres` superuser so that you can access the psql
-interface. 
+interface.
 
 You will need to edit your `postgresql.conf` file to include
 necessary libraries:
