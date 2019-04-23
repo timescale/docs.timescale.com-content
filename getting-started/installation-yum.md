@@ -21,8 +21,8 @@ sure to remove non-`yum` installations before using this method.
 You'll need to [download the correct PGDG from PostgreSQL][pgdg] for
 your operating system and architecture and install it:
 ```bash
-# Download PGDG for PostgreSQL 9.6, e.g. for Fedora 24:
-sudo yum install -y https://download.postgresql.org/pub/repos/yum/9.6/fedora/fedora-24-x86_64/pgdg-fedora96-9.6-3.noarch.rpm
+# Download PGDG for PostgreSQL 9.6, e.g. for Fedora 30:
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/9.6/fedora/fedora-30-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 
 ## Follow the initial setup instructions found below:
 ```
