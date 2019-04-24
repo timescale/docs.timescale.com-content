@@ -97,7 +97,7 @@ const pageIndex = [
                         Title: "RHEL/CentOS",
                         type: DIRECTORY,
                         href: "rhel-centos",
-                        src: "//assets.iobeam.com/images/docs/Red_Hat_logo.svg",
+                        src: "//assets.iobeam.com/images/docs/Centos_Red_Hat_logo.svg",
                         children: [
                             {
                                 Title: "yum/dnf",
