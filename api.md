@@ -11,6 +11,7 @@
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > - [create_hypertable](#create_hypertable)
+> - [create index (transaction per chunk)](#create_index)
 > - [create view (continuous aggregate)](#cagg_create_view)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
@@ -415,6 +416,39 @@ field).  A very large number of such partitions leads both to poorer
 per-partition load balancing (the mapping of items to partitions using
 hashing), as well as much increased planning latency for some types of
 queries.
+
+---
+
+## CREATE INDEX (Transaction Per Chunk) [](create_index)
+
+```SQL
+CREATE INDEX ... WITH (timescaledb.transaction_per_chunk, ...);
+```
+
+This option extends [`CREATE INDEX`][postgres-createindex] with the
+ability to use a separate transaction for each chunk it creates an
+index on, instead of using a single transaction for the entire hypertable.
+This allows `INSERT`s, and other operations to to be performed concurrently
+during most of the duration of the `CREATE INDEX` command.
+While the index is being created on an individual chunk, it functions as
+if a regular `CREATE INDEX` were called on that chunk, however other chunks are
+completely un-blocked.
+
+>:TIP: This version of `CREATE INDEX` can be used as an alternative to `CREATE INDEX CONCURRENTLY`, which is not currently supported on hypertables.
+
+>:WARNING: If the operation fails partway through, indexes may not be created on all hypertable chunks. If this occurs, the index on the root table of the hypertable will be marked as invalid (this can be seen by running `\d+` on the hypertable). The index will still work, and will be created on new chunks, but if you wish to ensure _all_ chunks have a copy of the index, drop and recreate it.
+
+#### Sample Usage [](create_index-examples)
+
+Anonymous index
+```SQL
+CREATE INDEX ON conditions(time, device_id) WITH (timescaledb.transaction_per_chunk);
+```
+Other index methods
+```SQL
+CREATE INDEX ON conditions(time, location) USING brin
+  WITH (timescaledb.transaction_per_chunk);
+```
 
 ---
 
@@ -855,8 +889,8 @@ runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the 
 
 ---
 ## Continuous Aggregates :community_function: [](continuous-aggregates)
-TimescaleDB allows users the ability to automatically recompute aggregates 
-at predefined intervals and materialize the results. This is suitable for 
+TimescaleDB allows users the ability to automatically recompute aggregates
+at predefined intervals and materialize the results. This is suitable for
 frequently used queries.
 
 *  [CREATE VIEW](#cagg_create_view)
@@ -864,16 +898,16 @@ frequently used queries.
 *  [REFRESH](#cagg_refresh_view)
 *  [DROP VIEW](#cagg_drop_view)
 
-## CREATE VIEW (Continuous Aggregate) [](cagg_create_view) 
+## CREATE VIEW (Continuous Aggregate) [](cagg_create_view)
 `CREATE VIEW` statement is used to create continuous aggregates.
 
 The syntax is:
 ``` sql
-    CREATE VIEW <view_name> [ ( column_name [, ...] ) ] 
+    CREATE VIEW <view_name> [ ( column_name [, ...] ) ]
     WITH ( timescaledb.continuous [, timescaledb.<option> = <value> ] )
     AS
     <select_query>
-    
+
     <select_query> is of the form :
     SELECT <grouping_exprs>, <aggregate_functions>
     FROM <hypertable>
@@ -900,31 +934,31 @@ The syntax is:
 |`timescaledb.refresh_lag`|Refresh lag controls the amount by which the materialization will lag behind the maximum current time value. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
 |`timescaledb.refresh_interval`|Refresh interval controls how often the background materializer is run.| `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
 |`timescaledb.max_interval_per_job`|Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
-|`timescaledb.create_group_index`|Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.| 
+|`timescaledb.create_group_index`|Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
 
-#### Restrictions   
+#### Restrictions
 - `SELECT` query should be of the form specified in the syntax above.
-- The hypertable used in the `SELECT` may not have 
- [row-level-security policies][postgres-rls] enabled. 
+- The hypertable used in the `SELECT` may not have
+ [row-level-security policies][postgres-rls] enabled.
 -  `GROUP BY` clause must include a time_bucket expression. The
  [`time_bucket`] [time-bucket] expression must use the time dimension column of the hypertable.
 - [`time_bucket_gapfill`][time-bucket-gapfill] is not allowed in continuous
-  aggs, but may be run in a `SELECT` from the continuous aggregate view. 
-- In general, aggregates which can be 
+  aggs, but may be run in a `SELECT` from the continuous aggregate view.
+- In general, aggregates which can be
   [parallelized by PostgreSQL][postgres-parallel-agg] are allowed in the view definition, this
   includes most aggregates distributed with PostgreSQL. Aggregates with `ORDER BY`,
-  `DISTINCT` and `FILTER` clauses are not permitted.  
-* All functions and their arguments included in `SELECT`, `GROUP BY` and `HAVING` clauses must be [immutable][postgres-immutable]. 
+  `DISTINCT` and `FILTER` clauses are not permitted.
+* All functions and their arguments included in `SELECT`, `GROUP BY` and `HAVING` clauses must be [immutable][postgres-immutable].
 - Queries with `ORDER BY` are disallowed.
-- The view is not allowed to be a [security barrier view][postgres-security-barrier]. 
+- The view is not allowed to be a [security barrier view][postgres-security-barrier].
 [time-bucket]: /api#time_bucket
 [time-bucket-gapfill]: /api#time_bucket_gapfill
 [postgres-immutable]:https://www.postgresql.org/docs/current/xfunc-volatility.html
 [postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
-[postgres-rls]:https://www.postgresql.org/docs/current/ddl-rowsecurity.html 
+[postgres-rls]:https://www.postgresql.org/docs/current/ddl-rowsecurity.html
 [postgres-security-barrier]:https://www.postgresql.org/docs/current/rules-privileges.html
 
->:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-cagg) and 
+>:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-cagg) and
 [statistics](#timescaledb_information-caggstats) in `timescaledb_information` views.
 
 #### Examples [](cagg-create-examples)
@@ -954,7 +988,7 @@ Set the max interval processed by a materializer job (that updates the continuou
 ```sql
 ALTER VIEW contagg_view SET (timescaledb.max_interval_per_job = '1 week');
 ```
-Set the refresh lag to 1 hour, the refresh interval to 30 minutes and the max 
+Set the refresh lag to 1 hour, the refresh interval to 30 minutes and the max
 interval processed by a job to 1 week for the continuous aggregate.
 ```sql
 ALTER VIEW contagg_view SET (timescaledb.refresh_lag = '1h', timescaledb.max_interval_per_job='1week', timescaledb.refresh_interval='30m');
@@ -969,7 +1003,7 @@ you need to change any other parameters, drop the view and create a new one.
 The continuous aggregate view can be manually updated by using `REFRESH MATERIALIZED VIEW` statement. A background materializer job will run immediately and update the
  continuous aggregate.
 ``` sql
-REFRESH MATERIALIZED VIEW <view_name> 
+REFRESH MATERIALIZED VIEW <view_name>
 ```
 #### Parameters
 |Name|Description|
@@ -983,7 +1017,7 @@ REFRESH MATERIALIZED VIEW contagg_view;
 ```
 ---
 
->:TIP: Note that max_interval_per_job and refresh_lag parameter settings are used by the materialization job 
+>:TIP: Note that max_interval_per_job and refresh_lag parameter settings are used by the materialization job
 when the REFRESH is run. So the materialization (of the continuous aggregate) does not necessarily include
 all the updates to the hypertable.
 
@@ -1828,7 +1862,7 @@ Get metadata and settings information for continuous aggregates.
 select * from timescaledb_information.continuous_aggregates;
 -[ RECORD 1 ]--------------+-------------------------------------------------
 view_name                  | contagg_view
-view_owner                 | postgres 
+view_owner                 | postgres
 refresh_lag                | 2
 refresh_interval           | 12:00:00
 max_interval_per_job       | 20
@@ -1841,11 +1875,11 @@ view_definition            |  SELECT foo.a,                                  +
 -- description of foo
 \d foo
                 Table "public.foo"
- Column |  Type   | Collation | Nullable | Default 
+ Column |  Type   | Collation | Nullable | Default
 --------+---------+-----------+----------+---------
- a      | integer |           | not null | 
- b      | integer |           |          | 
- c      | integer |           |          | 
+ a      | integer |           | not null |
+ b      | integer |           |          |
+ c      | integer |           |          |
 
 ```
 ---
@@ -2302,6 +2336,7 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [best practices]: #create_hypertable-best-practices
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
 [postgres-tablespaces]: https://www.postgresql.org/docs/current/manage-ag-tablespaces.html
+[postgres-createindex]: https://www.postgresql.org/docs/current/sql-createindex.html
 [postgres-createtablespace]: https://www.postgresql.org/docs/current/sql-createtablespace.html
 [postgres-cluster]: https://www.postgresql.org/docs/current/sql-cluster.html
 [migrate-from-postgresql]: /getting-started/migrating-data
