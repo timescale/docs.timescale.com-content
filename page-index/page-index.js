@@ -306,6 +306,37 @@ const pageIndex = [
                     }
                 ]
             }, {
+                Title: "Continuous Aggregates",
+                type: PAGE,
+                href: "continuous-aggregates",
+                children: [
+                    {
+                        Title: "Creating a Continuous Aggregate View",
+                        type: ANCHOR,
+                        href: "#create"
+                    }, {
+                        Title: "Using Continuous Aggregates",
+                        type: ANCHOR,
+                        href: "#using"
+                    }, {
+                        Title: "Altering / Dropping Continuous Aggregates",
+                        type: ANCHOR,
+                        href: "#alter-drop"
+                    }, {
+                        Title: "Dropping Data",
+                        type: ANCHOR,
+                        href: "#dropping-data"
+                    }, {
+                        Title: "Best Practices",
+                        type: ANCHOR,
+                        href: "#best-practices"
+                    }, {
+                        Title: "Future Work",
+                        type: ANCHOR,
+                        href: "#future-work"
+                    }
+                ] 
+            },{
                 Title: "Visualizing data",
                 type: PAGE,
                 href: "visualizing-data"
@@ -414,6 +445,10 @@ const pageIndex = [
                 Title: "Hypertable management",
                 type: ANCHOR,
                 href: "#hypertable-management"
+            }, {
+                Title: "Continuous Aggregates",
+                type: ANCHOR,
+                href: "#continuous-aggregates"
             }, {
                 Title: "Automation",
                 type: ANCHOR,

@@ -6,17 +6,17 @@
 > - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
 > - [alter_job_schedule](#alter_job_schedule)
-> - [alter view (continuous aggregate)](#cagg_alter_view)
+> - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > - [create_hypertable](#create_hypertable)
 > - [create index (transaction per chunk)](#create_index)
-> - [create view (continuous aggregate)](#cagg_create_view)
+> - [create view (continuous aggregate)](#continuous_aggregate-create_view)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
-> - [drop view (continuous aggregate)](#cagg_drop_view)
+> - [drop view (continuous aggregate)](#continuous_aggregate-drop_view)
 > - [first](#first)
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
@@ -28,7 +28,7 @@
 > - [interpolate](#interpolate)
 > - [last](#last)
 > - [locf](#locf)
-> - [refresh materialized view (continuous aggregate)](#cagg_refresh_view)
+> - [refresh materialized view (continuous aggregate)](#continuous_aggregate-refresh_view)
 > - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
 > - [reorder_chunk](#reorder_chunk)
@@ -41,8 +41,8 @@
 > - [time_bucket_gapfill](#time_bucket_gapfill)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
-> - [timescaledb_information.continuous_aggregates](#timescaledb_information-cagg)
-> - [timescaledb_information.continuous_aggregate_stats](#timescaledb_information-caggstats)
+> - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
+> - [timescaledb_information.continuous_aggregate_stats](#timescaledb_information-continuous_aggregate_stats)
 > - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
 > - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
 > - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
@@ -891,14 +891,15 @@ runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the 
 ## Continuous Aggregates :community_function: [](continuous-aggregates)
 TimescaleDB allows users the ability to automatically recompute aggregates
 at predefined intervals and materialize the results. This is suitable for
-frequently used queries.
+frequently used queries. For a more detailed discussion of this capability, 
+please see [using TimescaleDB Continuous Aggregates][using-continuous-aggs].
 
-*  [CREATE VIEW](#cagg_create_view)
-*  [ALTER VIEW](#cagg_alter_view)
-*  [REFRESH](#cagg_refresh_view)
-*  [DROP VIEW](#cagg_drop_view)
+*  [CREATE VIEW](#continuous_aggregate-create_view)
+*  [ALTER VIEW](#continuous_aggregate-alter_view)
+*  [REFRESH](#continuous_aggregate-refresh_view)
+*  [DROP VIEW](#continuous_aggregate-drop_view)
 
-## CREATE VIEW (Continuous Aggregate) [](cagg_create_view)
+## CREATE VIEW (Continuous Aggregate) [](continuous_aggregate-create_view)
 `CREATE VIEW` statement is used to create continuous aggregates.
 
 The syntax is:
@@ -958,21 +959,21 @@ The syntax is:
 [postgres-rls]:https://www.postgresql.org/docs/current/ddl-rowsecurity.html
 [postgres-security-barrier]:https://www.postgresql.org/docs/current/rules-privileges.html
 
->:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-cagg) and
-[statistics](#timescaledb_information-caggstats) in `timescaledb_information` views.
+>:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-continuous_aggregate) and
+[statistics](#timescaledb_information-continuous_aggregate_stats) in `timescaledb_information` views.
 
-#### Examples [](cagg-create-examples)
+#### Examples [](continuous_aggregate-create-examples)
 Create a continuous aggregate view.
 ```sql
-CREATE VIEW cagg_view( timec, minl, sumt, sumh )
+CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
 WITH ( timescaledb.continuous, timescaledb.refresh_lag = '5 hours', timescaledb.refresh_interval = '1h' )
 AS
-SELECT time_bucket('1day', timec), min(location), sum(temperature),sum(humidity)
+SELECT time_bucket('1day', timec), min(location), sum(temperature), sum(humidity)
 from conditions
 group by time_bucket('1day', timec), location, humidity, temperature;
 ```
 ---
-## ALTER VIEW (Continuous Aggregate) [](cagg_alter_view)
+## ALTER VIEW (Continuous Aggregate) [](continuous_aggregate-alter_view)
 `ALTER VIEW` statement can be used to modify the `WITH` clause [options](#create-view-with) for the continuous aggregate view.
 
 ``` sql
@@ -983,7 +984,7 @@ ALTER VIEW <view_name> SET ( timescaledb.option =  <value> )
 |---|---|
 | `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
 
-#### Examples [](cagg-alter-examples)
+#### Examples [](continuous_aggregate-alter-examples)
 Set the max interval processed by a materializer job (that updates the continuous aggregate) to 1 week.
 ```sql
 ALTER VIEW contagg_view SET (timescaledb.max_interval_per_job = '1 week');
@@ -991,7 +992,7 @@ ALTER VIEW contagg_view SET (timescaledb.max_interval_per_job = '1 week');
 Set the refresh lag to 1 hour, the refresh interval to 30 minutes and the max
 interval processed by a job to 1 week for the continuous aggregate.
 ```sql
-ALTER VIEW contagg_view SET (timescaledb.refresh_lag = '1h', timescaledb.max_interval_per_job='1week', timescaledb.refresh_interval='30m');
+ALTER VIEW contagg_view SET (timescaledb.refresh_lag = '1h', timescaledb.max_interval_per_job = '1 week', timescaledb.refresh_interval = '30m');
 
 ```
 >:TIP: Only WITH options can be modified using the ALTER statment. If
@@ -999,7 +1000,7 @@ you need to change any other parameters, drop the view and create a new one.
 
 ---
 
-## REFRESH MATERIALIZED VIEW (Continuous Aggregate) [](cagg_refresh_view)
+## REFRESH MATERIALIZED VIEW (Continuous Aggregate) [](continuous_aggregate-refresh_view)
 The continuous aggregate view can be manually updated by using `REFRESH MATERIALIZED VIEW` statement. A background materializer job will run immediately and update the
  continuous aggregate.
 ``` sql
@@ -1010,7 +1011,7 @@ REFRESH MATERIALIZED VIEW <view_name>
 |---|---|
 | `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
 
-#### Examples [](cagg-refresh-examples)
+#### Examples [](continuous_aggregate-refresh-examples)
 Update the continuous aggregate view immediately.
 ```sql
 REFRESH MATERIALIZED VIEW contagg_view;
@@ -1022,7 +1023,7 @@ when the REFRESH is run. So the materialization (of the continuous aggregate) do
 all the updates to the hypertable.
 
 
-## DROP VIEW (Continuous Aggregate) [](cagg_drop_view)
+## DROP VIEW (Continuous Aggregate) [](continuous_aggregate-drop_view)
 Continuous aggregate views can be dropped using `DROP VIEW` statement.
 
 ``` sql
@@ -1033,7 +1034,7 @@ DROP VIEW <view_name>
 |---|---|
 | `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
 
-#### Examples [](cagg-drop-examples)
+#### Examples [](continuous_aggregate-drop-examples)
 Drop existing continuous aggregate.
 ```sql
 DROP VIEW contagg_view;
@@ -1841,7 +1842,7 @@ enterprise | f       | 2019-02-15 13:44:53-05
 ```
 
 ---
-## timescaledb_information.continuous_aggregates [](timescaledb_information-cagg)
+## timescaledb_information.continuous_aggregates [](timescaledb_information-continuous_aggregate)
 
 Get metadata and settings information for continuous aggregates.
 
@@ -1883,7 +1884,7 @@ view_definition            |  SELECT foo.a,                                  +
 
 ```
 ---
-## timescaledb_information.continuous_aggregate_stats [](timescaledb_information-caggstats)
+## timescaledb_information.continuous_aggregate_stats [](timescaledb_information-continuous_aggregate_stats)
 
 Get information about background jobs and statistics related to continuous aggregates.
 
@@ -2334,6 +2335,7 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [Slack]: https://slack-login.timescale.com
 [chunk relation size]: #chunk_relation_size
 [best practices]: #create_hypertable-best-practices
+[using-continuous-aggs]: /using-timescaledb/continuous-aggregates
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
 [postgres-tablespaces]: https://www.postgresql.org/docs/current/manage-ag-tablespaces.html
 [postgres-createindex]: https://www.postgresql.org/docs/current/sql-createindex.html
