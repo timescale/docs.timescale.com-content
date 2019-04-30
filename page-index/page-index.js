@@ -374,6 +374,11 @@ const pageIndex = [
                 href: "replication",
                 children: []
             }, {
+                Title: "Continuous aggregates",
+                type: PAGE,
+                href: "continuous-aggs-tutorial",
+                children: []
+            }, {
                 Title: "Migration with Outflux",
                 type: PAGE,
                 href: "outflux",
