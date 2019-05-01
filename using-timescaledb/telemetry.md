@@ -26,6 +26,9 @@ the JSON that is sent to our servers about a specific deployment:
 	"build_os_version": "4.9.125-linuxkit",
 	"data_volume": "65982148",
 	"num_hypertables": "3",
+	"num_continuous_aggs": "0",
+	"num_reorder_policies": "1",
+	"num_drop_chunks_policies": "2",
 	"related_extensions":
     	{
 		"pg_prometheus": "false",
