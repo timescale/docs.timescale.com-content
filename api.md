@@ -47,6 +47,8 @@
 > - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
 > - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
 > - [timescaledb.license_key](#timescaledb_license-key)
+> - [timescaledb_pre_restore](#timescaledb_pre_restore)
+> - [timescaledb_post_restore](#timescaledb_post_restore)
 
 ## Hypertable management [](hypertable-management)
 
@@ -2316,6 +2318,36 @@ SELECT * FROM show_tablespaces('conditions');
 
 ---
 
+## timescaledb_pre_restore() [](timescaledb_pre_restore)
+
+Perform the proper operations to allow restoring of the database via `pg_restore` to commence.
+Specifically this sets the `timescaledb.restoring` GUC to `on` and stops any
+background workers which may have been performing tasks until the [`timescaledb_post_restore`](#timescaledb_post_restore) 
+fuction is run following the restore. See [backup/restore docs][backup-restore] for more information.
+
+>:WARNING: After running `SELECT timescaledb_pre_restore()` you must run the 
+  [`timescaledb_post_restore`](#timescaledb_post_restore) function before using the database normally.
+
+#### Sample Usage  [](timescaledb_pre_restore-examples)
+
+```sql
+SELECT timescaledb_pre_restore();
+```
+
+---
+
+## timescaledb_post_restore() [](timescaledb_post_restore)
+Perform the proper operations after restoring the database has completed.
+Specifically this sets the `timescaledb.restoring` GUC to `off` and restarts any
+background workers. See [backup/restore docs][backup-restore] for more information.
+
+#### Sample Usage  [](timescaledb_pre_restore-examples)
+
+```sql
+SELECT timescaledb_post_restore();
+```
+---
+
 ## Dump TimescaleDB meta data [](dump-meta-data)
 
 To help when asking for support and reporting bugs,
@@ -2344,3 +2376,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [telemetry]: /using-timescaledb/telemetry
 [drop chunks]: #drop_chunks
 [show chunks]: #show_chunks
+[backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore

@@ -1,8 +1,21 @@
 # Backup & Restore [](backup)
 
-Backing up TimescaleDB takes advantage of the reliable functionality already available
-through PostgreSQL.  We recommend using one of two methods depending on your setup:
-`pg_dump` with `pg_restore` or the Write-Ahead Log (WAL).
+Backing up TimescaleDB takes advantage of the reliable functionality already
+available through PostgreSQL.  There are several ways to accomplish this:
+physical backups with `pg_basebackup` or another tool, or logical backups with
+`pg_dump` and `pg_restore`. Physical backups may also be used with Write-Ahead Log
+(WAL) archiving to achieve an ongoing backup.
+
+## Performing Physical Backups [](physical-backups)
+
+For full instance physical backups (which are especially useful for starting up
+new [replicas][replication-tutorial]), [`pg_basebackup`][postgres-pg_basebackup]
+works with all TimescaleDB installations. You can also use any of several
+external backup and restore managers such as [`pg_backrest`][pg-backrest],
+[`barman`][pg-barman], or [`wal-e`][wale official]. These allow you to take
+online, hot physical backups of your entire instance, and many offer incremental
+backups and other automation options. 
+
 
 
 ## Using `pg_dump` and `pg_restore` [](pg_dump-pg_restore)
@@ -30,28 +43,34 @@ Restoring data from a backup currently requires some additional procedures,
 which need to be run from `psql`:
 ```sql
 CREATE DATABASE tutorial;
-ALTER DATABASE tutorial SET timescaledb.restoring='on';
+\c tutorial --connect to the db where we'll perform the restore
+CREATE EXTENSION timescaledb; 
+SELECT timescaledb_pre_restore();
 
 -- execute the restore (or from a shell)
 \! pg_restore -Fc -d tutorial tutorial.bak
 
--- connect to the restored db
-\c tutorial
-ALTER DATABASE tutorial SET timescaledb.restoring='off';
+
+SELECT timescaledb_post_restore();
 ```
 
 >:WARNING: PostgreSQL's `pg_dump` does not currently specify the *version* of
  the extension in its backup, which leads to problems if you are
- restoring into a database instance with a more recent extension
+ restoring into a database instance with a more recent extension 
  version installed.  (In particular, the backup could be for some
- version 0.4, but then the `CREATE EXTENSION timescaledb` command just
- installs the latest (say, 0.5), and thus does not have the
+ version 1.1, but then the `CREATE EXTENSION timescaledb` command just
+ installs the latest (say, 1.3), and thus does not have the
  opportunity to run our upgrade scripts.)  We are looking into
  submitting a fix for `pg_dump`.
 >
 >The workaround is that when restoring from a backup, you need to
  restore to a PostgreSQL instance with the same extension version
- installed, and *then* upgrade the version.
+ installed, and *then* upgrade the version. 
+
+>:WARNING: When restoring from versions before 1.3, you must follow 
+  the instructions for restoring from earlier versions. You can select 
+  docs for previous versions of the database in the sidebar.
+
 
 <!-- -->
 >:WARNING: These instructions do not work if you use flags to selectively
@@ -65,6 +84,7 @@ ALTER DATABASE tutorial SET timescaledb.restoring='off';
 >You can, however, explicitly *exclude* tables from this whole
  database backup (`-T`), as well as continue to selectively backup
  plain tables (i.e., non-hypertable) as well.
+
 
 ### Individual hypertables
 
@@ -316,6 +336,10 @@ end as the recovery will be complete when no further files can be
 found in the archive. See the PostgreSQL documentation on [continuous
 archiving][pg archiving] for more information.
 
+[replication-tutorial]: /tutorials/replication
+[postgres-pg_basebackup]: https://www.postgresql.org/docs/current/app-pgbasebackup.html
+[pg-backrest]: https://pgbackrest.org/
+[pg-barman]: https://www.pgbarman.org/
 [updating instructions]: /api/update-db
 [pg_dump]: https://www.postgresql.org/docs/current/static/app-pgdump.html
 [pg_restore]: https://www.postgresql.org/docs/current/static/app-pgrestore.html
