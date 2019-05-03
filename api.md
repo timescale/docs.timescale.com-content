@@ -6,13 +6,16 @@
 > - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
 > - [alter_job_schedule](#alter_job_schedule)
+> - [alter view (continuous aggregate)](#cagg_alter_view)
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > - [create_hypertable](#create_hypertable)
+> - [create view (continuous aggregate)](#cagg_create_view)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
+> - [drop view (continuous aggregate)](#cagg_drop_view)
 > - [first](#first)
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
@@ -24,6 +27,7 @@
 > - [interpolate](#interpolate)
 > - [last](#last)
 > - [locf](#locf)
+> - [refresh materialized view (continuous aggregate)](#cagg_refresh_view)
 > - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
 > - [reorder_chunk](#reorder_chunk)
@@ -36,6 +40,8 @@
 > - [time_bucket_gapfill](#time_bucket_gapfill)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
+> - [timescaledb_information.continuous_aggregates](#timescaledb_information-cagg)
+> - [timescaledb_information.continuous_aggregate_stats](#timescaledb_information-caggstats)
 > - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
 > - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
 > - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
@@ -848,7 +854,158 @@ SELECT reorder_chunk('_timescaledb_internal._hyper_1_10_chunk', 'conditions_devi
 runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the `conditions_device_id_time_idx` index.
 
 ---
+## Continuous Aggregates :community_function: [](continuous-aggregates)
+TimescaleDB allows users the ability to automatically recompute aggregates 
+at predefined intervals and materialize the results. This is suitable for 
+frequently used queries.
 
+*  [CREATE VIEW](#cagg_create_view)
+*  [ALTER VIEW](#cagg_alter_view)
+*  [REFRESH](#cagg_refresh_view)
+*  [DROP VIEW](#cagg_drop_view)
+
+## CREATE VIEW (Continuous Aggregate) [](cagg_create_view) 
+`CREATE VIEW` statement is used to create continuous aggregates.
+
+The syntax is:
+``` sql
+    CREATE VIEW <view_name> [ ( column_name [, ...] ) ] 
+    WITH ( timescaledb.continuous [, timescaledb.<option> = <value> ] )
+    AS
+    <select_query>
+    
+    <select_query> is of the form :
+    SELECT <grouping_exprs>, <aggregate_functions>
+    FROM <hypertable>
+    [WHERE ... ]
+    GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
+             [ optional grouping exprs>]
+    [HAVING ...]
+```
+
+#### Parameters
+|Name|Description|
+|---|---|
+| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
+| `<column_name>`| Optional list of names to be used for columns of the view. If not given, the column names are deduced from the query.|
+| `WITH` clause | This clause specifies [options](#create-view-with) for the continuous aggregate view.|
+| `<select_query>`| A `SELECT` query that uses the specified syntax. |
+
+#### `WITH` clause options [](create-view-with)
+|Name|Description|Type|Default|
+|---|---|---|---|
+|**Required**|
+|`timescaledb.continuous`|If timescaledb.continuous is not specified, then this is a regular PostgresSQL view. |||
+|**Optional**|
+|`timescaledb.refresh_lag`|Refresh lag controls the amount by which the materialization will lag behind the maximum current time value. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
+|`timescaledb.refresh_interval`|Refresh interval controls how often the background materializer is run.| `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
+|`timescaledb.max_interval_per_job`|Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
+|`timescaledb.create_group_index`|Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.| 
+
+#### Restrictions   
+- `SELECT` query should be of the form specified in the syntax above.
+- The hypertable used in the `SELECT` may not have 
+ [row-level-security policies][postgres-rls] enabled. 
+-  `GROUP BY` clause must include a time_bucket expression. The
+ [`time_bucket`] [time-bucket] expression must use the time dimension column of the hypertable.
+- [`time_bucket_gapfill`][time-bucket-gapfill] is not allowed in continuous
+  aggs, but may be run in a `SELECT` from the continuous aggregate view. 
+- In general, aggregates which can be 
+  [parallelized by PostgreSQL][postgres-parallel-agg] are allowed in the view definition, this
+  includes most aggregates distributed with PostgreSQL. Aggregates with `ORDER BY`,
+  `DISTINCT` and `FILTER` clauses are not permitted.  
+* All functions and their arguments included in `SELECT`, `GROUP BY` and `HAVING` clauses must be [immutable][postgres-immutable]. 
+- Queries with `ORDER BY` are disallowed.
+- The view is not allowed to be a [security barrier view][postgres-security-barrier]. 
+[time-bucket]: /api#time_bucket
+[time-bucket-gapfill]: /api#time_bucket_gapfill
+[postgres-immutable]:https://www.postgresql.org/docs/current/xfunc-volatility.html
+[postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
+[postgres-rls]:https://www.postgresql.org/docs/current/ddl-rowsecurity.html 
+[postgres-security-barrier]:https://www.postgresql.org/docs/current/rules-privileges.html
+
+>:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-cagg) and 
+[statistics](#timescaledb_information-caggstats) in `timescaledb_information` views.
+
+#### Examples [](cagg-create-examples)
+Create a continuous aggregate view.
+```sql
+CREATE VIEW cagg_view( timec, minl, sumt, sumh )
+WITH ( timescaledb.continuous, timescaledb.refresh_lag = '5 hours', timescaledb.refresh_interval = '1h' )
+AS
+SELECT time_bucket('1day', timec), min(location), sum(temperature),sum(humidity)
+from conditions
+group by time_bucket('1day', timec), location, humidity, temperature;
+```
+---
+## ALTER VIEW (Continuous Aggregate) [](cagg_alter_view)
+`ALTER VIEW` statement can be used to modify the `WITH` clause [options](#create-view-with) for the continuous aggregate view.
+
+``` sql
+ALTER VIEW <view_name> SET ( timescaledb.option =  <value> )
+```
+#### Parameters
+|Name|Description|
+|---|---|
+| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
+
+#### Examples [](cagg-alter-examples)
+Set the max interval processed by a materializer job (that updates the continuous aggregate) to 1 week.
+```sql
+ALTER VIEW contagg_view SET (timescaledb.max_interval_per_job = '1 week');
+```
+Set the refresh lag to 1 hour, the refresh interval to 30 minutes and the max 
+interval processed by a job to 1 week for the continuous aggregate.
+```sql
+ALTER VIEW contagg_view SET (timescaledb.refresh_lag = '1h', timescaledb.max_interval_per_job='1week', timescaledb.refresh_interval='30m');
+
+```
+>:TIP: Only WITH options can be modified using the ALTER statment. If
+you need to change any other parameters, drop the view and create a new one.
+
+---
+
+## REFRESH MATERIALIZED VIEW (Continuous Aggregate) [](cagg_refresh_view)
+The continuous aggregate view can be manually updated by using `REFRESH MATERIALIZED VIEW` statement. A background materializer job will run immediately and update the
+ continuous aggregate.
+``` sql
+REFRESH MATERIALIZED VIEW <view_name> 
+```
+#### Parameters
+|Name|Description|
+|---|---|
+| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
+
+#### Examples [](cagg-refresh-examples)
+Update the continuous aggregate view immediately.
+```sql
+REFRESH MATERIALIZED VIEW contagg_view;
+```
+---
+
+>:TIP: Note that max_interval_per_job and refresh_lag parameter settings are used by the materialization job 
+when the REFRESH is run. So the materialization (of the continuous aggregate) does not necessarily include
+all the updates to the hypertable.
+
+
+## DROP VIEW (Continuous Aggregate) [](cagg_drop_view)
+Continuous aggregate views can be dropped using `DROP VIEW` statement.
+
+``` sql
+DROP VIEW <view_name>
+```
+#### Parameters
+|Name|Description|
+|---|---|
+| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
+
+#### Examples [](cagg-drop-examples)
+Drop existing continuous aggregate.
+```sql
+DROP VIEW contagg_view;
+```
+
+---
 ## Automation policies :enterprise_function: [](automation-policies)
 TimescaleDB includes an automation framework for allowing background tasks to
 run inside the database, controllable by user-supplied policies. These tasks
@@ -1649,6 +1806,79 @@ enterprise | f       | 2019-02-15 13:44:53-05
 (1 row)
 ```
 
+---
+## timescaledb_information.continuous_aggregates [](timescaledb_information-cagg)
+
+Get metadata and settings information for continuous aggregates.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+|`view_name` | User supplied name for continuous aggregate view |
+|`view_owner` | Owner of the continuous aggregate view|
+|`refresh_lag` | Amount by which the materialization for the continuous aggregate lags behind the current max value for the column used in the `time_bucket` expression of the continuous aggregate query|
+|`refresh_interval` | Interval between updates of the continuous aggregate materialization|
+|`max_interval_per_job` | Maximum amount of data processed by a materialization job in a single run|
+|`materialization_hypertable` | Name of the underlying materialization table|
+|`view_definition` | `SELECT` query for continuous aggregate view|
+
+#### Sample Usage
+```sql
+select * from timescaledb_information.continuous_aggregates;
+-[ RECORD 1 ]--------------+-------------------------------------------------
+view_name                  | contagg_view
+view_owner                 | postgres 
+refresh_lag                | 2
+refresh_interval           | 12:00:00
+max_interval_per_job       | 20
+materialization_hypertable | _timescaledb_internal._materialized_hypertable_2
+view_definition            |  SELECT foo.a,                                  +
+                           |     count(foo.b) AS countb                      +
+                           |    FROM foo                                     +
+                           |   GROUP BY (time_bucket(1, foo.a)), foo.a;
+
+-- description of foo
+\d foo
+                Table "public.foo"
+ Column |  Type   | Collation | Nullable | Default 
+--------+---------+-----------+----------+---------
+ a      | integer |           | not null | 
+ b      | integer |           |          | 
+ c      | integer |           |          | 
+
+```
+---
+## timescaledb_information.continuous_aggregate_stats [](timescaledb_information-caggstats)
+
+Get information about background jobs and statistics related to continuous aggregates.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+|`view_name`| User supplied name for continuous aggregate. |
+|`completed_threshold`| Completed threshold for the last materialization job.|
+|`invalidation_threshold`| Invalidation threshold set by the latest materialization job|
+|`last_run_started_at`| Start time of the last job|
+|`job_status`| Status of the materialization job . Valid values are ‘Running’ and ‘Scheduled’|
+|`last_run_duration`| Time taken by the last materialization job|
+|`next_scheduled_run` | Start time of the next materialization job |
+
+#### Sample Usage
+
+```sql
+select * from timescaledb_information.continuous_aggregate_stats;
+-[ RECORD 1 ]----------+------------------------------
+view_name              | contagg_view
+completed_threshold    | 1
+invalidation_threshold | 1
+job_id                 | 1003
+last_run_started_at    | 2019-05-02 12:34:27.941868-04
+job_status             | scheduled
+last_run_duration      | 00:00:00.038291
+next_scheduled_run     | 2019-05-03 00:34:27.980159-04
+```
 ---
 ## timescaledb_information.drop_chunks_policies[](timescaledb_information-drop_chunks_policies)
 Shows information about drop_chunks policies that have been created by the user.
