@@ -522,6 +522,7 @@ the same semantics as the `show_chunks` [function][show chunks].
 | `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 | `cascade` | Boolean on whether to `CASCADE` the drop on chunks, therefore removing dependent objects on chunks to be removed. Defaults to `FALSE`.
+| `cascade_to_materializations` | Set to `TRUE` to delete chunk data in associated continuous aggregates. Defaults to `NULL`. `FALSE` is not yet supported.
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
@@ -545,6 +546,8 @@ specifying `newer_than => 4 months` and `older_than => 3 months` will drop all f
 all full chunks between '2017-01-01' and '2017-02-01'. Specifying parameters that do not result in an overlapping
 intersection between two ranges will result in an error.
 
+>:TIP: By default, calling `drop_chunks` on a table that has a continuous aggregate will throw an error. This can be resolved by setting `cascade_to_materializations` to `TRUE`, which will cause the corresponding aggregated data to also be dropped.
+
 #### Sample Usage [](drop_chunks-examples)
 
 Drop all chunks older than 3 months ago:
@@ -555,7 +558,7 @@ SELECT drop_chunks(interval '3 months');
 The expected output:
 
 ```sql
- drop_chunks  
+ drop_chunks
 -------------
 
 (1 row)
@@ -594,6 +597,11 @@ SELECT drop_chunks(newer_than => interval '3 months');
 Drop all chunks older than 3 months ago and newer than 4 months ago:
 ```sql
 SELECT drop_chunks(older_than => interval '3 months', newer_than => interval '4 months', table_name => 'conditions')
+```
+
+Drop all chunks older than 3 months, and delete this data from any continuous aggregates based on it:
+```sql
+SELECT drop_chunks(interval '3 months', 'conditions', cascade_to_materializations => true);
 ```
 
 ---
@@ -744,7 +752,7 @@ SELECT show_chunks();
 
 The expected output:
 ```sql
- show_chunks  
+ show_chunks
 ---------------------------------------
  _timescaledb_internal._hyper_1_10_chunk
  _timescaledb_internal._hyper_1_11_chunk
@@ -872,6 +880,9 @@ one drop_chunks policy may exist per hypertable.
 |---|---|
 | `cascade` | (BOOLEAN) Set to true to drop objects dependent upon chunks being dropped. Defaults to false.|
 | `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the drop_chunks_policy already exists. A notice is issued instead. Defaults to false. |
+| `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to delete chunk data in associated continuous aggregates. Defaults to `NULL`. `FALSE` is not yet supported. |
+
+>:WARNING: If a drop chunks policy is setup which does not set `cascade_to_materializations` to `TRUE` on a hypertable that has a continuous aggregate, the policy will not drop any chunks.
 
 #### Returns [](add_drop_chunks_policy-returns)
 
