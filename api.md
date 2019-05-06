@@ -340,12 +340,11 @@ Users of TimescaleDB often have two common questions:
 1. How large should I configure my intervals for time partitioning?
 1. Should I use space partitioning, and how many space partitions should I use?
 
-**Time intervals**: The current release of TimescaleDB enables both
+**Time intervals:** The current release of TimescaleDB enables both
 the manual and automated adaption of its time intervals. With
 manually-set intervals, users should specify a `chunk_time_interval`
 when creating their hypertable (the default value is 1 week). The
-interval used for new chunks can be changed by calling
-[`set_chunk_time_interval()`](#set_chunk_time_interval).
+interval used for new chunks can be changed by calling [`set_chunk_time_interval()`](#set_chunk_time_interval).
 
 The key property of choosing the time interval is that the chunk (including indexes) belonging to the most recent interval (or chunks if using space
 partitions) fit into memory.  As such, we typically recommend setting
@@ -373,7 +372,7 @@ PostGIS geospatial indexes).  During testing, you might check your
 total chunk sizes via the [`chunk_relation_size`](#chunk_relation_size)
 function.
 
-**Space partitions**: The use of additional partitioning is a very
+**Space partitions:** The use of additional partitioning is a very
 specialized use case.  **Most users will not need to use it.**
 
 Space partitions use hashing: Every distinct item is hashed to one of
@@ -568,12 +567,12 @@ the same semantics as the `show_chunks` [function][show chunks].
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
-- **interval type**: The cut-off point is computed as `now() -
+- **interval type:** The cut-off point is computed as `now() -
     older_than` and similarly `now() - newer_than`.  An error will be returned if an INTERVAL is supplied
     and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
     DATE.
 
-- **timestamp, date, or integer type**: The cut-off point is
+- **timestamp, date, or integer type:** The cut-off point is
     explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
     SMALLINT / INT / BIGINT. The choice of timestamp or integer must follow the type of the hypertable's time column.
 
@@ -668,12 +667,12 @@ not affected.
 The valid types for the `chunk_time_interval` depend on the type of
 hypertable time column:
 
-- **TIMESTAMP, TIMESTAMPTZ, DATE**: The specified
+- **TIMESTAMP, TIMESTAMPTZ, DATE:** The specified
     `chunk_time_interval` should be given either as an INTERVAL type
     (`interval '1 day'`) or as an
     integer or bigint value (representing some number of microseconds).
 
-- **INTEGER**: The specified `chunk_time_interval` should be an
+- **INTEGER:** The specified `chunk_time_interval` should be an
     integer (smallint, int, bigint) value and represent the underlying
     semantics of the hypertable's time column, e.g., given in
     milliseconds if the time column is expressed in milliseconds
@@ -770,12 +769,12 @@ the same semantics as the `drop_chunks` [function][drop chunks].
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
-- **interval type**: The cut-off point is computed as `now() -
+- **interval type:** The cut-off point is computed as `now() -
     older_than` and similarly `now() - newer_than`.  An error will be returned if an INTERVAL is supplied
     and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
     DATE.
 
-- **timestamp, date, or integer type**: The cut-off point is
+- **timestamp, date, or integer type:** The cut-off point is
     explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
     SMALLINT / INT / BIGINT. The choice of timestamp or integer must follow the type of the hypertable's time column.
 
@@ -893,7 +892,7 @@ runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the 
 ## Continuous Aggregates :community_function: [](continuous-aggregates)
 TimescaleDB allows users the ability to automatically recompute aggregates
 at predefined intervals and materialize the results. This is suitable for
-frequently used queries. For a more detailed discussion of this capability, 
+frequently used queries. For a more detailed discussion of this capability,
 please see [using TimescaleDB Continuous Aggregates][using-continuous-aggs].
 
 *  [CREATE VIEW](#continuous_aggregate-create_view)
@@ -906,18 +905,21 @@ please see [using TimescaleDB Continuous Aggregates][using-continuous-aggs].
 
 The syntax is:
 ``` sql
-    CREATE VIEW <view_name> [ ( column_name [, ...] ) ]
-    WITH ( timescaledb.continuous [, timescaledb.<option> = <value> ] )
-    AS
-    <select_query>
+CREATE VIEW <view_name> [ ( column_name [, ...] ) ]
+WITH ( timescaledb.continuous [, timescaledb.<option> = <value> ] )
+AS
+<select_query>
+```
 
-    <select_query> is of the form :
-    SELECT <grouping_exprs>, <aggregate_functions>
+`<select_query>` is of the form :
+
+```sql
+SELECT <grouping_exprs>, <aggregate_functions>
     FROM <hypertable>
-    [WHERE ... ]
-    GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
-             [ optional grouping exprs>]
-    [HAVING ...]
+[WHERE ... ]
+GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
+         [ optional grouping exprs>]
+[HAVING ...]
 ```
 
 #### Parameters
@@ -941,19 +943,17 @@ The syntax is:
 
 #### Restrictions
 - `SELECT` query should be of the form specified in the syntax above.
-- The hypertable used in the `SELECT` may not have
- [row-level-security policies][postgres-rls] enabled.
--  `GROUP BY` clause must include a time_bucket expression. The
- [`time_bucket`] [time-bucket] expression must use the time dimension column of the hypertable.
+- The hypertable used in the `SELECT` may not have [row-level-security policies][postgres-rls] enabled.
+-  `GROUP BY` clause must include a time_bucket expression. The [`time_bucket`][time-bucket] expression must use the time dimension column of the hypertable.
 - [`time_bucket_gapfill`][time-bucket-gapfill] is not allowed in continuous
   aggs, but may be run in a `SELECT` from the continuous aggregate view.
-- In general, aggregates which can be
-  [parallelized by PostgreSQL][postgres-parallel-agg] are allowed in the view definition, this
+- In general, aggregates which can be [parallelized by PostgreSQL][postgres-parallel-agg] are allowed in the view definition, this
   includes most aggregates distributed with PostgreSQL. Aggregates with `ORDER BY`,
   `DISTINCT` and `FILTER` clauses are not permitted.
 * All functions and their arguments included in `SELECT`, `GROUP BY` and `HAVING` clauses must be [immutable][postgres-immutable].
 - Queries with `ORDER BY` are disallowed.
 - The view is not allowed to be a [security barrier view][postgres-security-barrier].
+
 [time-bucket]: /api#time_bucket
 [time-bucket-gapfill]: /api#time_bucket_gapfill
 [postgres-immutable]:https://www.postgresql.org/docs/current/xfunc-volatility.html
@@ -968,11 +968,13 @@ The syntax is:
 Create a continuous aggregate view.
 ```sql
 CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
-WITH ( timescaledb.continuous, timescaledb.refresh_lag = '5 hours', timescaledb.refresh_interval = '1h' )
+WITH ( timescaledb.continuous,
+    timescaledb.refresh_lag = '5 hours',
+    timescaledb.refresh_interval = '1h' )
 AS
-SELECT time_bucket('1day', timec), min(location), sum(temperature), sum(humidity)
-from conditions
-group by time_bucket('1day', timec), location, humidity, temperature;
+    SELECT time_bucket('1day', timec), min(location), sum(temperature), sum(humidity)
+        FROM conditions
+        GROUP BY time_bucket('1day', timec), location, humidity, temperature;
 ```
 ---
 ## ALTER VIEW (Continuous Aggregate) [](continuous_aggregate-alter_view)
@@ -2323,10 +2325,10 @@ SELECT * FROM show_tablespaces('conditions');
 
 Perform the proper operations to allow restoring of the database via `pg_restore` to commence.
 Specifically this sets the `timescaledb.restoring` GUC to `on` and stops any
-background workers which may have been performing tasks until the [`timescaledb_post_restore`](#timescaledb_post_restore) 
+background workers which may have been performing tasks until the [`timescaledb_post_restore`](#timescaledb_post_restore)
 fuction is run following the restore. See [backup/restore docs][backup-restore] for more information.
 
->:WARNING: After running `SELECT timescaledb_pre_restore()` you must run the 
+>:WARNING: After running `SELECT timescaledb_pre_restore()` you must run the
   [`timescaledb_post_restore`](#timescaledb_post_restore) function before using the database normally.
 
 #### Sample Usage  [](timescaledb_pre_restore-examples)
