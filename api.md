@@ -897,10 +897,10 @@ please see [using TimescaleDB Continuous Aggregates][using-continuous-aggs].
 
 *  [CREATE VIEW](#continuous_aggregate-create_view)
 *  [ALTER VIEW](#continuous_aggregate-alter_view)
-*  [REFRESH](#continuous_aggregate-refresh_view)
+*  [REFRESH MATERIALIZED VIEW](#continuous_aggregate-refresh_view)
 *  [DROP VIEW](#continuous_aggregate-drop_view)
 
-## CREATE VIEW (Continuous Aggregate) [](continuous_aggregate-create_view)
+## CREATE VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-create_view)
 `CREATE VIEW` statement is used to create continuous aggregates.
 
 The syntax is:
@@ -977,7 +977,7 @@ AS
         GROUP BY time_bucket('1day', timec), location, humidity, temperature;
 ```
 ---
-## ALTER VIEW (Continuous Aggregate) [](continuous_aggregate-alter_view)
+## ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
 `ALTER VIEW` statement can be used to modify the `WITH` clause [options](#create-view-with) for the continuous aggregate view.
 
 ``` sql
@@ -1004,7 +1004,7 @@ you need to change any other parameters, drop the view and create a new one.
 
 ---
 
-## REFRESH MATERIALIZED VIEW (Continuous Aggregate) [](continuous_aggregate-refresh_view)
+## REFRESH MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-refresh_view)
 The continuous aggregate view can be manually updated by using `REFRESH MATERIALIZED VIEW` statement. A background materializer job will run immediately and update the
  continuous aggregate.
 ``` sql
@@ -1027,7 +1027,7 @@ when the REFRESH is run. So the materialization (of the continuous aggregate) do
 all the updates to the hypertable.
 
 
-## DROP VIEW (Continuous Aggregate) [](continuous_aggregate-drop_view)
+## DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
 Continuous aggregate views can be dropped using `DROP VIEW` statement.
 
 ``` sql
