@@ -161,10 +161,13 @@ Other alterations to the continuous aggregate view are currently disallowed. To
 alter a continuous aggregate view in other ways it must be dropped and
 re-created; this can entail some time to re-calculate aggregations.
 
-A continuous aggregate may be dropped by using the `DROP VIEW` command.
+A continuous aggregate may be dropped by using the `DROP VIEW` command, the
+`CASCADE` parameter is required.
 ```sql
-DROP VIEW device_summary;
+DROP VIEW device_summary CASCADE;
 ```
+>:TIP: `CASCADE` will only drop those objects that depend on the continuous aggregate,
+it does not drop the underlying hypertable or delete any data.
 
 ---
 
