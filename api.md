@@ -1030,8 +1030,13 @@ all the updates to the hypertable.
 ## DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
 Continuous aggregate views can be dropped using `DROP VIEW` statement.
 
+This deletes the hypertable that stores the materialized data for the
+continuous aggregate; it does not affect the data in the underlying hypertable
+from which the continuous aggregate is derived (i.e., the raw data).  The
+`CASCADE` parameter is required for this command.
+
 ``` sql
-DROP VIEW <view_name>
+DROP VIEW <view_name> CASCADE;
 ```
 #### Parameters
 |Name|Description|
@@ -1041,8 +1046,11 @@ DROP VIEW <view_name>
 #### Examples [](continuous_aggregate-drop-examples)
 Drop existing continuous aggregate.
 ```sql
-DROP VIEW contagg_view;
+DROP VIEW contagg_view CASCADE;
 ```
+>:WARNING: `CASCADE` will drop those objects that depend on the continuous
+aggregate, such as views that are built on top of the continuous aggregate view.```
+
 
 ---
 ## Automation policies :enterprise_function: [](automation-policies)

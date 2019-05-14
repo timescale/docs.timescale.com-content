@@ -156,18 +156,23 @@ ALTER VIEW device_summary SET (timescaledb.refresh_interval = '10 min');
 ```
 Which sets the interval at which the view refreshes to 10 minutes.
 
-
 Other alterations to the continuous aggregate view are currently disallowed. To
 alter a continuous aggregate view in other ways it must be dropped and
 re-created; this can entail some time to re-calculate aggregations.
 
-A continuous aggregate may be dropped by using the `DROP VIEW` command, the
-`CASCADE` parameter is required.
+A continuous aggregate may be dropped by using the `DROP VIEW` command, which
+deletes the hypertable that stores the materialized data for the continuous
+aggregate; it does not affect the data in the underlying hypertable from which
+the continuous aggregate is derived (i.e., the raw data).  The `CASCADE`
+parameter is required for this command.
+
 ```sql
 DROP VIEW device_summary CASCADE;
 ```
->:TIP: `CASCADE` will only drop those objects that depend on the continuous aggregate,
-it does not drop the underlying hypertable or delete any data.
+
+>:WARNING: `CASCADE` will drop those objects that depend on the continuous
+aggregate, such as views that are built on top of the continuous aggregate view.```
+
 
 ---
 
