@@ -8,7 +8,7 @@ For instance if we want to find out the average of a column for each day in the
 dataset stored in a hypertable, we would run
 
 ``` sql
-SELECT time_bucket('1 day', timedimesion_column_name) bucket, avg(column_name), stddev(column_name)
+SELECT time_bucket('1 day', time_dimension_column_name) bucket, avg(column_name), stddev(column_name)
 FROM hypertable
 GROUP BY bucket;
 ```
