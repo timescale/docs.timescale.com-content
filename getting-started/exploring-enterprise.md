@@ -3,7 +3,7 @@
 TimescaleDB currently offers three product lines: OSS, Community, and Enterprise.
 The Enterprise offering features automated data management that enables hands-free data retention policies
 and data re-ordering on disk. For an overview of how TimescaleDB product lines differ,
-please take a look at our [Pricing][pricing] page.
+please take a look at our [Products][products] page.
 
 ## Requesting a License Key
 
