@@ -208,6 +208,7 @@ still work on the resulting hypertable.
 | `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
+| `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
 | `chunk_target_size` | DEPRECATED - The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable adaptive chunking (a DEPRECATED feature). The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
 | `chunk_sizing_func` | DEPRECATED - Allows setting a custom chunk sizing function for adaptive chunking (a DEPRECATED feature). The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
 
@@ -247,6 +248,9 @@ The 'time' column supports the following data types:
 | Integer (SMALLINT, INT, BIGINT) |
 
 >:TIP: The type flexibility of the 'time' column allows the use of non-time-based values as the primary chunk partitioning column, as long as those values can increment.
+
+>:TIP: For incompatible data types (e.g. `jsonb`) you can specify a function to the
+`time_partitioning_func` argument which can extract a compatible data type
 
 The units of `chunk_time_interval` should be set as follows:
 
@@ -323,6 +327,33 @@ if `conditions` is already a hypertable:
 ```sql
 SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 ```
+
+Time partition table `measurements` on a composite column type `report` using a time partitioning function:
+Requires an immutable function that can convert the column value into a supported column value:
+```sql
+CREATE TYPE report AS (reported timestamp with time zone, contents jsonb);
+
+CREATE FUNCTION report_reported(report)
+  RETURNS timestamptz
+  LANGUAGE SQL
+  IMMUTABLE AS
+  'SELECT $1.reported';
+
+SELECT create_hypertable('measurements', 'report', time_partitioning_func => 'report_reported');
+```
+
+Time partition table `events`, on a column type `jsonb` (`event`), which has
+a top level key (`started`) containing an ISO 8601 formatted timestamp:
+```sql
+CREATE FUNCTION event_started(jsonb)
+  RETURNS timestamptz
+  LANGUAGE SQL
+  IMMUTABLE AS
+  $func$SELECT ($1->>'started')::timestamptz$func$;
+
+SELECT create_hypertable('events', 'event', time_partitioning_func => 'event_started');
+```
+
 
 #### Best Practices [](create_hypertable-best-practices)
 
