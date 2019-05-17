@@ -57,6 +57,6 @@ You'll be able to use the above command to check your license type and license e
 Continue exploring our enterprise features in our API docs.
 
 
-[pricing]: https://www.timescale.com/pricing
+[products]: https://www.timescale.com/products
 [license]: https://www.timescale.com/license
 [contact-sales]: https://www.timescale.com/contact
