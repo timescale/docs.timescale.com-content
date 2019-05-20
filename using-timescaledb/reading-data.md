@@ -26,6 +26,23 @@ SELECT COUNT(*) FROM conditions
 To more advanced SQL queries:
 
 ```sql
+-- Return maximum temperature and time when it was reached
+-- over the past 3 hours
+SELECT 
+  time, 
+  temperature as temperature_max 
+FROM 
+  conditions 
+WHERE 
+  temperature = (
+    SELECT MAX(temperature) 
+    FROM conditions 
+    WHERE time > NOW() - interval '3 hours'
+  ) 
+ORDER BY time DESC 
+LIMIT 1;
+
+
 -- Information about each 15-min period for each location
 -- over the past 3 hours, ordered by time and temperature
 SELECT time_bucket('15 minutes', time) AS fifteen_min,
