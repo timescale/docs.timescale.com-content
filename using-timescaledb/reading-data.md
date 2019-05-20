@@ -26,7 +26,7 @@ SELECT COUNT(*) FROM conditions
 To more advanced SQL queries:
 
 ```sql
--- Return maximum temperature and time when it was reached
+-- Return maximum temperature and latest time when it was reached
 -- over the past 3 hours
 SELECT 
   time, 
