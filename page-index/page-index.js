@@ -47,7 +47,7 @@ const pageIndex = [
                 Title: "Installing",
                 type: REACT_PAGE,
                 href: "installation",
-                options: {pg_version: ["9.6", "10", "11"]},
+                options: {pg_version: ["11", "10", "9.6"]},
                 component: "InstallationPage",
                 children: [
                     {
@@ -135,7 +135,7 @@ const pageIndex = [
                             {
                                 Title: "Windows Azure",
                                 type: NON_MENU_PAGE,
-                                options: {pg_version: ["9.6", "10"]},
+                                options: {pg_version: ["10", "9.6"]},
                                 href: "installation-windows-azure"
                             }
                         ]
