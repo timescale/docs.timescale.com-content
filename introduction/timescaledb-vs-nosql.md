@@ -24,25 +24,3 @@ TimescaleDB provides both qualitative and quantitative differences:
   can leverage PostGIS's geometric datatypes, indexes, and queries.
 - **Third-party tools**: TimescaleDB supports anything that speaks
   SQL, including BI tools like Tableau.
-
-## When *Not* to Use TimescaleDB?
-
-Then again, if any of the following is true, you might not want to use TimescaleDB:
-
-- **Simple read requirements**: If you simply want fast key-value
-lookups or single column rollups, an in-memory or column-oriented
-database might be more appropriate.  The former clearly does not scale
-to the same data volumes, however, while the latter's performance
-significantly underperforms for more complex queries.
-- **Very sparse or unstructured data**: While TimescaleDB leverages PostgreSQL
-support for JSON/JSONB formats and handles sparsity quite efficiently (bitmaps
-for NULL values), schema-less architectures may be more appropriate in
-certain scenarios.
-- **Heavy compression is a priority**:  Benchmarks show TimescaleDB running on
-ZFS getting around 4x compression, but compression-optimized column stores might
-be more appropriate for higher compression rates.
-- **Infrequent or offline analysis**: If slow response times are
-acceptable (or fast response times limited to a small number of
-pre-computed metrics), and if you don't expect many applications/users
-to access that data concurrently, you might avoid using a database at
-all and instead just store data in an distributed file system.
