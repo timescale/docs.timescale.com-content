@@ -970,7 +970,7 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 |`timescaledb.refresh_lag`|Refresh lag controls the amount by which the materialization will lag behind the maximum current time value. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
 |`timescaledb.refresh_interval`|Refresh interval controls how often the background materializer is run.| `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
 |`timescaledb.max_interval_per_job`|Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
-|`timescaledb.create_group_index`|Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
+|`timescaledb.create_group_indexes`|Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
 
 #### Restrictions
 - `SELECT` query should be of the form specified in the syntax above.
