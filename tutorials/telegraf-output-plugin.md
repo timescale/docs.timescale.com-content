@@ -20,9 +20,9 @@ Before we start, you will need [TimescaleDB installed][getting-started] and a me
 
 Telegraf is written in Go, so only one standalone binary is required to run it. But also because of this all the code for the different plugins must be part of that binary. We have an unoficial build of Telegraf version 1.10.4 with our plugin added. You can download from the following links: 
 
-* Linux amd64 [deb build] [rpm build] [binary]
-* Windows amd64 [binary/exe]
-* MacOS amd64 [binary]
+* Linux amd64: [deb][deb-build] [rpm][rpm-build] [binary][linux-bin-build]
+* Windows amd64 [binary/exe][windows-build]
+* MacOS amd64 [binary][mac-build]
 
 We can also provide you with a builds for:
 
@@ -320,3 +320,8 @@ Additionally, we have several other [tutorials][] available for you to explore a
 [getting-started]: /getting-started
 [tutorials]: /tutorials
 [public-slack]: https://timescaledb.slack.com/
+[mac-build]: https://telegrafreleases.blob.core.windows.net/macos/telegraf
+[windows-build]: https://telegrafreleases.blob.core.windows.net/windows/telegraf.exe
+[deb-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf_1.10.4~with~pg-1_amd64.deb
+[rpm-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf-1.10.4~with~pg-1.x86_64.rpm
+[linux-bin-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf
