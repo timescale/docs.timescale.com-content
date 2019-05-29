@@ -303,8 +303,6 @@ Once you have started inserting data in TimescaleDB, you can begin to familiariz
 
 Additionally, we have several other [tutorials][] available for you to explore as you become accustomed to working with TimescaleDB.
 
-## Additional Configurations
-
 
 [getting-started]: /getting-started
 [tutorials]: /tutorials
