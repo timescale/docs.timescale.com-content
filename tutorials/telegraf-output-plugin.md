@@ -146,7 +146,20 @@ From the config we can notice several things:
 The commented parameters also show the default values they have when commented out.
 
 For the first example we'll set up the address parameter to a proper connection string
-so a connection to an instance of TimescaleDb or PostgreSQL can be established. All the other parameters will have their default values.
+so a connection to an instance of TimescaleDB or PostgreSQL can be established. All the other parameters will have their default values.
+
+### Creating hypertables
+
+The plugin we developed allows the user to configure several parameters. The `table_template` parameter defines the SQL to be executed when a new measurement is recorded by Telegraf and the
+required table doesn't exist in the output database. By default the `table_template` used is `CREATE TABLE IF NOT EXISTS {TABLE}({COLUMNS})` where `{TABLE}` and `{COLUMNS}` are placeholders 
+for the name of the table and the column definitions.
+
+For users of TimescaleDB they can update the `table_template` parameter in the config with
+```
+  table_template=`CREATE TABLE IF NOT EXISTS {TABLE}({COLUMNS}); SELECT create_hypertable({TABLELITERAL},'time',chunk_time_interval := '1 week'::interval,if_not_exists := true);`
+```
+
+This way when a new table is created it is converted into a hypertable, with each chunk holding 1 week intervals. Nothing else is needed to use the plugin with TimescaleDB. 
 
 ## Running Telegraf
 
@@ -181,19 +194,6 @@ So with the SQL query `SELECT * FROM cpu`, depending on how long you left Telegr
  cpu2      | 12.2718724052057
  cpu3      | 4.26716970050303
 ```
-
-### Creating hypertables
-
-The plugin we developed allows the user to configure several parameters. The `table_template` parameter defines the SQL to be executed when a new measurement is recorded by Telegraf and the
-required table doesn't exist in the output database. By default the `table_template` used is `CREATE TABLE IF NOT EXISTS {TABLE}({COLUMNS})` where `{TABLE}` and `{COLUMNS}` are placeholders 
-for the name of the table and the column definitions.
-
-For users of TimescaleDB they can update the `table_template` parameter in the config with
-```
-  table_template=`CREATE TABLE IF NOT EXISTS {TABLE}({COLUMNS}); SELECT create_hypertable({TABLELITERAL},'time',chunk_time_interval := '1 week'::interval,if_not_exists := true);`
-```
-
-This way when a new table is created it is converted into a hypertable, with each chunk holding 1 week intervals. Nothing else is needed to use the plugin with TimescaleDB. 
 
 ### Adding new Tags or Fields
 
