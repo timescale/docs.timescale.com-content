@@ -420,7 +420,7 @@ const pageIndex = [
                 href: "prometheus-adapter",
                 children: []
             }, {
-                Title: "Telegraf Output Plugin",
+                Title: "Collecting metrics with Telegraf",
                 type: PAGE,
                 href: "telegraf-output-plugin",
                 children: []

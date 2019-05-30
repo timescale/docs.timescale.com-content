@@ -1,14 +1,14 @@
-# PostgreSQL and TimescaleDB output plugin for Telegraf
+# Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf
 
-Telegraf can collect metrics from a wide array of inputs and write them into a wide array of outputs. It is plugin-driven for both collection and output of data so it is easily extendable. It is written in Go, which means that it is a compiled and standalone binary that can be executed on any system with no need for external dependencies, no npm, pip, gem, or other package management tools required. 
+Telegraf can collect metrics from a wide array of inputs and write them to a wide array of outputs. 
+It is plugin-driven for both collection and output of data so it is easily extendable. 
+It is written in Go, which means that it is compiled and standalone binary that can be executed on any system with no need for external dependencies, or package management tools required. 
 
 Telegraf is an open-source tool. It contains over 200 plugins for gathering and writing different types of data written by people who work with that data. 
-As an open-source project hosted on GitHub it has a typical Pull Request review process. When a plugin is written it is submitted for a review by the developers of Telegraf. 
-If accepted the new code is merged and the plugin is available with the following release. 
 
-We wrote the PostgreSQL output plugin which also has the ability to send data to an TimescaleDB hypertable. The Pull Request is open and currently under review by the Telegraf developers. 
+We wrote the PostgreSQL output plugin which also has the ability to send data to an TimescaleDB hypertable. The [pull request][pull-request] is open and currently under review by the Telegraf developers, waiting to be merged. To give developers the opportunity to try this functionality, we built downloadable binaries of Telegraf with our plugin already included.
 
-This tutorial will show a couple of examples on how to use the PostgreSQL/TimescaleDB output plugin for Telegraf. While the Pull Request is in review, we provide a built binary of Telegraf with our plugin already included that users can download.  
+This tutorial will run through a couple of examples on how to use the PostgreSQL/TimescaleDB output plugin for Telegraf.
 
 ## Installation [](telegraf-installation)
 
@@ -18,19 +18,19 @@ Before we start, you will need [TimescaleDB installed][getting-started] and a me
 
 ### Setting up Telegraf
 
-Telegraf is written in Go, so only one standalone binary is required to run it. But also because of this all the code for the different plugins must be part of that binary. We have an unofficial build of Telegraf version 1.10.4 with our plugin added. You can download from the following links: 
+Telegraf is written in Go, and the current build process of the tool is configured to produce one standalone binary. Because of this all the code for the different plugins must be part of that binary. We have an unofficial build of Telegraf version 1.10.4 with our plugin added. You can download from the following links: 
 
-* Linux amd64: [deb][deb-build] [rpm][rpm-build] [binary][linux-bin-build]
-* Windows amd64 [binary/exe][windows-build]
-* MacOS amd64 [binary][mac-build]
+* Linux amd64: [:DOWNLOAD_LINK: `deb`][deb-build] [:DOWNLOAD_LINK: `rpm`][rpm-build] [:DOWNLOAD_LINK: `binary`][linux-bin-build]
+* Windows amd64 [:DOWNLOAD_LINK: `binary/exe`][windows-build]
+* MacOS amd64 [:DOWNLOAD_LINK: `binary`][mac-build]
 
-We can also provide you with a builds for:
+We can also provide you with builds for:
 
 * Windows i386
-* Linux (i386, armhf, armel, arm64, static_amd64, s390x, mipsel
+* Linux (i386, armhf, armel, arm64, static_amd64, s390x, mipsel)
 * FreeBSD (amd64, i386)
 
-if you contact us using our [Public Support Slack][public-slack]
+if you contact us in our [community slack][public-slack]
 
 Once you download the binary and extract it to a suitable location (or install the packages) we can test out the build. 
 You may have to make the file executable by running `chmod +x telegraf`.
@@ -81,7 +81,7 @@ And the output should look something like:
 ```
 
 A line is outputted for each core of the CPU and the total. Values are presented in `key=value` pairs with the timestamp last in the row. 
-Writing to STDOUT doesn't distinguish between *tags*, which are indexed fields (cpu, host) and value *fields* (usage_quest, usage_user ...). 
+When writing to STDOUT you can distinguish between *tags*, which are indexed fields (cpu, host) and value *fields* (usage_quest, usage_user ...) by a blank space (in our example the space after host=local). 
 The distinction exists because different configuration options are available for the different fields.
 
 ### Configuring the PostgreSQL Output Plugin
@@ -237,8 +237,9 @@ Table "public.cpu"
  ### Creating a separate metadata table for tags
 
  The plugin we developed allows the user to select to have the tag sets inserted in a separate
- table and then referenced via Foreign Keys in the measurement table. This way space can be saved
- for measurements with low cardinality tag sets. To enable this change, you need to uncomment the `tags_as_foreignkeys` parameter in the plugin config (around line  103 in `telegraf.conf`) and set it to true
+ table and then referenced via Foreign Keys in the measurement table. 
+ Having the tags as a separate table saves space for high cardinality tag sets, the insert rate is improved, and certain queries can be written to be more  efficeint. 
+ To enable this change, you need to uncomment the `tags_as_foreignkeys` parameter in the plugin config (around line  103 in `telegraf.conf`) and set it to true
 
  ```
  ## Store tags as foreign keys in the metrics table. Default is false.
@@ -304,7 +305,7 @@ Once you have started inserting data in TimescaleDB, you can begin to familiariz
 Additionally, we have several other [tutorials][] available for you to explore as you become accustomed to working with TimescaleDB.
 
 
-[getting-started]: /getting-started
+[getting-started]: /getting-started/installation
 [tutorials]: /tutorials
 [public-slack]: https://timescaledb.slack.com/
 [mac-build]: https://telegrafreleases.blob.core.windows.net/macos/telegraf
@@ -312,3 +313,4 @@ Additionally, we have several other [tutorials][] available for you to explore a
 [deb-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf_1.10.4~with~pg-1_amd64.deb
 [rpm-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf-1.10.4~with~pg-1.x86_64.rpm
 [linux-bin-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf
+[pull-request]: https://github.com/influxdata/telegraf/pull/3428
