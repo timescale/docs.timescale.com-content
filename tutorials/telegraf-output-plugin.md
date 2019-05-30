@@ -64,8 +64,7 @@ The config file also includes all available input, output, processor, and aggreg
 
 ### Testing out the config file
 
-The selected input plugin and agent settings can be tested so they output 
-a single collection to STDOUT. By running 
+To test our configuration, we can output a single collection to STDOUT. By running 
 
 ```
 $ telegraf --config telegraf.conf --test
@@ -81,12 +80,12 @@ And the output should look something like:
 ```
 
 A line is outputted for each core of the CPU and the total. Values are presented in `key=value` pairs with the timestamp last in the row. 
-When writing to STDOUT you can distinguish between *tags*, which are indexed fields (cpu, host) and value *fields* (usage_quest, usage_user ...) by a blank space (in our example the space after host=local). 
+When writing to STDOUT you can distinguish between *tags*, which are indexed fields (`cpu`, `host`) and value *fields* (`usage_quest`, `usage_user` ...) by a blank space (in our example the space after `host=local`). 
 The distinction exists because different configuration options are available for the different fields.
 
 ### Configuring the PostgreSQL Output Plugin
 
-The `telegraf.conf` file we generated has a section (around line 80) headered with 
+The `telegraf.conf` file we generated has a section (around line 80) headed with 
 
 ```
 ################################################
@@ -140,10 +139,10 @@ laid out.
 From the config we can notice several things:
 1. The top line enables the plugin, the plugin specific config is indented after this line
 2. There is currently only one parameter configured, `address`. The others are commented out
-3. Possible parameters are commented out with a single `#`. (tags_as_foreignkeys, table_template, schema, tags_as_jsonb, fields_as_jsonb)
+3. Possible parameters are commented out with a single `#`. (`tags_as_foreignkeys`, `table_template`, `schema`, `tags_as_jsonb`, `fields_as_jsonb`)
 4. Explanations of the parameters are commented out with a single `##`
 
-The commented parameters also show the default values they have when commented out.
+The commented out parameters also show their default values.
 
 For the first example we'll set up the address parameter to a proper connection string
 so a connection to an instance of TimescaleDB or PostgreSQL can be established. All the other parameters will have their default values.
@@ -197,14 +196,20 @@ So with the SQL query `SELECT * FROM cpu`, depending on how long you left Telegr
 
 ### Adding new Tags or Fields
 
-Your telegraf configuration can change at any moment. An input plugin can be reconfigured to produce different data, or you may decide to index your data with different tags. The plugin we built can dynamically update the created tables with new columns as they appear. The previous configuration we used had no global tags specified other than the `host` tag. We will now add a new global tag in the configuration. Open the file in any text editor and update the `[global_tags]` section (around line 18) with: 
+Your Telegraf configuration can change at any moment. 
+An input plugin can be reconfigured to produce different data, or you may decide to index your data with different tags. 
+Our SQL plugin can dynamically update the created tables with new columns as they appear. 
+The previous configuration we used had no global tags specified other than the `host` tag. 
+We will now add a new global tag in the configuration. 
+Open the file in any text editor and update the `[global_tags]` section (around line 18) with: 
 
 ```
 [global_tags]
   location="New York"
 ```
 
-This way all metric collected with the instance of telegraf running with this config will be tagged with location="New York". If we run Telegraf again, collecting the metrics in TimescaleDB
+This way all metrics collected with the instance of telegraf running with this config will be tagged with `location="New York"`. 
+If we run Telegraf again, collecting the metrics in TimescaleDB
 
 ```
 $ telegraf --config telegraf.conf
@@ -237,8 +242,8 @@ Table "public.cpu"
  ### Creating a separate metadata table for tags
 
  The plugin we developed allows the user to select to have the tag sets inserted in a separate
- table and then referenced via Foreign Keys in the measurement table. 
- Having the tags as a separate table saves space for high cardinality tag sets, the insert rate is improved, and certain queries can be written to be more  efficeint. 
+ table and then referenced via **foreign keys** in the measurement table. 
+ Having the tags in a separate table saves space for high cardinality tag sets, improves insert rate, and allows certain queries to be written more efficeintly. 
  To enable this change, you need to uncomment the `tags_as_foreignkeys` parameter in the plugin config (around line  103 in `telegraf.conf`) and set it to true
 
  ```
