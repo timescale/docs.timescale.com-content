@@ -144,8 +144,8 @@ From the config we can notice several things:
 
 The commented out parameters also show their default values.
 
-For the first example we'll set up the address parameter to a proper connection string
-so a connection to an instance of TimescaleDB or PostgreSQL can be established. All the other parameters will have their default values.
+For the first example we'll set the address parameter to a proper connection string to establish a connection to an instance of TimescaleDB or PostgreSQL. 
+All the other parameters will have their default values.
 
 ### Creating hypertables
 
@@ -153,7 +153,8 @@ The plugin we developed allows the user to configure several parameters. The `ta
 required table doesn't exist in the output database. By default the `table_template` used is `CREATE TABLE IF NOT EXISTS {TABLE}({COLUMNS})` where `{TABLE}` and `{COLUMNS}` are placeholders 
 for the name of the table and the column definitions.
 
-For users of TimescaleDB they can update the `table_template` parameter in the config with
+Let's update `table_template` in the config for TimescaleDB:
+
 ```
   table_template=`CREATE TABLE IF NOT EXISTS {TABLE}({COLUMNS}); SELECT create_hypertable({TABLELITERAL},'time',chunk_time_interval := '1 week'::interval,if_not_exists := true);`
 ```
@@ -162,7 +163,7 @@ This way when a new table is created it is converted into a hypertable, with eac
 
 ## Running Telegraf
 
-When we run telegraf we only need to specify the config file to be used. If we execute 
+When we run Telegraf we only need to specify the config file to be used. If we execute 
 
 ```
 $  telegraf --config telegraf.conf 
@@ -173,16 +174,18 @@ $  telegraf --config telegraf.conf
 2019-05-23T13:48:09Z I! [agent] Config: Interval:10s, Quiet:false, Hostname:"local", Flush Interval:10s
 ```
 
-In the output you can notice the loaded inputs (cpu) and outputs (postgresql) along with the global tags and the intervals with which the agent will collect the data from the inputs, and flush to the outputs. We can stop the execution of Telegraf after ~10-15 seconds.
+In the output you can notice the loaded inputs (`cpu`) and outputs (`postgresql`) along with the global tags and the intervals with which the agent will collect the data from the inputs, and flush to the outputs. We can stop the execution of Telegraf after ~10-15 seconds.
 
-Let us now connect to our PostgreSQL instance and introspect the data
+Let us now connect to our PostgreSQL instance and inspect the data
 
 ```
 $ psql -U postgres -h localhost
 ```
 
 The cpu input plugin has one measurement, called cpu, and it's stored in a table of the same name (by default in the public schema).
-So with the SQL query `SELECT * FROM cpu`, depending on how long you left Telegraf running you will see the table populated with some values, and we can find the average usage per cpu core with `SELECT cpu, avg(usage_user) FROM cpu GROUP BY cpu` and the output would look like 
+So with the SQL query `SELECT * FROM cpu`, depending on how long you left Telegraf running you will see the table populated with some values. 
+We can find the average usage per cpu core with `SELECT cpu, avg(usage_user) FROM cpu GROUP BY cpu`.
+The output should look like 
 
 ```
     cpu    |       avg        
@@ -208,7 +211,7 @@ Open the file in any text editor and update the `[global_tags]` section (around 
   location="New York"
 ```
 
-This way all metrics collected with the instance of telegraf running with this config will be tagged with `location="New York"`. 
+This way all metrics collected with the instance of Telegraf running with this config will be tagged with `location="New York"`. 
 If we run Telegraf again, collecting the metrics in TimescaleDB
 
 ```
@@ -243,7 +246,7 @@ Table "public.cpu"
 
  The plugin we developed allows the user to select to have the tag sets inserted in a separate
  table and then referenced via **foreign keys** in the measurement table. 
- Having the tags in a separate table saves space for high cardinality tag sets, improves insert rate, and allows certain queries to be written more efficeintly. 
+ Having the tags in a separate table saves space for high cardinality tag sets, improves insert rate, and allows certain queries to be written more efficiently. 
  To enable this change, you need to uncomment the `tags_as_foreignkeys` parameter in the plugin config (around line  103 in `telegraf.conf`) and set it to true
 
  ```
@@ -251,23 +254,13 @@ Table "public.cpu"
  tags_as_foreignkeys = true
  ```
 
- ### JSONB column for Tags and Fields
-
- Additionally the tags and fields can be stored as JSONB columns in the database. All you need to do is uncomment the `tags_as_jsonb` or `fields_as_jsonb` parameters in `telegraf.conf` (around line 120) and set them to true. In this example we'll store the fields as separate columns, but the tags as JSON. 
-
- ```
- ## Use jsonb datatype for tags
- tags_as_jsonb = true
- ## Use jsonb datatype for fields
- fields_as_jsonb = false
- ```
-
 To better visualize the result we'll drop the existing `cpu` table from our database.
+
 ```
 psql> DROP TABLE cpu;
 ```
 
-Now we'll fire Telegraf up again, this time with the config changed to write the tags in a separate table, and as JSON.
+Now we'll fire Telegraf up again, this time with the config changed to write the tags in a separate table.
 ```
 $ telegraf --config telegraf.conf
 ```
@@ -290,8 +283,40 @@ Table "public.cpu"
  usage_user       | double precision         
  usage_idle       | double precision         
  usage_steal      | double precision         
+
 ```
 We can notice the `cpu`, `host` and `location` columns are not there, instead there's a `tag_id` column. The tag sets are stored in a separate table called `cpu_tag`:
+```
+ psql> SELECT * FROM cpu_tag;
+ tag_id |  host |    cpu    |  location
+--------+-------+-----------+----------
+      1 | local | cpu-total | New York
+      2 | local | cpu0      | New York
+      3 | local | cpu1      | New York
+```
+
+ ### JSONB column for Tags and Fields
+
+ Additionally the tags and fields can be stored as JSONB columns in the database. All you need to do is uncomment the `tags_as_jsonb` or `fields_as_jsonb` parameters in `telegraf.conf` (around line 120) and set them to true. In this example we'll store the fields as separate columns, but the tags as JSON. 
+
+ ```
+ ## Use jsonb datatype for tags
+ tags_as_jsonb = true
+ ## Use jsonb datatype for fields
+ fields_as_jsonb = false
+ ```
+
+To better visualize the result we'll drop the existing `cpu_tag` table from our database.
+```
+psql> DROP TABLE cpu_tag;
+```
+
+Fire up Telegraf up again, and turn it off after 20-30 seconds. Then we check the `cpu_tag` table:
+
+```
+$ telegraf --config telegraf.conf
+```
+
 ```
  psql> SELECT * FROM cpu_tag;
  tag_id |                                       tags                                        
@@ -301,7 +326,7 @@ We can notice the `cpu`, `host` and `location` columns are not there, instead th
       3 | {"cpu": "cpu1", "host": "local", "location": "New York"}
 ```
 
-And instead of having three text columns populated with a small number of possible values, only a single integer will be used.
+And instead of having three text columns, one JSONB column is created.
 
 ## Next Steps
 
