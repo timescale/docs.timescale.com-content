@@ -12,6 +12,7 @@ data analysis and make forecasts on your data.
 - **[Replication][]**: TimescaleDB takes advantage of well established PostgreSQL methods for replication.  Here we provide a detailed guide along with additional resources for setting up streaming replicas.
 - **[Migrate from InfluxDB with Outflux][Outflux]**: Use our open-source migration tool to transfer your data from InfluxDB to TimescaleDB.
 - **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers
+- **[Collecting metrics with Telegraf][Telegraf Output Plugin]**: Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf
 - **[Sample data sets][Data Sets]**: And if you want to explore on your own
 with some sample data, we have some ready-made data sets for you to explore.
 
@@ -22,3 +23,4 @@ with some sample data, we have some ready-made data sets for you to explore.
 [Prometheus adapter]: /tutorials/prometheus-adapter
 [Data Sets]: /tutorials/other-sample-datasets
 [Forecasting]: /tutorials/tutorial-forecasting
+[Telegraf Output Plugin]: /tutorials/telegraf-output-plugin
