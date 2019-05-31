@@ -6,7 +6,7 @@ It is written in Go, which means that it is compiled and standalone binary that 
 
 Telegraf is an open-source tool. It contains over 200 plugins for gathering and writing different types of data written by people who work with that data. 
 
-We wrote the PostgreSQL output plugin which also has the ability to send data to an TimescaleDB hypertable. The [pull request][pull-request] is open and currently under review by the Telegraf developers, waiting to be merged. To give developers the opportunity to try this functionality, we built downloadable binaries of Telegraf with our plugin already included.
+We wrote the PostgreSQL output plugin which also has the ability to send data to a TimescaleDB hypertable. The [pull request][pull-request] is open and currently under review by the Telegraf developers, waiting to be merged. To give developers the opportunity to try this functionality, we built downloadable binaries of Telegraf with our plugin already included.
 
 This tutorial will run through a couple of examples on how to use the PostgreSQL/TimescaleDB output plugin for Telegraf.
 
@@ -40,7 +40,7 @@ We can check the version of the installed Telegraf with
 $ telegraf --version
 ```
 
-If the installation was good it should print out `Telegraf 1.10.4-with-pg`.
+If the installation was successful it should print out `Telegraf 1.10.4-with-pg`.
 
 ## Telegraf Configuration [](telegraf-configuration)
 
@@ -246,7 +246,7 @@ Table "public.cpu"
 
  The plugin we developed allows the user to select to have the tag sets inserted in a separate
  table and then referenced via **foreign keys** in the measurement table. 
- Having the tags in a separate table saves space for high cardinality tag sets, improves insert rate, and allows certain queries to be written more efficiently. 
+ Having the tags in a separate table saves space for high cardinality tag sets, and allows certain queries to be written more efficiently. 
  To enable this change, you need to uncomment the `tags_as_foreignkeys` parameter in the plugin config (around line  103 in `telegraf.conf`) and set it to true
 
  ```
@@ -285,7 +285,7 @@ Table "public.cpu"
  usage_steal      | double precision         
 
 ```
-We can notice the `cpu`, `host` and `location` columns are not there, instead there's a `tag_id` column. The tag sets are stored in a separate table called `cpu_tag`:
+Notice that the `cpu`, `host` and `location` columns are not there, instead there's a `tag_id` column. The tag sets are stored in a separate table called `cpu_tag`:
 ```
  psql> SELECT * FROM cpu_tag;
  tag_id |  host |    cpu    |  location
@@ -311,7 +311,7 @@ To better visualize the result we'll drop the existing `cpu_tag` table from our 
 psql> DROP TABLE cpu_tag;
 ```
 
-Fire up Telegraf up again, and turn it off after 20-30 seconds. Then we check the `cpu_tag` table:
+Fire up Telegraf again, and turn it off after 20-30 seconds. Then we check the `cpu_tag` table:
 
 ```
 $ telegraf --config telegraf.conf
@@ -330,7 +330,7 @@ And instead of having three text columns, one JSONB column is created.
 
 ## Next Steps
 
-Once you have started inserting data in TimescaleDB, you can begin to familiarize yourself with our [architecture](https://docs.timescale.com/introduction/architecture) and [API reference](https://docs.timescale.com/api).
+Once you have started inserting data in TimescaleDB, you can begin to familiarize yourself with our [architecture][architecture_lnk] and [API reference][api].
 
 Additionally, we have several other [tutorials][] available for you to explore as you become accustomed to working with TimescaleDB.
 
@@ -344,3 +344,5 @@ Additionally, we have several other [tutorials][] available for you to explore a
 [rpm-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf-1.10.4~with~pg-1.x86_64.rpm
 [linux-bin-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf
 [pull-request]: https://github.com/influxdata/telegraf/pull/3428
+[architecture_lnk]: https://docs.timescale.com/introduction/architecture
+[api]: https://docs.timescale.com/api
