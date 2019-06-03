@@ -115,9 +115,10 @@ highest inserted time value the background worker will attempt to materialize
 (we will be behind by `refresh_lag` + `bucket_width`).  So in our example, if
 the `refresh_lag` is 1 hour and the `bucket_width` is 1 hour, the
 materialization will generally be 2 hours behind the maximum inserted value.
-Tuning the `refresh_lag` parameter lower, or even negative, will mean that the
+Tuning the `refresh_lag` parameter lower will mean that the
 aggregates will follow inserts more closely, but can cause some write
-amplification which may degrade insert performance.
+amplification which may degrade insert performance. Setting `refresh_lag` to
+`-<bucket_width>` will keep the continuous aggregate up-to-date.
 
 The `refresh_interval` controls how frequently materialization jobs will be
 launched. Setting a shorter interval will mean materializations happen more
@@ -275,13 +276,16 @@ amount of data.
 
 **Fully Up-to-date Views:**
 As noted [above](#how-far-behind), aggregates are intentionally a bit behind where the most recent
-inserts are occuring, this reduces write amplification. However, we recognize
+inserts are occurring, this reduces write amplification. However, we recognize
 the need for fully up-to-date views and can accomplish this by automatically
 querying the raw data and calculating the aggregates on the fly for the most
 recent periods that have not yet been materialized. This union view of both the
 materialization and the aggregate will then replace the normal continuous
 aggregate view (though whether one selected fully up-to-date data would be
 tunable at query time).
+
+In the meantime, you can force the continuous aggregate to run whenever new data is received
+by setting `refresh_lag` to `-<bucket_width>`.
 
 **Synchronous Invalidation:**
 Similarly, invalidated portions of the materialization are re-calculated the

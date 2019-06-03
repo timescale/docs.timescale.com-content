@@ -967,12 +967,16 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 |**Required**|
 |`timescaledb.continuous`|If timescaledb.continuous is not specified, then this is a regular PostgresSQL view. |||
 |**Optional**|
-|`timescaledb.refresh_lag`|Refresh lag controls the amount by which the materialization will lag behind the maximum current time value. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
-|`timescaledb.refresh_interval`|Refresh interval controls how often the background materializer is run.| `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
+|`timescaledb.refresh_lag`|Refresh lag controls the amount by which the materialization will lag behind the maximum current time value. The continuous aggregate view lags behind by `bucket_width` + `refresh_lag` value. `refresh_lag` can be set to positive and negative values. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
+|`timescaledb.refresh_interval`|Refresh interval controls how often the background materializer is run. Note that if `refresh_lag` is set to `-<bucket_width>`, the continuous aggregate will run whenever new data is received, regardless of what the `refresh_interval` value is. | `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
 |`timescaledb.max_interval_per_job`|Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
 |`timescaledb.create_group_indexes`|Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
 
+>:TIP: Say, the continuous aggregate uses time_bucket('2h', time_column) and we want to keep the view up to date with the data. We can do this by modifying the `refresh_lag` setting. Set refresh_lag to `-2h`. E.g. `ALTER VIEW contview set (timescaledb.refresh_lag = '-2h');` Please refer to the [caveats][].
+
 #### Restrictions
+- Only one continuous aggregate is permitted per hypertable. Multiple continuous aggregates will be supported
+in future versions.
 - `SELECT` query should be of the form specified in the syntax above.
 - The hypertable used in the `SELECT` may not have [row-level-security policies][postgres-rls] enabled.
 -  `GROUP BY` clause must include a time_bucket expression. The [`time_bucket`][time-bucket] expression must use the time dimension column of the hypertable.
@@ -1007,7 +1011,24 @@ AS
         FROM conditions
         GROUP BY time_bucket('1day', timec), location, humidity, temperature;
 ```
+
+>:TIP: In order to keep the continuous aggregate up to date with incoming data,
+the refresh lag can be set to `-<bucket_width>`. Please note that by doing so,
+you will incur higher write amplification and incur performance penalties.
+
+```sql
+CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
+WITH (timescaledb.continuous,
+    timescaledb.refresh_lag = '-1h',
+    timescaledb.refresh_interval = '30m')
+AS
+  SELECT time_bucket('1h', timec), min(location), sum(temperature), sum(humidity)
+    FROM conditions
+    GROUP BY time_bucket('1h', timec), location, humidity, temperature;
+```
+
 ---
+
 ## ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
 `ALTER VIEW` statement can be used to modify the `WITH` clause [options](#create-view-with) for the continuous aggregate view.
 
@@ -2419,4 +2440,5 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [telemetry]: /using-timescaledb/telemetry
 [drop chunks]: #drop_chunks
 [show chunks]: #show_chunks
+[caveats]: /using-timescaledb/continuous-aggregates
 [backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore
