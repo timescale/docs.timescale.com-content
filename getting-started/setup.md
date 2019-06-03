@@ -24,6 +24,11 @@ Now create a new empty database (skip this if you already have a database):
 CREATE database tutorial;
 ```
 
+>:WARNING: Starting in v0.12.0, TimescaleDB enables [telemetry reporting][]
+by default. You can opt-out by following the instructions detailed
+in our [telemetry documentation][]. However, please do note that telemetry is
+anonymous, and by keeping it on, you help us [improve our product][].
+
 Lastly add TimescaleDB:
 
 ```sql
@@ -54,9 +59,6 @@ to a TimescaleDB hypertable.
 
 ---
 
-Note: Starting in v0.12.0, TimescaleDB will by default enable [telemetry
-reporting][].
-
 [setup illustration]: https://assets.iobeam.com/images/docs/illustration-setup.svg
 [installed]: /getting-started/installation
 [start-scratch]: /getting-started/creating-hypertables
@@ -64,3 +66,5 @@ reporting][].
 [telemetry reporting]: /api#get_report
 [configure]: /getting-started/configuring
 [pgtune]: http://pgtune.leopard.in.ua/
+[telemetry documentation]: /using-timescaledb/telemetry
+[improve our product]: https://blog.timescale.com/why-introduced-telemetry-in-timescaledb-2ed11014d95d/
