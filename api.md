@@ -49,10 +49,6 @@ Add an additional partitioning dimension to a TimescaleDB hypertable.
 The column selected as the dimension can either use interval
 partitioning (e.g., for a second time partition) or hash partitioning.
 
->:WARNING: Before using this command, please see the hypertable [best practices][] discussion
-and talk with us on [Slack](https://slack-login.timescale.com) about
-your use case. Users will *rarely* want or need to use this command.
-
 <!-- -->
 >:WARNING: The `add_dimension` command can only be executed after a table has been
 converted to a hypertable (via `create_hypertable`), but must similarly
@@ -71,11 +67,7 @@ queries should be able to read from different disks in parallel, or
 (b) a single query should be able to use query parallelization to read
 from multiple disks in parallel.
 
-Note that query parallelization in PostgreSQL 9.6 (and 10) does not
-support querying *different* hypertable chunks in parallel;
-query parallelization only works on a single physical table (and thus
-a single chunk). We might add our own support for this, but it is not
-currently supported.
+Note that queries to multiple chunks can be executed in parallel when TimescaleDB is running on Postgres 11, but PostgreSQL 9.6 or 10 does not support such parallel chunk execution.
 
 Thus, users looking for parallel I/O have two options:
 
@@ -84,9 +76,8 @@ single logical disk to the hypertable (i.e., via a single tablespace).
 
 1. For each physical disk, add a separate tablespace to the
 database.  TimescaleDB allows you to actually add multiple tablespaces
-to a *single* hypertable (although under the covers, each underlying
-chunk will be mapped by TimescaleDB to a single tablespace / physical
-disk).
+to a *single* hypertable (although under the covers, a hypertable's
+chunks are spread across the tablespaces associated with that hypertable).
 
 We recommend a RAID setup when possible, as it supports both forms of
 parallelization described above (i.e., separate queries to separate
@@ -366,7 +357,7 @@ SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 
 #### Best Practices [](create_hypertable-best-practices)
 
-One of the most common questions users of TimescaleDB have revolve around 
+One of the most common questions users of TimescaleDB have revolve around
 configuring `chunk_time_interval`.
 
 **Time intervals**: The current release of TimescaleDB enables both
@@ -401,6 +392,10 @@ taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
 total chunk sizes via the [`chunk_relation_size`](#chunk_relation_size)
 function.
+
+**Space partitions**: In most cases, it is advised for users not to use
+space partitions. The rare cases in which space partitions may be useful
+are described in the [add dimension][] section.
 
 ---
 
@@ -2033,3 +2028,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [telemetry]: /using-timescaledb/telemetry
 [drop chunks]: #drop_chunks
 [show chunks]: #show_chunks
+[add dimension]: #add_dimension
