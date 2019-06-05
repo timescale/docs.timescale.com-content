@@ -357,7 +357,7 @@ SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 
 #### Best Practices [](create_hypertable-best-practices)
 
-One of the most common questions users of TimescaleDB have revolve around
+One of the most common questions users of TimescaleDB have revolves around
 configuring `chunk_time_interval`.
 
 **Time intervals**: The current release of TimescaleDB enables both
