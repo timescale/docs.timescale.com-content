@@ -126,7 +126,7 @@ SELECT
 Like [increase](#increase), rate applies to a situation with monotonically
 increasing counters. If your sample interval is variable or you use different
 sampling intervals between different series it is helpful to normalize the
-values to a common time interval to make the calcaluted values comparable.
+values to a common time interval to make the calculated values comparable.
 The following query calculates bytes per second sent while taking counter
 resets into account.
 
@@ -145,6 +145,27 @@ SELECT
   WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
   WINDOW w AS (ORDER BY time)
   ORDER BY time
+```
+
+### Delta [](rate)
+
+In many monitoring (and IoT) use cases, devices or sensors report metrics that typically do not
+change. In cases where the value changes, these changes are considered anomalies. When querying
+for these changes in values over time, users typically do not want to transmit all the values where
+no changes were observed since they want to minimize the amount of data that gets sent back to
+the client. 
+
+Users can leverage a combination of window functions and subselects to achieve this. The below query
+uses diffs to filter rows where values have not changed and only transmits rows where values
+have changed.
+
+```sql
+SELECT time, value FROM (
+  SELECT time,
+    value,
+    value - LAG(value) OVER (ORDER BY time) AS diff
+  FROM hypertable) ht
+WHERE diff IS NULL OR diff != 0;
 ```
 
 ### Time Bucket :timescale_function: [](time-bucket)
