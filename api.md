@@ -33,14 +33,51 @@ Add an additional partitioning dimension to a TimescaleDB hypertable.
 The column selected as the dimension can either use interval
 partitioning (e.g., for a second time partition) or hash partitioning.
 
->:WARNING: Before using this command, please see the hypertable [best practices][] discussion
-and talk with us on [Slack](https://slack-login.timescale.com) about
-your use case. Users will *rarely* want or need to use this command.
-
 <!-- -->
 >:WARNING: The `add_dimension` command can only be executed after a table has been
 converted to a hypertable (via `create_hypertable`), but must similarly
 be run only on an empty hypertable.
+
+**Space partitions**: The use of additional partitioning is a very
+specialized use case.  **Most users will not need to use it.**
+
+Space partitions use hashing: Every distinct item is hashed to one of
+*N* buckets.  Remember that we are already using (flexible) time
+intervals to manage chunk sizes; the main purpose of space
+partitioning is to enable parallel I/O to the same time interval.
+
+Parallel I/O can benefit in two scenarios: (a) two or more concurrent
+queries should be able to read from different disks in parallel, or
+(b) a single query should be able to use query parallelization to read
+from multiple disks in parallel.
+
+Note that queries to multiple chunks can be executed in parallel when TimescaleDB is running on Postgres 11, but PostgreSQL 9.6 or 10 does not support such parallel chunk execution.
+
+Thus, users looking for parallel I/O have two options:
+
+1. Use a RAID setup across multiple physical disks, and expose a
+single logical disk to the hypertable (i.e., via a single tablespace).
+
+1. For each physical disk, add a separate tablespace to the
+database.  TimescaleDB allows you to actually add multiple tablespaces
+to a *single* hypertable (although under the covers, a hypertable's
+chunks are spread across the tablespaces associated with that hypertable).
+
+We recommend a RAID setup when possible, as it supports both forms of
+parallelization described above (i.e., separate queries to separate
+disks, single query to multiple disks in parallel).  The multiple
+tablespace approach only supports the former.  With a RAID setup,
+*no spatial partitioning is required*.
+
+That said, when using space partitions, we recommend using 1
+space partition per disk.
+
+TimescaleDB does *not* benefit from a very large number of space
+partitions (such as the number of unique items you expect in partition
+field).  A very large number of such partitions leads both to poorer
+per-partition load balancing (the mapping of items to partitions using
+hashing), as well as much increased planning latency for some types of
+queries.
 
 #### Required Arguments [](add_dimension-required-arguments)
 
@@ -266,13 +303,6 @@ discourage people from using the `chunk_target_size` and
 the future.
 
 <!-- -->
->:TIP: The `add_dimension` function can be used following hypertable
- creation to add one or more additional partitioning dimensions (and
- as an alternative to specifying the optional argument
- in `create_hypertable`).  See [best practices][] before using any
- spatial partitioning.
-
-<!-- -->
 >:TIP: The time column in `create_hypertable` must be defined as `NOT
  NULL`.  If this is not already specified on table creation,
  `create_hypertable` will automatically add this constraint on the
@@ -311,10 +341,8 @@ SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 
 #### Best Practices [](create_hypertable-best-practices)
 
-Users of TimescaleDB often have two common questions:
-
-1. How large should I configure my intervals for time partitioning?
-1. Should I use space partitioning, and how many space partitions should I use?
+One of the most common questions users of TimescaleDB have revolves around
+configuring `chunk_time_interval`.
 
 **Time intervals**: The current release of TimescaleDB enables both
 the manual and automated adaption of its time intervals. With
@@ -349,51 +377,9 @@ PostGIS geospatial indexes).  During testing, you might check your
 total chunk sizes via the [`chunk_relation_size`](#chunk_relation_size)
 function.
 
-**Space partitions**: The use of additional partitioning is a very
-specialized use case.  **Most users will not need to use it.**
-
-Space partitions use hashing: Every distinct item is hashed to one of
-*N* buckets.  Remember that we are already using (flexible) time
-intervals to manage chunk sizes; the main purpose of space
-partitioning is to enable parallel I/O to the same time interval.
-
-Parallel I/O can benefit in two scenarios: (a) two or more concurrent
-queries should be able to read from different disks in parallel, or
-(b) a single query should be able to use query parallelization to read
-from multiple disks in parallel.
-
-Note that query parallelization in PostgreSQL 9.6 (and 10) does not
-support querying *different* hypertable chunks in parallel;
-query parallelization only works on a single physical table (and thus
-a single chunk). We might add our own support for this, but it is not
-currently supported.
-
-Thus, users looking for parallel I/O have two options:
-
-1. Use a RAID setup across multiple physical disks, and expose a
-single logical disk to the hypertable (i.e., via a single tablespace).
-
-1. For each physical disk, add a separate tablespace to the
-database.  TimescaleDB allows you to actually add multiple tablespaces
-to a *single* hypertable (although under the covers, each underlying
-chunk will be mapped by TimescaleDB to a single tablespace / physical
-disk).
-
-We recommend a RAID setup when possible, as it supports both forms of
-parallelization described above (i.e., separate queries to separate
-disks, single query to multiple disks in parallel).  The multiple
-tablespace approach only supports the former.  With a RAID setup,
-*no spatial partitioning is required*.
-
-That said, when using space partitions, we recommend using 1
-space partition per disk.
-
-TimescaleDB does *not* benefit from a very large number of space
-partitions (such as the number of unique items you expect in partition
-field).  A very large number of such partitions leads both to poorer
-per-partition load balancing (the mapping of items to partitions using
-hashing), as well as much increased planning latency for some types of
-queries.
+**Space partitions**: In most cases, it is advised for users not to use
+space partitions. The rare cases in which space partitions may be useful
+are described in the [add dimension][] section.
 
 ---
 
