@@ -126,7 +126,7 @@ SELECT
 Like [increase](#increase), rate applies to a situation with monotonically
 increasing counters. If your sample interval is variable or you use different
 sampling intervals between different series it is helpful to normalize the
-values to a common time interval to make the calcaluted values comparable.
+values to a common time interval to make the calculated values comparable.
 The following query calculates bytes per second sent while taking counter
 resets into account.
 
@@ -145,6 +145,27 @@ SELECT
   WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
   WINDOW w AS (ORDER BY time)
   ORDER BY time
+```
+
+### Delta [](rate)
+
+In many monitoring (and IoT) use cases, devices or sensors report metrics that typically do not
+change. In cases where the value changes, these changes are considered anomalies. When querying
+for these changes in values over time, users typically do not want to transmit all the values where
+no changes were observed since they want to minimize the amount of data that gets sent back to
+the client. 
+
+Users can leverage a combination of window functions and subselects to achieve this. The below query
+uses diffs to filter rows where values have not changed and only transmits rows where values
+have changed.
+
+```sql
+SELECT time, value FROM (
+  SELECT time,
+    value,
+    value - LAG(value) OVER (ORDER BY time) AS diff
+  FROM hypertable) ht
+WHERE diff IS NULL OR diff != 0;
 ```
 
 ### Time Bucket :timescale_function: [](time-bucket)
@@ -203,17 +224,12 @@ This query will output data in the following form:
  garage     | 10080 | {0,2679,957,2420,2150,1874,0}
 ```
 
-### Gap Filling [](gap-filling)
+### Gap Filling :timescale_function: :community_function: [](gap-filling)
 
 Some time-series analyses or visualizations want to display records for
 each selected time period, even if no data was recorded during that
 period.  This is commonly termed "gap filling", and may involve
 performing such operations as recording a "0" for any missing period.
-
-TimescaleDB allows you to use
-PostgreSQL's [`generate_series`][generate_series] functionality to
-generate a set of the desired time periods, then join this set against
-the actual time-series data.
 
 In the following example, we use trading data that includes
 a `time` timestamp, the `asset_code` being traded, as well as
@@ -245,10 +261,11 @@ This query will output data in the following form:
 ```
 
 Note that no records are included for 09-23, 09-24, or 09-30 as no
-trade data was recorded for those days (they were weekends).  To
-instead output a value of "0" for each missing day, one can use the
-following query, which joins data from the prices table (akin to the
-query above) with a generated stream of dates.
+trade data was recorded for those days (they were weekends).
+To instead include time records for each missing day, one can use
+the following TimescaleDB function `time_bucket_gapfill`, which
+serves to generate a series of time buckets according to some
+interval (here, `1 day`) across a specified period.
 
 ```sql
 SELECT
@@ -274,9 +291,6 @@ This query will then output data in the following form:
  2017-09-23 |
  2017-09-22 |   9855
 ```
-Unlike with date_trunc, we can use a custom time interval with the time_bucket function,
-but in order for the generated times to align with the subselect we need to use time_bucket on
-the first argument to generate_series.
 For example, let's say you want 1080 data points in the last two weeks and, as many graphing
 libraries require time data points with null values to draw gaps in a graph, we need to
 generate the correct timestamp for each of the data points even if there is no data there.
@@ -310,7 +324,7 @@ This query will output data of the form:
  2018-03-09 20:53:20+00 |  1037.78
 ```
 
-### Last Observation Carried Forward [](locf)
+### Last Observation Carried Forward :timescale_function: :community_function: [](locf)
 
 If your data collections only records rows when the actual value changes,
 your visualizations might still need all data points to properly display

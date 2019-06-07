@@ -6,13 +6,17 @@
 > - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
 > - [alter_job_schedule](#alter_job_schedule)
+> - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > - [create_hypertable](#create_hypertable)
+> - [create index (transaction per chunk)](#create_index)
+> - [create view (continuous aggregate)](#continuous_aggregate-create_view)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
+> - [drop view (continuous aggregate)](#continuous_aggregate-drop_view)
 > - [first](#first)
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
@@ -24,22 +28,27 @@
 > - [interpolate](#interpolate)
 > - [last](#last)
 > - [locf](#locf)
-> - [set_adaptive_chunking](#set_adaptive_chunking)
-> - [set_chunk_time_interval](#set_chunk_time_interval)
-> - [set_number_partitions](#set_number_partitions)
-> - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
-> - [timescaledb_information.license](#timescaledb_information-license)
-> - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
-> - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
-> - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
-> - [timescaledb.license_key](#timescaledb_license-key)
+> - [refresh materialized view (continuous aggregate)](#continuous_aggregate-refresh_view)
 > - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
 > - [reorder_chunk](#reorder_chunk)
+> - [set_adaptive_chunking](#set_adaptive_chunking)
+> - [set_chunk_time_interval](#set_chunk_time_interval)
+> - [set_number_partitions](#set_number_partitions)
 > - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 > - [time_bucket_gapfill](#time_bucket_gapfill)
+> - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
+> - [timescaledb_information.license](#timescaledb_information-license)
+> - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
+> - [timescaledb_information.continuous_aggregate_stats](#timescaledb_information-continuous_aggregate_stats)
+> - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
+> - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
+> - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
+> - [timescaledb.license_key](#timescaledb_license-key)
+> - [timescaledb_pre_restore](#timescaledb_pre_restore)
+> - [timescaledb_post_restore](#timescaledb_post_restore)
 
 ## Hypertable management [](hypertable-management)
 
@@ -115,7 +124,7 @@ queries.
 
 |Column|Description|
 |---|---|
-| `dimension_id` | ID of the dimension in TimescaleDB's internal catalog. |
+| `dimension_id` | ID of the dimension in the TimescaleDB internal catalog. |
 | `schema_name` | Schema name of the hypertable.|
 | `table_name` | Table name of the hypertable. |
 | `column_name` | Column name of the column to partition by. |
@@ -162,7 +171,6 @@ SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_e
 ```
 
 ---
-
 ## attach_tablespace() [](attach_tablespace)
 
 Attach a tablespace to a hypertable and use it to store chunks. A
@@ -239,13 +247,14 @@ still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
 | `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
-| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of Timescale v0.11.0, default is 7 days, unless adaptive chunking (DEPRECATED)  is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of TimescaleDB v0.11.0, default is 7 days, unless adaptive chunking (DEPRECATED)  is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
 | `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
+| `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
 | `chunk_target_size` | DEPRECATED - The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable adaptive chunking (a DEPRECATED feature). The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
 | `chunk_sizing_func` | DEPRECATED - Allows setting a custom chunk sizing function for adaptive chunking (a DEPRECATED feature). The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
 
@@ -253,7 +262,7 @@ still work on the resulting hypertable.
 
 |Column|Description|
 |---|---|
-| `hypertable_id` | ID of the hypertable in TimescaleDB's internal catalog. |
+| `hypertable_id` | ID of the hypertable in TimescaleDB. |
 | `schema_name` | Schema name of the table converted to hypertable. |
 | `table_name` | Table name of the table converted to hypertable. |
 | `created` | True if the hypertable was created, false when `if_not_exists` is true and no hypertable was created. |
@@ -285,6 +294,9 @@ The 'time' column supports the following data types:
 | Integer (SMALLINT, INT, BIGINT) |
 
 >:TIP: The type flexibility of the 'time' column allows the use of non-time-based values as the primary chunk partitioning column, as long as those values can increment.
+
+>:TIP: For incompatible data types (e.g. `jsonb`) you can specify a function to the
+`time_partitioning_func` argument which can extract a compatible data type
 
 The units of `chunk_time_interval` should be set as follows:
 
@@ -355,17 +367,43 @@ if `conditions` is already a hypertable:
 SELECT create_hypertable('conditions', 'time', if_not_exists => TRUE);
 ```
 
+Time partition table `measurements` on a composite column type `report` using a time partitioning function:
+Requires an immutable function that can convert the column value into a supported column value:
+```sql
+CREATE TYPE report AS (reported timestamp with time zone, contents jsonb);
+
+CREATE FUNCTION report_reported(report)
+  RETURNS timestamptz
+  LANGUAGE SQL
+  IMMUTABLE AS
+  'SELECT $1.reported';
+
+SELECT create_hypertable('measurements', 'report', time_partitioning_func => 'report_reported');
+```
+
+Time partition table `events`, on a column type `jsonb` (`event`), which has
+a top level key (`started`) containing an ISO 8601 formatted timestamp:
+```sql
+CREATE FUNCTION event_started(jsonb)
+  RETURNS timestamptz
+  LANGUAGE SQL
+  IMMUTABLE AS
+  $func$SELECT ($1->>'started')::timestamptz$func$;
+
+SELECT create_hypertable('events', 'event', time_partitioning_func => 'event_started');
+```
+
+
 #### Best Practices [](create_hypertable-best-practices)
 
 One of the most common questions users of TimescaleDB have revolves around
 configuring `chunk_time_interval`.
 
-**Time intervals**: The current release of TimescaleDB enables both
+**Time intervals:** The current release of TimescaleDB enables both
 the manual and automated adaption of its time intervals. With
 manually-set intervals, users should specify a `chunk_time_interval`
 when creating their hypertable (the default value is 1 week). The
-interval used for new chunks can be changed by calling
-[`set_chunk_time_interval()`](#set_chunk_time_interval).
+interval used for new chunks can be changed by calling [`set_chunk_time_interval()`](#set_chunk_time_interval).
 
 The key property of choosing the time interval is that the chunk (including indexes) belonging to the most recent interval (or chunks if using space
 partitions) fit into memory.  As such, we typically recommend setting
@@ -396,6 +434,39 @@ function.
 **Space partitions**: In most cases, it is advised for users not to use
 space partitions. The rare cases in which space partitions may be useful
 are described in the [add dimension][] section.
+
+---
+
+## CREATE INDEX (Transaction Per Chunk) [](create_index)
+
+```SQL
+CREATE INDEX ... WITH (timescaledb.transaction_per_chunk, ...);
+```
+
+This option extends [`CREATE INDEX`][postgres-createindex] with the
+ability to use a separate transaction for each chunk it creates an
+index on, instead of using a single transaction for the entire hypertable.
+This allows `INSERT`s, and other operations to to be performed concurrently
+during most of the duration of the `CREATE INDEX` command.
+While the index is being created on an individual chunk, it functions as
+if a regular `CREATE INDEX` were called on that chunk, however other chunks are
+completely un-blocked.
+
+>:TIP: This version of `CREATE INDEX` can be used as an alternative to `CREATE INDEX CONCURRENTLY`, which is not currently supported on hypertables.
+
+>:WARNING: If the operation fails partway through, indexes may not be created on all hypertable chunks. If this occurs, the index on the root table of the hypertable will be marked as invalid (this can be seen by running `\d+` on the hypertable). The index will still work, and will be created on new chunks, but if you wish to ensure _all_ chunks have a copy of the index, drop and recreate it.
+
+#### Sample Usage [](create_index-examples)
+
+Anonymous index
+```SQL
+CREATE INDEX ON conditions(time, device_id) WITH (timescaledb.transaction_per_chunk);
+```
+Other index methods
+```SQL
+CREATE INDEX ON conditions(time, location) USING brin
+  WITH (timescaledb.transaction_per_chunk);
+```
 
 ---
 
@@ -509,17 +580,23 @@ the same semantics as the `show_chunks` [function][show chunks].
 | `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 | `cascade` | Boolean on whether to `CASCADE` the drop on chunks, therefore removing dependent objects on chunks to be removed. Defaults to `FALSE`.
+| `cascade_to_materializations` | Set to `TRUE` to delete chunk data in associated continuous aggregates. Defaults to `NULL`. `FALSE` is not yet supported.
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
-- **interval type**: The cut-off point is computed as `now() -
+- **interval type:** The cut-off point is computed as `now() -
     older_than` and similarly `now() - newer_than`.  An error will be returned if an INTERVAL is supplied
     and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
     DATE.
 
-- **timestamp, date, or integer type**: The cut-off point is
+- **timestamp, date, or integer type:** The cut-off point is
     explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
     SMALLINT / INT / BIGINT. The choice of timestamp or integer must follow the type of the hypertable's time column.
+
+
+>:WARNING: When using just an interval type, the function assumes that
+you are are removing things _in the past_. If you want to remove data
+in the future (i.e., erroneous entries), use a timestamp.
 
 When both arguments are used, the function returns the intersection of the resulting two ranges. For example,
 specifying `newer_than => 4 months` and `older_than => 3 months` will drop all full chunks that are between 3 and
@@ -527,9 +604,11 @@ specifying `newer_than => 4 months` and `older_than => 3 months` will drop all f
 all full chunks between '2017-01-01' and '2017-02-01'. Specifying parameters that do not result in an overlapping
 intersection between two ranges will result in an error.
 
+>:TIP: By default, calling `drop_chunks` on a table that has a continuous aggregate will throw an error. This can be resolved by setting `cascade_to_materializations` to `TRUE`, which will cause the corresponding aggregated data to also be dropped.
+
 #### Sample Usage [](drop_chunks-examples)
 
-Drop all chunks older than 3 months:
+Drop all chunks older than 3 months ago:
 ```sql
 SELECT drop_chunks(interval '3 months');
 ```
@@ -537,7 +616,7 @@ SELECT drop_chunks(interval '3 months');
 The expected output:
 
 ```sql
- drop_chunks  
+ drop_chunks
 -------------
 
 (1 row)
@@ -568,14 +647,19 @@ Drop all chunks from hypertable `conditions` older than 3 months, including depe
 SELECT drop_chunks(interval '3 months', 'conditions', cascade => TRUE);
 ```
 
-Drop all chunks newer than 3 months:
+Drop all chunks newer than 3 months ago:
 ```sql
 SELECT drop_chunks(newer_than => interval '3 months');
 ```
 
-Drop all chunks older than 3 months and newer than 4 months:
+Drop all chunks older than 3 months ago and newer than 4 months ago:
 ```sql
 SELECT drop_chunks(older_than => interval '3 months', newer_than => interval '4 months', table_name => 'conditions')
+```
+
+Drop all chunks older than 3 months, and delete this data from any continuous aggregates based on it:
+```sql
+SELECT drop_chunks(interval '3 months', 'conditions', cascade_to_materializations => true);
 ```
 
 ---
@@ -600,12 +684,12 @@ not affected.
 The valid types for the `chunk_time_interval` depend on the type of
 hypertable time column:
 
-- **TIMESTAMP, TIMESTAMPTZ, DATE**: The specified
+- **TIMESTAMP, TIMESTAMPTZ, DATE:** The specified
     `chunk_time_interval` should be given either as an INTERVAL type
     (`interval '1 day'`) or as an
     integer or bigint value (representing some number of microseconds).
 
-- **INTEGER**: The specified `chunk_time_interval` should be an
+- **INTEGER:** The specified `chunk_time_interval` should be an
     integer (smallint, int, bigint) value and represent the underlying
     semantics of the hypertable's time column, e.g., given in
     milliseconds if the time column is expressed in milliseconds
@@ -702,12 +786,12 @@ the same semantics as the `drop_chunks` [function][drop chunks].
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
-- **interval type**: The cut-off point is computed as `now() -
+- **interval type:** The cut-off point is computed as `now() -
     older_than` and similarly `now() - newer_than`.  An error will be returned if an INTERVAL is supplied
     and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
     DATE.
 
-- **timestamp, date, or integer type**: The cut-off point is
+- **timestamp, date, or integer type:** The cut-off point is
     explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
     SMALLINT / INT / BIGINT. The choice of timestamp or integer must follow the type of the hypertable's time column.
 
@@ -726,7 +810,7 @@ SELECT show_chunks();
 
 The expected output:
 ```sql
- show_chunks  
+ show_chunks
 ---------------------------------------
  _timescaledb_internal._hyper_1_10_chunk
  _timescaledb_internal._hyper_1_11_chunk
@@ -774,7 +858,9 @@ Get all chunks older than 3 months and newer than 4 months:
 SELECT show_chunks(older_than => interval '3 months', newer_than => interval '4 months');
 ```
 
-## reorder_chunk() [](reorder_chunk)
+---
+## reorder_chunk() :community_function: [](reorder_chunk)
+
 Reorder a single chunk's heap to follow the order of an index. This function
 acts similarly to the [PostgreSQL CLUSTER command][postgres-cluster] , however
 it uses lower lock levels so that, unlike with the CLUSTER command,  the chunk
@@ -820,8 +906,171 @@ SELECT reorder_chunk('_timescaledb_internal._hyper_1_10_chunk', 'conditions_devi
 runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the `conditions_device_id_time_idx` index.
 
 ---
+## Continuous Aggregates :community_function: [](continuous-aggregates)
+TimescaleDB allows users the ability to automatically recompute aggregates
+at predefined intervals and materialize the results. This is suitable for
+frequently used queries. For a more detailed discussion of this capability,
+please see [using TimescaleDB Continuous Aggregates][using-continuous-aggs].
 
-## Policies [](policies)
+*  [CREATE VIEW](#continuous_aggregate-create_view)
+*  [ALTER VIEW](#continuous_aggregate-alter_view)
+*  [REFRESH MATERIALIZED VIEW](#continuous_aggregate-refresh_view)
+*  [DROP VIEW](#continuous_aggregate-drop_view)
+
+## CREATE VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-create_view)
+`CREATE VIEW` statement is used to create continuous aggregates.
+
+The syntax is:
+``` sql
+CREATE VIEW <view_name> [ ( column_name [, ...] ) ]
+WITH ( timescaledb.continuous [, timescaledb.<option> = <value> ] )
+AS
+<select_query>
+```
+
+`<select_query>` is of the form :
+
+```sql
+SELECT <grouping_exprs>, <aggregate_functions>
+    FROM <hypertable>
+[WHERE ... ]
+GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
+         [ optional grouping exprs>]
+[HAVING ...]
+```
+
+#### Parameters
+|Name|Description|
+|---|---|
+| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
+| `<column_name>`| Optional list of names to be used for columns of the view. If not given, the column names are deduced from the query.|
+| `WITH` clause | This clause specifies [options](#create-view-with) for the continuous aggregate view.|
+| `<select_query>`| A `SELECT` query that uses the specified syntax. |
+
+#### `WITH` clause options [](create-view-with)
+|Name|Description|Type|Default|
+|---|---|---|---|
+|**Required**|
+|`timescaledb.continuous`|If timescaledb.continuous is not specified, then this is a regular PostgresSQL view. |||
+|**Optional**|
+|`timescaledb.refresh_lag`|Refresh lag controls the amount by which the materialization will lag behind the maximum current time value. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
+|`timescaledb.refresh_interval`|Refresh interval controls how often the background materializer is run.| `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
+|`timescaledb.max_interval_per_job`|Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
+|`timescaledb.create_group_indexes`|Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
+
+#### Restrictions
+- `SELECT` query should be of the form specified in the syntax above.
+- The hypertable used in the `SELECT` may not have [row-level-security policies][postgres-rls] enabled.
+-  `GROUP BY` clause must include a time_bucket expression. The [`time_bucket`][time-bucket] expression must use the time dimension column of the hypertable.
+- [`time_bucket_gapfill`][time-bucket-gapfill] is not allowed in continuous
+  aggs, but may be run in a `SELECT` from the continuous aggregate view.
+- In general, aggregates which can be [parallelized by PostgreSQL][postgres-parallel-agg] are allowed in the view definition, this
+  includes most aggregates distributed with PostgreSQL. Aggregates with `ORDER BY`,
+  `DISTINCT` and `FILTER` clauses are not permitted.
+* All functions and their arguments included in `SELECT`, `GROUP BY` and `HAVING` clauses must be [immutable][postgres-immutable].
+- Queries with `ORDER BY` are disallowed.
+- The view is not allowed to be a [security barrier view][postgres-security-barrier].
+
+[time-bucket]: /api#time_bucket
+[time-bucket-gapfill]: /api#time_bucket_gapfill
+[postgres-immutable]:https://www.postgresql.org/docs/current/xfunc-volatility.html
+[postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
+[postgres-rls]:https://www.postgresql.org/docs/current/ddl-rowsecurity.html
+[postgres-security-barrier]:https://www.postgresql.org/docs/current/rules-privileges.html
+
+>:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-continuous_aggregate) and
+[statistics](#timescaledb_information-continuous_aggregate_stats) in `timescaledb_information` views.
+
+#### Examples [](continuous_aggregate-create-examples)
+Create a continuous aggregate view.
+```sql
+CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
+WITH ( timescaledb.continuous,
+    timescaledb.refresh_lag = '5 hours',
+    timescaledb.refresh_interval = '1h' )
+AS
+    SELECT time_bucket('1day', timec), min(location), sum(temperature), sum(humidity)
+        FROM conditions
+        GROUP BY time_bucket('1day', timec), location, humidity, temperature;
+```
+---
+## ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
+`ALTER VIEW` statement can be used to modify the `WITH` clause [options](#create-view-with) for the continuous aggregate view.
+
+``` sql
+ALTER VIEW <view_name> SET ( timescaledb.option =  <value> )
+```
+#### Parameters
+|Name|Description|
+|---|---|
+| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
+
+#### Examples [](continuous_aggregate-alter-examples)
+Set the max interval processed by a materializer job (that updates the continuous aggregate) to 1 week.
+```sql
+ALTER VIEW contagg_view SET (timescaledb.max_interval_per_job = '1 week');
+```
+Set the refresh lag to 1 hour, the refresh interval to 30 minutes and the max
+interval processed by a job to 1 week for the continuous aggregate.
+```sql
+ALTER VIEW contagg_view SET (timescaledb.refresh_lag = '1h', timescaledb.max_interval_per_job = '1 week', timescaledb.refresh_interval = '30m');
+
+```
+>:TIP: Only WITH options can be modified using the ALTER statment. If
+you need to change any other parameters, drop the view and create a new one.
+
+---
+
+## REFRESH MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-refresh_view)
+The continuous aggregate view can be manually updated by using `REFRESH MATERIALIZED VIEW` statement. A background materializer job will run immediately and update the
+ continuous aggregate.
+``` sql
+REFRESH MATERIALIZED VIEW <view_name>
+```
+#### Parameters
+|Name|Description|
+|---|---|
+| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
+
+#### Examples [](continuous_aggregate-refresh-examples)
+Update the continuous aggregate view immediately.
+```sql
+REFRESH MATERIALIZED VIEW contagg_view;
+```
+---
+
+>:TIP: Note that max_interval_per_job and refresh_lag parameter settings are used by the materialization job
+when the REFRESH is run. So the materialization (of the continuous aggregate) does not necessarily include
+all the updates to the hypertable.
+
+
+## DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
+Continuous aggregate views can be dropped using `DROP VIEW` statement.
+
+This deletes the hypertable that stores the materialized data for the
+continuous aggregate; it does not affect the data in the underlying hypertable
+from which the continuous aggregate is derived (i.e., the raw data).  The
+`CASCADE` parameter is required for this command.
+
+``` sql
+DROP VIEW <view_name> CASCADE;
+```
+#### Parameters
+|Name|Description|
+|---|---|
+| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
+
+#### Examples [](continuous_aggregate-drop-examples)
+Drop existing continuous aggregate.
+```sql
+DROP VIEW contagg_view CASCADE;
+```
+>:WARNING: `CASCADE` will drop those objects that depend on the continuous
+aggregate, such as views that are built on top of the continuous aggregate view.```
+
+
+---
+## Automation policies :enterprise_function: [](automation-policies)
 TimescaleDB includes an automation framework for allowing background tasks to
 run inside the database, controllable by user-supplied policies. These tasks
 currently include capabilities around data retention and data reordering for
@@ -833,9 +1082,7 @@ are meant to implement data retention or perform tasks that will improve query
 performance on older chunks. Each policy is assigned a scheduled job
 which will be run in the background to enforce it.
 
-
-
-## add_drop_chunks_policy() [](add_drop_chunks_policy)
+## add_drop_chunks_policy() :enterprise_function: [](add_drop_chunks_policy)
 Create a policy to drop chunks older than a given interval of a particular
 hypertable on a schedule in the background. (See [drop_chunks](#drop_chunks)).
 This implements a data retention policy and will remove data on a schedule. Only
@@ -854,12 +1101,15 @@ one drop_chunks policy may exist per hypertable.
 |---|---|
 | `cascade` | (BOOLEAN) Set to true to drop objects dependent upon chunks being dropped. Defaults to false.|
 | `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the drop_chunks_policy already exists. A notice is issued instead. Defaults to false. |
+| `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to delete chunk data in associated continuous aggregates. Defaults to `NULL`. `FALSE` is not yet supported. |
+
+>:WARNING: If a drop chunks policy is setup which does not set `cascade_to_materializations` to `TRUE` on a hypertable that has a continuous aggregate, the policy will not drop any chunks.
 
 #### Returns [](add_drop_chunks_policy-returns)
 
 |Column|Description|
 |---|---|
-|`job_id`| (INTEGER)  Timescaledb background job id created to implement this policy|
+|`job_id`| (INTEGER)  TimescaleDB background job id created to implement this policy|
 
 
 #### Sample Usage [](add_drop_chunks_policy-examples)
@@ -871,8 +1121,8 @@ SELECT add_drop_chunks_policy('conditions', INTERVAL '6 months');
 
 creates a data retention policy to discard chunks greater than 6 months old.
 
-
-## remove_drop_chunks_policy() [](remove_drop_chunks_policy)
+---
+## remove_drop_chunks_policy() :enterprise_function: [](remove_drop_chunks_policy)
 Remove a policy to drop chunks of a particular hypertable.
 
 #### Required Arguments [](remove_drop_chunks_policy-required-arguments)
@@ -900,7 +1150,7 @@ removes the existing data retention policy for the `conditions` table.
 
 
 ---
-## add_reorder_policy() [](add_reorder_policy)
+## add_reorder_policy() :enterprise_function: [](add_reorder_policy)
 Create a policy to reorder chunks older on a given hypertable index in the
 background. (See [reorder_chunk](#reorder_chunk)). Only one reorder policy may
 exist per hypertable. Only chunks that are the 3rd from the most recent will be
@@ -929,7 +1179,7 @@ and re-create the policy if many older chunks have been affected.
 
 |Column|Description|
 |---|---|
-|`job_id`| (INTEGER) Timescaledb background job id created to implement this policy|
+|`job_id`| (INTEGER) TimescaleDB background job id created to implement this policy|
 
 
 #### Sample Usage [](add_reorder_policy-examples)
@@ -942,7 +1192,7 @@ SELECT add_reorder_policy('conditions', 'conditions_device_id_time_idx');
 creates a policy to reorder completed chunks by the existing `(device_id, time)` index. (See [reorder_chunk](#reorder_chunk)).
 
 ---
-## remove_reorder_policy() [](remove_reorder_policy)
+## remove_reorder_policy() :enterprise_function: [](remove_reorder_policy)
 Remove a policy to reorder a particular hypertable.
 
 #### Required Arguments [](remove_reorder_policy-required-arguments)
@@ -971,7 +1221,7 @@ removes the existing reorder policy for the `conditions` table if it exists.
 ---
 
 
-## alter_job_schedule() [](alter_job_schedule)
+## alter_job_schedule() :enterprise_function: [](alter_job_schedule)
 
 Policy jobs are scheduled to run periodically via a job run in a background
 worker. You can change the schedule using `alter_job_schedule`. To alter an
@@ -1022,7 +1272,7 @@ WHERE hypertable = 'conditions';
 ```
 reschedules the reorder policy job for the `conditions` table so that it runs every two days.
 
-
+---
 ## Analytics [](analytics)
 
 ## first() [](first)
@@ -1108,7 +1358,7 @@ The expected output:
 
 ---
 
-## interpolate() [](interpolate)
+## interpolate() :community_function: [](interpolate)
 
 The `interpolate` function does linear interpolation for missing values.
 It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
@@ -1173,10 +1423,10 @@ Get the average temperature every day for each device over the last 7 days inter
 SELECT
   time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
   device_id,
-  interpolate(avg(temperature) AS value,
-    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id),
-    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id)
-  )
+  interpolate(avg(temperature),
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id) ORDER BY time DESC LIMIT 1,
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1)
+  ) AS value
 FROM metrics
 WHERE time > now () - interval '1 week'
 GROUP BY day, device_id
@@ -1194,6 +1444,7 @@ ORDER BY day;
 (7 row)
 ```
 
+---
 ## last() [](last)
 
 The `last` aggregate allows you to get the value of one column
@@ -1225,7 +1476,8 @@ ORDER BY interval DESC;
  alternative to an `ORDER BY time DESC LIMIT 1` clause to find the
  latest value (which will use indexes).
 
-## locf() [](locf)
+---
+## locf() :community_function: [](locf)
 
 The `locf` function (last observation carried forward) allows you to carry the last seen value in an aggregation group forward.
 It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
@@ -1242,6 +1494,7 @@ The `locf` function call cannot be nested inside other function calls.
 |Name|Description|
 |---|---|
 | `prev` | The lookup expression for values before gapfill start (anyelement) |
+| `treat_null_as_missing` | Ignore NULL values in locf and only carry non-NULL values forward |
 
 Because the locf function relies on having values before each bucketed period
 to carry forward, it might not have enough data to fill in a value for the first
@@ -1288,7 +1541,7 @@ SELECT
   avg(temperature) AS value,
   locf(
     avg(temperature),
-    (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id)
+    (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1)
   )
 FROM metrics m
 WHERE time > now () - interval '1 week'
@@ -1426,7 +1679,8 @@ to the server's timezone setting.
  multi-day calls to time_bucket. The old behavior can be reproduced by passing
  2000-01-01 as the origin parameter to time_bucket.
 
-## time_bucket_gapfill() [](time_bucket_gapfill)
+---
+## time_bucket_gapfill() :community_function: [](time_bucket_gapfill)
 
 The `time_bucket_gapfill` function works similar to `time_bucket` but also activates gap
 filling for the interval between `start` and `finish`. It can only be used with an aggregation
@@ -1439,8 +1693,16 @@ done outside of the specified range.
 |---|---|
 | `bucket_width` | A PostgreSQL time interval for how long each bucket is (interval) |
 | `time` | The timestamp to bucket (timestamp/timestamptz/date)|
+
+#### Optional Arguments [](time_bucket_gapfill-optional-arguments)
+
+|Name|Description|
+|---|---|
 | `start` | The start of the gapfill period (timestamp/timestamptz/date)|
 | `finish` | The end of the gapfill period (timestamp/timestamptz/date)|
+
+Starting with version 1.3.0 `start` and `finish` are optional arguments and will
+be inferred from the WHERE clause if not supplied as arguments.
 
 ### For Integer Time Inputs
 
@@ -1450,8 +1712,16 @@ done outside of the specified range.
 |---|---|
 | `bucket_width` | integer interval for how long each bucket is (int2/int4/int8) |
 | `time` | The timestamp to bucket (int2/int4/int8)|
+
+#### Optional Arguments [](time_bucket_gapfill-integer-optional-arguments)
+
+|Name|Description|
+|---|---|
 | `start` | The start of the gapfill period (int2/int4/int8)|
 | `finish` | The end of the gapfill period (int2/int4/int8)|
+
+Starting with version 1.3.0 `start` and `finish` are optional arguments and will
+be inferred from the WHERE clause if not supplied as arguments.
 
 #### Sample Usage [](time_bucket_gapfill-examples)
 
@@ -1459,11 +1729,11 @@ Get the metric value every day over the last 7 days:
 
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('1 day', time) AS day,
   device_id,
   avg(value) AS value
 FROM metrics
-WHERE time > now() - interval '1 week'
+WHERE time > now() - interval '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1483,12 +1753,12 @@ Get the metric value every day over the last 7 days carrying forward the previou
 
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('1 day', time) AS day,
   device_id,
   avg(value) AS value,
   locf(avg(value))
 FROM metrics
-WHERE time > now() - interval '1 week'
+WHERE time > now() - interval '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1507,11 +1777,12 @@ Get the metric value every day over the last 7 days interpolating missing values
 
 ```sql
 SELECT
-  time_bucket_gapfill('5 minutes', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('5 minutes', time) AS day,
   device_id,
   avg(value) AS value,
   interpolate(avg(value))
 FROM metrics
+WHERE time > now() - interval '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1600,6 +1871,79 @@ enterprise | f       | 2019-02-15 13:44:53-05
 ```
 
 ---
+## timescaledb_information.continuous_aggregates [](timescaledb_information-continuous_aggregate)
+
+Get metadata and settings information for continuous aggregates.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+|`view_name` | User supplied name for continuous aggregate view |
+|`view_owner` | Owner of the continuous aggregate view|
+|`refresh_lag` | Amount by which the materialization for the continuous aggregate lags behind the current max value for the column used in the `time_bucket` expression of the continuous aggregate query|
+|`refresh_interval` | Interval between updates of the continuous aggregate materialization|
+|`max_interval_per_job` | Maximum amount of data processed by a materialization job in a single run|
+|`materialization_hypertable` | Name of the underlying materialization table|
+|`view_definition` | `SELECT` query for continuous aggregate view|
+
+#### Sample Usage
+```sql
+select * from timescaledb_information.continuous_aggregates;
+-[ RECORD 1 ]--------------+-------------------------------------------------
+view_name                  | contagg_view
+view_owner                 | postgres
+refresh_lag                | 2
+refresh_interval           | 12:00:00
+max_interval_per_job       | 20
+materialization_hypertable | _timescaledb_internal._materialized_hypertable_2
+view_definition            |  SELECT foo.a,                                  +
+                           |     count(foo.b) AS countb                      +
+                           |    FROM foo                                     +
+                           |   GROUP BY (time_bucket(1, foo.a)), foo.a;
+
+-- description of foo
+\d foo
+                Table "public.foo"
+ Column |  Type   | Collation | Nullable | Default
+--------+---------+-----------+----------+---------
+ a      | integer |           | not null |
+ b      | integer |           |          |
+ c      | integer |           |          |
+
+```
+---
+## timescaledb_information.continuous_aggregate_stats [](timescaledb_information-continuous_aggregate_stats)
+
+Get information about background jobs and statistics related to continuous aggregates.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+|`view_name`| User supplied name for continuous aggregate. |
+|`completed_threshold`| Completed threshold for the last materialization job.|
+|`invalidation_threshold`| Invalidation threshold set by the latest materialization job|
+|`last_run_started_at`| Start time of the last job|
+|`job_status`| Status of the materialization job . Valid values are ‘Running’ and ‘Scheduled’|
+|`last_run_duration`| Time taken by the last materialization job|
+|`next_scheduled_run` | Start time of the next materialization job |
+
+#### Sample Usage
+
+```sql
+select * from timescaledb_information.continuous_aggregate_stats;
+-[ RECORD 1 ]----------+------------------------------
+view_name              | contagg_view
+completed_threshold    | 1
+invalidation_threshold | 1
+job_id                 | 1003
+last_run_started_at    | 2019-05-02 12:34:27.941868-04
+job_status             | scheduled
+last_run_duration      | 00:00:00.038291
+next_scheduled_run     | 2019-05-03 00:34:27.980159-04
+```
+---
 ## timescaledb_information.drop_chunks_policies[](timescaledb_information-drop_chunks_policies)
 Shows information about drop_chunks policies that have been created by the user.
 (See [add_drop_chunks_policy](#add_drop_chunks_policy) for more information
@@ -1631,7 +1975,7 @@ SELECT * FROM timescaledb_information.drop_chunks_policies;
 (1 row)
 ```
 
---
+---
 ## timescaledb_information.reorder_policies[](timescaledb_information-reorder_policies)
 Shows information about reorder policies that have been created by the user.
 (See [add_reorder_policy](#add_reorder_policy) for more information about
@@ -1666,7 +2010,7 @@ SELECT * FROM timescaledb_information.reorder_policies;
 ## timescaledb_information.policy_stats[](timescaledb_information-policy_stats)
 
 Shows information and statistics about policies created to manage data retention
-and other administrative tasks on hypertables. (See [policies](#policies)). The
+and other administrative tasks on hypertables. (See [policies](#automation-policies)). The
 statistics include information useful for administering jobs and determining
 whether they ought be rescheduled, such as: when and whether the background job
 used to implement the policy succeeded and when it is scheduled to run next.
@@ -1697,6 +2041,7 @@ SELECT * FROM timescaledb_information.policy_stats;
 (1 row)
 ```
 
+---
 ## timescaledb.license_key [](timescaledb_license-key)
 
 #### Sample Usage
@@ -1721,7 +2066,7 @@ Get relation size of the chunks of an hypertable.
 #### Returns [](chunk_relation_size-returns)
 |Column|Description|
 |---|---|
-|chunk_id|Timescaledb id of a chunk|
+|chunk_id|TimescaleDB id of a chunk|
 |chunk_table|Table used for the chunk|
 |partitioning_columns|Partitioning column names|
 |partitioning_column_types|Types of partitioning columns|
@@ -1768,7 +2113,7 @@ Get relation size of the chunks of an hypertable.
 #### Returns [](chunk_relation_size_pretty-returns)
 |Column|Description|
 |---|---|
-|chunk_id|Timescaledb id of a chunk|
+|chunk_id|TimescaleDB id of a chunk|
 |chunk_table|Table used for the chunk|
 |partitioning_columns|Partitioning column names|
 |partitioning_column_types|Types of partitioning columns|
@@ -2001,6 +2346,36 @@ SELECT * FROM show_tablespaces('conditions');
 
 ---
 
+## timescaledb_pre_restore() [](timescaledb_pre_restore)
+
+Perform the proper operations to allow restoring of the database via `pg_restore` to commence.
+Specifically this sets the `timescaledb.restoring` GUC to `on` and stops any
+background workers which may have been performing tasks until the [`timescaledb_post_restore`](#timescaledb_post_restore)
+fuction is run following the restore. See [backup/restore docs][backup-restore] for more information.
+
+>:WARNING: After running `SELECT timescaledb_pre_restore()` you must run the
+  [`timescaledb_post_restore`](#timescaledb_post_restore) function before using the database normally.
+
+#### Sample Usage  [](timescaledb_pre_restore-examples)
+
+```sql
+SELECT timescaledb_pre_restore();
+```
+
+---
+
+## timescaledb_post_restore() [](timescaledb_post_restore)
+Perform the proper operations after restoring the database has completed.
+Specifically this sets the `timescaledb.restoring` GUC to `off` and restarts any
+background workers. See [backup/restore docs][backup-restore] for more information.
+
+#### Sample Usage  [](timescaledb_pre_restore-examples)
+
+```sql
+SELECT timescaledb_post_restore();
+```
+---
+
 ## Dump TimescaleDB meta data [](dump-meta-data)
 
 To help when asking for support and reporting bugs,
@@ -2019,8 +2394,10 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [Slack]: https://slack-login.timescale.com
 [chunk relation size]: #chunk_relation_size
 [best practices]: #create_hypertable-best-practices
+[using-continuous-aggs]: /using-timescaledb/continuous-aggregates
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
 [postgres-tablespaces]: https://www.postgresql.org/docs/current/manage-ag-tablespaces.html
+[postgres-createindex]: https://www.postgresql.org/docs/current/sql-createindex.html
 [postgres-createtablespace]: https://www.postgresql.org/docs/current/sql-createtablespace.html
 [postgres-cluster]: https://www.postgresql.org/docs/current/sql-cluster.html
 [migrate-from-postgresql]: /getting-started/migrating-data
@@ -2028,4 +2405,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [telemetry]: /using-timescaledb/telemetry
 [drop chunks]: #drop_chunks
 [show chunks]: #show_chunks
-[add dimension]: #add_dimension
+[backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore

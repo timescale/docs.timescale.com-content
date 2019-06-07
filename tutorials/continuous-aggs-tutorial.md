@@ -154,11 +154,6 @@ aggregates only for the data that satisfies the condition:
 `time_bucket(‘1h’, pickup_datetime) <   max(pickup_time) - ‘1h’ `(if the
 `refresh_lag` is set to 1 hour)
 
-To keep the continuous aggregate up-to-date,
-you can set `timescaledb.refresh_lag` to a negative value. This will allow the continuous aggregate
-to update when new data comes in. However, do note that this comes with performance implications,
-since the aggregate query will be run more often. 
-
 The `timescaledb.max_interval_per_job` parameter is used when we want to limit
 the amount of data processed by an update of the continuous aggregate and use
 smaller or bigger batch sizes (the batching is done automatically by TimescaleDB).

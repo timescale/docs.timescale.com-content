@@ -9,10 +9,10 @@ See below for the image id corresponding to each region for the most recent Time
 
 Region | Image ID
 --- | ---
-us-east-1 (North Virginia) | ami-0c81977fdea008f43
-us-east-2 (Ohio) | ami-0fc4ec0c98fbd5370
-us-west-1 (North California) | ami-05f090bbe9b024d08
-us-west-2 (Oregon) | us-west-2: ami-0d47d47e488fba35b
+us-east-1 (North Virginia) | ami-0f363f7577e1144d8
+us-east-2 (Ohio) | ami-0fbed80aa76bbe1b2
+us-west-1 (North California) | ami-0fa66a71c0d1905a1
+us-west-2 (Oregon) | ami-08d3b0d760d3e3045
 
 
 To launch the AMI, go to the `AMIs` section of your AWS EC2 Dashboard run the following steps:
@@ -25,7 +25,7 @@ You can also use the image id to build an instance using Cloudformation, Terrafo
 the AWS CLI, or any other AWS deployment tool that supports building from public AMIs.
 
 TimescaleDB is installed on the AMI, but you will still need to follow the steps for
-initializing a database with the Timescale extension. See our [setup] section for details.
+initializing a database with the TimescaleDB extension. See our [setup] section for details.
 Depending on your user/permission needs, you will also need to set up a postgres superuser for your
 database by following these [postgres instructions]. Another possibility is using the operating system's
 `ubuntu` user and modifying the [pg_hba].

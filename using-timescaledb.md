@@ -26,16 +26,16 @@ This section covers all of the operations, and more, for using TimescaleDB.
 
 ## Clustering [](clustering)
 
-Timescale also supports PostgreSQL's built-in replication functionality for
+TimescaleDB also supports PostgreSQL's built-in replication functionality for
 high availability, redundancy, and sharding read queries. Hypertables are fully
 compatible with the PostgreSQL streaming replication protocol, as explained in our
 [streaming replication tutorial][replication]. Streaming replication setups can be
 further extended to offer high availability and failover using community tools like [patroni][patroni].
 
-Write clustering for multi-node Timescale deployments is under active development, and we're
+Write clustering for multi-node TimescaleDB deployments is under active development, and we're
 excited to share our progress with the community soon. That being said, workloads that
 may require a multi-node deployment on NoSQL databases can often be handled by
-a single Timescale instance with one or more read replicas. The power of using a
+a single TimescaleDB instance with one or more read replicas. The power of using a
 relational database to handle production-level time series data is discussed in further
 detail in this [blog post][nosql-blog-post].
 

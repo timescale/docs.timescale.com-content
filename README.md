@@ -17,7 +17,7 @@ The admin for the docs will use that as a guide when updating version branches.
 
 ### A note on page links
 
-None of the internal page links within these files will work on Github.  They are designed to function within the code for the documentation site at [docs.timescale.com](http://docs.timescale.com).  All external links should work.
+None of the internal page links within these files will work on GitHub.  They are designed to function within the code for the documentation site at [docs.timescale.com](http://docs.timescale.com).  All external links should work.
 
 ### A note on anchors
 
@@ -81,6 +81,9 @@ functions, etc.  See the FAQ page (faq.md) for an example.
 + Adding `:DOWNLOAD_LINK: ` to the start of a link will append a 'download link' icon to the end of the link inline.
 + Adding `x.y.z` anywhere in the text will be replaced by the version number of the branch.  Ex. `look at file foo-x.y.z` >> `look at file foo-0.4.2`.
 + Adding `:pg_version:` to text displayed in an installation section (i.e. any page with a filename beginning `installation-`) will display the PostgreSQL version number.  This is primarily to be used for displayed filenames in install instructions that need to be modular based on the version.
++ Designating functions
+    + Adding `:community_function:` to a header (for example, in the api section) adds decorator text "community function".
+    + Adding `:enterprise_function:` to a header adds decorator text "enterprise function".
 
 _Make sure to include the space after the formatting command!_
 

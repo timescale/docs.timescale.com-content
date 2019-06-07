@@ -1,6 +1,6 @@
 # Telemetry and Version Checking
 We enable anonymous usage sharing to help us better
-understand and assist Timescale users, as well as provide automated version
+understand and assist TimescaleDB users, as well as provide automated version
 checks. We emphasize that privacy of our users is paramount, so we do not
 collect any personally-identifying information. The following is an example of
 the JSON that is sent to our servers about a specific deployment:
@@ -25,7 +25,13 @@ the JSON that is sent to our servers about a specific deployment:
 	"build_os_name": "Linux",
 	"build_os_version": "4.9.125-linuxkit",
 	"data_volume": "65982148",
+	"db_metadata":
+    	{
+    	},
 	"num_hypertables": "3",
+	"num_continuous_aggs": "0",
+	"num_reorder_policies": "1",
+	"num_drop_chunks_policies": "2",
 	"related_extensions":
     	{
 		"pg_prometheus": "false",
@@ -42,13 +48,16 @@ the `UUID`s contain the current timestamp. For full transparency, we expose a
 new API function, [`get_telemetry_report`][get_telemetry_report], that returns
 a text string of the exact JSON that is sent to our servers.
 
-Notably, telemetry reports a different set of values depending on the license 
-that your TimescaleDB instance is running under. If you are using OSS or Community, 
-we only send an "edition" field, which could have a value of either "apache_only" or "community", 
+Additionally any content of the table `_timescaledb_catalog.telemetry_metadata`
+and the value of `timescaledb_telemetry.cloud` will be included in the telemetry report.
+
+Notably, telemetry reports a different set of values depending on the license
+that your TimescaleDB instance is running under. If you are using OSS or Community,
+we only send an "edition" field, which could have a value of either "apache_only" or "community",
 as relevant.
 
-If you are using an Enterprise license, we report a few more relevant items, a sample 
-of which is below. 
+If you are using an Enterprise license, we report a few more relevant items, a sample
+of which is below.
 
 ```javascript
 "license": {
