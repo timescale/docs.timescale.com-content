@@ -32,19 +32,7 @@ Next, transform it into a hypertable with `create_hypertable`:
 SELECT create_hypertable('conditions', 'time');
 ```
 
-You can additionally partition data on another dimension (what we call
-'space partitioning'). However, we typically do not recommend users to start with
-space partitioning turned on, and it should only be utilized in very specific
-scenarios. You can read more about our suggestions in our [best practices][]
-documentation.
-
-```sql
--- This creates a hypertable partitioned on both time and `location`. In this example,
--- the hypertable will partition `location` into 4 partitions.
- SELECT create_hypertable('conditions', 'time', 'location', 4);
-```
-
->ttt The 'time' column used in the `create_hypertable` function supports
+>:TIP: The 'time' column used in the `create_hypertable` function supports
 timestamp, date, or integer types, so you can use a parameter that is not
 explicitly time-based, as long as it can increment.  For example, a
 monotonically increasing id would work. You must specify a chunk time interval
@@ -71,4 +59,3 @@ examples of using TimescaleDB's standard SQL interface, please see our
 [setup]: /getting-started/setup
 [API Reference]: /api#create_hypertable
 [use pages]: /using-timescaledb
-[best practices]: /using-timescaledb/hypertables#best-practices
