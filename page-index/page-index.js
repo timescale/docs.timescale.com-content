@@ -368,6 +368,10 @@ const pageIndex = [
                     }
                 ]
             }, {
+                Title: "Alerting",
+                type: PAGE,
+                href: "alerting"
+            }, {
                 Title: "Update software",
                 type: PAGE,
                 href: "update-db"
