@@ -1,6 +1,6 @@
 # Getting started with Prometheus and TimescaleDB
 
-If you ever needed a monitoring solution for your infrastructure than you've
+If you've ever needed a monitoring solution for your infrastructure, then you've
 probably heard about [Prometheus][]. Prometheus is an
 open-source and community driven monitoring system which is quite simple to
 start with. What makes Prometheus awesome is its unapologetic approach to
@@ -9,7 +9,7 @@ do one thing, and do it well. This is reflected in, e.g., the design of the
 PromQL language.
 
 However this philosophy can also be limiting. To their credit, the developers
-of Prometheus foresaw that their product is opinionated, and built in extensibility
+of Prometheus foresaw that their product is opinionated, and they built in extensibility
 to allow other systems to improve on it. In turn, Prometheus users often look to
 other systems as a way to augment their monitoring setup.
 
@@ -21,7 +21,7 @@ users often turn to TimescaleDB and PostgreSQL for a few reasons:
 - Query power and flexibility with SQL
 
 By using Prometheus and TimescaleDB together, you can combine the simplicity of
-Prometheus with the reliability, power, and flexibility of TimescaleDB, and
+Prometheus with the reliability, power, and flexibility of TimescaleDB and
 pick the approach that makes most sense for the task at hand. For instance, you
 can use either PromQL or full SQL for your queries, or both.
 
@@ -79,7 +79,7 @@ ecosystem.
 The only way to scale Prometheus is by [federation][]. However, there are cases
 where federation is not a good fit: for example, when copying large amounts of
 data from multiple Prometheus instances to be handled by a single machine.
-This is can result in poor performance, decreased reliability
+This can result in poor performance, decreased reliability
 (an additional point of failure), and loss of some data. These are all the
 problems you can `outsource` to TimescaleDB.
 
@@ -108,26 +108,34 @@ To connect TimescaleDB and PostgreSQL to Prometheus, there are two components:
 2. A PostgreSQL database with the `pg_prometheus` and `timescaledb` extensions
 
 
-At a high-level, here is how it works:
+At a high-level, here's how it works:
 
 <img class="main-content__illustration" src="http://assets.iobeam.com/images/docs/collecting-metrics.jpg" alt="Prometheus TimescaleDB Adapter"/>
 
 
-All the data is first collected into Prometheus. Then Prometheus forwards it
-to the configured [Prometheus PostgreSQL Adapter][postgresql adapter] and
-then further towards the database with the [pg_prometheus extension][pg_prometheus] and finally to TimescaleDB.
+All the data is first collected into Prometheus. Then, Prometheus forwards it
+to the configured [Prometheus PostgreSQL Adapter][postgresql adapter], which in
+turn forwards the data towards the database with the [pg_prometheus extension][pg_prometheus] 
+and finally TimescaleDB.
 
 ### Prometheus PostgreSQL Adapter - the remote storage adapter
 
-The adapter is basically a translation proxy that Prometheus uses for reading and writing data into TimescaleDB/PostgreSQL. Whenever Prometheus scrapes some service for metrics it will send the data to the adapter who is responsible for writing the data to the database. Because the data from Prometheus arrives as a Protobuf, it needs to be first deserialized and then converted into the [Prometheus native format][] before it is inserted into the database.
+The adapter is basically a translation proxy that Prometheus uses for reading and 
+writing data into TimescaleDB/PostgreSQL. Whenever Prometheus scrapes some service 
+for metrics it will send the data to the adapter which is responsible for writing 
+the data to the database. Because the data from Prometheus arrives as a Protobuf, 
+it needs to be first deserialized and then converted into the [Prometheus native 
+format][] before it is inserted into the database.
 
-The adapter has a dependency on the pg_prometheus PostgreSQL extension, which takes care of writing the data in most optimal format for storage and querying within TimescaleDB/PostgreSQL.
+The adapter has a dependency on the pg_prometheus PostgreSQL extension, which takes 
+care of writing the data in most optimal format for storage and querying within 
+TimescaleDB/PostgreSQL.
 
 ### Pg_Prometheus
 
 In order to slim down the adapter and enable seamless integration with the
-database, we decided to build a PostgreSQL extension. The extension translates
-from the [Prometheus data model][Prometheus native format]
+database, we decided to build a PostgreSQL extension called `pg_prometheus`. The 
+extension translates from the [Prometheus data model][Prometheus native format]
 into a compact SQL model that is stored efficiently and is easy to query.
 
 To do this, Pg_Prometheus stores data in two tables in a “normalized format”,
@@ -193,7 +201,7 @@ use a PostgreSQL docker image that has both Pg_Prometheus and TimescaleDB
 extensions installed: https://hub.docker.com/r/timescale/pg_prometheus.
 
 ```bash
-docker run --network prometheus_timescale_network  --name pg_prometheus -d -p 5432:5432 timescale/pg_prometheus:master postgres \
+docker run --network prometheus_timescale_network  --name pg_prometheus -d -p 5432:5432 timescale/pg_prometheus:latest postgres \
      -csynchronous_commit=off
 ```
 
@@ -202,14 +210,35 @@ options documented there are applicable to this image as well. This is
 especially important for users that wish to persist data outside of docker
 volumes is the PGDATA environment variable and accompanying volume mount (visit https://hub.docker.com/_/postgres/ for available configuration options)
 
+#### Set the `postgres` user's password
+
+We'll also want to set the password for the postgres user now so that our adapter can connect to it later. 
+1. Connect to the pg_prometheus container:
+```bash
+docker exec -it pg_prometheus bash
+```
+2. Connect to the database:
+```bash
+psql postgres postgres
+```
+3. Bring up the password prompt:
+```bash
+\password postgres
+```
+1. At the prompt, enter a password for the postgres user.
+2. Quit the postgres prompt with `\q`.
+3. Exit the container with `exit`.
+
+
 ### Spin up the Prometheus PostgreSQL adapter
 
-Since we have the database up and running, let’s spin up a [Prometheus PostgreSQL adapter][postgresql adapter]. A [docker image][] is available on Docker Hub:
+Since we have the database up and running now, let’s spin up a [Prometheus PostgreSQL adapter][postgresql adapter]. A [docker image][] is available on Docker Hub:
 
 ```bash
 docker run --network prometheus_timescale_network --name prometheus_postgresql_adapter -d -p 9201:9201 \
-timescale/prometheus-postgresql-adapter:master \
+timescale/prometheus-postgresql-adapter:latest \
 -pg.host=pg_prometheus \
+-pg.password=<PASSWORD SET IN PG_PROMETHEUS STEP> \
 -pg.prometheus-log-samples
 ```
 
@@ -262,7 +291,7 @@ spin up all the docker containers together (Make sure you have `prometheus.yml` 
 version: '2.1'
 services:
  pg_prometheus:
-   image: timescale/pg_prometheus:master
+   image: timescale/pg_prometheus:latest
    command: -c synchronous_commit=OFF
    container_name: pg_prometheus
    healthcheck:
@@ -271,13 +300,13 @@ services:
      timeout: 5s  
      retries: 10
  prometheus_postgresql_adapter:
-   image: timescale/prometheus-postgresql-adapter:master
+   image: timescale/prometheus-postgresql-adapter:latest
    ports:
      - "9201:9201"
    depends_on:
      pg_prometheus:
        condition: service_healthy
-   command: "-pg.host=pg_prometheus -pg.prometheus-log-samples"
+   command: "-pg.host=pg_prometheus -pg.prometheus-log-samples -pg.password=<PASSWORD SET IN PG_PROMETHEUS STEP>"
  node_exporter:
    image: quay.io/prometheus/node-exporter
    ports:
@@ -290,14 +319,18 @@ services:
      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-Fire it up with `docker-compose up`
+Fire it up with `docker-compose up`, then complete the deployment:
+1. Set up the Postgres user's password as described in 'Spin Up Pg_Prometheus.'
+2. Start the prometheus-postgresql-adapter container using `docker start`.
+
+Now you're ready to run some queries!
 
 
 ### Run queries! [](run-queries)
 
-As specified in the configuration above, the Prometheus will scrape Node
+As specified in the configuration above, Prometheus will scrape Node
 Exporter every 10s and metrics will end up in both Prometheus local storage and
-TimescaleDB. Now we can run few queries to make sure that data is coming in.
+TimescaleDB. Now we can run a few queries to make sure that data is coming in.
 
 To run PromQL queries go to http://localhost:9090/graph. SQL queries you can
 run from your favorite SQL tool or from the Pg_Prometheus docker container:
@@ -309,38 +342,21 @@ docker exec -it pg_prometheus bash
 Once in the container use psql `psql postgres postgres` to connect to
 TimescaleDB and run SQL queries. Below you can find some example queries.
 
-**CPU frequency values for core “0” for the last 5 minutes (gauge):**
+**Get total bytes received by the eth0 network interface (resets to 0 if machine restarts):**
 
 PromQL:
 ```
-node_cpu_frequency_hertz{cpu="0"}[5m]
+node_network_transmit_bytes_total{device="eth0"}
 ```
 
 SQL:
 ```sql
-SELECT time, value
-FROM metrics
-WHERE name='node_cpu_frequency_hertz' AND labels->>'cpu' = '0' AND
-      time > NOW() - interval '5 min'
+SELECT time, value AS "total transmitted bytes" 
+FROM metrics 
+WHERE labels->>'device' = 'eth0' AND
+      name='node_network_transmit_bytes_total' 
+ORDER BY time;
 ```
-
-
-**Max CPU frequency by CPU core in the last 5 minutes:**
-
-PromQL:
-```
-max(max_over_time(node_cpu_frequency_hertz[5m])) by (cpu)
-```
-
-SQL:
-```sql
-SELECT labels->>'cpu', MAX(value)
-FROM metrics
-WHERE name='node_cpu_frequency_hertz' AND
-    time > NOW() - interval '5 min'
-GROUP BY labels->>'cpu';
-```
-
 
 **Get average system load and used memory grouped in 5 minute buckets for the last 24 hours:**
 
@@ -366,8 +382,7 @@ PromQL: not a good fit because you would need metadata in Prometheus
 
 SQL:
 
-Clearly, enriching and correlated your data from different sources is pretty simple with TimescaleDB; it’s just a plain old `JOIN` statement. An example query
-could look like:
+Clearly, enriching and correlating your data from different sources is pretty simple with TimescaleDB: it’s just a plain old `JOIN` statement. An example query could look like:
 
 ```sql
 SELECT time_bucket('1 hour', m.time) AS hour_bucket, 
