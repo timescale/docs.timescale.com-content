@@ -4,7 +4,7 @@
 
 #### Prerequisites
 
-- A standard **PostgreSQL 9.6, 10, or 11** installation with development environment (header files) (see https://www.postgresql.org/download/ for the appropriate package)
+- A standard **PostgreSQL :pg_version:** installation with development environment (header files) (see https://www.postgresql.org/download/ for the appropriate package)
 - C compiler (e.g., gcc or clang)
 - [CMake][] version 3.4 or greater
 
@@ -36,13 +36,14 @@ installed with.
 #### Update `postgresql.conf`
 
 You will need to edit your `postgresql.conf` file to include
-necessary libraries, and then restart PostgreSQL. First, locate your postgresql.conf file:
+the TimescaleDB library, and then restart PostgreSQL. First, locate your
+`postgresql.conf` file:
 
 ```bash
 psql -d postgres -c "SHOW config_file;"
 ```
 
-Then modify `postgresql.conf` to add required libraries.  Note that
+Then modify `postgresql.conf` to add the required library.  Note that
 the `shared_preload_libraries` line is commented out by default.
 Make sure to uncomment it when adding our library.
 
@@ -53,10 +54,10 @@ shared_preload_libraries = 'timescaledb'
 
 Then, restart the PostgreSQL instance.
 
->:TIP: Our standard binary releases are licensed under the Timescale License. This means that you can use all of our free Community capabilities and seamlessly 
+>:TIP: Our standard binary releases are licensed under the Timescale License. This means that you can use all of our free Community capabilities and seamlessly
 activate Enterprise capabilities.  
-To build a version of this software that contains 
-source code that is only licensed under Apache License 2.0, pass `-DAPACHE_ONLY=1` 
+To build a version of this software that contains
+source code that is only licensed under Apache License 2.0, pass `-DAPACHE_ONLY=1`
 to `bootstrap`.   
 For more information about licensing, please read our [blog post][blog-post] about the subject.
 

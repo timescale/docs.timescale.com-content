@@ -6,7 +6,7 @@ This will install TimescaleDB via `apt` on Ubuntu distros.
 
 #### Prerequisites
 
-- Ubuntu 14.04 or later, except obsoleted versions.
+- Ubuntu 16.04 or later, except obsoleted versions.
 Check [releases.ubuntu.com][ubuntu-releases] for list of
 non-obsolete releases.
 
@@ -41,8 +41,8 @@ sudo apt install timescaledb-postgresql-:pg_version:
 #### Configure your database
 
 There are a [variety of settings that can be configured][config] for your
-new database. At a minimum, you will need to update your `postgresql.conf` file
-to include our library to the parameter `shared_preload_libraries`.
+new database. At a minimum, you will need to update your `postgresql.conf`
+file to include our library in the parameter `shared_preload_libraries`.
 The easiest way to get started is to run `timescaledb-tune`, which is
 installed by default when using `apt`:
 ```bash
