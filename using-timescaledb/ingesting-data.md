@@ -52,7 +52,7 @@ To get started with the PostgreSQL and TimescaleDB output plugin, visit the [tut
 
 ## PostgreSQL's Kafka connector [](postgresqls-kafka-connector)
 
-Another popular method of ingesting data intoTimescaleDB is through the use of the [PostgreSQL connector with Kafka Connect][postgresql-connector-with-kafka-connect]. The connector is designed to work with [Kafka Connect][kafka-connect] and to be deployed to a Kafka Connect runtime service. It’s purpose is to ingest change events from PostgreSQL databases (i.e. TimescaleDB).
+Another popular method of ingesting data into TimescaleDB is through the use of the [PostgreSQL connector with Kafka Connect][postgresql-connector-with-kafka-connect]. The connector is designed to work with [Kafka Connect][kafka-connect] and to be deployed to a Kafka Connect runtime service. It’s purpose is to ingest change events from PostgreSQL databases (i.e. TimescaleDB).
 
 The deployed connector will monitor one or more schemas within a TimescaleDB server and write all change events to Kafka topics, which can be independently consumed by one or more clients. Kafka Connect can be distributed to provide fault tolerance to ensure the connectors are running and continually keeping up with changes in the database.
 
