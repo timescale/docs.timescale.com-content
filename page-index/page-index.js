@@ -372,6 +372,10 @@ const pageIndex = [
                 type: PAGE,
                 href: "alerting"
             }, {
+                Title: "Tooling",
+                type: PAGE,
+                href: "tooling"
+            }, {   
                 Title: "Update software",
                 type: PAGE,
                 href: "update-db"
