@@ -12,7 +12,7 @@ import {
 
 const pageIndex = [
     {
-        Title: "Understanding TimescaleDB",
+        Title: "Overview",
         type: PAGE,
         href: "introduction",
         children: [
@@ -375,7 +375,7 @@ const pageIndex = [
                 Title: "Tooling",
                 type: PAGE,
                 href: "tooling"
-            }, {   
+            }, {
                 Title: "Update software",
                 type: PAGE,
                 href: "update-db"
