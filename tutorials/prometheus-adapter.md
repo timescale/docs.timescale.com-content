@@ -115,26 +115,26 @@ At a high-level, here's how it works:
 
 All the data is first collected into Prometheus. Then, Prometheus forwards it
 to the configured [Prometheus PostgreSQL Adapter][postgresql adapter], which in
-turn forwards the data towards the database with the [pg_prometheus extension][pg_prometheus] 
+turn forwards the data towards the database with the [pg_prometheus extension][pg_prometheus]
 and finally TimescaleDB.
 
 ### Prometheus PostgreSQL Adapter - the remote storage adapter
 
-The adapter is basically a translation proxy that Prometheus uses for reading and 
-writing data into TimescaleDB/PostgreSQL. Whenever Prometheus scrapes some service 
-for metrics it will send the data to the adapter which is responsible for writing 
-the data to the database. Because the data from Prometheus arrives as a Protobuf, 
-it needs to be first deserialized and then converted into the [Prometheus native 
+The adapter is a translation proxy that Prometheus uses for reading and
+writing data into TimescaleDB/PostgreSQL. Whenever Prometheus scrapes some service
+for metrics it will send the data to the adapter which is responsible for writing
+the data to the database. Because the data from Prometheus arrives as a Protobuf,
+it needs to be first deserialized and then converted into the [Prometheus native
 format][] before it is inserted into the database.
 
-The adapter has a dependency on the pg_prometheus PostgreSQL extension, which takes 
-care of writing the data in most optimal format for storage and querying within 
+The adapter has a dependency on the pg_prometheus PostgreSQL extension, which takes
+care of writing the data in most optimal format for storage and querying within
 TimescaleDB/PostgreSQL.
 
 ### Pg_Prometheus
 
 In order to slim down the adapter and enable seamless integration with the
-database, we decided to build a PostgreSQL extension called `pg_prometheus`. The 
+database, we decided to build a PostgreSQL extension called `pg_prometheus`. The
 extension translates from the [Prometheus data model][Prometheus native format]
 into a compact SQL model that is stored efficiently and is easy to query.
 
@@ -198,7 +198,7 @@ docker network create -d bridge prometheus_timescale_network
 Now, let’s spin up a database with the [Pg_Prometheus extension][pg_prometheus]. This is where we are
 going to store all our metrics that Prometheus scrapes for. For this, we will
 use a PostgreSQL docker image that has both Pg_Prometheus and TimescaleDB
-extensions installed: https://hub.docker.com/r/timescale/pg_prometheus.
+extensions installed (found [here][docker-pg-prom-timescale]).
 
 ```bash
 docker run --network prometheus_timescale_network  --name pg_prometheus -d -p 5432:5432 timescale/pg_prometheus:latest postgres \
@@ -212,7 +212,7 @@ volumes is the PGDATA environment variable and accompanying volume mount (visit 
 
 #### Set the `postgres` user's password
 
-We'll also want to set the password for the postgres user now so that our adapter can connect to it later. 
+We'll also want to set the password for the postgres user now so that our adapter can connect to it later.
 1. Connect to the pg_prometheus container:
 ```bash
 docker exec -it pg_prometheus bash
@@ -264,7 +264,7 @@ set scrape config target to point to our Node Exporter instance.
 Below is very basic `prometheus.yml` that we can use for this tutorial (click
 [here][first steps] to read more on
 Prometheus configuration)
-```
+```yaml
 global:
  scrape_interval:     10s
  evaluation_interval: 10s
@@ -287,7 +287,7 @@ docker run --network prometheus_timescale_network -p 9090:9090 -v /path/to/prome
 To avoid running each docker container separately, here is the `docker-compose.yml` that will
 spin up all the docker containers together (Make sure you have `prometheus.yml` config file in the same folder as `docker-compose.yml`)
 
-```
+```yaml
 version: '2.1'
 services:
  pg_prometheus:
@@ -351,10 +351,10 @@ node_network_transmit_bytes_total{device="eth0"}
 
 SQL:
 ```sql
-SELECT time, value AS "total transmitted bytes" 
-FROM metrics 
+SELECT time, value AS "total transmitted bytes"
+FROM metrics
 WHERE labels->>'device' = 'eth0' AND
-      name='node_network_transmit_bytes_total' 
+      name='node_network_transmit_bytes_total'
 ORDER BY time;
 ```
 
@@ -385,10 +385,10 @@ SQL:
 Clearly, enriching and correlating your data from different sources is pretty simple with TimescaleDB: it’s just a plain old `JOIN` statement. An example query could look like:
 
 ```sql
-SELECT time_bucket('1 hour', m.time) AS hour_bucket, 
+SELECT time_bucket('1 hour', m.time) AS hour_bucket,
        m.labels->>'host', h.kernel_updated, AVG(value)
-FROM metrics m LEFT JOIN hosts h on h.host = m.labels->>'host' 
-AND  time_bucket('1 hour', m.time) = time_bucket('1 hour', h.kernel_updated) 
+FROM metrics m LEFT JOIN hosts h on h.host = m.labels->>'host'
+AND  time_bucket('1 hour', m.time) = time_bucket('1 hour', h.kernel_updated)
 WHERE m.name='node_load5' AND m.time > NOW() - interval '7 days'
 GROUP BY hour_bucket, m.labels->>'host', h.kernel_updated
 ORDER BY hour_bucket;
@@ -402,6 +402,7 @@ Integrating your Prometheus instance(s) with TimescaleDB is simple and risk-free
 [prometheus docs]: https://prometheus.io/docs/prometheus/2.3/storage/
 [prometheus lts]: https://prometheus.io/docs/operating/integrations/#remote-endpoints-and-storage
 [federation]: https://prometheus.io/docs/prometheus/latest/federation/
+[docker-pg-prom-timescale]: https://hub.docker.com/r/timescale/pg_prometheus
 [postgresql adapter]: https://github.com/timescale/prometheus-postgresql-adapter
 [pg_prometheus]: https://github.com/timescale/pg_prometheus
 [Prometheus native format]: https://prometheus.io/docs/instrumenting/exposition_formats/
