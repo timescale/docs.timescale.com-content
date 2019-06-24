@@ -12,7 +12,7 @@ import {
 
 const pageIndex = [
     {
-        Title: "Understanding TimescaleDB",
+        Title: "Overview",
         type: PAGE,
         href: "introduction",
         children: [
