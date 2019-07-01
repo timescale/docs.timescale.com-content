@@ -1,3 +1,6 @@
+>:WARNING: Our clustering capabilities are currently in private beta and 
+are not available through this installation method.
+
 ## apt Installation (Debian) [](installation-apt-debian)
 
 This will install TimescaleDB via `apt` on Debian distros.
