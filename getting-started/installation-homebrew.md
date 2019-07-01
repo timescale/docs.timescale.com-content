@@ -1,3 +1,6 @@
+>:WARNING: Our clustering capabilities are currently in private beta and
+are not available through this installation method.
+
 ## Homebrew [](homebrew)
 
 This will install both TimescaleDB *and* PostgreSQL via Homebrew.
