@@ -1,3 +1,6 @@
+>:WARNING: Our clustering capabilities are currently in private beta and
+are not available through this installation method.
+
 ## Windows ZIP Installer [](installation-windows)
 
 **Note: TimescaleDB requires PostgreSQL 11 or 12.**
