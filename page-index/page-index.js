@@ -59,6 +59,7 @@ const pageIndex = [
                             {
                                 Title: "Timescale Cloud",
                                 type: NON_MENU_PAGE,
+                                options: {pg_version: []},
                                 href: "installation-timescale-cloud"
                             }
                        ]
