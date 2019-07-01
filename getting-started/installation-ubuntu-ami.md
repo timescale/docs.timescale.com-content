@@ -1,3 +1,6 @@
+>:WARNING: Our clustering capabilities are currently in private beta and
+are not available through this installation method.
+
 ## Installing from an Amazon AMI (Ubuntu) [](installation-ubuntu-ami)
 
 TimescaleDB is currently available as an Ubuntu 18.04 Amazon EBS-backed AMI. AMIs are
