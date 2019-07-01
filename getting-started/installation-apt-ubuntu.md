@@ -1,3 +1,6 @@
+>:WARNING: Our clustering capabilities are currently in private beta and
+are not available through this installation method.
+
 ## apt Installation (Ubuntu) [](installation-apt-ubuntu)
 
 This will install TimescaleDB via `apt` on Ubuntu distros.
