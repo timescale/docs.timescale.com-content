@@ -2112,7 +2112,8 @@ ORDER BY day;
 
 ## timescaledb_information.hypertable [](timescaledb_information-hypertable)
 
-Get information about hypertables.
+Get information about hypertables. If the hypertable is distributed, the
+hypertable statistics reflect the sum of statistics across all distributed chunks.
 
 #### Available Columns [](timescaledb_information-hypertable-available-columns)
 
@@ -2127,6 +2128,7 @@ Get information about hypertables.
 | `index_size` |Disk space used by indexes|
 | `toast_size` |Disk space of toast tables|
 | `total_size` |Total disk space used by the specified table, including all indexes and TOAST data|
+| `distributed` | (BOOLEAN) Distributed status of the hypertable |
 
 #### Sample Usage [](timescaledb_information-hypertable-examples)
 
@@ -2135,10 +2137,10 @@ Get information about all hypertables.
 ```sql
 SELECT * FROM timescaledb_information.hypertable;
 
- table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size
---------------+------------+-------------+----------------+------------+------------+------------+------------+------------
- public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
- public       | devices    | postgres    |              1 |          1 | 8192 bytes | 16 kB      |            | 24 kB
+ table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size | distributed
+--------------+------------+-------------+----------------+------------+------------+------------+------------+------------+--------------
+ public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB     | t
+ public       | devices    | postgres    |              1 |          1 | 8192 bytes | 16 kB      |            | 24 kB      | f
 (2 rows)
 ```
 
@@ -2148,9 +2150,9 @@ Check whether a table is a hypertable.
 SELECT * FROM timescaledb_information.hypertable
 WHERE table_schema='public' AND table_name='metrics';
 
- table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size
---------------+------------+-------------+----------------+------------+------------+------------+------------+------------
- public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
+ table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size | distributed
+--------------+------------+-------------+----------------+------------+------------+------------+------------+------------+--------------
+ public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB     | t
 (1 row)
 ```
 
