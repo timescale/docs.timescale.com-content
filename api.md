@@ -1792,21 +1792,23 @@ ORDER BY day;
 
 ## timescaledb_information.hypertable [](timescaledb_information-hypertable)
 
-Get information about hypertables.
+Get information about hypertables. If the hypertable is distributed, the
+hypertable statistics reflect the sum of statistics across all distributed chunks.
 
 #### Available Columns
 
 |Name|Description|
 |---|---|
-| `schema_name` | Schema name of the hypertable. |
-| `table_name` | Table name of the hypertable. |
-| `table_owner` | Owner of the hypertable. |
-| `num_dimensions` | Number of dimensions. |
+| `table_schema` | Schema name of the hypertable |
+| `table_name` | Table name of the hypertable |
+| `table_owner` | Owner of the hypertable |
+| `num_dimensions` | Number of dimensions |
 | `num_chunks` | Number of chunks. |
-| `table_bytes` |Disk space used by hypertable |
-| `index_bytes` |Disk space used by indexes|
-| `toast_bytes` |Disk space of toast tables|
-| `total_bytes` |Total disk space used by the specified table, including all indexes and TOAST data|
+| `table_size` | Disk space used by hypertable |
+| `index_size` | Disk space used by indexes |
+| `toast_size` | Disk space of toast tables |
+| `total_size` | Total disk space used by the specified table, including all indexes and TOAST data|
+| `distributed` | (BOOLEAN) Distributed status of the hypertable |
 
 #### Sample Usage
 
@@ -1815,10 +1817,10 @@ Get information about all hypertables.
 ```sql
 SELECT * FROM timescaledb_information.hypertable;
 
- table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size
---------------+------------+-------------+----------------+------------+------------+------------+------------+------------
- public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
- public       | devices    | postgres    |              1 |          1 | 8192 bytes | 16 kB      |            | 24 kB
+ table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size | distributed
+--------------+------------+-------------+----------------+------------+------------+------------+------------+------------+--------------
+ public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB     | t
+ public       | devices    | postgres    |              1 |          1 | 8192 bytes | 16 kB      |            | 24 kB      | f
 (2 rows)
 ```
 
@@ -1828,9 +1830,9 @@ Check whether a table is a hypertable.
 SELECT * FROM timescaledb_information.hypertable
 WHERE table_schema='public' AND table_name='metrics';
 
- table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size
---------------+------------+-------------+----------------+------------+------------+------------+------------+------------
- public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB
+ table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size | distributed
+--------------+------------+-------------+----------------+------------+------------+------------+------------+------------+--------------
+ public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB     | t
 (1 row)
 ```
 
