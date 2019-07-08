@@ -554,6 +554,8 @@ SELECT detach_tablespaces('conditions');
 
 Removes data chunks whose time range falls completely before (or after) a
 specified time, operating either across all hypertables or for a specific one.
+Shows a list of the chunks that were dropped in the same style as the 
+`show_chunks` [function][show chunks].
 
 Chunks are defined by a certain start and end time.  If `older_than` is
 specified, a chunk is dropped if its end time is older than the specified
@@ -613,13 +615,17 @@ Drop all chunks older than 3 months ago:
 SELECT drop_chunks(interval '3 months');
 ```
 
-The expected output:
+Example output: 
 
 ```sql
- drop_chunks
--------------
-
-(1 row)
+              drop_chunks               
+----------------------------------------
+ _timescaledb_internal._hyper_3_5_chunk
+ _timescaledb_internal._hyper_3_6_chunk
+ _timescaledb_internal._hyper_3_7_chunk
+ _timescaledb_internal._hyper_3_8_chunk
+ _timescaledb_internal._hyper_3_9_chunk
+(5 rows)
 ```
 
 Drop all chunks more than 3 months in the future. This is useful for correcting data ingested with incorrect clocks:
