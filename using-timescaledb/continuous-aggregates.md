@@ -304,7 +304,7 @@ we plan to extend our support for aggregates like this in upcoming releases.
 **Data Retention Integration:**
 As noted [above](#dropping-data), currently, the only option available when
 dropping chunks from a raw hypertable is to cascade the drop to the
-materialialization. We plan on extending the materialization mechanism to allow
+materialization. We plan on extending the materialization mechanism to allow
 for dropping the underlying data even while keeping the aggregates for a longer
 period of time at different granularities.
 
