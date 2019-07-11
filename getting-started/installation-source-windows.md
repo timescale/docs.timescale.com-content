@@ -1,6 +1,3 @@
->:WARNING: Our clustering capabilities are currently in private beta and
-are not available through this installation method.
-
 ## From Source (Windows) [](installation-source)
 
 **Note: TimescaleDB requires PostgreSQL 11 or 12.**
