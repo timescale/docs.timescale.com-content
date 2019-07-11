@@ -51,6 +51,19 @@ const pageIndex = [
                 component: "InstallationPage",
                 children: [
                     {
+                        Title: "Timescale Cloud",
+                        type: DIRECTORY,
+                        href: "timescale-cloud",
+                        src: "//assets.iobeam.com/images/docs/timescale_cloud_logo.svg",
+                        children: [
+                            {
+                                Title: "Timescale Cloud",
+                                type: NON_MENU_PAGE,
+                                options: {pg_version: []},
+                                href: "installation-timescale-cloud"
+                            }
+                       ]
+                    }, {
                         Title: "Docker",
                         type: DIRECTORY,
                         href: "docker",
