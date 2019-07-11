@@ -408,6 +408,11 @@ const pageIndex = [
                 href: "tutorial-forecasting",
                 children: []
             }, {
+                Title: "Scaling out TimescaleDB",
+                type: PAGE,
+                href: "clustering",
+                children: []
+            }, {
                 Title: "Replication",
                 type: PAGE,
                 href: "replication",
