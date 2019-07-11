@@ -1,3 +1,7 @@
+>:WARNING: Our clustering capabilities are currently in private beta and
+are not available through this installation method. For more information,
+please [contact us][contact].
+
 ## Installing from Azure Database for PostgreSQL
 
 TimescaleDB is currently available on [Azure Database for PostgreSQL][azure-postgresql] versions 9.6 and 10. To install TimescaleDB, you need to include it in the server’s shared preloaded libraries. A change to PostgreSQL’s shared preloaded libraries requires a restart to take effect.

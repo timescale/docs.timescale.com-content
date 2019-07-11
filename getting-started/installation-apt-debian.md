@@ -1,5 +1,6 @@
->:WARNING: Our clustering capabilities are currently in private beta and 
-are not available through this installation method.
+>:WARNING: Our clustering capabilities are currently in private beta and
+are not available through this installation method. For more information,
+please [contact us][contact].
 
 ## apt Installation (Debian) [](installation-apt-debian)
 
