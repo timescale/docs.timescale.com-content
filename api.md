@@ -39,6 +39,7 @@
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 > - [time_bucket_gapfill](#time_bucket_gapfill)
+> - [timescaledb_information.data_node](#timescaledb_information-datanode)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
 > - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
@@ -1822,6 +1823,33 @@ ORDER BY day;
 
 ## Utilities/Statistics [](utilities)
 
+### timescaledb_information.data_node [](#timescaledb_information-datanode)
+
+Get information on data nodes.
+
+|Name|Description|
+|---|---|
+| `node_name` | Data node name. |
+| `owner` | oid |
+| `options` | Options used when creating the data node. |
+| `node_up` | (BOOLEAN) Data node responds to ping. |
+| `num_dist_tables` | Number of distributed hypertables that use this data node. |
+| `num_dist_chunks` | Total number of chunks stored in data node. |
+| `total_dist_size` | Total amount of data stored in data node. |
+
+#### Sample Usage
+
+Get information on data nodes.
+
+```sql
+SELECT * FROM timescaledb_information.data_node;
+ node_name    | owner      | options                        | server_up | num_dist_tables | num_dist_chunks | total_dist_size
+--------------+------------+--------------------------------+-----------+-----------------+-----------------+----------------
+ dn_1         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 96 MB      
+ dn_2         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 400 MB      
+(2 rows)
+```
+
 ### timescaledb_information.hypertable [](timescaledb_information-hypertable)
 
 Get information about hypertables.
@@ -2168,9 +2196,9 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ### get_telemetry_report() [](get_telemetry_report)
 
-If background [telemetry][] is enabled, returns the string sent to our servers. 
+If background [telemetry][] is enabled, returns the string sent to our servers.
 If telemetry is not enabled, outputs INFO message affirming telemetry is disabled
-and returns a NULL report. 
+and returns a NULL report.
 
 #### Optional Arguments [](get_telemetry_report-optional-arguments)
 
