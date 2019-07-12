@@ -38,6 +38,7 @@
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 > - [time_bucket_gapfill](#time_bucket_gapfill)
+> - [timescaledb_information.data_node](#timescaledb_information-datanode)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
 > - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
@@ -1789,6 +1790,37 @@ ORDER BY day;
 ---
 
 ## Utilities/Statistics [](utilities)
+
+### timescaledb_information.data_node [](timescaledb_information-datanode)
+
+Get information on data nodes. This function is specific to running
+TimescaleDB in a multi-node setup.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+| `node_name` | Data node name. |
+| `owner` | Oid of the user, who added the data node. |
+| `options` | Options used when creating the data node. |
+| `node_up` | (BOOLEAN) Data node responds to ping. |
+| `num_dist_tables` | Number of distributed hypertables that use this data node. This metric is only available if a node is up. |
+| `num_dist_chunks` | Total number of distributed chunks associated with distributed hypertables stored in data node. This metric is only available if a node is up. |
+| `total_dist_size` | Total amount of distributed data stored in data node. Data and chunks in non-distributed hypertables are not included in this metric. |
+
+#### Sample Usage
+
+Get liveness and metrics from data nodes.
+
+```sql
+SELECT * FROM timescaledb_information.data_node;
+
+ node_name    | owner      | options                        | server_up | num_dist_tables | num_dist_chunks | total_dist_size
+--------------+------------+--------------------------------+-----------+-----------------+-----------------+----------------
+ dn_1         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 96 MB      
+ dn_2         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 400 MB      
+(2 rows)
+```
 
 ### timescaledb_information.hypertable [](timescaledb_information-hypertable)
 
