@@ -1966,7 +1966,7 @@ Get sizes of indexes on a hypertable.
 #### Returns [](hypertable_relation_size_pretty-returns)
 |Column|Description|
 |---|---|
-|index_name|Index on hyper table|
+|index_name|Index on hypertable|
 |total_bytes|Size of index on disk|
 
 #### Sample Usage [](hypertable_relation_size_pretty-examples)
@@ -1997,7 +1997,7 @@ Get sizes of indexes on a hypertable.
 #### Returns [](indexes_relation_size_pretty-returns)
 |Column|Description|
 |---|---|
-|index_name|Index on hyper table|
+|index_name|Index on hypertable|
 |total_size|Pretty output of total_bytes|
 
 #### Sample Usage [](indexes_relation_size_pretty-examples)
