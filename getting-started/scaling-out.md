@@ -1,20 +1,26 @@
 # Scaling out using Distributed Hypertables
 
-Hypertables are used to handle large amount of data by chunking it up
-in smaller pieces, allowing operations to execute efficiently. When
-the amount of data grows beyond what you can handle with a single
-machine, you can distribute the data over several machines by using
+TimescaleDB supports multi-node clustering by leveraging the hypertable and chunk primitives.
+Hypertables are used to handle large amount of data by breaking it up
+in smaller pieces (chunks), allowing operations to execute efficiently. When
+the amount of data is expected to be beyond what you can handle with a single
+machine, you can distribute the data chunks over several machines by using
 *distributed hypertables*.
-
 Distributed hypertables are similar to normal hypertables, but they
-add an additional layer of partitioning to the hypertable and
-distribute the hypertable partitions onto *data nodes*.
+add an additional layer of hypertable partitioning by distributing chunks
+across *data nodes*.
+
+In the multi-node topology ([architecture][]), all nodes are TimescaleDB instances.
+The data are distributed and stored in TimescaleDB instances, called data nodes.
+The distributed data are accessed through distributed hypertable
+on another TimescaleDB instance, called *access node*.
+The access node is entry point for any access to data in the cluster.
 
 ![Deployment diagram for distributed hypertables]()
 
 ## Working with Data Nodes
 
-Data nodes act as the containers of the hypertable partitions and are
+Data nodes act as the containers for the hypertable chunks and are
 necessary to create distributed hypertables. Data nodes are
 added to the current database using [`add_data_node`][add_data_node]
 and removed using [`delete_data_node`][delete_data_node].
@@ -50,14 +56,13 @@ Deleting a data node is done in a similar manner.
 SELECT delete_data_node('node1');
 ```
 >:TIP: Note that a data node cannot be deleted if it contains data for a
-hypertable. You have to ensure either that there is no data on the
-data node, or that the data is replicated to other nodes.
+hypertable.
 
 ### Information Schema for Data Nodes
 
 The data nodes that have been added to the database can be found by
 querying the
-[`timescaledb_information.data_node`][timescaledb_information-data_node].
+[`timescaledb_information.data_node`][timescaledb_information-data_node] view.
 
 ## Working with Distributed Hypertables
 
@@ -103,7 +108,7 @@ created distributed hypertables using
 [`attach_data_node`][attach_data_node] and
 [`detach_data_node`][detach_data_node].
 
-For example, if you add a new data node, it will not automatically be
+For example, if you add a new data node to the cluster, it will not automatically be
 added to existing distributed hypertables, so it is necssary to attach
 it explicitly.
 
@@ -112,8 +117,8 @@ SELECT add_data_node('node3', host => 'dn3.example.com');
 SELECT attach_data_node('node3', hypertable => 'conditions');
 ```
 
-Once the data node has been attached, any new rows added will also be
-distributed to the hypertable partition on the new data node.
+Once the data node has been attached, any new chunks will also be
+distributed to the hypertable on the new data node.
 
 In a similar way, if you want to remove a data node from a distributed
 hypertable, you can use [`detach_data_node`][detach_data_node].
@@ -122,7 +127,7 @@ hypertable, you can use [`detach_data_node`][detach_data_node].
 SELECT detach_data_node('node1', hypertable => 'conditions');
 ```
 
-If a data node is storing data for a hypertable and is not replicated,
+If a data node is storing data for a hypertable,
 then you will get an error.
 
 ```sql
@@ -132,6 +137,7 @@ HINT:  Ensure the data node "node1" has no non-replicated data before detaching 
 ```
 
 [add_data_node]: /api#add_data_node
+[architecture]: /introduction/architecture#timescaledb-clustering
 [attach_data_node]: /api#attach_data_node
 [create_distributed_hypertable]: /api#create_distributed_hypertable
 [creating-hypertables]: /getting-started/creating-hypertables
