@@ -108,8 +108,8 @@ dataset. So if we size these chunks properly, we can fit the latest tables
 (and their B-trees) completely in memory, and avoid this swap-to-disk problem,
 while maintaining support for multiple indexes.
 
-For more on the motivation and design of TimescaleDB's adaptive space/time
-chunking, please see our [technical blog post][chunking].
+For more on the motivation and design of TimescaleDB, please see our
+[technical blog post][chunking].
 
 
 <!--- Picture of blog post -->
