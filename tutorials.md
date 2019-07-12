@@ -15,6 +15,8 @@ data analysis and make forecasts on your data.
 
 ### How to use specific TimescaleDB features
 
+- **[Scaling out TimescaleDB][Clustering]**: Distribute data across multiple nodes to
+scale out your TimescaleDB cluster.
 - **[Replication][]**: TimescaleDB takes advantage of well established PostgreSQL methods for replication.  Here we provide a detailed guide along with additional resources for setting up streaming replicas.
 - **[Continuous Aggregates][]**: Getting started with continuous aggregates.
 
@@ -59,6 +61,7 @@ and pick up some valuable `psql` tips and tricks along the way.
 [Hello Timescale]: /tutorials/tutorial-hello-timescale
 [Forecasting]: /tutorials/tutorial-forecasting
 [Replication]: /tutorials/replication
+[Clustering]: /tutorials/clustering
 [Continuous Aggregates]: /tutorials/continuous-aggs-tutorial
 [Outflux]: /tutorials/outflux
 [Prometheus adapter]: /tutorials/prometheus-adapter

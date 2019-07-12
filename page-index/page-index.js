@@ -453,6 +453,11 @@ const pageIndex = [
                 href: "analyze-cryptocurrency-data",
                 children: []
             }, {
+                Title: "Scaling out TimescaleDB",
+                type: PAGE,
+                href: "clustering",
+                children: []
+            }, {
                 Title: "Replication",
                 type: PAGE,
                 href: "replication",
