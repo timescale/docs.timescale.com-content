@@ -1,5 +1,6 @@
 >:WARNING: Our clustering capabilities are currently in private beta and
-are not available through this installation method.
+are not available through this installation method. For more information,
+please [contact us][contact].
 
 ## yum Installation [](installation-yum)
 
@@ -86,3 +87,4 @@ about the subject.
 [pgdg]: https://yum.postgresql.org/repopackages.php
 [yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation
 [blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[contact]: https://www.timescale.com/contact

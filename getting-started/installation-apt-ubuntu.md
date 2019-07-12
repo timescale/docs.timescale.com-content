@@ -1,5 +1,6 @@
 >:WARNING: Our clustering capabilities are currently in private beta and
-are not available through this installation method.
+are not available through this installation method. For more information,
+please [contact us][contact].
 
 ## apt Installation (Ubuntu) [](installation-apt-ubuntu)
 
@@ -77,3 +78,4 @@ about the subject.
 [createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 [ubuntu-releases]: http://releases.ubuntu.com/
 [blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[contact]: https://www.timescale.com/contact

@@ -1,5 +1,6 @@
 >:WARNING: Our clustering capabilities are currently in private beta and
-are not available through this installation method.
+are not available through this installation method. For more information,
+please [contact us][contact].
 
 ## Homebrew [](homebrew)
 
@@ -70,3 +71,4 @@ about the subject.
 [config]: /getting-started/configuring
 [Homebrew]: https://brew.sh/
 [blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[contact]: https://www.timescale.com/contact

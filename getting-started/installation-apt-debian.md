@@ -1,5 +1,6 @@
->:WARNING: Our clustering capabilities are currently in private beta and 
-are not available through this installation method.
+>:WARNING: Our clustering capabilities are currently in private beta and
+are not available through this installation method. For more information,
+please [contact us][contact].
 
 ## apt Installation (Debian) [](installation-apt-debian)
 
@@ -75,3 +76,4 @@ about the subject.
 [config]: /getting-started/configuring
 [createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 [blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[contact]: https://www.timescale.com/contact
