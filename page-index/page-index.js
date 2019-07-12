@@ -205,7 +205,7 @@ const pageIndex = [
                 href: "migrating-data"
             }, {
             		Title: "Scaling Out",
-            		type: Page,
+            		type: PAGE,
             		href: "scaling-out"
       	    }, {
                 type: HIDDEN_REDIRECT,
