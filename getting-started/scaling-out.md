@@ -58,7 +58,7 @@ querying the `timesscaledb_information.data_node` view.
 | Column            | Type    | Description                                               |
 |-------------------|---------|-----------------------------------------------------------|
 | `node_name`       | name    | Data node name                                            |
-| `owner`           | oid     |                                                           |
+| `owner`           | oid     | Oid of the user, who added the data node                  |
 | `options`         | text[]  | Options used when creating the data node                  |
 | `node_up`         | boolean | Data node responds to ping                                |
 | `num_dist_tables` | bigint  | Number of distributed hypertables that use this data node |
@@ -69,7 +69,8 @@ querying the `timesscaledb_information.data_node` view.
 
 As previously mentioned, distributed hypertables are similar to normal
 hypertable with the difference that distributed hypertables will
-partition the data and store it on remote data nodes. This means that
+store chunks across remote data nodes instead of locally.
+This means that
 to create a hypertable, you need to have added at least one data node
 before starting to create distributed hypertables.
 
@@ -89,7 +90,7 @@ CREATE TABLE conditions (
   humidity    DOUBLE PRECISION  NULL
 );
 
-SELECT create_distributed_hypertable('conditions', 'time');
+SELECT create_distributed_hypertable('conditions', 'time', 'location');
 ```
 
 You can now start inserting data into the distributed hypertable and
@@ -105,7 +106,7 @@ created distributed hypertables using
 [`attach_data_node`][attach_data_node] and
 [`detach_data_node`][detach_data_node].
 
-For example, if you add a new data node, it will not automatically be
+For example, if you add a new data node to the cluster, it will not automatically be
 added to existing distributed hypertables, so it is necssary to attach
 it explicitly.
 
@@ -114,8 +115,8 @@ SELECT add_data_node('node3', host => 'dn3.example.com');
 SELECT attach_data_node('node3', hypertable => 'conditions');
 ```
 
-Once the data node has been attached, any new rows added will also be
-distributed to the hypertable partition on the new data node.
+Once the data node has been attached, any new chunks will also be
+distributed to the hypertable on the new data node.
 
 In a similar way, if you want to remove a data node from a distributed
 hypertable, you can use [`detach_data_node`][detach_data_node].
