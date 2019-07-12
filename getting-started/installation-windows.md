@@ -1,5 +1,6 @@
 >:WARNING: Our clustering capabilities are currently in private beta and
-are not available through this installation method.
+are not available through this installation method. For more information,
+please [contact us][contact].
 
 ## Windows ZIP Installer [](installation-windows)
 
@@ -51,3 +52,4 @@ For more information about licensing, please read our [blog post][blog-post] abo
 [pg_config]: https://www.postgresql.org/docs/10/static/app-pgconfig.html
 [windows-dl]:  https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-:pg_version:_x.y.z-windows-amd64.zip
 [blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[contact]: https://www.timescale.com/contact
