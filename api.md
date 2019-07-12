@@ -13,6 +13,7 @@
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > -	[compress_chunk](#compress_chunk)
+> - [create_distributed_hypertable](#create_distributed_hypertable)
 > - [create_hypertable](#create_hypertable)
 > - [create index (transaction per chunk)](#create_index)
 > - [create view (continuous aggregate)](#continuous_aggregate-create_view)
@@ -45,6 +46,7 @@
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 > - [time_bucket_gapfill](#time_bucket_gapfill)
+> - [timescaledb_information.data_node](#timescaledb_information-datanode)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
 > - [timescaledb_information.compressed_chunk_stats](#timescaledb_information-compressed_chunk_stats)
@@ -261,6 +263,8 @@ still work on the resulting hypertable.
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
 | `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
+| `replication_factor` | If set to 1 or greater, will create a distributed hypertable. Values greater than 1 are currently not recommended. The default value is NULL. When creating a distributed hypertable, consider using [`create_distributed_hypertable`](#create_distributed_hypertable) in place of `create_hypertable`. |
+| `data_nodes` | This is the set of data nodes that will be used for this table if it is distributed. This has no impact on non-distributed hypertables. If no data nodes are specified, a distributed hypertable will use all data nodes known by this instance. |
 
 #### Returns [](create_hypertable-returns)
 
@@ -437,9 +441,96 @@ PostGIS geospatial indexes).  During testing, you might check your
 total chunk sizes via the [`chunk_relation_size`](#chunk_relation_size)
 function.
 
-**Space partitions**: In most cases, it is advised for users not to use
+**Space partitions:** In most cases, it is advised for users not to use
 space partitions. The rare cases in which space partitions may be useful
 are described in the [add_dimension](#add_dimension) section.
+
+---
+
+## create_distributed_hypertable() [](create_distributed_hypertable)
+
+Creates a TimescaleDB hypertable distributed across a multinode
+environment.  Use this function in place of [`create_hypertable`](#create_hypertable)
+when creating distributed hypertables.
+
+#### Required Arguments [](create_distributed_hypertable-required-arguments)
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of table to convert to hypertable |
+| `time_column_name` | Name of the column containing time values as well as the primary column to partition by. |
+
+#### Optional Arguments [](create_distributed_hypertable-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
+| `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of TimescaleDB v0.11.0, default is 7 days, unless adaptive chunking (DEPRECATED)  is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
+| `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
+| `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
+| `partitioning_func` | The function to use for calculating a value's partition.|
+| `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
+| `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
+| `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
+| `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
+| `replication_factor` | This will determine the number of data nodes each incoming write is written to.  The default value is 1 and this is required to be 1 or greater, but note that values greater than 1 are not recommended in the current implementation. |
+| `data_nodes` | This is the set of data nodes that will be used for this table.  If this is not present then all data nodes known by this instance will be used to distribute the hypertable. | 
+| `chunk_target_size` | DEPRECATED - The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable adaptive chunking (a DEPRECATED feature). The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
+| `chunk_sizing_func` | DEPRECATED - Allows setting a custom chunk sizing function for adaptive chunking (a DEPRECATED feature). The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
+
+#### Returns
+
+|Column|Description|
+|---|---|
+| `hypertable_id` | ID of the hypertable in TimescaleDB. |
+| `schema_name` | Schema name of the table converted to hypertable. |
+| `table_name` | Table name of the table converted to hypertable. |
+| `created` | True if the hypertable was created, false when `if_not_exists` is true and no hypertable was created. |
+
+#### Sample Usage [](create_distributed_hypertable-examples)
+
+Create a table `conditions` which will be partitioned across data
+nodes by the 'location' column.  Note that the number of space
+partitions is automatically equal to the number of data nodes assigned
+to this hypertable (all configured data nodes in this case, as
+`data_nodes` is not specified).
+```sql
+SELECT create_distributed_hypertable('conditions', 'time', 'location');
+```
+
+Create a table `conditions` using a specific set of data nodes.
+```sql
+SELECT create_distributed_hypertable('conditions', 'time', 'location',
+    data_nodes => '{ "data_node_1", "data_node_2", "data_node_4", "data_node_7" }');
+```
+
+#### Best Practices [](create_distributed_hypertable-best-practices)
+
+**Space partitions:** As opposed to the normal [`create_hypertable` best practices](#create_hypertable-best-practices),
+space partitions are highly recommended for distributed hypertables.
+Incoming data will be divided among data nodes based upon the space
+partition (the first one if multiple space partitions have been
+defined).  If there is no space partition, all the data for each time
+slice will be written to a single data node.
+
+**Time intervals:** Follow the same guideline in setting the `chunk_time_interval`
+as with [`create_hypertable`](#create_hypertable-best-practices),
+bearing in mind that the calculation needs to be based on the memory
+capacity of the data nodes.  However, one additional thing to
+consider, assuming space partitioning is being used, is that the
+hypertable will be evenly distributed across the data nodes, allowing
+a larger time interval.
+
+For example, assume you are ingesting 10GB of data per day and you
+have five data nodes, each with 64GB of memory.  If this is the only
+table being served by these data nodes, then you should use a time 
+interval of 1 week (7 * 10GB / 5 * 64GB ~= 22% main memory used for
+most recent chunks).
+
+If space partitioning is not being used, the `chunk_time_interval`
+should be the same as the non-distributed case, as all of the incoming
+data will be handled by a single node.
 
 ---
 
@@ -2109,6 +2200,37 @@ ORDER BY day;
 ---
 
 ## Utilities/Statistics [](utilities)
+
+### timescaledb_information.data_node [](timescaledb_information-datanode)
+
+Get information on data nodes. This function is specific to running
+TimescaleDB in a multi-node setup.
+
+#### Available Columns
+
+|Name|Description|
+|---|---|
+| `node_name` | Data node name. |
+| `owner` | Oid of the user, who added the data node. |
+| `options` | Options used when creating the data node. |
+| `node_up` | (BOOLEAN) Data node responds to ping. |
+| `num_dist_tables` | Number of distributed hypertables that use this data node. This metric is only available if a node is up. |
+| `num_dist_chunks` | Total number of distributed chunks associated with distributed hypertables stored in data node. This metric is only available if a node is up. |
+| `total_dist_size` | Total amount of distributed data stored in data node. Data and chunks in non-distributed hypertables are not included in this metric. |
+
+#### Sample Usage
+
+Get liveness and metrics from data nodes.
+
+```sql
+SELECT * FROM timescaledb_information.data_node;
+
+ node_name    | owner      | options                        | server_up | num_dist_tables | num_dist_chunks | total_dist_size
+--------------+------------+--------------------------------+-----------+-----------------+-----------------+----------------
+ dn_1         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 96 MB      
+ dn_2         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 400 MB      
+(2 rows)
+```
 
 ### timescaledb_information.hypertable [](timescaledb_information-hypertable)
 
