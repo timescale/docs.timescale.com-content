@@ -183,10 +183,9 @@ const pageIndex = [
                         href: "migrate-from-postgresql",
                         to: "/getting-started/migrating-data"
                     }, {
-			type: HIDDEN_REDIRECT,
-			href: "scaling-out",
-			to: "/getting-started/scaling-out"
-		    }
+                        href: "scaling-out",
+                        to: "/getting-started/scaling-out"
+                    },
                 ]
             }, {
                 Title: "Setting up Enterprise",
@@ -205,10 +204,10 @@ const pageIndex = [
                 type: PAGE,
                 href: "migrating-data"
             }, {
-		Title: "Scaling Out",
-		type: Page,
-		href: "scaling-out"
-	    }, {
+            		Title: "Scaling Out",
+            		type: Page,
+            		href: "scaling-out"
+      	    }, {
                 type: HIDDEN_REDIRECT,
                 href: "basic-operations",
                 to: "/using-timescaledb/hypertables"
