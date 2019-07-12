@@ -1,7 +1,8 @@
 # Scaling out using Distributed Hypertables
 
+TimescaleDB supports multi-node clustering by leveraging the hypertable and chunk primitives.
 Hypertables are used to handle large amount of data by chunking it up
-in smaller pieces, allowing operations to execute efficiently. When
+in smaller pieces, chunks, allowing operations to execute efficiently. When
 the amount of data grows beyond what you can handle with a single
 machine, you can distribute the data over several machines by using
 *distributed hypertables*.
@@ -9,6 +10,12 @@ machine, you can distribute the data over several machines by using
 Distributed hypertables are similar to normal hypertables, but they
 add an additional layer of partitioning of the hypertable and
 distribute the hypertable partitions on *data nodes*.
+
+In the multi-node topology ([architecture][]), all nodes are TimescaleDB instances.
+The data are distributed and stored in TimescaleDB instances, called data nodes.
+The distributed data are accessed through distributed hypertable
+on another TimescaleDB instance, called *access node*.
+The access node is entry point for any access to data in the cluster.
 
 ![Deployment diagram for distributed hypertables]()
 
@@ -123,6 +130,7 @@ ERROR:  detaching data node "node1" would mean a data-loss for hypertable "condi
 HINT:  Ensure the data node "node1" has no non-replicated data before detaching it.
 ```
 
+[architecture]: /introduction/architecture#timescaledb-clustering
 [attach_data_node]: /api#attach_data_node
 [creating-hypertables]: /getting-started/creating-hypertables
 [detach_data_node]: /api#detach_data_node
