@@ -3,10 +3,9 @@
 TimescaleDB supports multi-node clustering by leveraging the hypertable and chunk primitives.
 Hypertables are used to handle large amount of data by chunking it up
 in smaller pieces, chunks, allowing operations to execute efficiently. When
-the amount of data grows beyond what you can handle with a single
+the amount of data is expected to be beyond what you can handle with a single
 machine, you can distribute the data chunks over several machines by using
 *distributed hypertables*.
-
 Distributed hypertables are similar to normal hypertables, but they
 add an additional layer of partitioning of the hypertable by distributing chunks 
 across *data nodes*.
@@ -26,9 +25,9 @@ necessary to be able to create distributed hypertables. Data nodes are
 added to the current database using [`add_data_node`][add_data_node]
 and removed using [`delete_data_node`][delete_data_node].
 
-Note that a data node is local object on the access node that points to another database, 
-typically on a remote host. The host could, however, be the same as the access node; 
-this allows setting up a distributed database on a single server for, e.g., testing purposes. 
+Note that a data node is a local object on the access node that points to another database, 
+typically on a remote host. The host could be the same as the access node,
+which allows setting up a distributed database on a single server for, e.g., testing purposes. 
 To achieve scale-out, however, each data node should be 
 their own physical server with separate CPU and disk resources.
 
@@ -68,19 +67,20 @@ querying the `timesscaledb_information.data_node` view.
 ## Working with Distributed Hypertables
 
 As previously mentioned, distributed hypertables are similar to normal
-hypertable with the difference that distributed hypertables will
+hypertables with the difference that distributed hypertables will
 store chunks across remote data nodes instead of locally.
-This means that
-to create a hypertable, you need to have added at least one data node
+This means that to create a distributed hypertable, you need to 
+have added at least one data node
 before starting to create distributed hypertables.
 
 ### Creating Distributed Hypertables
 
 As with normal hypertables, you have to start by creating a regular
 table to hold the data, then transform it into a distributed
-hypertable. In contrast to when creating a normal hypertable, we use
+hypertable. In contrast to when creating a normal hypertable,
 the function
-[`create_distributed_hypertable`][create_distributed_hypertable].
+[`create_distributed_hypertable`][create_distributed_hypertable]
+is used.
 
 ```sql
 CREATE TABLE conditions (
@@ -125,7 +125,7 @@ hypertable, you can use [`detach_data_node`][detach_data_node].
 SELECT detach_data_node('node1', hypertable => 'conditions');
 ```
 
-If a data node is storing data for a hypertable and is not replicated,
+If a data node is storing data for a hypertable,
 then you will get an error.
 
 ```
@@ -134,7 +134,10 @@ ERROR:  detaching data node "node1" would mean a data-loss for hypertable "condi
 HINT:  Ensure the data node "node1" has no non-replicated data before detaching it.
 ```
 
+[add_data_node]: /api#add_data_node
 [architecture]: /introduction/architecture#timescaledb-clustering
 [attach_data_node]: /api#attach_data_node
+[create_distributed_hypertable]: /api#create_distributed_hypertable
 [creating-hypertables]: /getting-started/creating-hypertables
+[delete_data_node]: /api#delete_data_node
 [detach_data_node]: /api#detach_data_node
