@@ -4,12 +4,12 @@ TimescaleDB supports multi-node clustering by leveraging the hypertable and chun
 Hypertables are used to handle large amount of data by chunking it up
 in smaller pieces, chunks, allowing operations to execute efficiently. When
 the amount of data grows beyond what you can handle with a single
-machine, you can distribute the data over several machines by using
+machine, you can distribute the data chunks over several machines by using
 *distributed hypertables*.
 
 Distributed hypertables are similar to normal hypertables, but they
-add an additional layer of partitioning of the hypertable and
-distribute the hypertable partitions on *data nodes*.
+add an additional layer of partitioning of the hypertable by distributing chunks 
+across *data nodes*.
 
 In the multi-node topology ([architecture][]), all nodes are TimescaleDB instances.
 The data are distributed and stored in TimescaleDB instances, called data nodes.
@@ -21,16 +21,20 @@ The access node is entry point for any access to data in the cluster.
 
 ## Working with Data Nodes
 
-Data nodes act as the containers of the hypertable partitions and are
+Data nodes act as the containers of the hypertable chunks and are
 necessary to be able to create distributed hypertables. Data nodes are
 added to the current database using [`add_data_node`][add_data_node]
 and removed using [`delete_data_node`][delete_data_node].
 
-Note that data nodes are added as objects locally and you should
-already have a running database server on some host. When creating the
+Note that a data node is local object on the access node that points to another database, 
+typically on a remote host. The host could, however, be the same as the access node; 
+this allows setting up a distributed database on a single server for, e.g., testing purposes. 
+To achieve scale-out, however, each data node should be 
+their own physical server with separate CPU and disk resources.
+
+When creating the
 data node, you should provide a (local) name to use when referring to
-the data node as well as the host where the hypertable partition
-should be stored.
+the data node as well as the host to connect to.
 
 ```sql
 SELECT add_data_node('node1', host => 'dn1.example.com');
@@ -44,13 +48,12 @@ SELECT delete_data_node('node1');
 ```
 
 Note that a data node cannot be deleted if it contains data for a
-hypertable. You have to ensure either that there is no data on the
-data node, or that the data is replicated to other nodes.
+hypertable.
 
 ### Information Schema for Data Nodes
 
 The data nodes that have been added to the database can be found by
-querying the `timesscaledb_information.data_node`.
+querying the `timesscaledb_information.data_node` view.
 
 | Column            | Type    | Description                                               |
 |-------------------|---------|-----------------------------------------------------------|
