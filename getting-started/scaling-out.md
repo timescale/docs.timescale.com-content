@@ -37,7 +37,13 @@ When creating the data node, you should:
 
 * Provide the host where the hypertable partition for the distributed
   hypertable should be stored.
-
+  
+* Provide password, which will be used during access to
+  the created remote data node.
+  
+* Provide bootstrap user and password, which is used to
+  create the data node.
+  
 * Ensure that the bootstrap user used for connecting to the data node has
   `CREATEDB` privilege or is a superuser. 
   This is necessary since
@@ -48,10 +54,10 @@ When creating the data node, you should:
 ```sql
 SELECT add_data_node('node1', host => 'dn1.example.com',
   password=>'<remote_password>', bootstrap_user=>'<superuser>',
-	bootstrap_password=>'<superuser_password>');
+  bootstrap_password=>'<superuser_password>');
 SELECT add_data_node('node2', host => 'dn2.example.com',
   password=>'<remote_password>', bootstrap_user=>'<superuser>',
-	bootstrap_password=>'<superuser_password>');
+  bootstrap_password=>'<superuser_password>');
 ```
 
 Deleting a data node is done in a similar manner.
@@ -100,7 +106,8 @@ SELECT create_distributed_hypertable('conditions', 'time', 'location');
 >hypertable will not be created.
 
 You can now insert data into the distributed hypertable and
-it will automatically be partitioned on the available data nodes. You
+it will automatically be partitioned on the available data nodes
+by using the provided space partition. You
 can find more information for how work with data in hypertables in the
 section [Creating Hypertables][creating-hypertables].
 
@@ -117,7 +124,9 @@ added to existing distributed hypertables, so it is necssary to attach
 it explicitly.
 
 ```sql
-SELECT add_data_node('node3', host => 'dn3.example.com');
+SELECT add_data_node('node3', host => 'dn3.example.com',
+  password=>'<remote_password>', bootstrap_user=>'<superuser>',
+  bootstrap_password=>'<superuser_password>');
 SELECT attach_data_node('node3', hypertable => 'conditions');
 ```
 
