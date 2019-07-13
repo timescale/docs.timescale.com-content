@@ -39,8 +39,8 @@ When creating the data node, you should:
   hypertable should be stored.
 
 * Ensure that the user used for connecting to the data node has
-  `CREATEDB` permissions or be a superuser. This is necessary since
-  `create_distributed_hypertable` expect to be able to create a
+  `CREATEDB` permissions or is a superuser. This is necessary since
+  `create_distributed_hypertable` expects to be able to create a
   database on the remote data node.
 
 ```sql
@@ -65,7 +65,7 @@ querying the
 ## Working with Distributed Hypertables
 
 As previously mentioned, distributed hypertables are similar to normal
-hypertable with the difference that distributed hypertables will
+hypertables with the difference that distributed hypertables will
 partition the data and store it on remote data nodes. This means that
 to create a distributed hypertable, you need to have added at least one data node
 before starting.
