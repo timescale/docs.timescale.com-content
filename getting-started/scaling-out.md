@@ -38,14 +38,20 @@ When creating the data node, you should:
 * Provide the host where the hypertable partition for the distributed
   hypertable should be stored.
 
-* Ensure that the user used for connecting to the data node has
-  `CREATEDB` permissions or is a superuser. This is necessary since
-  `create_distributed_hypertable` expects to be able to create a
-  database on the remote data node.
+* Ensure that the bootstrap user used for connecting to the data node has
+  `CREATEDB` privilege or is a superuser. 
+  This is necessary since
+  `add_data_node` expects to be able to create a
+  database on the remote data node and create
+  TimescaleDB extension in it.
 
 ```sql
-SELECT add_data_node('node1', host => 'dn1.example.com');
-SELECT add_data_node('node2', host => 'dn2.example.com');
+SELECT add_data_node('node1', host => 'dn1.example.com',
+  password=>'<remote_password>', bootstrap_user=>'<superuser>',
+	bootstrap_password=>'<superuser_password>');
+SELECT add_data_node('node2', host => 'dn2.example.com',
+  password=>'<remote_password>', bootstrap_user=>'<superuser>',
+	bootstrap_password=>'<superuser_password>');
 ```
 
 Deleting a data node is done in a similar manner.
