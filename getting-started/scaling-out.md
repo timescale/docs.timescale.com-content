@@ -10,11 +10,11 @@ Distributed hypertables are similar to normal hypertables, but they
 add an additional layer of hypertable partitioning by distributing chunks
 across *data nodes*.
 
-In the multi-node topology ([architecture][]), all nodes are TimescaleDB instances.
-The data are distributed and stored in TimescaleDB instances, called data nodes.
-The distributed data are accessed through a distributed hypertable
-on another TimescaleDB instance, called the *access node*.
-The access node is the entry point for any access to data in the cluster.
+Data nodes together with an *access node* constitue a multi-node cluster
+([architecture][]). All the nodes are TimescaleDB instances,
+i.e., a host with running PostgreSQL database and loaded TimescaleDB extension.
+While data nodes store distributed chunks, the access node is
+the entry point for clients to access distributed hypertables.
 
 ## Working with Data Nodes
 
@@ -25,10 +25,10 @@ and removed using [`delete_data_node`][delete_data_node].
 
 Note that:
 
-* Data nodes are added as objects locally and just connect to an
-  existing database server.
+* Data nodes are added as objects locally and connect to an
+  existing PostgreSQL instance.
 
-* You should already have a running database server on some host.
+* You should already have a running PostgreSQL server on the data node host.
 
 When creating the data node, you should:
 
@@ -40,9 +40,13 @@ When creating the data node, you should:
   
 * Provide password, which will be used during access to
   the created remote data node.
-  
+
+* Ensure that data nodes have password authentication enabled 
+  in their `pg_hba.conf` files for any non-superusers.
+
 * Provide bootstrap user and password, which is used to
-  create the data node.
+  create the data node. If the current user can be used, then 
+  the boostrap user and password can be omitted.
   
 * Ensure that the bootstrap user used for connecting to the data node has
   `CREATEDB` privilege or is a superuser. 
@@ -50,7 +54,10 @@ When creating the data node, you should:
   `add_data_node` expects to be able to create a
   database on the remote data node and create
   TimescaleDB extension in it.
-
+  
+* Ensure that the local user has `USAGE` privilege on the `timescaledb_fdw` 
+  foreign data wrapper on the access node.
+  
 ```sql
 SELECT add_data_node('node1', host => 'dn1.example.com',
   password=>'<remote_password>', bootstrap_user=>'<superuser>',
@@ -59,6 +66,11 @@ SELECT add_data_node('node2', host => 'dn2.example.com',
   password=>'<remote_password>', bootstrap_user=>'<superuser>',
   bootstrap_password=>'<superuser_password>');
 ```
+
+>:TIP: Any additional users that will access a distributed hypertable 
+currently need their own user mappings per data node with 
+a user and password option, which can be created with
+`CREATE USER MAPPING FOR` statement.
 
 Deleting a data node is done in a similar manner.
 
