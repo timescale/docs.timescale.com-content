@@ -187,14 +187,12 @@ If you want a hypertable to use a data node that was created later,
 you must attach the data node to the hypertable using this
 function.
 
->:WARNING: This function *MUST* be run on an access node.
-
 #### Required Arguments [](attach_data_node-required-arguments)
 
 | Name              | Description                                   |
 |-------------------|-----------------------------------------------|
 | `hypertable`      | Name of hypertable to attach node to          |
-| `node_name`       | Local name of data node to attach             |
+| `node_name`       | Name of data node to attach             |
 
 #### Optional Arguments [](attach_data_node-optional-arguments)
 
@@ -208,7 +206,7 @@ function.
 |-------------------|-----------------------------------------------|
 | `hypertable_id`      | Hypertable id of the modified hypertable |
 | `node_hypertable_id` | Hypertable id on the remote data node    |
-| `node_name`          | Local name of the attached data node     |
+| `node_name`          | Name of the attached data node     |
 
 #### Sample Usage [](attach_data_node-examples)
 
@@ -539,36 +537,18 @@ removed from all hypertables that use it
 - You want to have fewer data nodes for a distributed hypertable to
 partition across to other distributed hypertables in the database
 
->:WARNING: This function *MUST* be run on an access node.
-
 #### Required Arguments [](detach_data_node-required-arguments)
 
 | Name        | Description                       |
 |-------------|-----------------------------------|
-| `node_name` | Local name of data node to detach |
-
-##### Parameter Description
-
-* `node_name` - Local name of the data node to detach from the
-  hypertable.
+| `node_name` | Name of data node to detach from the hypertable |
 
 #### Optional Arguments [](detach_data_node-optional-arguments)
 
 | Name         | Description                            |
 |--------------|----------------------------------------|
-| `hypertable` | Name of hypertable to detach node from |
-| `force`      | Force detach of the data node          |
-
-##### Parameter Description
-
-* `hypertable` - The name of the hypertable where the data node should
-  be attached. If NULL, the data node will be detached from all
-  hypertables.
-
-* `force` - Force detaching the node even if that means that the
-  replication factor is reduced below what was required. Note that it
-  will never be allowed to reduce the replication factor below 1 since
-  that would cause data loss.
+| `hypertable` | Name of the hypertable where the data node should be attached. If NULL, the data node will be detached from all hypertables. |
+| `force`      | Force detach of the data node even if that means that the replication factor is reduced below what was set. Note that it will never be allowed to reduce the replication factor below 1 since that would cause data loss.         |
 
 #### Returns
 
@@ -576,7 +556,7 @@ partition across to other distributed hypertables in the database
 |----------------------|------------------------------------------|
 | `hypertable_id`      | Hypertable id of the modified hypertable |
 | `node_hypertable_id` | Hypertable id on the remote data node    |
-| `node_name`          | Local name of the attached data node     |
+| `node_name`          | Name of the attached data node     |
 
 #### Errors
 
