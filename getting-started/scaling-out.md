@@ -70,11 +70,11 @@ SELECT add_data_node('node2', host => 'dn2.example.com',
 
 Any additional users that will access a distributed hypertable currently 
 need their own user mappings per data node with a `user` and `password` option. 
-A user mapping can be created for data node as follows: 
+A user mapping can be created for a data node as follows: 
 
 ```sql
-CREATE USER MAPPING FOR foo SERVER <data node> 
-  OPTIONS (user 'foo' password 'bar');
+CREATE USER MAPPING FOR foo SERVER node1 
+  OPTIONS (user '<user>' password '<remote_password>');
 ```
 The additional users also need `USAGE` permission on the `timescaledb_fdw` 
 foreign data wrapper and any data node (server) objects 
