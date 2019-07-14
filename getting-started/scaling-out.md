@@ -10,9 +10,9 @@ Distributed hypertables are similar to normal hypertables, but they
 add an additional layer of hypertable partitioning by distributing chunks
 across *data nodes*.
 
-Data nodes together with an *access node* constitue a multi-node cluster
+Data nodes together with an *access node* constitute a multi-node cluster
 ([architecture][]). All the nodes are TimescaleDB instances,
-i.e., hosts with running PostgreSQL database and loaded TimescaleDB extension.
+i.e., hosts with a running PostgreSQL database and loaded TimescaleDB extension.
 While data nodes store distributed chunks, the access node is
 the entry point for clients to access distributed hypertables.
 
@@ -46,7 +46,7 @@ When creating the data node, you should:
   create the data node. If the current user can be used, then 
   the boostrap user and password can be omitted.
   
-* Ensure that data node has password authentication enabled 
+* Ensure that the data node has password authentication enabled 
   in their `pg_hba.conf` files for any non-superusers.
 
 * Ensure that the bootstrap user used for connecting to the data node has
@@ -68,18 +68,24 @@ SELECT add_data_node('node2', host => 'dn2.example.com',
   bootstrap_password=>'<superuser_password>');
 ```
 
->:TIP: Any additional users that will access a distributed hypertable 
-currently need their own user mappings per data node with 
-a user and password option, which can be created with
-`CREATE USER MAPPING FOR` statement.
+Any additional users that will access a distributed hypertable currently 
+need their own user mappings per data node with a `user` and `password` option. 
+A user mapping can be created for data node as follows: 
 
-Deleting a data node is done in a similar manner.
+```sql
+CREATE USER MAPPING FOR foo SERVER <data node> 
+  OPTIONS (user 'foo' password 'bar');
+```
+The additional users also need `USAGE` permission on the `timescaledb_fdw` 
+foreign data wrapper and any data node (server) objects 
+
+Deleting a data node is done by calling `delete_data_node.
 
 ```sql
 SELECT delete_data_node('node1');
 ```
 >:TIP: Note that a data node cannot be deleted if it contains data for a
-hypertable.
+hypertable, since no data can be lost.
 
 ### Information Schema for Data Nodes
 
