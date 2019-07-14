@@ -12,7 +12,7 @@ across *data nodes*.
 
 Data nodes together with an *access node* constitue a multi-node cluster
 ([architecture][]). All the nodes are TimescaleDB instances,
-i.e., a host with running PostgreSQL database and loaded TimescaleDB extension.
+i.e., hosts with running PostgreSQL database and loaded TimescaleDB extension.
 While data nodes store distributed chunks, the access node is
 the entry point for clients to access distributed hypertables.
 
@@ -20,7 +20,8 @@ the entry point for clients to access distributed hypertables.
 
 Data nodes act as the containers for the hypertable chunks and are
 necessary to create distributed hypertables. Data nodes are
-added to the current database using [`add_data_node`][add_data_node]
+added to the current database on an access node
+using [`add_data_node`][add_data_node]
 and removed using [`delete_data_node`][delete_data_node].
 
 Note that:
@@ -41,13 +42,13 @@ When creating the data node, you should:
 * Provide password, which will be used during access to
   the created remote data node.
 
-* Ensure that data nodes have password authentication enabled 
-  in their `pg_hba.conf` files for any non-superusers.
-
 * Provide bootstrap user and password, which is used to
   create the data node. If the current user can be used, then 
   the boostrap user and password can be omitted.
   
+* Ensure that data node has password authentication enabled 
+  in their `pg_hba.conf` files for any non-superusers.
+
 * Ensure that the bootstrap user used for connecting to the data node has
   `CREATEDB` privilege or is a superuser. 
   This is necessary since
