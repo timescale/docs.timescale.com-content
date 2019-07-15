@@ -3,12 +3,14 @@
 >:TOPLIST:
 > ### Command List (A-Z)
 > - [add_dimension](#add_dimension)
+> - [add_data_node](#add_data_node)
 > - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
 > -	[add_compress_chunks_policy](#add_compress_chunks_policy)
 > - [alter_job_schedule](#alter_job_schedule)
 > - [alter table (compression)](#compression_alter-table)
 > - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
+> - [attach_data_node](#attach_data_node)
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
@@ -18,6 +20,8 @@
 > - [create index (transaction per chunk)](#create_index)
 > - [create view (continuous aggregate)](#continuous_aggregate-create_view)
 > -	[decompress_chunk](#decompress_chunk)
+> - [delete_data_node](#delete_data_node)
+> - [detach_data_node](#detach_data_node)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
@@ -62,7 +66,7 @@
 
 ## Hypertable management [](hypertable-management)
 
-### add_dimension() [](add_dimension)
+## add_dimension() [](add_dimension)
 
 Add an additional partitioning dimension to a TimescaleDB hypertable.
 The column selected as the dimension can either use interval
@@ -181,7 +185,141 @@ SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_e
 ```
 
 ---
-### attach_tablespace() [](attach_tablespace)
+## attach_data_node() [](attach_data_node)
+
+Attach a data node to a hypertable. The data node should have been
+previously created using [`add_data_node`](#add_data_node).
+
+When a distributed hypertable is created it will by default use all
+available data nodes for the hypertable, but if a data node is added
+*after* a hypertable is created, the data node will not automatically
+be used by existing distributed hypertables.
+
+If you want a hypertable to use a data node that was created later,
+you must attach the data node to the hypertable using this
+function.
+
+#### Required Arguments [](attach_data_node-required-arguments)
+
+| Name              | Description                                   |
+|-------------------|-----------------------------------------------|
+| `node_name`       | Name of data node to attach             |
+| `hypertable`      | Name of distributed hypertable to attach node to          |
+
+#### Optional Arguments [](attach_data_node-optional-arguments)
+
+| Name              | Description                                   |
+|-------------------|-----------------------------------------------|
+| `if_not_attached` | Prevents error if data node is already attached to the hypertable. A notice will be printed that the data node is attached. |
+
+#### Returns
+
+| Column               | Description                              |
+|-------------------|-----------------------------------------------|
+| `hypertable_id`      | Hypertable id of the modified hypertable |
+| `node_hypertable_id` | Hypertable id on the remote data node    |
+| `node_name`          | Name of the attached data node     |
+
+#### Sample Usage [](attach_data_node-examples)
+
+Attach a data node `dn3` to a distributed hypertable `conditions`
+previously created with
+[`create_distributed_hypertable`](#create_distributed_hypertable).
+
+```sql
+SELECT * FROM attach_data_node('dn3','conditions');
+
+hypertable_id | node_hypertable_id |  node_name  
+--------------+--------------------+-------------
+            5 |                  3 | dn3
+
+(1 row)
+```
+
+>:TIP: You must add a data node to your distributed database first
+with [`add_data_node`](#add_data_node) first before attaching it.
+
+---
+## add_data_node() [](add_data_node)
+
+Add a new data node to the database to be used for creating
+distributed hypertables.
+
+Newly created distributed hypertables will be able to make use of this
+data node for apportioning data across the distributed database. Note that existing
+distributed hypertables will not automatically use the newly added
+data node. For existing distributed hypertables to use added data
+nodes, use [`attach_data_node`](#attach_data_node).
+
+The function will attempt to bootstrap the data node by:
+1. Connecting to a specified postgres instance
+2. Creating the database that will serve as the new data node
+3. Loading the TimescaleDB extension on the new database
+
+#### Errors
+
+An error will be given if:
+* an attempt is made to run the function inside a transaction _or_
+* the remote database already exists on the data node and
+  `if_not_exists` is not set.
+
+#### Required Arguments [](add_data_node-required-arguments)
+
+| Name        | Description                         |
+| ----------- | -----------                         |
+| `node_name` | Name for the data node.             |
+
+#### Optional Arguments [](add_data_node-optional-arguments)
+
+| Name                 | Description                                           |
+|----------------------|-------------------------------------------------------|
+| `host`               | Host name for the remote data node. The default is `'localhost'`. |
+| `port`               | Port to use on the remote data node. The default is the PostgreSQL port used by the access node on which the function is executed. |
+| `database`           | Database name where remote hypertables will be created. The default is the current database name. |
+| `password`           | Password to be used when connecting to the remote data node. Note that the user name will be the same as the current user. The default is to not use a password. |
+| `if_not_exists`      | Do not fail if the data node already exists. The data node will not be overwritten, but the command will not generate an error and instead generate a notice. |
+| `bootstrap_database` | Database to use when bootstrapping as described above. The default is `'postgres'`. |
+| `bootstrap_user`     | User to be used for bootstrapping. This user needs to have `SUPERUSER` permissions on the remote database server, unless the remote database already exists with the timescaledb extension. The default is the current user. |
+| `bootstrap_password` | Password to be used when bootstrapping. The default is the password provided in `password`. |
+
+#### Returns [](add_data_node-returns)
+
+| Column              | Description                                       |
+|---------------------|---------------------------------------------------|
+| `node_name`         | Local name to use for the data node               |
+| `host`              | Host name for the remote data node                |
+| `port`              | Port for the remote data node                     |
+| `database`          | Database name used on the remote data node        |
+| `node_created`      | Was the data node created locally                 |
+| `database_created`  | Was the database created on the remote data node  |
+| `extension_created` | Was the extension created on the remote data node |
+
+#### Sample usage [](add_data_node-examples)
+
+Let's assume that you have an existing hypertable `conditions` and
+want to use `time` as the time partitioning column and `location` as
+the space partitioning column. You also want to distribute the chunks
+of the hypertable on two data nodes `dn1.example.com` and
+`dn2.example.com`:
+
+```sql
+SELECT add_data_node('dn1', host => 'dn1.example.com');
+SELECT add_data_node('dn2', host => 'dn2.example.com');
+SELECT create_distributed_hypertable('conditions', 'time', 'location');
+```
+
+Note that the previous example will only succeed if the current user
+has `SUPERUSER` permission on the two remote systems and doesn't
+require a password to connect.  If the current user doesn't have the
+appropriate permissions, you'll have to provide a bootstrap user as
+described above:
+
+```sql
+SELECT add_data_node('dn1', host => 'dn1.example.com', password => 'mydn1password', bootstrap_user => 'dn1_superuser', bootstrap_password => 'dn1_su_password');
+```
+
+---
+## attach_tablespace() [](attach_tablespace)
 
 Attach a tablespace to a hypertable and use it to store chunks. A
 [tablespace][postgres-tablespaces] is a directory on the filesystem
@@ -477,7 +615,7 @@ when creating distributed hypertables.
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
 | `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
 | `replication_factor` | This will determine the number of data nodes each incoming write is written to.  The default value is 1 and this is required to be 1 or greater, but note that values greater than 1 are not recommended in the current implementation. |
-| `data_nodes` | This is the set of data nodes that will be used for this table.  If this is not present then all data nodes known by this instance will be used to distribute the hypertable. | 
+| `data_nodes` | This is the set of data nodes that will be used for this table.  If this is not present then all data nodes known by this instance will be used to distribute the hypertable. |
 | `chunk_target_size` | DEPRECATED - The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable adaptive chunking (a DEPRECATED feature). The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
 | `chunk_sizing_func` | DEPRECATED - Allows setting a custom chunk sizing function for adaptive chunking (a DEPRECATED feature). The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
 
@@ -526,7 +664,7 @@ a larger time interval.
 
 For example, assume you are ingesting 10GB of data per day and you
 have five data nodes, each with 64GB of memory.  If this is the only
-table being served by these data nodes, then you should use a time 
+table being served by these data nodes, then you should use a time
 interval of 1 week (7 * 10GB / 5 * 64GB ~= 22% main memory used for
 most recent chunks).
 
@@ -536,7 +674,7 @@ data will be handled by a single node.
 
 ---
 
-### CREATE INDEX (Transaction Per Chunk) [](create_index)
+## CREATE INDEX (Transaction Per Chunk) [](create_index)
 
 ```SQL
 CREATE INDEX ... WITH (timescaledb.transaction_per_chunk, ...);
@@ -567,9 +705,107 @@ CREATE INDEX ON conditions(time, location) USING brin
   WITH (timescaledb.transaction_per_chunk);
 ```
 
----
+## delete_data_node() [](delete_data_node)
 
-### detach_tablespace() [](detach_tablespace)
+This function will remove the data node locally. This will *not*
+affect the remote database in any way, it will just update the local
+index over all existing data nodes.
+
+The data node will be detached from all hypertables that are using
+it if permissions and data integrity requirements are satisfied. For
+more information, see [`detach_data_node`](#detach_data_node).
+
+#### Errors
+
+An error will be generated if the data node cannot be detached from
+all attached hypertables.
+
+#### Required Arguments [](delete_data_node-required-arguments)
+
+| Name        | Description            |
+| ----------- | -----------            |
+| `node_name` | Name of the data node. |
+
+#### Optional Arguments [](delete_data_node-optional-arguments)
+
+| Name        | Description                                           |
+|-------------|-------------------------------------------------------|
+| `if_exists` | Prevent error if the data node does not exist. Defaults to false. |
+| `cascade`   | Cascade the delete so that all objects dependent on the data node are deleted as well. Defaults to false. |
+| `force`     | Force removal of data nodes from hypertables unless that would result in data loss.  Defaults to false. |
+
+#### Returns [](delete_data_node-returns)
+
+A boolean indicating if the operation was successful or not.
+
+#### Sample usage [](delete_data_node-examples)
+
+To delete a data node named `dn1`:
+```sql
+SELECT delete_data_node('dn1');
+```
+
+---
+## detach_data_node() [](detach_data_node)
+
+Detach a data node from one hypertable or from all hypertables.
+
+Reasons for detaching a data node:
+
+- A data node should no longer be used by a hypertable and needs to be
+removed from all hypertables that use it
+- You want to have fewer data nodes for a distributed hypertable to
+partition across
+
+#### Required Arguments [](detach_data_node-required-arguments)
+
+| Name        | Description                       |
+|-------------|-----------------------------------|
+| `node_name` | Name of data node to detach from the distributed hypertable |
+
+#### Optional Arguments [](detach_data_node-optional-arguments)
+
+| Name         | Description                            |
+|--------------|----------------------------------------|
+| `hypertable` | Name of the distributed hypertable where the data node should be attached. If NULL, the data node will be detached from all hypertables. |
+| `force`      | Force detach of the data node even if that means that the replication factor is reduced below what was set. Note that it will never be allowed to reduce the replication factor below 1 since that would cause data loss.         |
+
+#### Returns
+
+| Column               | Description                              |
+|----------------------|------------------------------------------|
+| `hypertable_id`      | Hypertable id of the modified hypertable |
+| `node_hypertable_id` | Hypertable id on the remote data node    |
+| `node_name`          | Name of the attached data node     |
+
+#### Errors
+
+Detaching a node is not permitted:
+- If it would result in data loss for the hypertable due to the data node
+containing chunks that are not replicated on other data nodes
+- If it would result in under-replicated chunks for the distributed hypertable
+(without the `force` argument)
+
+>:TIP: Replication is currently experimental, and not a supported feature
+
+Detaching a data node is under no circumstances possible if that would
+mean data loss for the hypertable. Nor is it possible to detach a data node,
+unless forced, if that would mean that the distributed hypertable would end
+up with under-replicated chunks.
+
+The only safe way to detach a data node is to first safely delete any
+data on it or replicate it to another data node.
+
+#### Sample Usage [](detach_data_node-examples)
+
+Detach data node `dn3` from `conditions`:
+
+```sql
+SELECT detach_data_node('conditions', 'dn3');
+```
+
+---
+## detach_tablespace() [](detach_tablespace)
 
 Detach a tablespace from one or more hypertables. This _only_ means
 that _new_ chunks will not be placed on the detached tablespace. This
@@ -626,7 +862,7 @@ SELECT detach_tablespace('disk1');
 
 ---
 
-### detach_tablespaces() [](detach_tablespaces)
+## detach_tablespaces() [](detach_tablespaces)
 
 Detach all tablespaces from a hypertable. After issuing this command
 on a hypertable, it will no longer have any tablespaces attached to
@@ -649,7 +885,7 @@ SELECT detach_tablespaces('conditions');
 
 ---
 
-### drop_chunks() [](drop_chunks)
+## drop_chunks() [](drop_chunks)
 
 Removes data chunks whose time range falls completely before (or after) a
 specified time, operating either across all hypertables or for a specific one.
@@ -760,7 +996,7 @@ SELECT drop_chunks(INTERVAL '3 months', 'conditions', cascade_to_materialization
 
 ---
 
-### set_chunk_time_interval() [](set_chunk_time_interval)
+## set_chunk_time_interval() [](set_chunk_time_interval)
 Sets the chunk_time_interval on a hypertable. The new interval is used
 when new chunks are created but the time intervals on existing chunks are
 not affected.
@@ -878,7 +1114,7 @@ SELECT set_integer_now_func('test_table_bigint', 'unix_now');
 
 ---
 
-### show_chunks() [](show_chunks)
+## show_chunks() [](show_chunks)
 Get list of chunks associated with hypertables.
 
 #### Optional Arguments [](show_chunks-optional-arguments)
@@ -967,7 +1203,7 @@ SELECT show_chunks(older_than => INTERVAL '3 months', newer_than => INTERVAL '4 
 ```
 
 ---
-### reorder_chunk() :community_function: [](reorder_chunk)
+## reorder_chunk() :community_function: [](reorder_chunk)
 
 Reorder a single chunk's heap to follow the order of an index. This function
 acts similarly to the [PostgreSQL CLUSTER command][postgres-cluster] , however
@@ -1409,7 +1645,7 @@ all the updates to the hypertable.
 
 ---
 
-### DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
+## DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
 Continuous aggregate views can be dropped using `DROP VIEW` statement.
 
 This deletes the hypertable that stores the materialized data for the
@@ -1666,7 +1902,7 @@ extract the `job_id`, as shown above.
 ---
 ## Analytics [](analytics)
 
-### first() [](first)
+## first() [](first)
 
 The `first` aggregate allows you to get the value of one column
 as ordered by another. For example, `first(temperature, time)` will return the
@@ -1696,7 +1932,7 @@ GROUP BY device_id;
 
 ---
 
-### histogram() [](histogram)
+## histogram() [](histogram)
 
 The `histogram()` function represents the distribution of a set of
 values as an array of equal-width buckets. It partitions the dataset
@@ -1869,7 +2105,7 @@ ORDER BY interval DESC;
  latest value (which will use indexes).
 
 ---
-### locf() :community_function: [](locf)
+## locf() :community_function: [](locf)
 
 The `locf` function (last observation carried forward) allows you to carry the last seen value in an aggregation group forward.
 It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
@@ -1954,7 +2190,7 @@ ORDER BY day;
 
 ---
 
-### time_bucket() [](time_bucket)
+## time_bucket() [](time_bucket)
 
 This is a more powerful version of the standard PostgreSQL `date_trunc` function.
 It allows for arbitrary time intervals instead of the second, minute, hour, etc.
@@ -2072,7 +2308,7 @@ to the server's timezone setting.
  2000-01-01 as the origin parameter to time_bucket.
 
 ---
-### time_bucket_gapfill() :community_function: [](time_bucket_gapfill)
+## time_bucket_gapfill() :community_function: [](time_bucket_gapfill)
 
 The `time_bucket_gapfill` function works similar to `time_bucket` but also activates gap
 filling for the interval between `start` and `finish`. It can only be used with an aggregation
@@ -2193,7 +2429,7 @@ ORDER BY day;
 
 ## Utilities/Statistics [](utilities)
 
-### timescaledb_information.data_node [](timescaledb_information-datanode)
+## timescaledb_information.data_node [](timescaledb_information-datanode)
 
 Get information on data nodes. This function is specific to running
 TimescaleDB in a multi-node setup.
@@ -2224,7 +2460,7 @@ SELECT * FROM timescaledb_information.data_node;
 (2 rows)
 ```
 
-### timescaledb_information.hypertable [](timescaledb_information-hypertable)
+## timescaledb_information.hypertable [](timescaledb_information-hypertable)
 
 Get information about hypertables. If the hypertable is distributed, the
 hypertable statistics reflect the sum of statistics across all distributed chunks.
@@ -2270,7 +2506,7 @@ WHERE table_schema='public' AND table_name='metrics';
 (1 row)
 ```
 
-### timescaledb_information.license [](timescaledb_information-license)
+## timescaledb_information.license [](timescaledb_information-license)
 
 Get information about current license.
 
@@ -2430,7 +2666,7 @@ view_definition                |  SELECT foo.a,                                 
 
 ```
 ---
-### timescaledb_information.continuous_aggregate_stats [](timescaledb_information-continuous_aggregate_stats)
+## timescaledb_information.continuous_aggregate_stats [](timescaledb_information-continuous_aggregate_stats)
 
 Get information about background jobs and statistics related to continuous aggregates.
 
@@ -2568,7 +2804,7 @@ SELECT * FROM timescaledb_information.policy_stats;
 ```
 
 ---
-### timescaledb.license_key [](timescaledb_license-key)
+## timescaledb.license_key [](timescaledb_license-key)
 
 #### Sample Usage [](timescaledb_license-key-examples)
 
@@ -2579,7 +2815,7 @@ SHOW timescaledb.license_key;
 ```
 ---
 
-### chunk_relation_size() [](chunk_relation_size)
+## chunk_relation_size() [](chunk_relation_size)
 
 Get relation size of the chunks of an hypertable.
 
@@ -2626,7 +2862,7 @@ Where `chunk_table` is the table that contains the data, `table_bytes` is the si
 
 ---
 
-### chunk_relation_size_pretty() [](chunk_relation_size_pretty)
+## chunk_relation_size_pretty() [](chunk_relation_size_pretty)
 
 Get relation size of the chunks of an hypertable.
 
@@ -2671,7 +2907,7 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
-### get_telemetry_report() [](get_telemetry_report)
+## get_telemetry_report() [](get_telemetry_report)
 
 If background [telemetry][] is enabled, returns the string sent to our servers.
 If telemetry is not enabled, outputs INFO message affirming telemetry is disabled
@@ -2695,7 +2931,7 @@ SELECT get_telemetry_report(always_display_report := true);
 
 ---
 
-### hypertable_approximate_row_count() [](hypertable_approximate_row_count)
+## hypertable_approximate_row_count() [](hypertable_approximate_row_count)
 
 Get approximate row count for hypertable(s) based on catalog estimates.
 
@@ -2726,7 +2962,7 @@ The expected output:
 
 ---
 
-### hypertable_relation_size() [](hypertable_relation_size)
+## hypertable_relation_size() [](hypertable_relation_size)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
@@ -2761,7 +2997,7 @@ The expected output:
 ```
 ---
 
-### hypertable_relation_size_pretty() [](hypertable_relation_size_pretty)
+## hypertable_relation_size_pretty() [](hypertable_relation_size_pretty)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
@@ -2797,7 +3033,7 @@ The expected output:
 
 ---
 
-### indexes_relation_size() [](indexes_relation_size)
+## indexes_relation_size() [](indexes_relation_size)
 
 Get sizes of indexes on a hypertable.
 
@@ -2828,7 +3064,7 @@ The expected output:
 
 ---
 
-### indexes_relation_size_pretty() [](indexes_relation_size_pretty)
+## indexes_relation_size_pretty() [](indexes_relation_size_pretty)
 
 Get sizes of indexes on a hypertable.
 
@@ -2860,7 +3096,7 @@ The expected output:
 
 ---
 
-### show_tablespaces() [](show_tablespaces)
+## show_tablespaces() [](show_tablespaces)
 
 Show the tablespaces attached to a hypertable.
 
@@ -2902,7 +3138,7 @@ SELECT timescaledb_pre_restore();
 
 ---
 
-### timescaledb_post_restore() [](timescaledb_post_restore)
+## timescaledb_post_restore() [](timescaledb_post_restore)
 Perform the proper operations after restoring the database has completed.
 Specifically this sets the `timescaledb.restoring` GUC to `off` and restarts any
 background workers. See [backup/restore docs][backup-restore] for more information.
