@@ -67,6 +67,7 @@ When creating the data node, you should:
 SELECT add_data_node('node1', host => 'dn1.example.com',
   password=>'<remote_password>', bootstrap_user=>'<superuser>',
   bootstrap_password=>'<superuser_password>');
+
 SELECT add_data_node('node2', host => 'dn2.example.com',
   password=>'<remote_password>', bootstrap_user=>'<superuser>',
   bootstrap_password=>'<superuser_password>');
@@ -88,7 +89,7 @@ Deleting a data node is done by calling `delete_data_node`:
 ```sql
 SELECT delete_data_node('node1', cascade=>true);
 ```
->:TIP: Note that a data node cannot be deleted if it contains data for a
+>:TIP: A data node cannot be deleted if it contains data for a
 hypertable, since otherwise data would be lost.
 
 >:WARNING: Although the `cascade` parameter is not strictly a required argument,
@@ -157,6 +158,7 @@ it explicitly.
 SELECT add_data_node('node3', host => 'dn3.example.com',
   password=>'<remote_password>', bootstrap_user=>'<superuser>',
   bootstrap_password=>'<superuser_password>');
+
 SELECT attach_data_node('node3', hypertable => 'conditions');
 ```
 
