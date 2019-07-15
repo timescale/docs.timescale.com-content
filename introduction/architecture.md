@@ -112,6 +112,11 @@ chunking, please see our [technical blog post][chunking].
 
 ## TimescaleDB Clustering (PRIVATE BETA) [](timescaledb-clustering)
 
+>:WARNING: Running TimescaleDB in a multi-node setup is currently in PRIVATE BETA.
+This method of deployment is not meant for production use. For more information,
+please
+[contact us][contact].
+
 TimescaleDB supports multi-node clustering by leveraging the hypertable and chunk primitives described above.
 In the multi-node topology, all nodes are TimescaleDB instances, but may play different roles
 depending on their responsibilities within a distributed database.
@@ -192,3 +197,4 @@ can be changed, the column on which the data is partitioned can not be changed.
 [chunking]: https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
 [jumpSQL]: /using-timescaledb/hypertables
 [TvsP]: /introduction/timescaledb-vs-postgres
+[contact]: https://www.timescale.com/contact
