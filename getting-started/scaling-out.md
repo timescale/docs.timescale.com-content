@@ -13,7 +13,7 @@ across *data nodes*.
 Data nodes together with an *access node* constitute a distributed database
 ([architecture][]). All the nodes are TimescaleDB instances,
 i.e., hosts with a running PostgreSQL database and loaded TimescaleDB extension.
-While data nodes store distributed chunks, the access node is
+While the data nodes store distributed chunks, the access node is
 the entry point for clients to access distributed hypertables.
 
 ## Working with Data Nodes
@@ -39,10 +39,10 @@ When creating the data node, you should:
 * Provide the host where the hypertable partition for the distributed
   hypertable should be stored.
   
-* Provide remote password, which will be used during access to
+* Provide a remote password, which will be used during access to
   the created remote data node by the current local user.
 
-* Provide bootstrap user and password, which is used to
+* Provide a bootstrap user and password, which is used to
   create the data node. If the current user can be used, then 
   the boostrap user and password can be omitted.
   
@@ -77,9 +77,9 @@ CREATE USER MAPPING FOR <another_user> SERVER node1
   OPTIONS (user '<remote_user>' password '<remote_password>');
 ```
 The additional users also need `USAGE` permission on the `timescaledb_fdw` 
-foreign data wrapper and any data node (server) objects 
+foreign data wrapper and any data node (server) objects.
 
-Deleting a data node is done by calling `delete_data_node.
+Deleting a data node is done by calling `delete_data_node`:
 
 ```sql
 SELECT delete_data_node('node1');
