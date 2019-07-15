@@ -39,8 +39,8 @@ When creating the data node, you should:
 * Provide the host where the hypertable partition for the distributed
   hypertable should be stored.
   
-* Provide a remote password, which will be used during access to
-  the created remote data node by the current local user.
+* Provide the remote password, which will be used during access to
+  the created remote data node by the current user.
 
 * Provide a bootstrap user and password, which is used to
   create the data node. If the current user can be used, then 
@@ -85,7 +85,7 @@ Deleting a data node is done by calling `delete_data_node`:
 SELECT delete_data_node('node1');
 ```
 >:TIP: Note that a data node cannot be deleted if it contains data for a
-hypertable, since no data can be lost.
+hypertable, since otherwise data would be lost.
 
 ### Information Schema for Data Nodes
 
@@ -124,6 +124,8 @@ SELECT create_distributed_hypertable('conditions', 'time', 'location');
 >when executing `create_distributed_hypertable` and the distributed
 >hypertable will not be created.
 
+This creates a multi-dimensional distributed hypertable 
+partitioned along `time` and `location`.
 You can now insert data into the distributed hypertable and
 it will automatically be partitioned on the available data nodes
 by using the provided space partition. You
