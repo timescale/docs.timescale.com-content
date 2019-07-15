@@ -218,14 +218,14 @@ previously created with
 SELECT * FROM attach_data_node('dn3','conditions');
 
 hypertable_id | node_hypertable_id |  node_name  
----------------+--------------------+-------------
+--------------+--------------------+-------------
             5 |                  3 | dn3
 
 (1 row)
 ```
 
 >:TIP: You must add a data node to your distributed database first
-before attaching it.
+with [`add_data_node`](#add_data_node) first before attaching it.
 
 ---
 ## attach_tablespace() [](attach_tablespace)
