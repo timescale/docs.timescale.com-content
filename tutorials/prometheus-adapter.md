@@ -8,7 +8,7 @@ solving monitoring in a simple and straightforward way. Their philosophy is to
 do one thing, and do it well. This is reflected in, e.g., the design of the
 PromQL language.
 
-However this philosophy can also be limiting. To their credit, the developers
+However, this philosophy can also be limiting. To their credit, the developers
 of Prometheus foresaw that their product is opinionated, and they built in extensibility
 to allow other systems to improve on it. In turn, Prometheus users often look to
 other systems as a way to augment their monitoring setup.
@@ -319,9 +319,11 @@ services:
      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-Fire it up with `docker-compose up`, then complete the deployment:
-1. Set up the Postgres user's password as described in 'Spin Up Pg_Prometheus.'
-2. Start the prometheus-postgresql-adapter container using `docker start`.
+To use the `docker-compose` method, follow these steps: 
+1. Set `-pg.password` in `docker-compose.yml` to a password of your choice.
+2. Fire things up with `docker-compose up`.
+3. Follow the steps in 'Spin Up Pg_Prometheus' to set the Postgres user's password to the password you choose in Step 1.
+4. Start the `prometheus-postgresql-adapter` container using `docker start`.
 
 Now you're ready to run some queries!
 
