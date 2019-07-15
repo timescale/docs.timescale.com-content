@@ -8,8 +8,8 @@ solving monitoring in a simple and straightforward way. Their philosophy is to
 do one thing, and do it well. This is reflected in, e.g., the design of the
 PromQL language.
 
-However this philosophy can also be limiting. To their credit, the developers
-of Prometheus foresaw that their product is opinionated, and built in extensibility
+However, this philosophy can also be limiting. To their credit, the developers
+of Prometheus foresaw that their product is opinionated, and they built in extensibility
 to allow other systems to improve on it. In turn, Prometheus users often look to
 other systems as a way to augment their monitoring setup.
 
@@ -290,7 +290,17 @@ services:
      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
+<<<<<<< HEAD
 Fire it up with `docker-compose up`
+=======
+To use the `docker-compose` method, follow these steps:
+1. Set `-pg.password` in `docker-compose.yml` to a password of your choice.
+2. Fire things up with `docker-compose up`.
+3. Follow the steps in 'Spin Up Pg_Prometheus' to set the Postgres user's password to the password you choose in Step 1.
+4. Start the `prometheus-postgresql-adapter` container using `docker start`.
+
+Now you're ready to run some queries!
+>>>>>>> b28ee4d... Clarify docker-compose method
 
 
 ### Run queries! [](run-queries)
@@ -370,10 +380,10 @@ Clearly, enriching and correlated your data from different sources is pretty sim
 could look like:
 
 ```sql
-SELECT time_bucket('1 hour', m.time) AS hour_bucket, 
+SELECT time_bucket('1 hour', m.time) AS hour_bucket,
        m.labels->>'host', h.kernel_updated, AVG(value)
-FROM metrics m LEFT JOIN hosts h on h.host = m.labels->>'host' 
-AND  time_bucket('1 hour', m.time) = time_bucket('1 hour', h.kernel_updated) 
+FROM metrics m LEFT JOIN hosts h on h.host = m.labels->>'host'
+AND  time_bucket('1 hour', m.time) = time_bucket('1 hour', h.kernel_updated)
 WHERE m.name='node_load5' AND m.time > NOW() - interval '7 days'
 GROUP BY hour_bucket, m.labels->>'host', h.kernel_updated
 ORDER BY hour_bucket;
