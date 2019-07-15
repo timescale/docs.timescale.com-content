@@ -51,6 +51,19 @@ const pageIndex = [
                 component: "InstallationPage",
                 children: [
                     {
+                        Title: "Timescale Cloud",
+                        type: DIRECTORY,
+                        href: "timescale-cloud",
+                        src: "//assets.iobeam.com/images/docs/timescale_cloud_logo.svg",
+                        children: [
+                            {
+                                Title: "Timescale Cloud",
+                                type: NON_MENU_PAGE,
+                                options: {pg_version: []},
+                                href: "installation-timescale-cloud"
+                            }
+                       ]
+                    }, {
                         Title: "Docker",
                         type: DIRECTORY,
                         href: "docker",
@@ -182,8 +195,10 @@ const pageIndex = [
                         type: HIDDEN_REDIRECT,
                         href: "migrate-from-postgresql",
                         to: "/getting-started/migrating-data"
-                    }
-
+                    }, {
+                        href: "scaling-out",
+                        to: "/getting-started/scaling-out"
+                    },
                 ]
             }, {
                 Title: "Setting up Enterprise",
@@ -202,6 +217,10 @@ const pageIndex = [
                 type: PAGE,
                 href: "migrating-data"
             }, {
+            		Title: "Scaling Out",
+            		type: PAGE,
+            		href: "scaling-out"
+      	    }, {
                 type: HIDDEN_REDIRECT,
                 href: "basic-operations",
                 to: "/using-timescaledb/hypertables"
@@ -406,6 +425,11 @@ const pageIndex = [
                 Title: "Time-series forecasting",
                 type: PAGE,
                 href: "tutorial-forecasting",
+                children: []
+            }, {
+                Title: "Scaling out TimescaleDB",
+                type: PAGE,
+                href: "clustering",
                 children: []
             }, {
                 Title: "Replication",
