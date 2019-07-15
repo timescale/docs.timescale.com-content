@@ -192,7 +192,7 @@ function.
 | Name              | Description                                   |
 |-------------------|-----------------------------------------------|
 | `node_name`       | Name of data node to attach             |
-| `hypertable`      | Name of hypertable to attach node to          |
+| `hypertable`      | Name of distributed hypertable to attach node to          |
 
 #### Optional Arguments [](attach_data_node-optional-arguments)
 
@@ -541,13 +541,13 @@ partition across
 
 | Name        | Description                       |
 |-------------|-----------------------------------|
-| `node_name` | Name of data node to detach from the hypertable |
+| `node_name` | Name of data node to detach from the distributed hypertable |
 
 #### Optional Arguments [](detach_data_node-optional-arguments)
 
 | Name         | Description                            |
 |--------------|----------------------------------------|
-| `hypertable` | Name of the hypertable where the data node should be attached. If NULL, the data node will be detached from all hypertables. |
+| `hypertable` | Name of the distributed hypertable where the data node should be attached. If NULL, the data node will be detached from all hypertables. |
 | `force`      | Force detach of the data node even if that means that the replication factor is reduced below what was set. Note that it will never be allowed to reduce the replication factor below 1 since that would cause data loss.         |
 
 #### Returns
