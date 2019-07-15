@@ -50,7 +50,7 @@
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 > - [time_bucket_gapfill](#time_bucket_gapfill)
-> - [timescaledb_information.data_node](#timescaledb_information-datanode)
+> - [timescaledb_information.data_node](#timescaledb_information-data_node)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
 > - [timescaledb_information.compressed_chunk_stats](#timescaledb_information-compressed_chunk_stats)
@@ -2432,7 +2432,7 @@ ORDER BY day;
 
 ## Utilities/Statistics [](utilities)
 
-## timescaledb_information.data_node [](timescaledb_information-datanode)
+## timescaledb_information.data_node [](timescaledb_information-data_node)
 
 Get information on data nodes. This function is specific to running
 TimescaleDB in a multi-node setup.
