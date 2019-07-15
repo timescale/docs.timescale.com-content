@@ -54,9 +54,9 @@ When creating the data node, you should:
   This is necessary since
   `add_data_node` expects to be able to create a
   database on the remote data node and create
-  TimescaleDB extension in it.
+  a TimescaleDB extension within it.
   
-* Ensure that the local user has `USAGE` privilege on the `timescaledb_fdw` 
+* Ensure that the local user has `USAGE` privileges on the `timescaledb_fdw` 
   foreign data wrapper on the access node.
   
 ```sql
@@ -76,7 +76,7 @@ A user mapping can be created for a data node as follows:
 CREATE USER MAPPING FOR <another_user> SERVER node1 
   OPTIONS (user '<remote_user>' password '<remote_password>');
 ```
-The additional users also need `USAGE` permission on the `timescaledb_fdw` 
+The additional users also need `USAGE` permissions on the `timescaledb_fdw` 
 foreign data wrapper and any data node (server) objects.
 
 Deleting a data node is done by calling `delete_data_node`:
