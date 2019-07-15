@@ -18,7 +18,7 @@ the entry point for clients to access distributed hypertables.
 
 ## Working with Data Nodes
 
-Data nodes act as the containers for the hypertable chunks and are
+Data nodes act as containers for hypertable chunks and are
 necessary to create distributed hypertables. Data nodes are
 added to the current database on an access node
 using [`add_data_node`][add_data_node]
