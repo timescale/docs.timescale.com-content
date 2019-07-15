@@ -799,7 +799,7 @@ data on it or replicate it to another data node.
 Detach data node `dn3` from `conditions`:
 
 ```sql
-SELECT detach_data_node('conditions', 'dn3');
+SELECT detach_data_node('dn3', 'conditions');
 ```
 
 ---
