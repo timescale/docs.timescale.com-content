@@ -51,7 +51,7 @@
 
 ## Hypertable management [](hypertable-management)
 
-## add_dimension() [](add_dimension)
+### add_dimension() [](add_dimension)
 
 Add an additional partitioning dimension to a TimescaleDB hypertable.
 The column selected as the dimension can either use interval
@@ -170,7 +170,7 @@ SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_e
 ```
 
 ---
-## attach_tablespace() [](attach_tablespace)
+### attach_tablespace() [](attach_tablespace)
 
 Attach a tablespace to a hypertable and use it to store chunks. A
 [tablespace][postgres-tablespaces] is a directory on the filesystem
@@ -429,7 +429,7 @@ are described in the [add dimension][] section.
 
 ---
 
-## CREATE INDEX (Transaction Per Chunk) [](create_index)
+### CREATE INDEX (Transaction Per Chunk) [](create_index)
 
 ```SQL
 CREATE INDEX ... WITH (timescaledb.transaction_per_chunk, ...);
@@ -462,7 +462,7 @@ CREATE INDEX ON conditions(time, location) USING brin
 
 ---
 
-## detach_tablespace() [](detach_tablespace)
+### detach_tablespace() [](detach_tablespace)
 
 Detach a tablespace from one or more hypertables. This _only_ means
 that _new_ chunks will not be placed on the detached tablespace. This
@@ -519,7 +519,7 @@ SELECT detach_tablespace('disk1');
 
 ---
 
-## detach_tablespaces() [](detach_tablespaces)
+### detach_tablespaces() [](detach_tablespaces)
 
 Detach all tablespaces from a hypertable. After issuing this command
 on a hypertable, it will no longer have any tablespaces attached to
@@ -542,7 +542,7 @@ SELECT detach_tablespaces('conditions');
 
 ---
 
-## drop_chunks() [](drop_chunks)
+### drop_chunks() [](drop_chunks)
 
 Removes data chunks whose time range falls completely before (or after) a
 specified time, operating either across all hypertables or for a specific one.
@@ -656,7 +656,7 @@ SELECT drop_chunks(interval '3 months', 'conditions', cascade_to_materialization
 
 ---
 
-## set_chunk_time_interval() [](set_chunk_time_interval)
+### set_chunk_time_interval() [](set_chunk_time_interval)
 Sets the chunk_time_interval on a hypertable. The new interval is used
 when new chunks are created but the time intervals on existing chunks are
 not affected.
@@ -738,7 +738,7 @@ SELECT set_number_partitions('conditions', 2, 'device_id');
 
 ---
 
-## show_chunks() [](show_chunks)
+### show_chunks() [](show_chunks)
 Get list of chunks associated with hypertables.
 
 #### Optional Arguments [](show_chunks-optional-arguments)
@@ -827,7 +827,7 @@ SELECT show_chunks(older_than => interval '3 months', newer_than => interval '4 
 ```
 
 ---
-## reorder_chunk() :community_function: [](reorder_chunk)
+### reorder_chunk() :community_function: [](reorder_chunk)
 
 Reorder a single chunk's heap to follow the order of an index. This function
 acts similarly to the [PostgreSQL CLUSTER command][postgres-cluster] , however
@@ -983,7 +983,7 @@ AS
 
 ---
 
-## ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
+### ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
 `ALTER VIEW` statement can be used to modify the `WITH` clause [options](#create-view-with) for the continuous aggregate view.
 
 ``` sql
@@ -1033,7 +1033,7 @@ when the REFRESH is run. So the materialization (of the continuous aggregate) do
 all the updates to the hypertable.
 
 
-## DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
+### DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
 Continuous aggregate views can be dropped using `DROP VIEW` statement.
 
 This deletes the hypertable that stores the materialized data for the
@@ -1139,7 +1139,7 @@ removes the existing data retention policy for the `conditions` table.
 
 
 ---
-## add_reorder_policy() :enterprise_function: [](add_reorder_policy)
+### add_reorder_policy() :enterprise_function: [](add_reorder_policy)
 Create a policy to reorder chunks older on a given hypertable index in the
 background. (See [reorder_chunk](#reorder_chunk)). Only one reorder policy may
 exist per hypertable. Only chunks that are the 3rd from the most recent will be
@@ -1210,7 +1210,7 @@ removes the existing reorder policy for the `conditions` table if it exists.
 ---
 
 
-## alter_job_schedule() :enterprise_function: [](alter_job_schedule)
+### alter_job_schedule() :enterprise_function: [](alter_job_schedule)
 
 Policy jobs are scheduled to run periodically via a job run in a background
 worker. You can change the schedule using `alter_job_schedule`. To alter an
@@ -1264,7 +1264,7 @@ reschedules the reorder policy job for the `conditions` table so that it runs ev
 ---
 ## Analytics [](analytics)
 
-## first() [](first)
+### first() [](first)
 
 The `first` aggregate allows you to get the value of one column
 as ordered by another. For example, `first(temperature, time)` will return the
@@ -1294,7 +1294,7 @@ GROUP BY device_id;
 
 ---
 
-## histogram() [](histogram)
+### histogram() [](histogram)
 
 The `histogram()` function represents the distribution of a set of
 values as an array of equal-width buckets. It partitions the dataset
@@ -1466,7 +1466,7 @@ ORDER BY interval DESC;
  latest value (which will use indexes).
 
 ---
-## locf() :community_function: [](locf)
+### locf() :community_function: [](locf)
 
 The `locf` function (last observation carried forward) allows you to carry the last seen value in an aggregation group forward.
 It can only be used in an aggregation query with [time_bucket_gapfill](#time_bucket_gapfill).
@@ -1551,7 +1551,7 @@ ORDER BY day;
 
 ---
 
-## time_bucket() [](time_bucket)
+### time_bucket() [](time_bucket)
 
 This is a more powerful version of the standard PostgreSQL `date_trunc` function.
 It allows for arbitrary time intervals instead of the second, minute, hour, etc.
@@ -1669,7 +1669,7 @@ to the server's timezone setting.
  2000-01-01 as the origin parameter to time_bucket.
 
 ---
-## time_bucket_gapfill() :community_function: [](time_bucket_gapfill)
+### time_bucket_gapfill() :community_function: [](time_bucket_gapfill)
 
 The `time_bucket_gapfill` function works similar to `time_bucket` but also activates gap
 filling for the interval between `start` and `finish`. It can only be used with an aggregation
@@ -1790,7 +1790,7 @@ ORDER BY day;
 
 ## Utilities/Statistics [](utilities)
 
-## timescaledb_information.hypertable [](timescaledb_information-hypertable)
+### timescaledb_information.hypertable [](timescaledb_information-hypertable)
 
 Get information about hypertables. If the hypertable is distributed, the
 hypertable statistics reflect the sum of statistics across all distributed chunks.
@@ -1836,7 +1836,7 @@ WHERE table_schema='public' AND table_name='metrics';
 (1 row)
 ```
 
-## timescaledb_information.license [](timescaledb_information-license)
+### timescaledb_information.license [](timescaledb_information-license)
 
 Get information about current license.
 
@@ -1862,7 +1862,7 @@ enterprise | f       | 2019-02-15 13:44:53-05
 ```
 
 ---
-## timescaledb_information.continuous_aggregates [](timescaledb_information-continuous_aggregate)
+### timescaledb_information.continuous_aggregates [](timescaledb_information-continuous_aggregate)
 
 Get metadata and settings information for continuous aggregates.
 
@@ -1904,7 +1904,7 @@ view_definition            |  SELECT foo.a,                                  +
 
 ```
 ---
-## timescaledb_information.continuous_aggregate_stats [](timescaledb_information-continuous_aggregate_stats)
+### timescaledb_information.continuous_aggregate_stats [](timescaledb_information-continuous_aggregate_stats)
 
 Get information about background jobs and statistics related to continuous aggregates.
 
@@ -2033,7 +2033,7 @@ SELECT * FROM timescaledb_information.policy_stats;
 ```
 
 ---
-## timescaledb.license_key [](timescaledb_license-key)
+### timescaledb.license_key [](timescaledb_license-key)
 
 #### Sample Usage
 
@@ -2044,7 +2044,7 @@ SHOW timescaledb.license_key;
 ```
 ---
 
-## chunk_relation_size() [](chunk_relation_size)
+### chunk_relation_size() [](chunk_relation_size)
 
 Get relation size of the chunks of an hypertable.
 
@@ -2091,7 +2091,7 @@ Where `chunk_table` is the table that contains the data, `table_bytes` is the si
 
 ---
 
-## chunk_relation_size_pretty() [](chunk_relation_size_pretty)
+### chunk_relation_size_pretty() [](chunk_relation_size_pretty)
 
 Get relation size of the chunks of an hypertable.
 
@@ -2136,7 +2136,7 @@ Where `chunk_table` is the table that contains the data, `table_size` is the siz
 
 ---
 
-## get_telemetry_report() [](get_telemetry_report)
+### get_telemetry_report() [](get_telemetry_report)
 
 If background [telemetry][] is enabled, returns the string sent to our servers.
 If telemetry is not enabled, outputs INFO message affirming telemetry is disabled
@@ -2160,7 +2160,7 @@ SELECT get_telemetry_report(always_display_report := true);
 
 ---
 
-## hypertable_approximate_row_count() [](hypertable_approximate_row_count)
+### hypertable_approximate_row_count() [](hypertable_approximate_row_count)
 
 Get approximate row count for hypertable(s) based on catalog estimates.
 
@@ -2191,7 +2191,7 @@ The expected output:
 
 ---
 
-## hypertable_relation_size() [](hypertable_relation_size)
+### hypertable_relation_size() [](hypertable_relation_size)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
@@ -2226,7 +2226,7 @@ The expected output:
 ```
 ---
 
-## hypertable_relation_size_pretty() [](hypertable_relation_size_pretty)
+### hypertable_relation_size_pretty() [](hypertable_relation_size_pretty)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
 
@@ -2262,7 +2262,7 @@ The expected output:
 
 ---
 
-## indexes_relation_size() [](indexes_relation_size)
+### indexes_relation_size() [](indexes_relation_size)
 
 Get sizes of indexes on a hypertable.
 
@@ -2293,7 +2293,7 @@ The expected output:
 
 ---
 
-## indexes_relation_size_pretty() [](indexes_relation_size_pretty)
+### indexes_relation_size_pretty() [](indexes_relation_size_pretty)
 
 Get sizes of indexes on a hypertable.
 
@@ -2325,7 +2325,7 @@ The expected output:
 
 ---
 
-## show_tablespaces() [](show_tablespaces)
+### show_tablespaces() [](show_tablespaces)
 
 Show the tablespaces attached to a hypertable.
 
@@ -2367,7 +2367,7 @@ SELECT timescaledb_pre_restore();
 
 ---
 
-## timescaledb_post_restore() [](timescaledb_post_restore)
+### timescaledb_post_restore() [](timescaledb_post_restore)
 Perform the proper operations after restoring the database has completed.
 Specifically this sets the `timescaledb.restoring` GUC to `off` and restarts any
 background workers. See [backup/restore docs][backup-restore] for more information.
