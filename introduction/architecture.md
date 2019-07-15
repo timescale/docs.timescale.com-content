@@ -142,6 +142,11 @@ For more on the motivation and design of TimescaleDB, please see our
 
 ## TimescaleDB Clustering (PRIVATE BETA) [](timescaledb-clustering)
 
+>:WARNING: Running TimescaleDB in a multi-node setup is currently in PRIVATE BETA.
+This method of deployment is not meant for production use. For more information,
+please
+[contact us][contact].
+
 TimescaleDB supports multi-node clustering by leveraging the hypertable and chunk primitives described above.
 In the multi-node topology, all nodes are TimescaleDB instances, but may play different roles
 depending on their responsibilities within a distributed database.
