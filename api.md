@@ -191,8 +191,8 @@ function.
 
 | Name              | Description                                   |
 |-------------------|-----------------------------------------------|
-| `hypertable`      | Name of hypertable to attach node to          |
 | `node_name`       | Name of data node to attach             |
+| `hypertable`      | Name of hypertable to attach node to          |
 
 #### Optional Arguments [](attach_data_node-optional-arguments)
 
@@ -215,11 +215,11 @@ previously created with
 [`create_distributed_hypertable`](#create_distributed_hypertable).
 
 ```sql
-SELECT attach_data_node('conditions', 'dn3');
+SELECT * FROM attach_data_node('dn3','conditions');
 
-attach_data_node
-----------------
-(2,1,dn3)
+hypertable_id | node_hypertable_id |  node_name  
+---------------+--------------------+-------------
+            5 |                  3 | dn3
 
 (1 row)
 ```
@@ -535,7 +535,7 @@ Reasons for detaching a data node:
 - A data node should no longer be used by a hypertable and needs to be
 removed from all hypertables that use it
 - You want to have fewer data nodes for a distributed hypertable to
-partition across to other distributed hypertables in the database
+partition across
 
 #### Required Arguments [](detach_data_node-required-arguments)
 
@@ -565,6 +565,8 @@ Detaching a node is not permitted:
 containing chunks that are not replicated on other data nodes
 - If it would result in under-replicated chunks for the distributed hypertable
 (without the `force` argument)
+
+>:TIP: Replication is currently experimental, and not a supported feature
 
 Detaching a data node is under no circumstances possible if that would
 mean data loss for the hypertable. Nor is it possible to detach a data node,
