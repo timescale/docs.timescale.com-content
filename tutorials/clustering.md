@@ -23,7 +23,7 @@ Prerequisites:
 
 Now that you have 3 running instances of TimescaleDB, you can go ahead and set up your
 distributed database. Connect to the instance that you would like to act as the access node,
-and create a new database there.
+and create a new database there:
 
 ```sql
 CREATE DATABASE multinode;
@@ -32,12 +32,13 @@ CREATE EXTENSION timescaledb;
 ```
 
 Now, you can tell your access node that currently contains the multinode database to add
-data nodes that it can use them to store distributed hypertables.
+data nodes in order to store distributed hypertables:
 
 ```sql
 SELECT add_data_node('dn1',host=>'<address>', if_not_exists=>'true',
 password=>'<remote_password>', bootstrap_user=>'<superuser>',
 bootstrap_password=>'<superuser_password>');
+
 SELECT add_data_node('dn2',host=>'<address>', if_not_exists=>'true',
 password=>'<remote_password>', bootstrap_user=>'<superuser>',
 bootstrap_password=>'<superuser_password>');
@@ -56,7 +57,7 @@ initially logged into, and needs to be a superuser. If you're already logged in 
 superuser, the `bootstrap_user` and `bootstrap_password` parameters are optional.
 
 You can check whether or not the data nodes have been connected successfully by
-using our informational views.
+using our informational views:
 
 ```sql
 SELECT * FROM timescaledb_information.data_node;
@@ -64,14 +65,15 @@ SELECT * FROM timescaledb_information.data_node;
 
 Now that we've created a database and connected a couple data nodes, let's go ahead
 and create a distributed hypertable. With the following commands, we'll create
-a hypertable and then distribute it.
+a hypertable and then distribute it:
 
 ```sql
 CREATE TABLE distributed (time timestamptz NOT NULL, id integer, value numeric);
+
 SELECT create_distributed_hypertable('distributed','time', 'id');
 ```
 
-To check how your data is being distributed, let's generate some sample data.
+To check how your data is being distributed, let's generate some sample data:
 
 ```sql
 WITH RECURSIVE CTE as (
