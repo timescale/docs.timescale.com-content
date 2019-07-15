@@ -10,7 +10,7 @@ Distributed hypertables are similar to normal hypertables, but they
 add an additional layer of hypertable partitioning by distributing chunks
 across *data nodes*.
 
-Data nodes together with an *access node* constitute a multi-node cluster
+Data nodes together with an *access node* constitute a distributed database
 ([architecture][]). All the nodes are TimescaleDB instances,
 i.e., hosts with a running PostgreSQL database and loaded TimescaleDB extension.
 While data nodes store distributed chunks, the access node is
@@ -39,8 +39,8 @@ When creating the data node, you should:
 * Provide the host where the hypertable partition for the distributed
   hypertable should be stored.
   
-* Provide password, which will be used during access to
-  the created remote data node.
+* Provide remote password, which will be used during access to
+  the created remote data node by the current local user.
 
 * Provide bootstrap user and password, which is used to
   create the data node. If the current user can be used, then 
@@ -49,8 +49,8 @@ When creating the data node, you should:
 * Ensure that the data node has password authentication enabled 
   in their `pg_hba.conf` files for any non-superusers.
 
-* Ensure that the bootstrap user used for connecting to the data node has
-  `CREATEDB` privilege or is a superuser. 
+* Ensure that the bootstrap user used for connecting to the data node
+  is a superuser. 
   This is necessary since
   `add_data_node` expects to be able to create a
   database on the remote data node and create
@@ -73,8 +73,8 @@ need their own user mappings per data node with a `user` and `password` option.
 A user mapping can be created for a data node as follows: 
 
 ```sql
-CREATE USER MAPPING FOR foo SERVER node1 
-  OPTIONS (user '<user>' password '<remote_password>');
+CREATE USER MAPPING FOR <another_user> SERVER node1 
+  OPTIONS (user '<remote_user>' password '<remote_password>');
 ```
 The additional users also need `USAGE` permission on the `timescaledb_fdw` 
 foreign data wrapper and any data node (server) objects 
@@ -89,8 +89,8 @@ hypertable, since no data can be lost.
 
 ### Information Schema for Data Nodes
 
-The data nodes that have been added to the database can be found by
-querying the
+The data nodes that have been added to the distributed database 
+can be found by querying the
 [`timescaledb_information.data_node`][timescaledb_information-data_node] view.
 
 ## Working with Distributed Hypertables
@@ -138,7 +138,8 @@ created distributed hypertables using
 [`attach_data_node`][attach_data_node] and
 [`detach_data_node`][detach_data_node].
 
-For example, if you add a new data node to the cluster, it will not automatically be
+For example, if you add a new data node to the distributed database, 
+it will not automatically be
 added to existing distributed hypertables, so it is necssary to attach
 it explicitly.
 
