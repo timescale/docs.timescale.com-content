@@ -7,14 +7,12 @@
 > - [add_reorder_policy](#add_reorder_policy)
 > - [alter_job_schedule](#alter_job_schedule)
 > - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
-> - [attach_data_node](#attach_data_node)
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > - [create_hypertable](#create_hypertable)
 > - [create index (transaction per chunk)](#create_index)
 > - [create view (continuous aggregate)](#continuous_aggregate-create_view)
-> - [detach_data_node](#detach_data_node)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
@@ -170,61 +168,6 @@ SELECT add_dimension('conditions', 'time_received', chunk_time_interval => inter
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_exists => true);
 ```
-
----
-## attach_data_node() [](attach_data_node)
-
-Attach a data node to a hypertable. The data node should have been
-previously created using [`add_data_node`](#add_data_node).
-
-When a distributed hypertable is created it will by default use all
-available data nodes for the hypertable, but if a data node is added
-*after* a hypertable is created, the data node will not automatically
-be used by existing distributed hypertables.
-
-If you want a hypertable to use a data node that was created later,
-you must attach the data node to the hypertable using this
-function.
-
-#### Required Arguments [](attach_data_node-required-arguments)
-
-| Name              | Description                                   |
-|-------------------|-----------------------------------------------|
-| `node_name`       | Name of data node to attach             |
-| `hypertable`      | Name of distributed hypertable to attach node to          |
-
-#### Optional Arguments [](attach_data_node-optional-arguments)
-
-| Name              | Description                                   |
-|-------------------|-----------------------------------------------|
-| `if_not_attached` | Prevents error if data node is already attached to the hypertable. A notice will be printed that the data node is attached. |
-
-#### Returns
-
-| Column               | Description                              |
-|-------------------|-----------------------------------------------|
-| `hypertable_id`      | Hypertable id of the modified hypertable |
-| `node_hypertable_id` | Hypertable id on the remote data node    |
-| `node_name`          | Name of the attached data node     |
-
-#### Sample Usage [](attach_data_node-examples)
-
-Attach a data node `dn3` to a distributed hypertable `conditions`
-previously created with
-[`create_distributed_hypertable`](#create_distributed_hypertable).
-
-```sql
-SELECT * FROM attach_data_node('dn3','conditions');
-
-hypertable_id | node_hypertable_id |  node_name  
---------------+--------------------+-------------
-            5 |                  3 | dn3
-
-(1 row)
-```
-
->:TIP: You must add a data node to your distributed database first
-with [`add_data_node`](#add_data_node) first before attaching it.
 
 ---
 ## attach_tablespace() [](attach_tablespace)
@@ -518,65 +461,7 @@ CREATE INDEX ON conditions(time, location) USING brin
 ```
 
 ---
-## detach_data_node() [](detach_data_node)
 
-Detach a data node from one hypertable or from all hypertables.
-
-Reasons for detaching a data node:
-
-- A data node should no longer be used by a hypertable and needs to be
-removed from all hypertables that use it
-- You want to have fewer data nodes for a distributed hypertable to
-partition across
-
-#### Required Arguments [](detach_data_node-required-arguments)
-
-| Name        | Description                       |
-|-------------|-----------------------------------|
-| `node_name` | Name of data node to detach from the distributed hypertable |
-
-#### Optional Arguments [](detach_data_node-optional-arguments)
-
-| Name         | Description                            |
-|--------------|----------------------------------------|
-| `hypertable` | Name of the distributed hypertable where the data node should be attached. If NULL, the data node will be detached from all hypertables. |
-| `force`      | Force detach of the data node even if that means that the replication factor is reduced below what was set. Note that it will never be allowed to reduce the replication factor below 1 since that would cause data loss.         |
-
-#### Returns
-
-| Column               | Description                              |
-|----------------------|------------------------------------------|
-| `hypertable_id`      | Hypertable id of the modified hypertable |
-| `node_hypertable_id` | Hypertable id on the remote data node    |
-| `node_name`          | Name of the attached data node     |
-
-#### Errors
-
-Detaching a node is not permitted:
-- If it would result in data loss for the hypertable due to the data node
-containing chunks that are not replicated on other data nodes
-- If it would result in under-replicated chunks for the distributed hypertable
-(without the `force` argument)
-
->:TIP: Replication is currently experimental, and not a supported feature
-
-Detaching a data node is under no circumstances possible if that would
-mean data loss for the hypertable. Nor is it possible to detach a data node,
-unless forced, if that would mean that the distributed hypertable would end
-up with under-replicated chunks.
-
-The only safe way to detach a data node is to first safely delete any
-data on it or replicate it to another data node.
-
-#### Sample Usage [](detach_data_node-examples)
-
-Detach data node `dn3` from `conditions`:
-
-```sql
-SELECT detach_data_node('conditions', 'dn3');
-```
-
----
 ## detach_tablespace() [](detach_tablespace)
 
 Detach a tablespace from one or more hypertables. This _only_ means
