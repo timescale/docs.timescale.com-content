@@ -3,6 +3,7 @@
 >:TOPLIST:
 > ### Command List (A-Z)
 > - [add_dimension](#add_dimension)
+> - [add_data_node](#add_data_node)
 > - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
 > - [alter_job_schedule](#alter_job_schedule)
@@ -14,6 +15,7 @@
 > - [create_hypertable](#create_hypertable)
 > - [create index (transaction per chunk)](#create_index)
 > - [create view (continuous aggregate)](#continuous_aggregate-create_view)
+> - [delete_data_node](#delete_data_node)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
@@ -170,6 +172,85 @@ SELECT create_hypertable('conditions', 'time', 'location', 2);
 SELECT add_dimension('conditions', 'time_received', chunk_time_interval => interval '1 day');
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_exists => true);
+```
+
+---
+## add_data_node() [](add_data_node)
+
+Add a new data node to the database to be used for creating
+distributed hypertables.
+
+Newly created distributed hypertables will be able to make use of this
+data node for apportioning data across the distributed database. Note that existing
+distributed hypertables will not automatically use the newly added
+data node. For existing distributed hypertables to use added data
+nodes, use [`attach_data_node`](#attach_data_node).
+
+The function will attempt to bootstrap the data node by:
+1. Connecting to a specified postgres instance
+2. Creating the database that will serve as the new data node
+3. Loading the TimescaleDB extension on the new database
+
+#### Errors
+
+An error will be given if:
+* an attempt is made to run the function inside a transaction _or_
+* the remote database already exists on the data node and
+  `if_not_exists` is not set.
+
+#### Required Arguments [](add_data_node-required-arguments)
+
+| Name        | Description                         |
+| ----------- | -----------                         |
+| `node_name` | Name for the data node.             |
+
+#### Optional Arguments [](add_data_node-optional-arguments)
+
+| Name                 | Description                                           |
+|----------------------|-------------------------------------------------------|
+| `host`               | Host name for the remote data node. The default is `'localhost'`. |
+| `port`               | Port to use on the remote data node. The default is the PostgreSQL port used by the access node on which the function is executed. |
+| `database`           | Database name where remote hypertables will be created. The default is the current database name. |
+| `password`           | Password to be used when connecting to the remote data node. Note that the user name will be the same as the current user. The default is to not use a password. |
+| `if_not_exists`      | Do not fail if the data node already exists. The data node will not be overwritten, but the command will not generate an error and instead generate a notice. |
+| `bootstrap_database` | Database to use when bootstrapping as described above. The default is `'postgres'`. |
+| `bootstrap_user`     | User to be used for bootstrapping. This user needs to have `SUPERUSER` permissions on the remote database server, unless the remote database already exists with the timescaledb extension. The default is the current user. |
+| `bootstrap_password` | Password to be used when bootstrapping. The default is the password provided in `password`. |
+
+#### Returns [](add_data_node-returns)
+
+| Column              | Description                                       |
+|---------------------|---------------------------------------------------|
+| `node_name`         | Local name to use for the data node               |
+| `host`              | Host name for the remote data node                |
+| `port`              | Port for the remote data node                     |
+| `database`          | Database name used on the remote data node        |
+| `node_created`      | Was the data node created locally                 |
+| `database_created`  | Was the database created on the remote data node  |
+| `extension_created` | Was the extension created on the remote data node |
+
+#### Sample usage [](add_data_node-examples)
+
+Let's assume that you have an existing hypertable `conditions` and
+want to use `time` as the time partitioning column and `location` as
+the space partitioning column. You also want to distribute the chunks
+of the hypertable on two data nodes `dn1.example.com` and
+`dn2.example.com`:
+
+```sql
+SELECT add_data_node('dn1', host => 'dn1.example.com');
+SELECT add_data_node('dn2', host => 'dn2.example.com');
+SELECT create_distributed_hypertable('conditions', 'time', 'location');
+```
+
+Note that the previous example will only succeed if the current user
+has `SUPERUSER` permission on the two remote systems and doesn't
+require a password to connect.  If the current user doesn't have the
+appropriate permissions, you'll have to provide a bootstrap user as
+described above:
+
+```sql
+SELECT add_data_node('dn1', host => 'dn1.example.com', password => 'mydn1password', bootstrap_user => 'dn1_superuser', bootstrap_password => 'dn1_su_password');
 ```
 
 ---
@@ -557,6 +638,46 @@ Other index methods
 ```SQL
 CREATE INDEX ON conditions(time, location) USING brin
   WITH (timescaledb.transaction_per_chunk);
+```
+
+## delete_data_node() [](delete_data_node)
+
+This function will remove the data node locally. This will *not*
+affect the remote database in any way, it will just update the local
+index over all existing data nodes.
+
+The data node will be detached from all hypertables that are using
+it if permissions and data integrity requirements are satisfied. For
+more information, see [`detach_data_node`](#detach_data_node).
+
+#### Errors
+
+An error will be generated if the data node cannot be detached from
+all attached hypertables.
+
+#### Required Arguments [](delete_data_node-required-arguments)
+
+| Name        | Description            |
+| ----------- | -----------            |
+| `node_name` | Name of the data node. |
+
+#### Optional Arguments [](delete_data_node-optional-arguments)
+
+| Name        | Description                                           |
+|-------------|-------------------------------------------------------|
+| `if_exists` | Prevent error if the data node does not exist. Defaults to false. |
+| `cascade`   | Cascade the delete so that all objects dependent on the data node are deleted as well. Defaults to false. |
+| `force`     | Force removal of data nodes from hypertables unless that would result in data loss.  Defaults to false. |
+
+#### Returns [](delete_data_node-returns)
+
+A boolean indicating if the operation was successful or not.
+
+#### Sample usage [](delete_data_node-examples)
+
+To delete a data node named `dn1`:
+```sql
+SELECT delete_data_node('dn1');
 ```
 
 ---
