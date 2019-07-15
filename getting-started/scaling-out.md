@@ -105,7 +105,7 @@ before starting.
 
 As with normal hypertables, start by creating a regular
 table to hold the data, then transform it into a distributed
-hypertable. In contrast to when creating a normal hypertable, we use
+hypertable. In contrast to creating a normal hypertable, we use
 the function
 [`create_distributed_hypertable`][create_distributed_hypertable].
 
