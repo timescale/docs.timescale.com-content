@@ -1,5 +1,10 @@
 # Scaling out using Distributed Hypertables
 
+>:WARNING: Running TimescaleDB in a multi-node setup is currently in PRIVATE BETA.
+This method of deployment is not meant for production use. For more information,
+please
+[contact us][contact].
+
 TimescaleDB supports multi-node clustering by leveraging the hypertable and chunk primitives.
 Hypertables are used to handle large amount of data by breaking it up
 into smaller pieces (chunks), allowing operations to execute efficiently. When
@@ -31,7 +36,7 @@ Note that:
 
 * You should already have a running PostgreSQL server on the data node host.
 
-* Ensure that the data node has password authentication enabled 
+* Ensure that the data node has password authentication enabled
   in their `pg_hba.conf` files for any non-superusers.
 
 When creating the data node, you should:
@@ -41,24 +46,24 @@ When creating the data node, you should:
 
 * Provide the host where the hypertable partition for the distributed
   hypertable should be stored.
-  
+
 * Provide the remote password, which will be used by the current user
   during access to the created remote data node.
 
 * Provide a bootstrap user and password, which is used to
-  create the data node. If the current user can be used, then 
+  create the data node. If the current user can be used, then
   the boostrap user and password can be omitted.
-  
+
 * Ensure that the bootstrap user used for connecting to the data node
-  is a superuser. 
+  is a superuser.
   This is necessary since
   `add_data_node` expects to be able to create a
   database on the remote data node and create
   a TimescaleDB extension within it.
-  
-* Ensure that the local user has `USAGE` privileges on the `timescaledb_fdw` 
+
+* Ensure that the local user has `USAGE` privileges on the `timescaledb_fdw`
   foreign data wrapper on the access node.
-  
+
 ```sql
 SELECT add_data_node('node1', host => 'dn1.example.com',
   password=>'<remote_password>', bootstrap_user=>'<superuser>',
@@ -68,15 +73,15 @@ SELECT add_data_node('node2', host => 'dn2.example.com',
   bootstrap_password=>'<superuser_password>');
 ```
 
-Any additional users that will access a distributed hypertable currently 
-need their own user mappings per data node with a `user` and `password` option. 
-A user mapping can be created for a data node as follows: 
+Any additional users that will access a distributed hypertable currently
+need their own user mappings per data node with a `user` and `password` option.
+A user mapping can be created for a data node as follows:
 
 ```sql
-CREATE USER MAPPING FOR <another_user> SERVER node1 
+CREATE USER MAPPING FOR <another_user> SERVER node1
   OPTIONS (user '<remote_user>' password '<remote_password>');
 ```
-The additional users also need `USAGE` permissions on the `timescaledb_fdw` 
+The additional users also need `USAGE` permissions on the `timescaledb_fdw`
 foreign data wrapper and any data node (server) objects.
 
 Deleting a data node is done by calling `delete_data_node`:
@@ -89,7 +94,7 @@ hypertable, since otherwise data would be lost.
 
 ### Information Schema for Data Nodes
 
-The data nodes that have been added to the distributed database 
+The data nodes that have been added to the distributed database
 can be found by querying the
 [`timescaledb_information.data_node`][timescaledb_information-data_node] view.
 
@@ -124,7 +129,7 @@ SELECT create_distributed_hypertable('conditions', 'time', 'location');
 >when executing `create_distributed_hypertable` and the distributed
 >hypertable will not be created.
 
-This creates a multi-dimensional distributed hypertable 
+This creates a multi-dimensional distributed hypertable
 partitioned along `time` and `location`.
 You can now insert data into the distributed hypertable and
 it will automatically be partitioned on the available data nodes
@@ -140,7 +145,7 @@ created distributed hypertables using
 [`attach_data_node`][attach_data_node] and
 [`detach_data_node`][detach_data_node].
 
-For example, if you add a new data node to the distributed database, 
+For example, if you add a new data node to the distributed database,
 it will not automatically be
 added to existing distributed hypertables, so it is necssary to attach
 it explicitly.

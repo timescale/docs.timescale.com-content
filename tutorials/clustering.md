@@ -1,7 +1,9 @@
 # Tutorial: Scaling out TimescaleDB
 
 >:WARNING: Running TimescaleDB in a multi-node setup is currently in PRIVATE BETA.
-This method of deployment is not meant for production use.
+This method of deployment is not meant for production use. For more information,
+please
+[contact us][contact].
 
 TimescaleDB can be run in a multi-node setup, with one primary access node distributing
 writes and queries to multiple data nodes. For more information on the actual
@@ -93,3 +95,4 @@ That's it! You can now use TimescaleDB in a multi-node setup.
 
 
 [architecture]: /introduction/architecture#timescaledb-clustering
+[contact]: https://www.timescale.com/contact
