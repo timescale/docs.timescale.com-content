@@ -127,7 +127,7 @@ SELECT create_distributed_hypertable('conditions', 'time', 'location');
 You can now insert data into the distributed hypertable and
 it will automatically be partitioned on the available data nodes
 by using the provided space partition. You
-can find more information for how work with data in hypertables in the
+can find more information for how to work with data in hypertables in the
 section [Creating Hypertables][creating-hypertables].
 
 ### Changing the Number of Data Nodes for a Distributed Hypertable
