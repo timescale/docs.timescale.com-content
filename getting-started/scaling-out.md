@@ -12,7 +12,7 @@ across *data nodes*.
 
 Data nodes together with an *access node* constitute a distributed database
 ([architecture][]). All the nodes are TimescaleDB instances,
-i.e., hosts with a running PostgreSQL database and loaded TimescaleDB extension.
+i.e., hosts with a running PostgreSQL server and loaded TimescaleDB extension.
 While the data nodes store distributed chunks, the access node is
 the entry point for clients to access distributed hypertables.
 
@@ -20,7 +20,7 @@ the entry point for clients to access distributed hypertables.
 
 Data nodes act as containers for hypertable chunks and are
 necessary to create distributed hypertables. Data nodes are
-added to the current database on an access node
+added to a distributed database on an access node
 using [`add_data_node`][add_data_node]
 and removed using [`delete_data_node`][delete_data_node].
 
@@ -31,6 +31,9 @@ Note that:
 
 * You should already have a running PostgreSQL server on the data node host.
 
+* Ensure that the data node has password authentication enabled 
+  in their `pg_hba.conf` files for any non-superusers.
+
 When creating the data node, you should:
 
 * Provide a name to use when referring to the data node from
@@ -39,16 +42,13 @@ When creating the data node, you should:
 * Provide the host where the hypertable partition for the distributed
   hypertable should be stored.
   
-* Provide the remote password, which will be used during access to
-  the created remote data node by the current user.
+* Provide the remote password, which will be used by the current user
+  during access to the created remote data node.
 
 * Provide a bootstrap user and password, which is used to
   create the data node. If the current user can be used, then 
   the boostrap user and password can be omitted.
   
-* Ensure that the data node has password authentication enabled 
-  in their `pg_hba.conf` files for any non-superusers.
-
 * Ensure that the bootstrap user used for connecting to the data node
   is a superuser. 
   This is necessary since
