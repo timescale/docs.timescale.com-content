@@ -32,7 +32,6 @@
 > - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
 > - [reorder_chunk](#reorder_chunk)
-> - [set_adaptive_chunking](#set_adaptive_chunking)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_number_partitions](#set_number_partitions)
 > - [show_chunks](#show_chunks)
@@ -247,7 +246,7 @@ still work on the resulting hypertable.
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
 | `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
-| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of TimescaleDB v0.11.0, default is 7 days, unless adaptive chunking (DEPRECATED)  is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
+| `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of TimescaleDB v0.11.0, default is 7 days. For previous versions, default is 1 month. |
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
@@ -255,8 +254,6 @@ still work on the resulting hypertable.
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
 | `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
-| `chunk_target_size` | DEPRECATED - The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable adaptive chunking (a DEPRECATED feature). The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
-| `chunk_sizing_func` | DEPRECATED - Allows setting a custom chunk sizing function for adaptive chunking (a DEPRECATED feature). The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
 
 #### Returns
 
@@ -324,11 +321,6 @@ partitioning function should take a single `anyelement` type argument
 and return a positive `integer` hash value. Note that this hash value
 is _not_ a partition ID, but rather the inserted value's position in
 the dimension's key space, which is then divided across the partitions.
-
-The adaptive chunking feature is now deprecated and so we strongly
-discourage people from using the `chunk_target_size` and
-`chunk_sizing_func` parameters. These may be removed altogether in
-the future.
 
 <!-- -->
 >:TIP: The time column in `create_hypertable` must be defined as `NOT
@@ -708,30 +700,6 @@ UNIX epoch, set `chunk_time_interval` to 24 hours.
 ```sql
 SELECT set_chunk_time_interval('conditions', 86400000);
 ```
-
----
-
-## DEPRECATED set_adaptive_chunking() [](set_adaptive_chunking)
-
->:WARNING: The adaptive chunking feature is now deprecated and should not be used.
-
-Changes the settings for adaptive chunking. The
-function returns the configured chunk sizing function and the target
-chunk size in bytes. This change will impact how and when new chunks
-are created; it does not modify the intervals of existing chunks.
-
-#### Required Arguments [](set_adaptive_chunking-required-arguments)
-
-|Name|Description|
-|---|---|
-| `hypertable` | Identifier of hypertable to update the settings for.|
-| `chunk_target_size` | The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable adaptive chunking. The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
-
-#### Optional Arguments [](set_adaptive_chunking-optional-arguments)
-| Name | Description |
-|---|---|
-| `chunk_sizing_func` | Allows setting a custom chunk sizing function for adaptive chunking. The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function. |
-
 
 ---
 
