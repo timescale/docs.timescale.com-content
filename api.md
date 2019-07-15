@@ -232,8 +232,6 @@ hypertable_id | node_hypertable_id |  node_name
 with [`add_data_node`](#add_data_node) first before attaching it.
 
 ---
-## attach_tablespace() [](attach_tablespace)
-=======
 ## add_data_node() [](add_data_node)
 
 Add a new data node to the database to be used for creating
@@ -799,7 +797,7 @@ SELECT detach_data_node('conditions', 'dn3');
 ```
 
 ---
-### detach_tablespace() [](detach_tablespace)
+## detach_tablespace() [](detach_tablespace)
 
 Detach a tablespace from one or more hypertables. This _only_ means
 that _new_ chunks will not be placed on the detached tablespace. This
