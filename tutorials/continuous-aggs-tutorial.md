@@ -192,9 +192,15 @@ completed_threshold    | 2016-01-31 22:00:00
 invalidation_threshold | 2016-01-31 22:00:00
 job_id                 | 1000
 last_run_started_at    | 2019-04-25 10:48:08.15141-04
+last_run_status        | Success
 job_status             | scheduled
 last_run_duration      | 00:00:00.042841
 next_scheduled_run     | 2019-04-25 11:18:08.194251-04
+total_runs             | 1
+total_successes        | 1
+total_failures         | 0
+total_crashes          | 0
+
 
 ---- fetch max pickup_datetime for comparison with completed_threshold ----
 SELECT max(pickup_datetime) FROM rides;
