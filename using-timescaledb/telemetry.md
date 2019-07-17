@@ -48,8 +48,9 @@ the `UUID`s contain the current timestamp. For full transparency, we expose a
 new API function, [`get_telemetry_report`][get_telemetry_report], that returns
 a text string of the exact JSON that is sent to our servers.
 
-Additionally any content of the table `_timescaledb_catalog.telemetry_metadata`
-and the value of `timescaledb_telemetry.cloud` will be included in the telemetry report.
+Additionally any content of the table `_timescaledb_catalog.metadata` which has
+`include_in_telemetry` set to `true` and the value of `timescaledb_telemetry.cloud`
+will be included in the telemetry report.
 
 Notably, telemetry reports a different set of values depending on the license
 that your TimescaleDB instance is running under. If you are using OSS or Community,
