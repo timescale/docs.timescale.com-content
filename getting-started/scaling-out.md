@@ -92,7 +92,8 @@ SELECT delete_data_node('node1', cascade=>'true');
 hypertable, since otherwise data would be lost.
 
 >:WARNING: Although the `cascade` parameter is not strictly a required argument,
-you *MUST* set it to `true` to avoid breaking necessary user mappings.
+you *MUST* set it to `true` in this current release to avoid putting TimescaleDB
+in a recoverable error state.
   
 ### Information Schema for Data Nodes
 
