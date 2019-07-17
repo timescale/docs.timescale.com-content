@@ -726,6 +726,9 @@ all attached hypertables.
 | ----------- | -----------            |
 | `node_name` | Name of the data node. |
 
+>:WARNING: Although the `cascade` parameter is not strictly a required argument,
+you *MUST* set it to `true` in this current release to avoid putting TimescaleDB in a recoverable error state.
+
 #### Optional Arguments [](delete_data_node-optional-arguments)
 
 | Name        | Description                                           |
@@ -742,7 +745,7 @@ A boolean indicating if the operation was successful or not.
 
 To delete a data node named `dn1`:
 ```sql
-SELECT delete_data_node('dn1');
+SELECT delete_data_node('dn1', cascade=>'true');
 ```
 
 ---
