@@ -22,6 +22,8 @@ the JSON that is sent to our servers about a specific deployment:
 	"os_name_pretty": "Debian GNU/Linux 8 (jessie)",
 	"postgresql_version": "10.4",
 	"timescaledb_version": "0.12.0",
+	"build_architecture": "x86_64",
+	"build_architecture_bit_size": "64",
 	"build_os_name": "Linux",
 	"build_os_version": "4.9.125-linuxkit",
 	"data_volume": "65982148",
