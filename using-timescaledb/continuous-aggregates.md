@@ -259,12 +259,14 @@ SELECT min_time::timestamp FROM device_summary;
 ---
 
 ### Future Work [](future-work)
-The first version of continuous aggregations has been released in TimescaleDB
-v1.3, but we have a number of new capabilities and improvements already planned
-in the next releases. Please find some of these forthcoming capabilities
-described below. If you'd like to help implement them, test them, want to help
-us prioritize, or have other areas you think we should work on, please get in
-touch via our [Github][timescale-github] or [Slack][support-slack].
+The first version of continuous aggregations was released in TimescaleDB
+v1.3. Multiple continuous aggregates on a hypertable is supported 
+in TimescaleDB v1.4. We have a number of new capabilities and 
+improvements already planned for the next releases.
+Please find some of these forthcoming capabilities described below. 
+If you'd like to help implement them, test them, want to help us prioritize, 
+or have other areas you think we should work on, please get in touch via our 
+[Github][timescale-github] or [Slack][support-slack].
 
 
 **Parallelized Materializations:**
