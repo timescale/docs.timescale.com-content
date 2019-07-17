@@ -737,7 +737,7 @@ A boolean indicating if the operation was successful or not.
 
 To delete a data node named `dn1`:
 ```sql
-SELECT delete_data_node('dn1', cascade=>'true');
+SELECT delete_data_node('dn1', cascade=>true);
 ```
 
 ---
