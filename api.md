@@ -929,8 +929,6 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 >:TIP: Say, the continuous aggregate uses time_bucket('2h', time_column) and we want to keep the view up to date with the data. We can do this by modifying the `refresh_lag` setting. Set refresh_lag to `-2h`. E.g. `ALTER VIEW contview set (timescaledb.refresh_lag = '-2h');` Please refer to the [caveats][].
 
 #### Restrictions
-- Only one continuous aggregate is permitted per hypertable. Multiple continuous aggregates will be supported
-in future versions.
 - `SELECT` query should be of the form specified in the syntax above.
 - The hypertable used in the `SELECT` may not have [row-level-security policies][postgres-rls] enabled.
 -  `GROUP BY` clause must include a time_bucket expression. The [`time_bucket`][time-bucket] expression must use the time dimension column of the hypertable.
@@ -1914,9 +1912,14 @@ Get information about background jobs and statistics related to continuous aggre
 |`completed_threshold`| Completed threshold for the last materialization job.|
 |`invalidation_threshold`| Invalidation threshold set by the latest materialization job|
 |`last_run_started_at`| Start time of the last job|
+|`last_run_status` | Whether the last run succeeded or failed |
 |`job_status`| Status of the materialization job . Valid values are ‘Running’ and ‘Scheduled’|
 |`last_run_duration`| Time taken by the last materialization job|
 |`next_scheduled_run` | Start time of the next materialization job |
+| `total_runs` | The total number of runs of this job |
+| `total_successes` | The total number of times this job succeeded |
+| `total_failures` | The total number of times this job failed |
+| `total_crashes` | The total number of times this job crashed |
 
 #### Sample Usage
 
@@ -1927,10 +1930,15 @@ view_name              | contagg_view
 completed_threshold    | 1
 invalidation_threshold | 1
 job_id                 | 1003
-last_run_started_at    | 2019-05-02 12:34:27.941868-04
+last_run_started_at    | 2019-07-03 15:00:26.016018-04
+last_run_status        | Success
 job_status             | scheduled
-last_run_duration      | 00:00:00.038291
-next_scheduled_run     | 2019-05-03 00:34:27.980159-04
+last_run_duration      | 00:00:00.039163
+next_scheduled_run     | 2019-07-03 15:00:56.055181-04
+total_runs             | 3
+total_successes        | 3
+total_failures         | 0
+total_crashes          | 0
 ```
 ---
 ## timescaledb_information.drop_chunks_policies [](timescaledb_information-drop_chunks_policies)
