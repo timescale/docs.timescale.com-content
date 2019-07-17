@@ -86,11 +86,15 @@ foreign data wrapper and any data node (server) objects.
 Deleting a data node is done by calling `delete_data_node`:
 
 ```sql
-SELECT delete_data_node('node1');
+SELECT delete_data_node('node1', cascade=>true);
 ```
 >:TIP: Note that a data node cannot be deleted if it contains data for a
 hypertable, since otherwise data would be lost.
 
+>:WARNING: Although the `cascade` parameter is not strictly a required argument,
+you *MUST* set it to `true` in this current release to avoid putting TimescaleDB
+in a recoverable error state.
+  
 ### Information Schema for Data Nodes
 
 The data nodes that have been added to the distributed database
