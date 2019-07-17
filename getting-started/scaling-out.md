@@ -86,7 +86,7 @@ foreign data wrapper and any data node (server) objects.
 Deleting a data node is done by calling `delete_data_node`:
 
 ```sql
-SELECT delete_data_node('node1', cascade=>'true');
+SELECT delete_data_node('node1', cascade=>true);
 ```
 >:TIP: Note that a data node cannot be deleted if it contains data for a
 hypertable, since otherwise data would be lost.
