@@ -290,9 +290,6 @@ services:
      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-<<<<<<< HEAD
-Fire it up with `docker-compose up`
-=======
 To use the `docker-compose` method, follow these steps:
 1. Set `-pg.password` in `docker-compose.yml` to a password of your choice.
 2. Fire things up with `docker-compose up`.
@@ -300,7 +297,6 @@ To use the `docker-compose` method, follow these steps:
 4. Start the `prometheus-postgresql-adapter` container using `docker start`.
 
 Now you're ready to run some queries!
->>>>>>> b28ee4d... Clarify docker-compose method
 
 
 ### Run queries! [](run-queries)
