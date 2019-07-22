@@ -1431,7 +1431,7 @@ ORDER BY day;
  2019-01-11 01:00:00+01 |         1 |   5.0 |         5.0
  2019-01-12 01:00:00+01 |         1 |       |         6.0
  2019-01-13 01:00:00+01 |         1 |   7.0 |         7.0
- 2019-01-14 01:00:00+01 |         1 |       |         6.5
+ 2019-01-14 01:00:00+01 |         1 |       |         7.5
  2019-01-15 01:00:00+01 |         1 |   8.0 |         8.0
  2019-01-16 01:00:00+01 |         1 |   9.0 |         9.0
 (7 row)
@@ -1442,11 +1442,12 @@ Get the average temperature every day for each device over the last 7 days inter
 SELECT
   time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
   device_id,
+  avg(value) AS value,
   interpolate(avg(temperature),
-    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id) ORDER BY time DESC LIMIT 1,
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1),
     (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1)
-  ) AS value
-FROM metrics
+  ) AS interpolate
+FROM metrics m
 WHERE time > now () - interval '1 week'
 GROUP BY day, device_id
 ORDER BY day;
