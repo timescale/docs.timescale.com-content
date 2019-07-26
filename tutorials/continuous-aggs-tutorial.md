@@ -31,7 +31,7 @@ TimescaleDB installed (version 1.3 or greater)
 Let's start by downloading the data.
 
 This dataset contains two files:
-1. `contagg_nyc_data.sql` - A SQL file that will set up the necessary tables
+1. `nyc_data_contagg.sql` - A SQL file that will set up the necessary tables
 for the continuous aggregates tutorial.
 1. `nyc_data_rides.csv` - A CSV file with the ride data.
 
@@ -54,7 +54,7 @@ Then, follow these steps:
 tar -xvzf nyc_data.tar.gz
 
 # (2) import the table schemas
-psql -U postgres -d nyc_data -h localhost <  contagg_nyc_data.sql
+psql -U postgres -d nyc_data -h localhost <  nyc_data_contagg.sql
 
 # (3) import data
 psql -U postgres -d nyc_data -h localhost -c "\COPY rides FROM nyc_data_rides.csv CSV"
