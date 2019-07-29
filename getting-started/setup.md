@@ -5,8 +5,7 @@ data.  The first thing to do is to create a new empty database or convert an
 existing PostgreSQL database to use TimescaleDB.
 
 >:TIP: If you are planning on doing any performance testing on TimescaleDB, we
-strongly recommend that you [configure][] TimescaleDB properly. We suggest getting
-the configuration values from the [PgTune][pgtune] website (suggested DB Type: Data warehouse).
+strongly recommend that you [configure][] TimescaleDB properly.
 
 <img class="main-content__illustration" style="margin: 0 5% 0 10%;" src="https://assets.iobeam.com/images/docs/illustration-setup.svg" alt="setup illustration"/>
 
@@ -59,12 +58,10 @@ to a TimescaleDB hypertable.
 
 ---
 
-[setup illustration]: https://assets.iobeam.com/images/docs/illustration-setup.svg
 [installed]: /getting-started/installation
+[configure]: /getting-started/configuring
+[telemetry reporting]: /api#get_telemetry_report
+[telemetry documentation]: /using-timescaledb/telemetry
+[improve our product]: https://www.timescale.com/blog/why-introduced-telemetry-in-timescaledb-2ed11014d95d/
 [start-scratch]: /getting-started/creating-hypertables
 [migrate-postgres]: /getting-started/migrating-data
-[telemetry reporting]: /api#get_report
-[configure]: /getting-started/configuring
-[pgtune]: http://pgtune.leopard.in.ua/
-[telemetry documentation]: /using-timescaledb/telemetry
-[improve our product]: https://blog.timescale.com/why-introduced-telemetry-in-timescaledb-2ed11014d95d/

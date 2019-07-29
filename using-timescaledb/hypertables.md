@@ -42,7 +42,7 @@ monotonically increasing id would work.
 
 ### Alter a Hypertable [](alter)
 
-You can execute standard `ALTER TABLE` commands against the hypertable ([PostgreSQL docs][postgres-createtable]).
+You can execute standard `ALTER TABLE` commands against the hypertable ([PostgreSQL docs][postgres-altertable]).
 
 ```sql
 ALTER TABLE conditions
@@ -81,7 +81,7 @@ Users can use the default time interval, which is 7 days starting in v0.11.0
 and 1 month prior to v0.11.0.
 Alternatively, users can explicitly configure time intervals by
 setting `chunk_time_interval` when creating a hypertable.
-After the hypertable has been created, the interval used for new chunks can be changed by calling `set_chunk_time_interval`.
+After the hypertable has been created, the interval used for new chunks can be changed by calling [`set_chunk_time_interval`][set_chunk_time_interval].
 
 The key property of choosing the time interval is that the chunk (including indexes) belonging to the most recent interval (or chunks if using space
 partitions) fit into memory.  As such, we typically recommend setting
@@ -106,8 +106,7 @@ corresponds to increased planning latency for some types of queries.
 both the underlying data size *and* any indexes, so some care might be
 taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
-total chunk sizes via the [chunk relation size](#chunk_relation_size)
-function.
+total chunk sizes via the [`chunk_relation_size`][chunk_relation_size] function.
 
 **Space partitions**: The use of additional partitioning is a very
 specialized use case.  **Most users will not need to use it.**
@@ -155,6 +154,9 @@ per-partition load balancing (the mapping of items to partitions using
 hashing), as well as much increased planning latency for some types of
 queries.
 
-[postgres-createtable]: https://www.postgresql.org/docs/9.6/static/sql-createtable.html
+[postgres-createtable]: https://www.postgresql.org/docs/current/sql-createtable.html
 [create_hypertable]: /api#create_hypertable
 [migrate-from-postgresql]: /getting-started/migrating-data
+[postgres-altertable]: https://www.postgresql.org/docs/current/sql-altertable.html
+[set_chunk_time_interval]: /api#set_chunk_time_interval
+[chunk_relation_size]: /api#chunk_relation_size

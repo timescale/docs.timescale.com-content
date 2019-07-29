@@ -315,20 +315,20 @@ See our [updating documentation][update]. [[Top]](#top)
 
 
 [api]: /api
-[why-sql]: https://blog.timescale.com/why-sql-beating-nosql-what-this-means-for-future-of-data-time-series-database-348b777b847a
+[why-sql]: https://www.timescale.com/blog/why-sql-beating-nosql-what-this-means-for-future-of-data-time-series-database-348b777b847a
 [new-queries]: /using-timescaledb/reading-data#advanced-analytics
 [INSERT]: /using-timescaledb/writing-data#insert
 [SELECT]: /using-timescaledb/reading-data#select
-[rdbms > nosql]: http://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c
+[rdbms > nosql]: http://www.timescale.com/blog/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c
 [docs-architecture]: /introduction/architecture
 [hypertable-best-practices]: /using-timescaledb/hypertables#best-practices
 [best-practices]: /using-timescaledb/hypertables#best-practices
-[PostgreSQL-benchmark]: https://blog.timescale.com/timescaledb-vs-6a696248104e
-[PostgreSQL-problems-time-series]: https://blog.timescale.com/time-series-data-postgresql-10-vs-timescaledb-816ee808bac5
+[PostgreSQL-benchmark]: https://www.timescale.com/blog/timescaledb-vs-6a696248104e
+[PostgreSQL-problems-time-series]: https://www.timescale.com/blog/time-series-data-postgresql-10-vs-timescaledb-816ee808bac5
 [time_bucket]: /api#time_bucket
 [first]: /api#first
 [last]: /api#last
-[data-retention]: http://docs.timescale.com/using-timescaledb/data-retention
+[data-retention]: /using-timescaledb/data-retention
 [postgis]: /tutorials/tutorial-hello-nyc#tutorial-postgis
 [GitHub]: https://github.com/timescale/timescaledb/issues
 [contact]: https://www.timescale.com/contact

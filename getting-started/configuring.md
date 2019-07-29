@@ -152,7 +152,7 @@ This setting takes into account that the number of locks taken by a hypertable q
 is roughly equal to the
 number of chunks in the hypertable, or double that number if the query
 also uses an index. You can see how many chunks you currently have using the
-`chunk_relation_size_pretty()` ([chunk_relation_size_pretty][]) command.
+[`chunk_relation_size_pretty`][chunk_relation_size_pretty] command.
  Also note that `max_locks_per_transaction` is not
 an exact setting; it only controls the *average* number of object
 locks allocated for each transaction. For more information, please
@@ -212,6 +212,6 @@ Additional examples of passing in arguments at boot can be found in our
 [async-commit]: https://www.postgresql.org/docs/current/static/wal-async-commit.html
 [synchronous-commit]: https://www.postgresql.org/docs/current/static/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT
 [lock-management]: https://www.postgresql.org/docs/current/static/runtime-config-locks.html
-[docker]: /getting-started/installation/linux/installation-docker
+[docker]: /getting-started/installation/docker/installation-docker
 [wale]: /using-timescaledb/backup#docker-wale
 [chunk_relation_size_pretty]: /api#chunk_relation_size_pretty
