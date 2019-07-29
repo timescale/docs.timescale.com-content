@@ -255,7 +255,7 @@ still work on the resulting hypertable.
 | `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
 | `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
 
-#### Returns
+#### Returns [](create_hypertable-returns)
 
 |Column|Description|
 |---|---|
@@ -546,8 +546,8 @@ SELECT detach_tablespaces('conditions');
 
 Removes data chunks whose time range falls completely before (or after) a
 specified time, operating either across all hypertables or for a specific one.
-Shows a list of the chunks that were dropped in the same style as the 
-`show_chunks` [function][show chunks].
+Shows a list of the chunks that were dropped in the same style as the
+`show_chunks` [function](#show_chunks).
 
 Chunks are defined by a certain start and end time.  If `older_than` is
 specified, a chunk is dropped if its end time is older than the specified
@@ -560,7 +560,7 @@ that are before (or after) the specified one.
 #### Required Arguments [](drop_chunks-required-arguments)
 
 Function requires at least one of the following arguments. These arguments have
-the same semantics as the `show_chunks` [function][show chunks].
+the same semantics as the `show_chunks` [function](#show_chunks).
 
 |Name|Description|
 |---|---|
@@ -607,7 +607,7 @@ Drop all chunks older than 3 months ago:
 SELECT drop_chunks(interval '3 months');
 ```
 
-Example output: 
+Example output:
 
 ```sql
               drop_chunks               
@@ -750,7 +750,7 @@ Get list of chunks associated with hypertables.
 #### Optional Arguments [](show_chunks-optional-arguments)
 
 Function accepts the following arguments. These arguments have
-the same semantics as the `drop_chunks` [function][drop chunks].
+the same semantics as the `drop_chunks` [function](#drop_chunks).
 
 |Name|Description|
 |---|---|
@@ -872,7 +872,6 @@ This function returns void.
 
 #### Sample Usage [](reorder_chunk-examples)
 
-
 ```sql
 SELECT reorder_chunk('_timescaledb_internal._hyper_1_10_chunk', 'conditions_device_id_time_idx');
 ```
@@ -918,10 +917,10 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 |---|---|
 | `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
 | `<column_name>`| Optional list of names to be used for columns of the view. If not given, the column names are deduced from the query.|
-| `WITH` clause | This clause specifies [options](#create-view-with) for the continuous aggregate view.|
+| `WITH` clause | This clause specifies [options](#continuous_aggregate-create_view-with) for the continuous aggregate view.|
 | `<select_query>`| A `SELECT` query that uses the specified syntax. |
 
-#### `WITH` clause options [](create-view-with)
+#### `WITH` clause options [](continuous_aggregate-create_view-with)
 |Name|Description|Type|Default|
 |---|---|---|---|
 |**Required**|
@@ -937,8 +936,8 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 #### Restrictions
 - `SELECT` query should be of the form specified in the syntax above.
 - The hypertable used in the `SELECT` may not have [row-level-security policies][postgres-rls] enabled.
--  `GROUP BY` clause must include a time_bucket expression. The [`time_bucket`][time-bucket] expression must use the time dimension column of the hypertable.
-- [`time_bucket_gapfill`][time-bucket-gapfill] is not allowed in continuous
+-  `GROUP BY` clause must include a time_bucket expression. The [`time_bucket`](#time_bucket) expression must use the time dimension column of the hypertable.
+- [`time_bucket_gapfill`](#time-bucket-gapfill) is not allowed in continuous
   aggs, but may be run in a `SELECT` from the continuous aggregate view.
 - In general, aggregates which can be [parallelized by PostgreSQL][postgres-parallel-agg] are allowed in the view definition, this
   includes most aggregates distributed with PostgreSQL. Aggregates with `ORDER BY`,
@@ -947,8 +946,6 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 - Queries with `ORDER BY` are disallowed.
 - The view is not allowed to be a [security barrier view][postgres-security-barrier].
 
-[time-bucket]: /api#time_bucket
-[time-bucket-gapfill]: /api#time_bucket_gapfill
 [postgres-immutable]:https://www.postgresql.org/docs/current/xfunc-volatility.html
 [postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
 [postgres-rls]:https://www.postgresql.org/docs/current/ddl-rowsecurity.html
@@ -957,7 +954,7 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 >:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-continuous_aggregate) and
 [statistics](#timescaledb_information-continuous_aggregate_stats) in `timescaledb_information` views.
 
-#### Examples [](continuous_aggregate-create-examples)
+#### Sample Usage [](continuous_aggregate-create-examples)
 Create a continuous aggregate view.
 ```sql
 CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
@@ -988,7 +985,7 @@ AS
 ---
 
 ## ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
-`ALTER VIEW` statement can be used to modify the `WITH` clause [options](#create-view-with) for the continuous aggregate view.
+`ALTER VIEW` statement can be used to modify the `WITH` clause [options](#continuous_aggregate-create_view-with) for the continuous aggregate view.
 
 ``` sql
 ALTER VIEW <view_name> SET ( timescaledb.option =  <value> )
@@ -998,7 +995,7 @@ ALTER VIEW <view_name> SET ( timescaledb.option =  <value> )
 |---|---|
 | `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
 
-#### Examples [](continuous_aggregate-alter-examples)
+#### Sample Usage [](continuous_aggregate-alter_view-examples)
 Set the max interval processed by a materializer job (that updates the continuous aggregate) to 1 week.
 ```sql
 ALTER VIEW contagg_view SET (timescaledb.max_interval_per_job = '1 week');
@@ -1025,7 +1022,7 @@ REFRESH MATERIALIZED VIEW <view_name>
 |---|---|
 | `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
 
-#### Examples [](continuous_aggregate-refresh-examples)
+#### Sample Usage [](continuous_aggregate-refresh_view-examples)
 Update the continuous aggregate view immediately.
 ```sql
 REFRESH MATERIALIZED VIEW contagg_view;
@@ -1053,17 +1050,18 @@ DROP VIEW <view_name> CASCADE;
 |---|---|
 | `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
 
-#### Examples [](continuous_aggregate-drop-examples)
+#### Sample Usage [](continuous_aggregate-drop_view-examples)
 Drop existing continuous aggregate.
 ```sql
 DROP VIEW contagg_view CASCADE;
 ```
 >:WARNING: `CASCADE` will drop those objects that depend on the continuous
-aggregate, such as views that are built on top of the continuous aggregate view.```
+aggregate, such as views that are built on top of the continuous aggregate view.
 
 
 ---
 ## Automation policies :enterprise_function: [](automation-policies)
+
 TimescaleDB includes an automation framework for allowing background tasks to
 run inside the database, controllable by user-supplied policies. These tasks
 currently include capabilities around data retention and data reordering for
@@ -1281,7 +1279,7 @@ earliest temperature value based on time within an aggregate group.
 | `value` | The value to return (anyelement) |
 | `time` | The timestamp to use for comparison (TIMESTAMP/TIMESTAMPTZ or integer type)  |
 
-#### Examples [](first-examples)
+#### Sample Usage [](first-examples)
 
 Get the earliest temperature by device_id:
 ```sql
@@ -1799,7 +1797,7 @@ ORDER BY day;
 
 Get information about hypertables.
 
-#### Available Columns
+#### Available Columns [](timescaledb_information-hypertable-available-columns)
 
 |Name|Description|
 |---|---|
@@ -1813,7 +1811,7 @@ Get information about hypertables.
 | `toast_bytes` |Disk space of toast tables|
 | `total_bytes` |Total disk space used by the specified table, including all indexes and TOAST data|
 
-#### Sample Usage
+#### Sample Usage [](timescaledb_information-hypertable-examples)
 
 Get information about all hypertables.
 
@@ -1843,7 +1841,7 @@ WHERE table_schema='public' AND table_name='metrics';
 
 Get information about current license.
 
-#### Available Columns
+#### Available Columns [](timescaledb_information-license-available-columns)
 
 |Name|Description|
 |---|---|
@@ -1851,7 +1849,7 @@ Get information about current license.
 | `expired` | Expiration status of license key (bool) |
 | `expiration_time` | Time of license key expiration |
 
-#### Sample Usage
+#### Sample Usage [](timescaledb_information-license-examples)
 
 Get information about current license.
 
@@ -1911,7 +1909,7 @@ view_definition            |  SELECT foo.a,                                  +
 
 Get information about background jobs and statistics related to continuous aggregates.
 
-#### Available Columns
+#### Available Columns [](timescaledb_information-continuous_aggregate_stats-available-columns)
 
 |Name|Description|
 |---|---|
@@ -1928,7 +1926,7 @@ Get information about background jobs and statistics related to continuous aggre
 | `total_failures` | The total number of times this job failed |
 | `total_crashes` | The total number of times this job crashed |
 
-#### Sample Usage
+#### Sample Usage [](timescaledb_information-continuous_aggregate_stats-examples)
 
 ```sql
 select * from timescaledb_information.continuous_aggregate_stats;
@@ -1954,7 +1952,7 @@ Shows information about drop_chunks policies that have been created by the user.
 about drop_chunks policies).
 
 
-#### Available Columns
+#### Available Columns [](timescaledb_information-drop_chunks_policies-available-columns)
 
 |Name|Description|
 |---|---|
@@ -1967,7 +1965,7 @@ about drop_chunks policies).
 | `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
 | `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
 
-#### Sample Usage
+#### Sample Usage [](timescaledb_information-drop_chunks_policies-examples)
 
 Get information about drop_chunks policies.
 ```sql
@@ -1986,7 +1984,7 @@ Shows information about reorder policies that have been created by the user.
 reorder policies).
 
 
-#### Available Columns
+#### Available Columns [](timescaledb_information-reorder_policies-available-columns)
 
 |Name|Description|
 |---|---|
@@ -1998,7 +1996,7 @@ reorder policies).
 | `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
 | `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
 
-#### Sample Usage
+#### Sample Usage [](timescaledb_information-reorder_policies-examples)
 
 Get information about reorder policies.
 ```sql
@@ -2019,7 +2017,7 @@ statistics include information useful for administering jobs and determining
 whether they ought be rescheduled, such as: when and whether the background job
 used to implement the policy succeeded and when it is scheduled to run next.
 
-#### Available Columns
+#### Available Columns [](timescaledb_information-policy_stats-available-columns)
 
 |Name|Description|
 |---|---|
@@ -2033,7 +2031,7 @@ used to implement the policy succeeded and when it is scheduled to run next.
 | `total_runs` | (INTEGER) The total number of runs of this job |
 | `total_failures` | (INTEGER) The total number of times this job failed |
 
-#### Sample Usage
+#### Sample Usage [](timescaledb_information-policy_stats-examples)
 
 Get information about statistics on created policies.
 ```sql
@@ -2048,7 +2046,7 @@ SELECT * FROM timescaledb_information.policy_stats;
 ---
 ## timescaledb.license_key [](timescaledb_license-key)
 
-#### Sample Usage
+#### Sample Usage [](timescaledb_license-key-examples)
 
 View current license key.
 
@@ -2279,19 +2277,19 @@ The expected output:
 
 Get sizes of indexes on a hypertable.
 
-#### Required Arguments [](hypertable_relation_size_pretty-required-arguments)
+#### Required Arguments [](indexes_relation_size-required-arguments)
 
 |Name|Description|
 |---|---|
 | `main_table` | Identifier of hypertable to get indexes size for.|
 
-#### Returns [](hypertable_relation_size_pretty-returns)
+#### Returns [](indexes_relation_size-returns)
 |Column|Description|
 |---|---|
 |index_name|Index on hypertable|
 |total_bytes|Size of index on disk|
 
-#### Sample Usage [](hypertable_relation_size_pretty-examples)
+#### Sample Usage [](indexes_relation_size-examples)
 ```sql
 SELECT * FROM indexes_relation_size('conditions');
 ```
@@ -2385,7 +2383,7 @@ Perform the proper operations after restoring the database has completed.
 Specifically this sets the `timescaledb.restoring` GUC to `off` and restarts any
 background workers. See [backup/restore docs][backup-restore] for more information.
 
-#### Sample Usage  [](timescaledb_pre_restore-examples)
+#### Sample Usage  [](timescaledb_post_restore-examples)
 
 ```sql
 SELECT timescaledb_post_restore();
@@ -2419,7 +2417,5 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [migrate-from-postgresql]: /getting-started/migrating-data
 [memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
 [telemetry]: /using-timescaledb/telemetry
-[drop chunks]: #drop_chunks
-[show chunks]: #show_chunks
 [caveats]: /using-timescaledb/continuous-aggregates
 [backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore
