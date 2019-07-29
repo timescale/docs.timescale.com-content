@@ -62,6 +62,6 @@ to `bootstrap`.
 For more information about licensing, please read our [blog post][blog-post] about the subject.
 
 [CMake]: https://cmake.org/
-[github-timescale]: https://github.com/timescale/timescaledb
 [github-releases]: https://github.com/timescale/timescaledb/releases
-[blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[github-timescale]: https://github.com/timescale/timescaledb
+[blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480

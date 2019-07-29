@@ -158,7 +158,7 @@ latest version of TimescaleDB installed.
 
 [pg_upgrade]: https://www.postgresql.org/docs/9.6/static/pgupgrade.html
 [backup]: /using-timescaledb/backup
-[install]: /getting-started/installation
-[bind-mounts]: https://docs.docker.com/engine/admin/volumes/bind-mounts/
-[volumes]: https://docs.docker.com/engine/admin/volumes/volumes/
+[Install]: /getting-started/installation
 [telemetry]: /using-timescaledb/telemetry
+[volumes]: https://docs.docker.com/engine/admin/volumes/volumes/
+[bind-mounts]: https://docs.docker.com/engine/admin/volumes/bind-mounts/

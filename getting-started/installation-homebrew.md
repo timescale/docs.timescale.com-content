@@ -66,4 +66,4 @@ about the subject.
 
 [config]: /getting-started/configuring
 [Homebrew]: https://brew.sh/
-[blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480

@@ -7,9 +7,9 @@ continuous aggregate view are then significantly faster as they do not need to
 touch the raw data in the hypertable, instead using the pre-computed aggregates
 in the view.
 
-Continuous aggregates are somewhat similar to PostgreSQL [materialized
-views][postgres-materialized-views], but unlike a materialized view, continuous
-aggregates do not need to be refreshed manually; the view will be refreshed
+Continuous aggregates are somewhat similar to PostgreSQL
+[materialized views][postgres-materialized-views], but unlike a materialized view,
+continuous aggregates do not need to be refreshed manually; the view will be refreshed
 automatically in the background as new data is added, or old data is
 modified. Additionally, it does not need to re-calculate all of the data on
 every refresh. Only new and/or invalidated data will be calculated.  Since this
@@ -33,8 +33,8 @@ will happen the next time the materialization job runs.
 
 ### Creating a Continuous Aggregate View [](create)
 [Continuous aggregates][api-continuous-aggs] are created by setting the
-`timescaledb.continuous` option in the `WITH` clause of a PostgreSQL [`CREATE
-VIEW`][postgres-createview] statement.
+`timescaledb.continuous` option in the `WITH` clause of a
+PostgreSQL [`CREATE VIEW`][postgres-createview] statement.
 
 Let's suppose we have a hypertable `device_readings` created as so:
 ```sql
@@ -134,17 +134,17 @@ data processed by previous jobs will be available even before the
 materialization is fully caught up.
 
 >:TIP: Most times the continuous aggregate view will be updated by the background job;
-  however, if you would like to run it yourself, you may use the [`REFRESH MATERIALIZED VIEW`
-  command][api-refresh-continuous-aggs].
+  however, if you would like to run it yourself, you may use the
+  [`REFRESH MATERIALIZED VIEW` command][api-refresh-continuous-aggs].
 
 **Using `timescaledb.information` Views:**
 The various options used to create the continuous aggregate view, as well as its
-definition, can be found in the [`timescaledb_information.continuous_aggregates`
-view][api-continuous-aggregates-info], and information about the state and progress
-of the materialization background worker jobs can be found in the
-[`timescaledb_information.continuous_aggregate_stats`
-view][api-continuous-aggregate-stats]. These views can be quite useful for
-administering continuous aggregates and tuning other options noted below.
+definition, can be found in the
+[`timescaledb_information.continuous_aggregates` view][api-continuous-aggregates-info],
+and information about the state and progress of the materialization background worker jobs can be found in the
+[`timescaledb_information.continuous_aggregate_stats` view][api-continuous-aggregate-stats].
+These views can be quite useful for administering continuous aggregates and
+tuning other options noted below.
 
 ---
 
@@ -179,13 +179,12 @@ aggregate, such as views that are built on top of the continuous aggregate view.
 
 
 ### Dropping Data with Continuous Aggregates Enabled [](dropping-data)
-When dropping data in a raw hypertable using the [`drop_chunks`
-function][api-drop-chunks] that has a continuous aggregate created on it, we
-must specify the `cascade_to_materializations` argument to the `drop_chunks`
-call. Currently, the only option for this argument is `true`, which will cause
-the continuous aggregate to drop all data associated with any chunks dropped from the
-raw hypertable. Further data retention options are planned for future releases
-(see [future work](#future-work)).
+When dropping data in a raw hypertable using the [`drop_chunks` function][api-drop-chunks]
+that has a continuous aggregate created on it, we must specify the `cascade_to_materializations`
+argument to the `drop_chunks` call. Currently, the only option for this argument is
+`true`, which will cause the continuous aggregate to drop all data associated
+with any chunks dropped from the raw hypertable. Further data retention options are
+planned for future releases (see [future work](#future-work)).
 
 The same argument must also be supplied to the [`add_drop_chunks_policy`
 function][api-add-drop-chunks] when creating a data retention policy for a
@@ -259,12 +258,14 @@ SELECT min_time::timestamp FROM device_summary;
 ---
 
 ### Future Work [](future-work)
-The first version of continuous aggregations has been released in TimescaleDB
-v1.3, but we have a number of new capabilities and improvements already planned
-in the next releases. Please find some of these forthcoming capabilities
-described below. If you'd like to help implement them, test them, want to help
-us prioritize, or have other areas you think we should work on, please get in
-touch via our [Github][timescale-github] or [Slack][support-slack].
+The first version of continuous aggregations was released in TimescaleDB
+v1.3. Multiple continuous aggregates on a hypertable is supported
+in TimescaleDB v1.4. We have a number of new capabilities and
+improvements already planned for the next releases.
+Please find some of these forthcoming capabilities described below.
+If you'd like to help implement them, test them, want to help us prioritize,
+or have other areas you think we should work on, please get in touch via our
+[Github][timescale-github] or [Slack][support-slack].
 
 
 **Parallelized Materializations:**
@@ -309,32 +310,29 @@ for dropping the underlying data even while keeping the aggregates for a longer
 period of time at different granularities.
 
 **Approximation Functions for Non-parallelizable Aggregates:**
-Non-parallelizable aggregates such as [ordered set
-aggregates][postgres-ordered-set] for calculating percentiles, medians, and the
-like, as well as aggregates to compute the number of distinct items in a set, are
-not supported by continuous aggregates. However, many of these types of
-functions have parallelizable approximations that can provide quite accurate
-approximations of the actual result and would therefore be able to integrate
-seamlessly with the continuous aggregates project. We intend to implement a
-number of these aggregates.  
+Non-parallelizable aggregates such as [ordered set aggregates][postgres-ordered-set]
+for calculating percentiles, medians, and the like, as well as aggregates to
+compute the number of distinct items in a set, are not supported by continuous
+aggregates. However, many of these types of functions have parallelizable approximations
+that can provide quite accurate approximations of the actual result and would therefore
+be able to integrate seamlessly with the continuous aggregates project. We intend to
+implement a number of these aggregates.  
 
 ---
 
 
-[postgres-createview]: https://www.postgresql.org/docs/current/static/sql-createview.html
-[postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
-[time-bucket]: /api#time_bucket
-[create_hypertable]: /api#create_hypertable
-[migrate-from-postgresql]: /getting-started/migrating-data
 [postgres-materialized-views]: https://www.postgresql.org/docs/current/rules-materializedviews.html
 [api-continuous-aggs]:/api#continuous-aggregates
+[postgres-createview]: https://www.postgresql.org/docs/current/static/sql-createview.html
+[time-bucket]: /api#time_bucket
 [api-continuous-aggs-create]: /api#continuous_aggregate-create_view
+[postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
+[api-refresh-continuous-aggs]: /api#continuous_aggregate-refresh_view
 [api-continuous-aggregates-info]: /api#timescaledb_information-continuous_aggregate
 [api-continuous-aggregate-stats]: /api#timescaledb_information-continuous_aggregate_stats
 [api-drop-chunks]: /api#drop_chunks
-[api-add-drop-chunks]: /api#add_drop_chunks_policy
 [api-set-chunk-interval]: /api#set_chunk_time_interval
+[api-add-drop-chunks]: /api#add_drop_chunks_policy
 [timescale-github]: https://github.com/timescale/timescaledb
-[postgres-ordered-set]: https://www.postgresql.org/docs/current/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
-[api-refresh-continuous-aggs]: /api#continuous_aggregate-refresh_view
 [support-slack]: https://slack-login.timescale.com
+[postgres-ordered-set]: https://www.postgresql.org/docs/current/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE

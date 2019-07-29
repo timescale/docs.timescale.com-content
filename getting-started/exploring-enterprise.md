@@ -58,5 +58,5 @@ Continue exploring our enterprise features in our API docs.
 
 
 [products]: https://www.timescale.com/products
-[license]: https://www.timescale.com/license
+[license]: https://www.timescale.com/enterprise-signup
 [contact-sales]: https://www.timescale.com/contact

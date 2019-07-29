@@ -1,7 +1,7 @@
 # Getting started with Outflux
 
-Designed to help users seamlessly migrate from InfluxDB to TimescaleDB, Outflux enables users to pipe exported data directly into TimescaleDB. 
-Outflux manages the schema discovery, validation, and creation for you. 
+Designed to help users seamlessly migrate from InfluxDB to TimescaleDB, Outflux enables users to pipe exported data directly into TimescaleDB.
+Outflux manages the schema discovery, validation, and creation for you.
 It’s easy to use, configurable, and most importantly, it’s fast.
 
 ## Installation [](outflux-installation)
@@ -54,7 +54,7 @@ $ influx -import -path=outflux_taxit.txt -database=outflux_tutorial
 2019/03/27 11:39:11 Failed 0 inserts
 ```
 
-The data in the file is without a timestamp so the current time of the Influx server will be used at the time of insert. 
+The data in the file is without a timestamp so the current time of the Influx server will be used at the time of insert.
 All the data points belong to one measurement `taxi`. The points are tagged with location, rating, and vendor. Four fields are recorded: fare, mta_tax, tip, and tolls.
 The `influx` client assumes the server is available at `http://localhost:8086` by default.
 
@@ -80,12 +80,12 @@ $ outflux schema-transfer outflux_tutorial taxi \
  --output-conn="dbname=postgres user=postgres"
 ```
 
-The `schema-transfer` command is executed by specifying the database (`outflux_tutorial`) and then the measurements (`taxi`). 
-If no measurements are specified, all measurements in a database will be transferred. 
-The location of the InfluxDB server is specified with the `--input-server` flag. 
-The target database and other connection options are specified with the `--output-conn` flag. 
-Here we’re using the `postgres` user and database to connect to our server. 
-How to specify usernames, passwords and many more configuration options about the input and output connections (including which environment variables are recognized) can be discovered on the [GitHub repo for Outflux][outflux-connection]. 
+The `schema-transfer` command is executed by specifying the database (`outflux_tutorial`) and then the measurements (`taxi`).
+If no measurements are specified, all measurements in a database will be transferred.
+The location of the InfluxDB server is specified with the `--input-server` flag.
+The target database and other connection options are specified with the `--output-conn` flag.
+Here we’re using the `postgres` user and database to connect to our server.
+How to specify usernames, passwords and many more configuration options about the input and output connections (including which environment variables are recognized) can be discovered on the [GitHub repo for Outflux][outflux-connection].
 By default, `schema-transfer` executes with the `CreateIfMissing` strategy.
 
 Here’s an example output of running Outflux `schema-transfer` with the `DropAndCreate` strategy and having all tags in a single JSONB column:
@@ -118,9 +118,9 @@ CREATE EXTENSION IF NOT EXISTS timescaledb
 
 ## Data Migration [](migration)
 
-Schema transfer is useful, but it’s not what we built Outflux for. 
-You can do schema-transfer *and* data migration in one with the `migrate` command. 
-The connection options available are the same (and you can check them out on the [public repo][outflux-connection]). 
+Schema transfer is useful, but it’s not what we built Outflux for.
+You can do schema-transfer *and* data migration in one with the `migrate` command.
+The connection options available are the same (and you can check them out on the [public repo][outflux-connection]).
 You can transfer a complete InfluxDB database with each measurement being exported as a separate table, or you can select which measurements to export.
 
 You can transfer all of the example data from the `taxi` measurement in the `outflux_tutorial` database with the command:
@@ -132,9 +132,9 @@ $ outflux migrate outflux_tutorial taxi \
  --schema-strategy=DropAndCreate
 ```
 
-Here we’re using the DropAndCreate strategy that will drop any previous table named `cpu` and create it before piping the data. 
-The migrate command supports several flags that offer the user flexibility in the selection of data to be migrated. 
-One of them is the `--limit` flag that will only export the first N rows from the InfluxDB database ordered by time. 
+Here we’re using the DropAndCreate strategy that will drop any previous table named `cpu` and create it before piping the data.
+The migrate command supports several flags that offer the user flexibility in the selection of data to be migrated.
+One of them is the `--limit` flag that will only export the first N rows from the InfluxDB database ordered by time.
 The output of the migrate command with a N=10 limit should look like this:
 
 ```
@@ -166,7 +166,7 @@ LIMIT 10
 2019/03/27 12:15:01 Migration execution time: 0.055 seconds
 ```
 
-Another way to select the exported data are the `--from` and `--to` flags to specify a narrower time-window to export. 
+Another way to select the exported data are the `--from` and `--to` flags to specify a narrower time-window to export.
 To export data only after January 1, 2020 execute the command:
 
 ```
@@ -176,7 +176,7 @@ $ outflux migrate outflux_tutorial cpu \
  --schema-strategy=ValidateOnly --from=2020-01-01T00:00:00Z
 ```
 
-If you follow the output closely, you can see that the data is pulled from the InfluxDB server in chunks, by default sized 15000, but can be changed by specifying the `--chunk-size` flag. 
+If you follow the output closely, you can see that the data is pulled from the InfluxDB server in chunks, by default sized 15000, but can be changed by specifying the `--chunk-size` flag.
 The data is inserted in batches of 8000 rows (by default), which can also be modified by the flag `--batch-size`. All the possible flags for the migrate command are listed in the GitHub documentation (https://github.com/timescale/outflux#migrate) or you can see them by executing:
 
 ```
@@ -185,7 +185,7 @@ $ outflux migrate --help
 
 ## Next Steps
 
-Once you have migrated to TimescaleDB, you can begin to familiarize yourself with our [architecture](https://docs.timescale.com/introduction/architecture) and [API reference](https://docs.timescale.com/api).
+Once you have migrated to TimescaleDB, you can begin to familiarize yourself with our [architecture][] and [API reference][].
 
 Additionally, we have several other [tutorials][] available for you to explore as you become accustomed to working with TimescaleDB.
 
@@ -195,4 +195,6 @@ Additionally, we have several other [tutorials][] available for you to explore a
 [outflux-releases]: https://github.com/timescale/outflux/releases
 [outflux-readme]: https://github.com/timescale/outflux/blob/master/README.md
 [outflux-connection]: https://github.com/timescale/outflux#connection
+[architecture]: /introduction/architecture
+[API reference]: /api
 [tutorials]: /tutorials

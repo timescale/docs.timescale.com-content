@@ -78,8 +78,8 @@ code, you should install the package `timescaledb-oss-postgresql-:pg_version:`.
 For more information about licensing, please read our [blog post][blog-post]
 about the subject.
 
-[config]: /getting-started/configuring
-[createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 [pgdg]: https://yum.postgresql.org/repopackages.php
 [yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation
-[blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[config]: /getting-started/configuring
+[createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
+[blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480

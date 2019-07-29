@@ -125,7 +125,8 @@ in traditional relational data models.
 
 ### Default Indexes
 
-By default, TimescaleDB automatically creates a time index on your data when a hypertable is created.
+By default, TimescaleDB automatically creates a time index on your
+data when a hypertable is created.
 
 ```sql
 CREATE INDEX ON conditions (time DESC);
@@ -256,10 +257,10 @@ running on top of a compressed file system like ZFS.
 ### Indexing the entire JSONB structure [](indexing-all-json)
 
 When indexing JSONB data across all fields that may be contained inside, it is
-often best to use a GIN index. PostgreSQL documentation has a [nice
-description][json-indexing] of the different types of GIN indexes available on
-JSON data. If in doubt, it is best to use the default GIN operator since it
-allows for more powerful queries:
+often best to use a GIN index. PostgreSQL documentation has
+a [nice description][json-indexing] of the different types of GIN indexes
+available on JSON data. If in doubt, it is best to use the default GIN operator
+since it allows for more powerful queries:
 
 ```sql
 CREATE INDEX idxgin ON metrics USING GIN (data);
@@ -360,17 +361,17 @@ partitions continuously, and will therefore have chunks assigned to
 tablespaces in a way similar to round-robin.
 
 [psql-docs]: https://www.postgresql.org/docs/current/static/app-psql.html
-[postgres-tablespaces]: https://www.postgresql.org/docs/current/static/manage-ag-tablespaces.html
 [postgres-createindex]: https://www.postgresql.org/docs/current/static/sql-createindex.html
+[create_hypertable]: /api#create_hypertable
+[postgres-createtrigger]: https://www.postgresql.org/docs/current/static/sql-createtrigger.html
+[postgres-createconstraint]: https://www.postgresql.org/docs/9.6/static/ddl-constraints.html
+[json-indexing]: https://www.postgresql.org/docs/current/static/datatype-json.html#JSON-INDEXING
+[json-operators]: https://www.postgresql.org/docs/current/static/functions-json.html#FUNCTIONS-JSONB-OP-TABLE
+[multicolumn-index]: https://www.postgresql.org/docs/current/static/indexes-multicolumn.html
+[partial-index]: https://www.postgresql.org/docs/current/static/indexes-partial.html
+[expression-index]: https://www.postgresql.org/docs/current/static/indexes-expressional.html
 [postgres-alter-table]: https://www.postgresql.org/docs/current/static/sql-altertable.html
+[postgres-tablespaces]: https://www.postgresql.org/docs/current/static/manage-ag-tablespaces.html
 [attach_tablespace]: /api/#attach_tablespace
 [detach_tablespace]: /api/#detach_tablespace
 [show_tablespaces]: /api/#show_tablespaces
-[create_hypertable]: /api#create_hypertable
-[postgres-createtrigger]: https://www.postgresql.org/docs/current/static/sql-createtrigger.html
-[json-indexing]: https://www.postgresql.org/docs/current/static/datatype-json.html#JSON-INDEXING
-[json-operators]: https://www.postgresql.org/docs/current/static/functions-json.html#FUNCTIONS-JSONB-OP-TABLE
-[expression-index]: https://www.postgresql.org/docs/current/static/indexes-expressional.html
-[partial-index]: https://www.postgresql.org/docs/current/static/indexes-partial.html
-[multicolumn-index]: https://www.postgresql.org/docs/current/static/indexes-multicolumn.html
-[postgres-createconstraint]: https://www.postgresql.org/docs/9.6/static/ddl-constraints.html

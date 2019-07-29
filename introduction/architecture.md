@@ -117,7 +117,6 @@ chunking, please see our [technical blog post][chunking].
 **Next:** Benefits of this architecture design? [TimescaleDB vs. PostgreSQL][TvsP]
 
 [data model]: /introduction/data-model
-[hypertables]: /introduction/architecture#hypertables-and-chunks
-[chunking]: https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
+[chunking]: https://www.timescale.com/blog/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
 [jumpSQL]: /using-timescaledb/hypertables
 [TvsP]: /introduction/timescaledb-vs-postgres
