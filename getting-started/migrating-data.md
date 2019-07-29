@@ -76,8 +76,7 @@ INSERT INTO new_table SELECT * FROM old_table;
 ```
 
 >:WARNING: `create_hypertable` may fail if invalid UNIQUE or PRIMARY
-KEY indexes existed on the old table (see
-this [note][unique_indexes]).
+KEY indexes existed on the old table (see this [note][unique_indexes]).
 In this case, you would have to reconfigure your indexes
 and/or schema.
 

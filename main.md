@@ -21,13 +21,13 @@
   </a>
 </div>
 <div class="test-chooser__cyoa-menu">
-  <a href="/api#insert">
+  <a href="/using-timescaledb/writing-data">
     <div class="cyoa-button">
       <img src="https://assets.iobeam.com/images/docs/welcome-4-data.png" class="cyoa-icon"/>
       <div class="test-chooser__cyoa-menu-label">Writing data</div>
     </div>
   </a>
-  <a href="/api#select">
+  <a href="/using-timescaledb/reading-data">
     <div class="cyoa-button">
       <img src="https://assets.iobeam.com/images/docs/welcome-5-analytics.png" class="cyoa-icon"/>
       <div class="test-chooser__cyoa-menu-label">Querying and data analytics</div>

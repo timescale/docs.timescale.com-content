@@ -198,7 +198,7 @@ SELECT time_bucket('1 day', time) AS day,
 ```
 
 For more information about TimescaleDB's current (and growing) list of
-time features, please [see our API][time bucketing].
+time features, please [see our API][api].
 
 #### Time-oriented Data Management
 
@@ -234,6 +234,6 @@ to automate your data retention policies.
 **Next:** How does TimescaleDB compare to NoSQL time-series DBs? [TimescaleDB vs. NoSQL][vs NoSQL]
 
 [architectural discussion]: /introduction/architecture#benefits-chunking
-[time bucketing]: /api#time_bucket
-[data retention]: /api/data-retention
+[api]: /api
+[data retention]: /using-timescaledb/data-retention
 [vs NoSQL]: /introduction/timescaledb-vs-nosql
