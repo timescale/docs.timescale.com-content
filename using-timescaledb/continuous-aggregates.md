@@ -172,7 +172,7 @@ DROP VIEW device_summary CASCADE;
 ```
 
 >:WARNING: `CASCADE` will drop those objects that depend on the continuous
-aggregate, such as views that are built on top of the continuous aggregate view.```
+aggregate, such as views that are built on top of the continuous aggregate view.
 
 
 ---
