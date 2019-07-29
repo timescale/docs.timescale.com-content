@@ -7,7 +7,7 @@ the abstraction of a single continuous table across all space and time intervals
 
 ### Creating a (Hyper)table [](create-hypertable)
 To create a hypertable, you start with a regular SQL table, and then convert
-it into a hypertable via the function `create_hypertable` ([API reference][]).
+it into a hypertable via the function [`create_hypertable`][create_hypertable].
 
 The following example creates a hypertable for tracking
 temperature and humidity across a collection of devices over time.
@@ -57,5 +57,5 @@ examples of using TimescaleDB's standard SQL interface, please see our
 
 [installed]: /getting-started/installation
 [setup]: /getting-started/setup
-[API Reference]: /api#create_hypertable
+[create_hypertable]: /api#create_hypertable
 [use pages]: /using-timescaledb

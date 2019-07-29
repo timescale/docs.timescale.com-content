@@ -51,7 +51,7 @@ If you're entirely new to SQL, here are some resources to help you get started:
 [architecture]: /introduction/architecture
 [replication]: /tutorials/replication
 [patroni]: https://github.com/zalando/patroni
-[nosql-blog-post]: https://blog.timescale.com/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c
+[nosql-blog-post]: https://www.timescale.com/blog/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c
 [creating-hypertables]: /using-timescaledb/hypertables
 [postgres-manuals]: https://www.postgresql.org/docs/manuals/
 [tutorialspoint]: https://www.tutorialspoint.com/sql/

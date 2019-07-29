@@ -104,14 +104,13 @@ GitHub links for more information.
 
 For more instructions on using our Prometheus adapter, [see our tutorial][tutorial-prometheus].
 
-[official-image]: https://github.com/docker-library/postgres/
-[docker-vulnerability]: https://www.techrepublic.com/article/how-to-fix-the-docker-and-ufw-security-flaw
-[alpine Linux]: https://alpinelinux.org/
 [Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
-[docker-run.sh]: https://github.com/timescale/timescaledb/blob/master/scripts/docker-run.sh
-[docker-data-volumes]: https://docs.docker.com/engine/tutorials/dockervolumes/#data-volumes
+[docker-vulnerability]: https://www.techrepublic.com/article/how-to-fix-the-docker-and-ufw-security-flaw
+[official-image]: https://github.com/docker-library/postgres/
+[alpine Linux]: https://alpinelinux.org/
+[docker-data-volumes]: https://docs.docker.com/storage/volumes/
+[blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480
 [tutorial-postgis]: http://docs.timescale.com/tutorials/tutorial-hello-nyc#tutorial-postgis
-[tutorial-prometheus]: /tutorials/prometheus-adapter
 [adapter-github]: https://github.com/timescale/prometheus-postgresql-adapter
 [prometheus-extension]: https://github.com/timescale/pg_prometheus
-[blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[tutorial-prometheus]: /tutorials/prometheus-adapter

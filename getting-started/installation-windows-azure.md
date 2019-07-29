@@ -20,12 +20,7 @@ You can now enable the TimescaleDB extension in your desired PostgreSQL database
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 ```
 
-Next you can [set up][setup] the database either by [creating a hypertable][create-hypertable] from scratch or [migrating existing time-series data in PostgreSQL][migrate-data].
-
 
 [azure-postgresql]: https://azure.microsoft.com/en-us/services/postgresql/
+[matrix]: https://www.timescale.com/products
 [azure-restart]: https://docs.microsoft.com/en-us/azure/postgresql/howto-restart-server-portal
-[setup]: /getting-started/setup
-[create-hypertable]: /getting-started/creating-hypertables
-[migrate-data]: /getting-started/migrating-data
-[matrix]: https://www.timescale.com/pricing

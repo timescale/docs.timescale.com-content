@@ -47,4 +47,5 @@ For more information about licensing, please read our [blog post][blog-post] abo
 [c_plus]: https://www.microsoft.com/en-us/download/details.aspx?id=48145
 [pg_config]: https://www.postgresql.org/docs/10/static/app-pgconfig.html
 [windows-dl]:  https://timescalereleases.blob.core.windows.net/windows/timescaledb-postgresql-:pg_version:_x.y.z-windows-amd64.zip
-[blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[config]: /getting-started/configuring
+[blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480

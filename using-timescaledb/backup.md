@@ -14,7 +14,7 @@ works with all TimescaleDB installations. You can also use any of several
 external backup and restore managers such as [`pg_backrest`][pg-backrest],
 [`barman`][pg-barman], or [`wal-e`][wale official]. These allow you to take
 online, hot physical backups of your entire instance, and many offer incremental
-backups and other automation options. 
+backups and other automation options.
 
 
 
@@ -44,7 +44,7 @@ which need to be run from `psql`:
 ```sql
 CREATE DATABASE tutorial;
 \c tutorial --connect to the db where we'll perform the restore
-CREATE EXTENSION timescaledb; 
+CREATE EXTENSION timescaledb;
 SELECT timescaledb_pre_restore();
 
 -- execute the restore (or from a shell)
@@ -56,7 +56,7 @@ SELECT timescaledb_post_restore();
 
 >:WARNING: PostgreSQL's `pg_dump` does not currently specify the *version* of
  the extension in its backup, which leads to problems if you are
- restoring into a database instance with a more recent extension 
+ restoring into a database instance with a more recent extension
  version installed.  (In particular, the backup could be for some
  version 1.1, but then the `CREATE EXTENSION timescaledb` command just
  installs the latest (say, 1.3), and thus does not have the
@@ -65,10 +65,10 @@ SELECT timescaledb_post_restore();
 >
 >The workaround is that when restoring from a backup, you need to
  restore to a PostgreSQL instance with the same extension version
- installed, and *then* upgrade the version. 
+ installed, and *then* upgrade the version.
 
->:WARNING: When restoring from versions before 1.3, you must follow 
-  the instructions for restoring from earlier versions. You can select 
+>:WARNING: When restoring from versions before 1.3, you must follow
+  the instructions for restoring from earlier versions. You can select
   docs for previous versions of the database in the sidebar.
 
 
@@ -333,19 +333,17 @@ docker logs timescaledb-recovered
 
 Note that it is normal to see some archive recovery "errors" at the
 end as the recovery will be complete when no further files can be
-found in the archive. See the PostgreSQL documentation on [continuous
-archiving][pg archiving] for more information.
+found in the archive. See the PostgreSQL documentation on
+[continuous archiving][pg archiving] for more information.
 
 [replication-tutorial]: /tutorials/replication
 [postgres-pg_basebackup]: https://www.postgresql.org/docs/current/app-pgbasebackup.html
 [pg-backrest]: https://pgbackrest.org/
 [pg-barman]: https://www.pgbarman.org/
-[updating instructions]: /api/update-db
+[wale official]: https://github.com/wal-e/wal-e
 [pg_dump]: https://www.postgresql.org/docs/current/static/app-pgdump.html
 [pg_restore]: https://www.postgresql.org/docs/current/static/app-pgrestore.html
+[updating instructions]: /api/update-db
 [parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
-[docker image]: https://hub.docker.com/r/timescale/timescaledb
-[wale image]: https://hub.docker.com/r/timescale/timescaledb-wale
-[wale github]: https://github.com/timescale/timescaledb-wale
-[wale official]: https://github.com/wal-e/wal-e
 [pg archiving]: https://www.postgresql.org/docs/current/continuous-archiving.html#BACKUP-PITR-RECOVERY
+[wale image]: https://hub.docker.com/r/timescale/timescaledb-wale

@@ -108,6 +108,6 @@ and immediately start it.
 
 
 [drop_chunks]: /api#drop_chunks
+[add_drop_chunks_policy]: /api#add_drop_chunks_policy
 [unit]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 [timer]: https://www.freedesktop.org/software/systemd/man/systemd.timer.html
-[add_drop_chunks_policy]: /api#add_drop_chunks_policy

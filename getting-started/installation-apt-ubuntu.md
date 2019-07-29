@@ -70,7 +70,7 @@ about the subject.
 
 [Here are some instructions to create the `postgres` superuser][createuser].
 
-[config]: /getting-started/configuring
-[createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 [ubuntu-releases]: http://releases.ubuntu.com/
-[blog-post]: https://blog.timescale.com/how-we-are-building-an-open-source-business-a7701516a480
+[config]: /getting-started/configuring
+[blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480
+[createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html

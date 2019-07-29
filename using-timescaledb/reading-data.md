@@ -153,7 +153,7 @@ In many monitoring (and IoT) use cases, devices or sensors report metrics that t
 change. In cases where the value changes, these changes are considered anomalies. When querying
 for these changes in values over time, users typically do not want to transmit all the values where
 no changes were observed since they want to minimize the amount of data that gets sent back to
-the client. 
+the client.
 
 Users can leverage a combination of window functions and subselects to achieve this. The below query
 uses diffs to filter rows where values have not changed and only transmits rows where values
@@ -434,12 +434,10 @@ What analytic functions are we missing?  [Let us know on github][issues].
 
 [postgres-select]: https://www.postgresql.org/docs/current/static/sql-select.html
 [percentile_cont]: https://www.postgresql.org/docs/current/static/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
-[indexing]: /using-timescaledb/schema-management#indexing
 [time_bucket]: /api#time_bucket
 [date_trunc]: https://www.postgresql.org/docs/current/static/functions-datetime.html#functions-datetime-trunc
 [first]: /api#first
 [last]: /api#last
 [histogram]: /api#histogram
-[generate_series]: https://www.postgresql.org/docs/current/static/functions-srf.html
 [loose index scan]: https://wiki.postgresql.org/wiki/Loose_indexscan
 [issues]: https://github.com/timescale/timescaledb/issues
