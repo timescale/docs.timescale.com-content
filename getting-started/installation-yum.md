@@ -32,7 +32,7 @@ Add TimescaleDB's third party repository and install TimescaleDB,
 which will download any dependencies it needs from the PostgreSQL repo:
 ```bash
 # Add our repo
-sudo cat > /etc/yum.repos.d/timescale_timescaledb.repo <<EOL
+sudo tee /etc/yum.repos.d/timescale_timescaledb.repo <<EOL
 [timescale_timescaledb]
 name=timescale_timescaledb
 baseurl=https://packagecloud.io/timescale/timescaledb/el/7/\$basearch
