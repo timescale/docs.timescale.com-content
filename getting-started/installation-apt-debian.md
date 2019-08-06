@@ -2,11 +2,11 @@
 
 This will install TimescaleDB via `apt` on Debian distros.
 
-**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.2+, or 11.0+**
+**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.9+, or 11.4+**
 
 #### Prerequisites
 
-- Debian 8 (jessie) or 9 (stretch)
+- Debian 8 (jessie), 9 (stretch), or 10 (buster)
 
 #### Build & Install
 
