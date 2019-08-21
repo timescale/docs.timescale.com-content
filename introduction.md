@@ -37,11 +37,19 @@ research (including streaming replication, backups).
 - **Flexible management options** (compatible with existing PostgreSQL
 ecosystem and tooling).
 
-
 The rest of this section describes the design and motivation around the TimescaleDB
 architecture, including why time-series data is different, and how we leverage
-its characteristics when building TimescaleDB.
+its characteristics when building TimescaleDB. 
 
 **Next:** In part to understand TimescaleDB's design choices, let us ask: [What is time-series data?][time-series-data]
 
+## Download the Guide
+If you want a quick visual intro to TimescaleDB, click on the image below to download the starter guide. 
+
+[<img class="main-content__illustration" style="margin: 0 5% 0 10%;"
+src="https://assets.timescale.com/images/covers/TimescaleDB_Starter_Guide.svg" 
+alt="starter guide"/>][starter-guide]
+
 [time-series-data]: /introduction/time-series-data
+[starter-guide]: https://assets.timescale.com/resources/TimescaleDB_Starter_Guide.pdf
+
