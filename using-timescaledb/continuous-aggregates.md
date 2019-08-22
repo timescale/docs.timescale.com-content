@@ -36,7 +36,7 @@ will happen the next time the materialization job runs.
 `timescaledb.continuous` option in the `WITH` clause of a
 PostgreSQL [`CREATE VIEW`][postgres-createview] statement.
 
-Let's suppose we have a hypertable `device_readings` created as so:
+Let's suppose we have a hypertable `device_readings` created like so:
 ```sql
 CREATE TABLE device_readings (
       observation_time  TIMESTAMPTZ       NOT NULL,
@@ -48,7 +48,7 @@ SELECT create_hypertable('device_readings', 'observation_time');
 ```
 
 If we want to query per-device readings aggregated on an hourly basis, we might
-create a continuous aggregate as so:
+create a continuous aggregate like so:
 
 ```sql
 CREATE VIEW device_summary
@@ -71,6 +71,24 @@ of the raw hypertable is required in all continuous aggregate views. The
 hour. See the [`CREATE VIEW (Continuous Aggregate)`][api-continuous-aggs-create]
 section of our documentation for all of the options and requirements for the
 command.
+
+You can also create multiple continuous aggregates on the same raw hypertable. For example, we may
+want to query per-device readings aggregated on a daily basis. To do so, we can create a continuous
+aggregate like so:
+
+```sql
+CREATE VIEW device_summary
+WITH (timescaledb.continuous) --This flag is what makes the view continuous
+AS
+SELECT
+  time_bucket('1 day', observation_time) as bucket, --time_bucket is required
+  device_id,
+  avg(metric) as metric_avg, --We can use any parallelizable aggregate
+  max(metric)-min(metric) as metric_spread --We can also use expressions on aggregates and constants
+FROM
+  device_readings
+GROUP BY bucket, device_id; --We have to group by the bucket column, but can also add other group-by columns
+```
 
 In general, aggregates which can be [parallelized by PostgreSQL][postgres-parallel-agg]
 are allowed in the view definition, this includes most aggregates distributed
