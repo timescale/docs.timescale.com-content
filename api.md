@@ -966,6 +966,18 @@ AS
         GROUP BY time_bucket('1day', timec), location, humidity, temperature;
 ```
 
+Add additional continuous aggregates on top of the same raw hypertable.
+```sql
+CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
+WITH ( timescaledb.continuous,
+    timescaledb.refresh_lag = '5 hours',
+    timescaledb.refresh_interval = '1h' )
+AS
+    SELECT time_bucket('30day', timec), min(location), sum(temperature), sum(humidity)
+        FROM conditions
+        GROUP BY time_bucket('30day', timec), location, humidity, temperature;
+```
+
 >:TIP: In order to keep the continuous aggregate up to date with incoming data,
 the refresh lag can be set to `-<bucket_width>`. Please note that by doing so,
 you will incur higher write amplification and incur performance penalties.
