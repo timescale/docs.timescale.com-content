@@ -9,7 +9,7 @@ TimescaleDB is currently available on [Azure Database for PostgreSQL][azure-post
 ### Using the Azure Portal
 1. Select your Azure Database for PostgreSQL server.
 1. On the left menu, select server parameters.
-1. Search for the `shared_preloaded_libraries` parameter.
+1. Search for the `shared_preload_libraries` parameter.
 1. Type in `timescaledb`.
 1. Select save to preserve your changes. You will receive a notification once the changes are saved.
 1. After the notification, restart the server to apply these changes. To learn how to restart a server, see [Restart an Azure Database for PostgreSQL server using Azure portal][azure-restart].
