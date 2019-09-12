@@ -12,7 +12,7 @@ running TimescaleDB Community, all you have to do is obtain a license key to unl
 all Enterprise capabilities. No software upgrade or downgrade is required. We offer a free 30-day license
 that you can request [online][license]. The license will be sent to you via email.
 
-To upgrade or obtain a full Enterprise license key, please [contact sales][contact-sales].
+To upgrade or obtain a full Enterprise license key (beyond the free 30-day trial), please [contact sales][contact-sales].
 
 ## Activating TimescaleDB Enterprise
 
