@@ -238,41 +238,50 @@ Add a new data node to the database to be used for creating
 distributed hypertables.
 
 Newly created distributed hypertables will be able to make use of this
-data node for apportioning data across the distributed database. Note that existing
-distributed hypertables will not automatically use the newly added
-data node. For existing distributed hypertables to use added data
-nodes, use [`attach_data_node`](#attach_data_node).
+data node for apportioning data across the distributed database. Note
+that existing distributed hypertables will not automatically use the
+newly added data node. For existing distributed hypertables to use
+added data nodes, use [`attach_data_node`](#attach_data_node).
 
-The function will attempt to bootstrap the data node by:
-1. Connecting to a specified postgres instance
-2. Creating the database that will serve as the new data node
-3. Loading the TimescaleDB extension on the new database
+If the data node already exists, the command will abort with either an
+error or a notice depending on the value of `if_not_exists`.
+
+If `bootstrap` is true, the function will attempt to bootstrap the
+data node by:
+1. Connecting to the database given in `bootstrap_database`.
+2. Creating the database given in `database` that will serve as the
+   new data node.
+3. Loading the TimescaleDB extension in the new database.
+4. Setting metadata to make data node part of the distributed
+   database.
 
 #### Errors
 
 An error will be given if:
-* an attempt is made to run the function inside a transaction _or_
-* the remote database already exists on the data node and
-  `if_not_exists` is not set.
+* The function is executed inside a transaction.
+* The function is executed in a database that is already a data node.
+* The data node already exists and `if_not_exists` is `FALSE`.
+* The port number is not valid for use as a port number.
+* If `boostrap` is `FALSE` and the database was not previously
+  bootstrapped.
+
 
 #### Required Arguments [](add_data_node-required-arguments)
 
 | Name        | Description                         |
 | ----------- | -----------                         |
 | `node_name` | Name for the data node.             |
+| `host`      | Host name for the remote data node. |
 
 #### Optional Arguments [](add_data_node-optional-arguments)
 
 | Name                 | Description                                           |
 |----------------------|-------------------------------------------------------|
-| `host`               | Host name for the remote data node. The default is `'localhost'`. |
-| `port`               | Port to use on the remote data node. The default is the PostgreSQL port used by the access node on which the function is executed. |
 | `database`           | Database name where remote hypertables will be created. The default is the current database name. |
-| `password`           | Password to be used when connecting to the remote data node. Note that the user name will be the same as the current user. The default is to not use a password. |
-| `if_not_exists`      | Do not fail if the data node already exists. The data node will not be overwritten, but the command will not generate an error and instead generate a notice. |
+| `port`               | Port to use on the remote data node. The default is the PostgreSQL port used by the access node on which the function is executed. |
+| `if_not_exists`      | Do not fail if the data node already exists. The default is `FALSE`. |
+| `bootstrap`          | Bootstrap the remote data node. The default is `TRUE`. |
 | `bootstrap_database` | Database to use when bootstrapping as described above. The default is `'postgres'`. |
-| `bootstrap_user`     | User to be used for bootstrapping. This user needs to have `SUPERUSER` permissions on the remote database server, unless the remote database already exists with the timescaledb extension. The default is the current user. |
-| `bootstrap_password` | Password to be used when bootstrapping. The default is the password provided in `password`. |
 
 #### Returns [](add_data_node-returns)
 
@@ -300,15 +309,17 @@ SELECT add_data_node('dn2', host => 'dn2.example.com');
 SELECT create_distributed_hypertable('conditions', 'time', 'location');
 ```
 
-Note that the previous example will only succeed if the current user
-has `SUPERUSER` permission on the two remote systems and doesn't
-require a password to connect.  If the current user doesn't have the
-appropriate permissions, you'll have to provide a bootstrap user as
-described above:
+If you want to create a distributed database with the two data nodes
+local to this instance, you can write:
 
 ```sql
-SELECT add_data_node('dn1', host => 'dn1.example.com', password => 'mydn1password', bootstrap_user => 'dn1_superuser', bootstrap_password => 'dn1_su_password');
+SELECT add_data_node('dn1', host => 'localhost', database => 'dn1');
+SELECT add_data_node('dn2', host => 'localhost', database => 'dn2');
+SELECT create_distributed_hypertable('conditions', 'time', 'location');
 ```
+
+Note that this does not offer any performance advantages over using a
+regular hypertable, but it can be useful for testing.
 
 ---
 ## attach_tablespace() [](attach_tablespace)
