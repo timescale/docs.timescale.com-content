@@ -202,7 +202,8 @@ function.
 
 | Name              | Description                                   |
 |-------------------|-----------------------------------------------|
-| `if_not_attached` | Prevents error if data node is already attached to the hypertable. A notice will be printed that the data node is attached. |
+| `if_not_attached` | Prevents error if the data node is already attached to the hypertable. A notice will be printed that the data node is attached. Defaults to `FALSE`. |
+| `repartition`     | Change the configuration so that all the attached data nodes are used. Defaults to `TRUE`. |
 
 #### Returns
 
@@ -252,7 +253,7 @@ data node by:
 2. Creating the database given in `database` that will serve as the
    new data node.
 3. Loading the TimescaleDB extension in the new database.
-4. Setting metadata to make the data node part of the distributed
+4. Setting metadata to make data node part of the distributed
    database.
 
 #### Errors
@@ -778,11 +779,7 @@ partition across
 
 #### Returns
 
-| Column               | Description                              |
-|----------------------|------------------------------------------|
-| `hypertable_id`      | Hypertable id of the modified hypertable |
-| `node_hypertable_id` | Hypertable id on the remote data node    |
-| `node_name`          | Name of the attached data node     |
+The number of hypertables the data node was detached from.
 
 #### Errors
 
