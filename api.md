@@ -253,7 +253,7 @@ data node by:
 2. Creating the database given in `database` that will serve as the
    new data node.
 3. Loading the TimescaleDB extension in the new database.
-4. Setting metadata to make data node part of the distributed
+4. Setting metadata to make the data node part of the distributed
    database.
 
 #### Errors
