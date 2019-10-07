@@ -211,7 +211,7 @@ function.
 | Name              | Description                                   |
 |-------------------|-----------------------------------------------|
 | `if_not_attached` | Prevents error if the data node is already attached to the hypertable. A notice will be printed that the data node is attached. Defaults to `FALSE`. |
-| `repartition`     | Change the configuration so that all the attached data nodes are used. Defaults to `TRUE`. |
+| `repartition`     | Change the partitioning configuration so that all the attached data nodes are used. Defaults to `TRUE`. |
 
 #### Returns
 
