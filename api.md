@@ -1057,12 +1057,12 @@ Update the continuous aggregate view immediately.
 ```sql
 REFRESH MATERIALIZED VIEW contagg_view;
 ```
----
 
 >:TIP: Note that max_interval_per_job and refresh_lag parameter settings are used by the materialization job
 when the REFRESH is run. So the materialization (of the continuous aggregate) does not necessarily include
 all the updates to the hypertable.
 
+---
 
 ## DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
 Continuous aggregate views can be dropped using `DROP VIEW` statement.
