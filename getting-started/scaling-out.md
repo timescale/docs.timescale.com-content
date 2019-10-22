@@ -1,17 +1,16 @@
 # Scaling out using Distributed Hypertables
 
->:WARNING: Running TimescaleDB in a multi-node setup is currently in PRIVATE BETA.
-This method of deployment is not meant for production use. For more information, please
+>:WARNING: Distributed hypertables are currently in PRIVATE BETA and
+are not yet meant for production use. For more information, please
 [contact us][contact].
 
-TimescaleDB supports multi-node clustering by leveraging the hypertable and chunk primitives.
-Hypertables are used to handle large amount of data by breaking it up
-into smaller pieces (chunks), allowing operations to execute efficiently. When
-the amount of data is expected to be beyond what a single machine can handle,
-you can distribute the data chunks over several machines by using
-*distributed hypertables*.
-Distributed hypertables are similar to normal hypertables, but they
-add an additional layer of hypertable partitioning by distributing chunks
+Hypertables handle large amounts of data by breaking it up into
+smaller pieces (chunks), allowing operations to execute
+efficiently. When the amount of data is expected to be beyond what a
+single machine can handle, you can distribute the data chunks over
+several machines by using *distributed hypertables*.  Distributed
+hypertables are similar to normal hypertables, but they add an
+additional layer of hypertable partitioning by distributing chunks
 across *data nodes*.
 
 Data nodes together with an *access node* constitute a distributed database
@@ -30,72 +29,64 @@ and removed using [`delete_data_node`][delete_data_node].
 
 Note that:
 
-* Data nodes are added as objects locally and connect to an
-  existing PostgreSQL instance.
+* A data node is represented on the access node by a local object that
+  contains the configuration needed to connect to a database on a
+  PostgreSQL instance. The [`add_data_node`][add_data_node] command is
+  used to create this object.
 
-* You should already have a running PostgreSQL server on the data node host.
+* You should already have a running PostgreSQL server on an instance
+  that will host a data node. The data node's database will
+  be created when executing the [`add_data_node`][add_data_node]
+  command on the access node and should _not_ exist prior to adding
+  the data node.
 
-* Ensure that the data node has password authentication enabled
-  in their `pg_hba.conf` files for any non-superusers.
+* PostgreSQL instances that will act as data nodes are assumed to
+  contain the same roles and permissions as the access node
+  instance. Currently, such roles and permissions need to be created
+  manually, although there is a [utility command][distributed_exec]
+  that can be used to create roles and permissions across data nodes.
+
+* A data node needs
+  [`max_prepared_transactions`][max_prepared_transactions]
+  set to a value greater than zero.
 
 When creating the data node, you should:
 
+* Run `add_data_node` as a superuser that can authenticate with the
+  data node instance. This can be done by setting up either password
+  or certificate [authentication][data-node-authentication].
+
 * Provide a name to use when referring to the data node from
-  this database.
+  the access node database.
 
-* Provide the host where the hypertable partition for the distributed
-  hypertable should be stored.
+* Provide the host name, and optionally port, of the PostgreSQL
+  instance that will hold the data node.
 
-* Provide the remote password, which will be used by the current user
-  during access to the created remote data node.
+After creating the data node:
 
-* Provide a bootstrap user and password, which is used to
-  create the data node. If the current user can be used, then
-  the boostrap user and password can be omitted.
+* Ensure that non-superusers have `USAGE` privileges on the
+  `timescaledb_fdw` foreign data wrapper and any
+  data node objects they will use on the access node.
 
-* Ensure that the bootstrap user used for connecting to the data node
-  is a superuser.
-  This is necessary since
-  `add_data_node` expects to be able to create a
-  database on the remote data node and create
-  a TimescaleDB extension within it.
-
-* Ensure that the local user has `USAGE` privileges on the `timescaledb_fdw`
-  foreign data wrapper on the access node.
+* Ensure that each user of a distributed hypertable has a way to
+  [authenticate][data-node-authentication] with the data nodes they
+  are using.
 
 ```sql
-SELECT add_data_node('node1', host => 'dn1.example.com',
-  password=>'<remote_password>', bootstrap_user=>'<superuser>',
-  bootstrap_password=>'<superuser_password>');
+SELECT add_data_node('node1', host => 'dn1.example.com');
 
-SELECT add_data_node('node2', host => 'dn2.example.com',
-  password=>'<remote_password>', bootstrap_user=>'<superuser>',
-  bootstrap_password=>'<superuser_password>');
+SELECT add_data_node('node2', host => 'dn2.example.com');
 ```
-
-Any additional users that will access a distributed hypertable currently
-need their own user mappings per data node with a `user` and `password` option.
-A user mapping can be created for a data node as follows:
-
-```sql
-CREATE USER MAPPING FOR <another_user> SERVER node1
-  OPTIONS (user '<remote_user>' password '<remote_password>');
-```
-The additional users also need `USAGE` permissions on the `timescaledb_fdw`
-foreign data wrapper and any data node (server) objects.
 
 Deleting a data node is done by calling `delete_data_node`:
 
 ```sql
-SELECT delete_data_node('node1', cascade=>true);
+SELECT delete_data_node('node1');
 ```
 >:TIP: A data node cannot be deleted if it contains data for a
-hypertable, since otherwise data would be lost.
+hypertable, since otherwise data would be lost and leave the
+distributed hypertable in an inconsistent state.
 
->:WARNING: Although the `cascade` parameter is not strictly a required argument,
-you *MUST* set it to `true` in this current release to avoid putting TimescaleDB
-in a recoverable error state.
-  
 ### Information Schema for Data Nodes
 
 The data nodes that have been added to the distributed database
@@ -155,9 +146,7 @@ added to existing distributed hypertables, so it is necssary to attach
 it explicitly.
 
 ```sql
-SELECT add_data_node('node3', host => 'dn3.example.com',
-  password=>'<remote_password>', bootstrap_user=>'<superuser>',
-  bootstrap_password=>'<superuser_password>');
+SELECT add_data_node('node3', host => 'dn3.example.com');
 
 SELECT attach_data_node('node3', hypertable => 'conditions');
 ```
@@ -172,16 +161,25 @@ hypertable, you can use [`detach_data_node`][detach_data_node].
 SELECT detach_data_node('node1', hypertable => 'conditions');
 ```
 
-If a data node is storing data for a hypertable,
-then you will get an error.
+Note that you cannot detach a data node that still holds data for the
+hypertable. However, if the distributed hypertable is subject to a
+retention policy, it is possible to block new data on a data node and
+wait until the existing data on the data node moves outside the
+retention window. This is achieved by first blocking new chunks on the
+data node:
 
 ```sql
-SELECT detach_data_node('node1', hypertable => 'conditions');
-ERROR:  detaching data node "node1" would mean a data-loss for hypertable "conditions" since data node has the only data replica
-HINT:  Ensure the data node "node1" has no non-replicated data before detaching it.
+SELECT block_new_chunks('node1', hypertable => 'conditions');
 ```
 
+This will prohibit new data from being stored on the data node. Once
+the data node's data is outside the retention window,
+[`drop_chunks`][drop_chunks] can be used to delete the data on the data
+node.
+
 [add_data_node]: /api#add_data_node
+[drop_chunks]: /api#drop_chunks
+[distributed_exec]: /api#distributed_exec
 [architecture]: /introduction/architecture#timescaledb-clustering
 [attach_data_node]: /api#attach_data_node
 [create_distributed_hypertable]: /api#create_distributed_hypertable
@@ -190,3 +188,5 @@ HINT:  Ensure the data node "node1" has no non-replicated data before detaching 
 [detach_data_node]: /api#detach_data_node
 [timescaledb_information-data_node]: /api#timescaledb_information-data_node
 [contact]: https://www.timescale.com/contact
+[data-node-authentication]: /getting-started/data-node-authentication
+[max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
