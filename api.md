@@ -926,7 +926,7 @@ SELECT distributed_exec($$CREATE USER davide WITH PASSWORD 'jw8s0F4'$$, node_lis
 
 ```
 
---
+---
 
 ## drop_chunks() [](drop_chunks)
 
