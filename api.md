@@ -7,11 +7,13 @@
 > - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
 > -	[add_compress_chunks_policy](#add_compress_chunks_policy)
+> - [allow_new_chunks](#allow_new_chunks)
 > - [alter_job_schedule](#alter_job_schedule)
 > - [alter table (compression)](#compression_alter-table)
 > - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
 > - [attach_data_node](#attach_data_node)
 > - [attach_tablespace](#attach_tablespace)
+> - [block_new_chunks](#block_new_chunks)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > -	[compress_chunk](#compress_chunk)
@@ -330,6 +332,41 @@ Note that this does not offer any performance advantages over using a
 regular hypertable, but it can be useful for testing.
 
 ---
+## allow_new_chunks() [](allow_new_chunks)
+
+This will undo a previous [`block_new_chunks`](#block_new_chunks)
+command, resulting in the data node once again being a target for new
+chunks belonging to the distributed hypertable. This will not have any
+effect for chunks already in existence, the data node is simply eligible
+to receive any new chunks created in the future.
+
+#### Required Arguments [](allow_new_chunks-required-arguments)
+
+| Name             | Description                       |
+|------------------|-----------------------------------|
+| `data_node_name` | Name of data node newly eligible for chunks for the distributed hypertable |
+
+#### Optional Arguments [](allow_new_chunks-optional-arguments)
+
+| Name         | Description                            |
+|--------------|----------------------------------------|
+| `hypertable` | Name of the distributed hypertable for which chunks creation is being allowed. If NULL, the data node will now be allowed to receive new chunks for any distributed hypertable to which it is attached. |
+
+#### Errors
+
+Allowing new chunks on a data node will only cause an error if the
+`hypertable` argument is not a valid distributed hypertable attached
+to the data node.
+
+#### Sample Usage [](allow_new_chunks-examples)
+
+Allow new chunks for `conditions` to be created on data node `dn3`:
+
+```sql
+SELECT allow_new_chunks('dn3', 'conditions');
+```
+
+---
 ## attach_tablespace() [](attach_tablespace)
 
 Attach a tablespace to a hypertable and use it to store chunks. A
@@ -382,6 +419,50 @@ SELECT attach_tablespace('disk2', 'conditions', if_not_attached => true);
 
 >:WARNING: The management of tablespaces on hypertables is currently an
 experimental feature.
+
+---
+## block_new_chunks() [](block_new_chunks)
+
+Prevent new chunks from being created on a data node without losing
+access to any of the existing data. Note than any chunks already
+existing on the data node may continue to receive further INSERTs and
+UPDATEs.
+
+This can be useful if one data node is running low on space or simply
+as a first step toward safely removing a data node from a distributed
+hypertable. To resume using a data node once blocked for a hypertable,
+use [`allow_new_chunks`](#allow_new_chunks).
+
+#### Required Arguments [](block_new_chunks-required-arguments)
+
+| Name             | Description                       |
+|------------------|-----------------------------------|
+| `data_node_name` | Name of data node to stop creating chunks for the distributed hypertable |
+
+#### Optional Arguments [](block_new_chunks-optional-arguments)
+
+| Name         | Description                            |
+|--------------|----------------------------------------|
+| `hypertable` | Name of the distributed hypertable for which chunk creation is being blocked. If NULL, no new chunks will be created for any hypertables. |
+| `force`      | Force blocking of the data node even if that means that the replication factor will no longer be reachable for new chunks. Note that it will never be allowed to block chunks on the last data node for a distributed hypertable.         |
+
+#### Errors
+
+Blocking chunks on a data node is not permitted:
+- If it would result in no available data nodes for any future chunks
+on a hypertable
+- If it would result in future chunks being under-replicated for the
+distributed hypertable (without the `force` argument)
+
+>:TIP: Replication is currently experimental, and not a supported feature.
+
+#### Sample Usage [](block_new_chunks-examples)
+
+Block any new chunks for `conditions` from being created on data node `dn3`:
+
+```sql
+SELECT block_new_chunks('dn3', 'conditions');
+```
 
 ---
 
@@ -777,7 +858,7 @@ partition across
 
 | Name         | Description                            |
 |--------------|----------------------------------------|
-| `hypertable` | Name of the distributed hypertable where the data node should be attached. If NULL, the data node will be detached from all hypertables. |
+| `hypertable` | Name of the distributed hypertable where the data node should be detached. If NULL, the data node will be detached from all hypertables. |
 | `force`      | Force detach of the data node even if that means that the replication factor is reduced below what was set. Note that it will never be allowed to reduce the replication factor below 1 since that would cause data loss.         |
 
 #### Returns

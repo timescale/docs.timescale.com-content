@@ -63,37 +63,54 @@ using our informational views:
 SELECT * FROM timescaledb_information.data_node;
 ```
 
-Now that we've created a database and connected a couple data nodes, let's go ahead
-and create a distributed hypertable. With the following commands, we'll create
-a hypertable and then distribute it:
+Now that we've created a database and added a couple data nodes,
+let's go ahead and create a distributed hypertable. With the following
+commands, we'll create a distributed hypertable for collecting
+temperature readings from sensors:
 
 ```sql
-CREATE TABLE distributed (time timestamptz NOT NULL, id integer, value numeric);
+CREATE TABLE conditions (time timestamptz NOT NULL, device integer, temp float);
 
-SELECT create_distributed_hypertable('distributed','time', 'id');
+SELECT create_distributed_hypertable('conditions', 'time', 'device');
 ```
 
-To check how your data is being distributed, let's generate some sample data:
+This will partition the `conditions` table along one time dimension
+(`time`) and one space dimension (`device`). By default, all
+the data nodes are used.
+
+Now, let's generate some sample data in insert it into the
+`conditions` table:
 
 ```sql
-WITH RECURSIVE CTE as (
-  SELECT timestamptz '2019-01-01 00:00:00' as x, 3::int as y, 80.0::float as z
-  UNION ALL
-    SELECT x + interval '1 minute', (y+random()*10)::int, greatest(least((z+((random()-0.5)*1))::float,100::float), 0::float)
-    FROM CTE where x < '2019-04-01'
-)
-INSERT INTO distributed SELECT * FROM CTE;
+INSERT INTO conditions
+SELECT time, (random()*30)::int, random()*80
+FROM generate_series('2019-01-01 00:00:00'::timestamptz, '2019-02-01 00:00:00', '1 min') AS time;
+```
 
+You can now check the configuration of the distributed hypertable and
+how many chunks it holds by running the following:
+
+```sql
 SELECT * FROM timescaledb_information.hypertable;
+
 ```
 
-You can also check how you data is actually being distributed by running the following:
+The data node view can also show how chunks are distributed across the
+nodes:
 
 ```sql
-SELECT * FROM hypertable_relation_size('distributed');
+SELECT * FROM timescaledb_information.data_node;
 ```
 
-That's it! You can now use TimescaleDB in a multi-node setup.
+You can query the distributed hypertable as normal to see the data it
+holds:
+
+```sql
+SELECT * FROM conditions;
+```
+
+That's it! You've now successfully created a distributed hypertable,
+inserted data across multiple data nodes, and queried that data.
 
 
 [architecture]: /introduction/architecture#timescaledb-clustering
