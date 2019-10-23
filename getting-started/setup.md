@@ -60,7 +60,7 @@ to a TimescaleDB hypertable.
 ---
 
 [setup illustration]: https://assets.iobeam.com/images/docs/illustration-setup.svg
-[installed]: /getting-started/installation
+[installed]: /getting-started/clustering-installation
 [start-scratch]: /getting-started/creating-hypertables
 [migrate-postgres]: /getting-started/migrating-data
 [telemetry reporting]: /api#get_report

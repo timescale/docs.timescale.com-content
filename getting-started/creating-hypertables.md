@@ -38,6 +38,9 @@ explicitly time-based, as long as it can increment.  For example, a
 monotonically increasing id would work. You must specify a chunk time interval
 when creating a hypertable if you use a monotonically increasing id.  
 
+>:TIP: If you want to use [distributed hypertables][create_distributed_hypertable] in a multinode
+TimescaleDB setup, refer to the [scaling out][scaling-out] section for more information.
+
 ### Inserting & Querying [](inserting-querying)
 Inserting data into the hypertable is done via normal SQL `INSERT` commands,
 e.g. using millisecond timestamps:
@@ -55,7 +58,10 @@ SQL `UPDATE` and `DELETE` commands also work as expected. For more
 examples of using TimescaleDB's standard SQL interface, please see our
 [use pages][].
 
-[installed]: /getting-started/installation
+[installed]: /getting-started/clustering-installation
 [setup]: /getting-started/setup
 [API Reference]: /api#create_hypertable
 [use pages]: /using-timescaledb
+[create_distributed_hypertable]: /api#create_distributed_hypertable
+[scaling-out]: /getting-started/scaling-out
+

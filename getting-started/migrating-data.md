@@ -242,7 +242,7 @@ For more information on how to get started, please follow [this tutorial][outflu
 
 Now check out some common [hypertable commands][] for exploring your data.
 
-[installed]: /getting-started/installation
+[installed]: /getting-started/clustering-installation
 [setup]: /getting-started/setup
 [same-db]: #same-db
 [different-db]: #different-db
