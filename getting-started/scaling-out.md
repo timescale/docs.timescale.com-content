@@ -8,10 +8,12 @@ Hypertables handle large amounts of data by breaking it up into
 smaller pieces (chunks), allowing operations to execute
 efficiently. When the amount of data is expected to be beyond what a
 single machine can handle, you can distribute the data chunks over
-several machines by using *distributed hypertables*.  Distributed
-hypertables are similar to normal hypertables, but they add an
-additional layer of hypertable partitioning by distributing chunks
-across *data nodes*.
+several machines by using *distributed hypertables*. There are some
+[limitations][distributed-hypertable-limitations] to using distributed
+hypertables that might be good to review before getting
+started. Distributed hypertables are otherwise similar to normal
+hypertables, but they add an additional layer of hypertable
+partitioning by distributing chunks across *data nodes*.
 
 Data nodes together with an *access node* constitute a distributed database
 ([architecture][]). All the nodes are TimescaleDB instances,
@@ -190,3 +192,4 @@ node.
 [contact]: https://www.timescale.com/contact
 [data-node-authentication]: /getting-started/data-node-authentication
 [max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
+[distributed-hypertable-limitations]: /using-timescaledb/limitations#distributed-hypertable-limitations
