@@ -6,7 +6,7 @@ in joining the Beta program, please [contact us][contact].
 To learn more about this capability, you can read the following:
 
 - Blog: [Announcing the Distributed Version of TimescaleDB][blog-post]
-- Documentation: [Using Distributed Hypertables][scale-out]
+- Documentation: [Setting Up Data Nodes and Working with Distributed Hypertables][scale-out]
 - API: [Creating Distributed Hypertables][api]
 - Tutorial: [Scaling Out][tutorial]
 
