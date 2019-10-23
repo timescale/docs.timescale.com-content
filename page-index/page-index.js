@@ -86,10 +86,10 @@ const pageIndex = [
                 type: PAGE,
                 href: "migrating-data"
             }, {
-            		Title: "Scaling Out",
-            		type: PAGE,
-            		href: "scaling-out"
-      	    }, {
+                    Title: "Scaling Out",
+                    type: PAGE,
+                    href: "scaling-out"
+            }, {
                 type: HIDDEN_REDIRECT,
                 href: "basic-operations",
                 to: "/using-timescaledb/hypertables"
@@ -271,6 +271,11 @@ const pageIndex = [
                 Title: "Telemetry",
                 type: PAGE,
                 href: "telemetry",
+                children: []
+            }, {
+                Title: "Limitations",
+                type: PAGE,
+                href: "limitations",
                 children: []
             }
         ]
