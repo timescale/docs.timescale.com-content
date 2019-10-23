@@ -183,13 +183,10 @@ const pageIndex = [
                         href: "migrate-from-postgresql",
                         to: "/getting-started/migrating-data"
                     }, {
-			Title: "Data Node Authentication",
-			type: PAGE,
+                  			Title: "Data Node Authentication",
+                  			type: PAGE,
                         href: "data-node-authentication",
-                    }, {
-                        href: "scaling-out",
-                        to: "/getting-started/scaling-out"
-                    },
+                    }
                 ]
             }, {
                 Title: "Setting up Timescale Cloud",

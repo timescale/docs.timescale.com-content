@@ -1,6 +1,6 @@
 # Data Node Authentication [](distdb-auth)
 
-In a multi-node environment, it is necessary to ensure that the access
+In a [multi-node environment][scaling-out], it is necessary to ensure that the access
 node have the necessary roles and permissions on all the data nodes
 where distributed hypertables are placed.
 
@@ -15,10 +15,10 @@ database and use the same database on all the data nodes. This means
 that you need to ensure that a user that is connected to the access
 node can access the same databases on the data nodes.
 
->:NOTE: Setting up a secure system is a complex task and this section
-> should not be read as recommending any particular security measures
-> for securing your system. The chapter contains technical
-> instructions for how to set up the different authentication methods.
+>:WARNING: Setting up a secure system is a complex task and this section
+should not be read as recommending any particular security measures
+for securing your system. The chapter contains technical
+instructions for how to set up the different authentication methods.
 
 ## Setting up Password Authentication [](distdb-auth-pass)
 
@@ -36,7 +36,7 @@ In this section, the focus is on setting up SCRAM SHA-256 password
 authentication. For other password authentication methods, [see the
 PostgreSQL manual][auth-password].
 
->:NOTE: The `password` method should not be used since it sends the
+>:TIP: The `password` method should not be used since it sends the
 > password in cleartext, and the `md5` is using a cryptographic hash
 > function that is no longer considered secure.
 
@@ -97,3 +97,5 @@ contents:
 [postgresql-hba]: https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
 [auth-password]: https://www.postgresql.org/docs/current/auth-password.html
 [passfile-format]: https://www.postgresql.org/docs/current/libpq-pgpass.html
+[scaling-out]: /getting-started/scaling-out
+
