@@ -932,7 +932,7 @@ SELECT distributed_exec($$CREATE USER davide WITH PASSWORD 'jw8s0F4'$$, node_lis
 
 Removes data chunks whose time range falls completely before (or after) a
 specified time, operating either across all hypertables or for a specific one.
-Shows a list of the chunks that were dropped in the same style as the
+Shows a list of the chunks that were dropped, in the same style as the
 `show_chunks` [function][show chunks].
 
 Chunks are defined by a certain start and end time.  If `older_than` is
