@@ -1,8 +1,7 @@
 # Tutorial: Scaling out TimescaleDB
 
->:WARNING: Running TimescaleDB in a multi-node setup is currently in PRIVATE BETA.
-This method of deployment is not meant for production use. For more information,
-please
+>:WARNING: Distributed hypertables are currently in PRIVATE BETA and
+are not yet meant for production use. For more information, please
 [contact us][contact].
 
 TimescaleDB can be run in a multi-node setup, with one primary access node distributing
@@ -13,48 +12,50 @@ In this tutorial, we will show how you can create a distributed hypertable withi
 a distributed database. We will set up the distributed database with one primary access node
 and two data nodes across three distinct TimescaleDB instances.
 
-Prerequisites:
-- 3 instances of TimescaleDB installed (private BETA branch only)
-- A superuser set up on all 3 instances of TimescaleDB
-- Network connectivity between the 3 TimescaleDB instances
-- Must be on PG11
+It is assumed before starting this tutorial you will have three networked machines set up with:
+- TimescaleDB version 2.0 (beta) or greater
+- PostgresSQL 11
+
+For the sake of this tutorial we will refer to these machines as
+`access.example.com`, `data1.example.com`, `data2.example.com`. You will also
+need a common superuser role on each postgres instance. This tutorial
+will assume the `postgres` role for this, but you may substitute any
+role common to all machines with superuser permission.
+
+Beyond this, please ensure that you've completed the following steps.
+Some or most of these may not be necessary depending on how you
+initially set up your instances:
+- Make sure you've enabled `max_prepared_transactions` on all the instances, this parameter is located in `postgresql.conf`. We recommend a setting of at least 150.
+- Make sure the data nodes are properly listening for network traffic. `postgresql.conf` should have a `listen_addresses` set to include the access node. If this parameter is missing or just `localhost`, change it to `access.example.com`, or the corresponding IP. You can also set it to `"*"` to not restrict where connections can originate from.
+- The superuser role, `postgres` in this example, must have an entry in the `pg_hba.conf` file for the data nodes. This should look something like: ```host    all    postgres    access.example.com    trust``` You can use any CIDR block covering the access node's IP in place of `access.example.com`. For using authentication mechanism's other than `trust`, please see the [authentication guide][data-node-authentication].
+
+After making any of these changes, please restart your Postgres instance to ensure the
+new settings take effect.
 
 ## Define the topology for your distributed database
 
-Now that you have 3 running instances of TimescaleDB, you can go ahead and set up your
-distributed database. Connect to the instance that you would like to act as the access node,
-and create a new database there:
+Now that you have 3 running instances of TimescaleDB, you can go ahead
+and set up your distributed database. Connect to `access.example.com`
+as `postgres`, and create a new database `multinode`. It's important that
+none of the instances already have a `multinode` database on them
+before starting this step:
 
 ```sql
 CREATE DATABASE multinode;
-\c multinode
+\c multinode postgres
 CREATE EXTENSION timescaledb;
 ```
 
-Now, you can tell your access node that currently contains the multinode database to add
-data nodes in order to store distributed hypertables:
+You can now add the data nodes to the access node:
 
 ```sql
-SELECT add_data_node('dn1',host=>'<address>', if_not_exists=>'true',
-password=>'<remote_password>', bootstrap_user=>'<superuser>',
-bootstrap_password=>'<superuser_password>');
+SELECT add_data_node('dn1', host=>'data1.example.com');
 
-SELECT add_data_node('dn2',host=>'<address>', if_not_exists=>'true',
-password=>'<remote_password>', bootstrap_user=>'<superuser>',
-bootstrap_password=>'<superuser_password>');
+SELECT add_data_node('dn2', host=>'data2.example.com');
 ```
 
-Let's go through exactly what the `add_data_node` command is doing. The first
-argument represents the local name of a data node that you can use to refer to
-data nodes when running commands on the access node. The `host` parameter is
-what the access node will use to actually access the remote data node. The
-`if_not_exists` parameter will bootstrap a database on the remote data node if
-an associated database does not yet exist. The `password` parameter is used each
-time the access node connects to a data node once the data node is created. This
-`password` is associated with the current user of the system. The
-`bootstrap_user` and `bootstrap_password` parameters are used when a data node is
-initially logged into, and needs to be a superuser. If you're already logged in as a
-superuser, the `bootstrap_user` and `bootstrap_password` parameters are optional.
+The first argument is the local name of a data node on the access node. The
+`host` parameter is the hostname or IP address of the data node.
 
 You can check whether or not the data nodes have been connected successfully by
 using our informational views:
@@ -92,7 +93,13 @@ how many chunks it holds by running the following:
 
 ```sql
 SELECT * FROM timescaledb_information.hypertable;
+```
 
+You can also see how the data of a distributed hypertable is distributed
+on the data nodes by using the `hypertable_data_node_relation_size` function:
+
+```sql
+SELECT * FROM hypertable_data_node_relation_size('distributed');
 ```
 
 The data node view can also show how chunks are distributed across the

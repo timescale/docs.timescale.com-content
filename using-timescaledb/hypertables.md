@@ -20,8 +20,8 @@ CREATE TABLE conditions (
 );
 ```
 
-1. Then, execute the TimescaleDB `create_hypertable` command on this
-newly created table ([API docs][create_hypertable]).
+1. Then, execute the TimescaleDB [`create_hypertable`][create_hypertable] command on this
+newly created table.
 
 >:TIP: If you need to *migrate* data from an existing table to a hypertable, make
 sure to set the `migrate_data` argument to `true` when calling the function.
@@ -69,6 +69,15 @@ DROP TABLE conditions;
 
 ---
 
+### Distributing a Hypertable across Multiple Nodes [](distributing)
+
+Hypertables can be distributed over several nodes using the
+[`create_distributed_hypertable`][create_distributed_hypertable]
+command instead of the regular `create_hypertable` command. Note,
+however, that this requires you to first configure a distributed
+database by [adding one or more data nodes][add_data_node].
+
+
 ### Best Practices [](best-practices)
 
 Users of TimescaleDB often have two common questions:
@@ -108,54 +117,54 @@ taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
 total chunk sizes via the [`chunk_relation_size`][chunk_relation_size] function.
 
-**Space partitions**: The use of additional partitioning is a very
-specialized use case.  **Most users will not need to use it.**
+**Space partitions**: Space partitioning is optional but can make
+sense for certain types of data and is recommended when using
+distributed hypertables.
 
 Space partitions use hashing: Every distinct item is hashed to one of
-N buckets.  Remember that we are already using (flexible) time
-intervals to manage chunk sizes; the main purpose of space
-partitioning is to enable parallel I/O to the same time interval.
+N buckets. In a distributed hypertable, each bucket of the primary
+space dimension corresponds to a specific data node (although two or
+more buckets could map to the same node). In non-distributed
+hypertables, each bucket can map to a distinct disk (using, e.g., a
+tablespace).
 
-Parallel I/O can benefit in two scenarios: (a) two or more concurrent
-queries should be able to read from different disks in parallel, or
-(b) a single query should be able to use query parallelization to read
-from multiple disks in parallel.
+>:TIP: TimescaleDB does *not* benefit from a very large number of
+space partitions (such as the number of unique items you expect in
+partition field).  A very large number of such partitions leads both
+to poorer per-partition load balancing (the mapping of items to
+partitions using hashing), as well as increased planning latency
+for some types of queries. We recommend tying the number of space
+partitions to the number of disks and/or data nodes.
 
-Note that query parallelization in PostgreSQL 9.6 (and 10) does not
-support querying *different* hypertable chunks in parallel;
-query parallelization only works on a single physical table (and thus
-a single chunk). We might add our own support for this, but it is not
-currently supported.
+Spreading chunks along disks and nodes in the space dimension allows
+for increased I/O parallelization, either by (a) having multiple
+concurrent client processes, or, by (b) splitting the work of a single
+client across multiple worker processes on a single node or multiple
+concurrent requests across several data nodes.
 
-Thus, users looking for parallel I/O have two options:
+In summary, to benefit from parallel I/O, one can do one of the
+following:
 
-1. Use a RAID setup across multiple physical disks, and expose a
-single logical disk to the hypertable (i.e., via a single tablespace).
+- For each physical disk on a single instance, add a separate
+tablespace to the database.  TimescaleDB actually allows you to add
+multiple tablespaces to a *single* hypertable (although under the
+covers, each underlying chunk will be mapped by TimescaleDB to a
+single tablespace / physical disk).
 
-1. For each physical disk, add a separate tablespace to the
-database.  TimescaleDB allows you to actually add multiple tablespaces
-to a *single* hypertable (although under the covers, each underlying
-chunk will be mapped by TimescaleDB to a single tablespace / physical
-disk).
+- Configure a distributed hypertable that spreads inserts and queries
+across multiple data nodes.
 
-We recommend a RAID setup when possible, as it supports both forms of
-parallelization described above (i.e., separate queries to separate
-disks, single query to multiple disks in parallel).  The multiple
-tablespace approach only supports the former.  With a RAID setup,
-*no spatial partitioning is required*.
+Apart from the built-in parallel I/O support in the database, a more
+transparent way to increase I/O performance is to use a RAID setup
+across multiple physical disks, and expose a single logical disk to
+the hypertable (i.e., via a single tablespace). With a RAID setup, *no
+spatial partitioning is required* on a single node.
 
-That said, when using space partitions, we recommend using 1
-space partition per disk.
-
-TimescaleDB does *not* benefit from a very large number of space
-partitions (such as the number of unique items you expect in partition
-field).  A very large number of such partitions leads both to poorer
-per-partition load balancing (the mapping of items to partitions using
-hashing), as well as much increased planning latency for some types of
-queries.
 
 [postgres-createtable]: https://www.postgresql.org/docs/current/sql-createtable.html
+[add_data_node]: /api#add_data_node
 [create_hypertable]: /api#create_hypertable
+[create_distributed_hypertable]: /api#create_distributed_hypertable
 [migrate-from-postgresql]: /getting-started/migrating-data
 [postgres-altertable]: https://www.postgresql.org/docs/current/sql-altertable.html
 [set_chunk_time_interval]: /api#set_chunk_time_interval
