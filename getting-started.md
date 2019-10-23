@@ -31,7 +31,7 @@ Getting started with TimescaleDB involves a few steps:
 1. [Setting up data node authentication for distributed hypertables][distdb-auth]
 
 [hypertables]: /introduction/architecture#hypertables
-[install]: /getting-started/installation
+[install]: /getting-started/clustering-installation
 [setup]: /getting-started/setup
 [create-hypertables]: /getting-started/creating-hypertables
 [distdb-auth]: /getting-started/data-node-authentication
