@@ -20,6 +20,7 @@
 > - [delete_data_node](#delete_data_node)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
+> - [distributed_exec](#distributed_exec)
 > - [drop_chunks](#drop_chunks)
 > - [drop view (continuous aggregate)](#continuous_aggregate-drop_view)
 > - [first](#first)
@@ -222,7 +223,7 @@ previously created with
 ```sql
 SELECT * FROM attach_data_node('dn3','conditions');
 
-hypertable_id | node_hypertable_id |  node_name  
+hypertable_id | node_hypertable_id |  node_name
 --------------+--------------------+-------------
             5 |                  3 | dn3
 
@@ -883,12 +884,51 @@ SELECT detach_tablespaces('conditions');
 ```
 
 ---
+## distributed_exec() [](distributed_exec)
+
+This function is used on an access node to execute a SQL command
+across the data nodes of a distributed database. For instance, one use
+case is to create the roles and permissions needed in a distributed
+database.
+
+Note that the command is _not_ executed on the access node itself and
+it is not possible to chain multiple commands together in one call.
+
+#### Required Arguments [](distributed_exec-required-arguments)
+
+|Name|Description|
+|---|---|
+| `query` | The command to execute on data nodes. |
+
+#### Optional Arguments [](distributed_exec-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `node_list` | An array of data nodes where the command should be executed. Defaults to all data nodes if not specified. |
+
+#### Sample Usage [](distributed_exec-examples)
+
+Create the role `davide` across all data nodes in a distributed database:
+
+```sql
+SELECT distributed_exec($$CREATE USER davide WITH PASSWORD 'jw8s0F4'$$);
+
+```
+
+Create the role `davide` on two specific data nodes:
+
+```sql
+SELECT distributed_exec($$CREATE USER davide WITH PASSWORD 'jw8s0F4'$$, node_list => '{ "dn1", "dn2" }');
+
+```
+
+---
 
 ## drop_chunks() [](drop_chunks)
 
 Removes data chunks whose time range falls completely before (or after) a
 specified time, operating either across all hypertables or for a specific one.
-Shows a list of the chunks that were dropped in the same style as the 
+Shows a list of the chunks that were dropped, in the same style as the
 `show_chunks` [function][show chunks].
 
 Chunks are defined by a certain start and end time.  If `older_than` is
@@ -949,10 +989,10 @@ Drop all chunks older than 3 months ago:
 SELECT drop_chunks(interval '3 months');
 ```
 
-Example output: 
+Example output:
 
 ```sql
-              drop_chunks               
+              drop_chunks
 ----------------------------------------
  _timescaledb_internal._hyper_3_5_chunk
  _timescaledb_internal._hyper_3_6_chunk
@@ -2187,8 +2227,8 @@ SELECT * FROM timescaledb_information.data_node;
 
  node_name    | owner      | options                        | server_up | num_dist_tables | num_dist_chunks | total_dist_size
 --------------+------------+--------------------------------+-----------+-----------------+-----------------+----------------
- dn_1         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 96 MB      
- dn_2         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 400 MB      
+ dn_1         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 96 MB
+ dn_2         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 400 MB
 (2 rows)
 ```
 
