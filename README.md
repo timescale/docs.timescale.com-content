@@ -6,6 +6,21 @@ pages using a bash script and markdown parser.
 
 All files are written in standard markdown.
 
+## Contributing
+
+We welcome and appreciate any help the community can provide to make
+TimescaleDB's documentation better!
+
+You can help either by opening an
+[issue](https://github.com/timescale/docs.timescale.com-content/issues) with
+any suggestions or bug reports, or by forking this repository, making your own
+contribution, and submitting a pull request.
+
+Before we accept any contributions, Timescale contributors need to
+sign the [Contributor License Agreement](https://cla-assistant.io/timescale/docs.timescale.com-content) (CLA).
+By signing a CLA, we can ensure that the community is free and confident in its
+ability to use your contributions.
+
 ## Docs versions
 
 There is a version of the docs for each supported version of the database, stored in
