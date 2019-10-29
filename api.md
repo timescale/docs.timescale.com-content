@@ -34,6 +34,7 @@
 > - [interpolate](#interpolate)
 > - [last](#last)
 > - [locf](#locf)
+> - [Move Chunk] (#Move_Chunk)
 > - [refresh materialized view (continuous aggregate)](#continuous_aggregate-refresh_view)
 > - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
@@ -995,7 +996,7 @@ the chunk first using this process.
 first stop any compression policy that is active on the hypertable you plan to perfrom this 
 operation on.  Once the update and/or back fill is complete simplt turn the policy back on
 and the system will recompress your chucks.
-
+ 
 The Syntax is:
 
 ``` sql
@@ -1007,6 +1008,50 @@ In this example we are decompressing chunk 2_2
 
 ``` sql
 select decompress_chunk( '_timescaledb_internal._hyper_2_2_chunk');  
+
+```
+---
+## Move Chunks :enterprise_function: [](move-chunks)
+TimescaleDb allows users to move data chunks (and indexes) to alternative tablespaces.
+This allows the user the ability to move data as it ages off to more cost effective storage.
+
+*	[Move Chunk] (#Move_Chunk)
+
+## Move Chunk and Index to different table space (move-chunks) :enterprise_function: [](#move-chunks)
+
+
+The Syntax is:
+
+``` sql
+SELECT move_chunk(chunk=>'<chunk_name>', destination_tablespace=>'<tablespace_name>', 
+index_destination_tablespace=>'<tblespace_name', reorder_index=>'chunk_index_name', 
+verbose=>TRUE);  
+
+```
+#### Sample Usage [](move-chunks)
+
+Move both the chunk and index to the same tablespace:
+
+``` sql
+SELECT move_chunk(chunk=>'_timescaledb_internal._hyper_1_4_chunk', destination_tablespace=>
+'tablespace_2', index_destination_tablespace=>'tablespace_2', reorder_index=>
+'_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);
+  
+```
+Move the same set of chunks back to the default tablespace:
+
+``` sql
+SELECT move_chunk(chunk=>'_timescaledb_internal._hyper_1_4_chunk', destination_tablespace=>'pg_default',
+index_destination_tablespace=>'pg_default', reorder_index=>
+'_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);
+
+```
+Move Chunk to one tablespace and the index to another:
+
+``` sql
+SELECT move_chunk(chunk=>'_timescaledb_internal._hyper_1_4_chunk', destination_tablespace=>'tablespace2',
+index_destination_tablespace=>'tablespae3', reorder_index=>
+'_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);
 
 ```
 ---
