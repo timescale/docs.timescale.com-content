@@ -10,9 +10,15 @@
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
+> - [Compress Table ORDER BY] (#Compress_table-orderby)
+> -	[Compress Table SEGMENT BY] (#Compress_table-segmentby)
+> -	[Compress Chunk](#Compress_chunk)
+> -	[Compress Policy] (#Compress_policy)
+> -	[Compress Policy Remove] (#Compress_policy_remove)
 > - [create_hypertable](#create_hypertable)
 > - [create index (transaction per chunk)](#create_index)
 > - [create view (continuous aggregate)](#continuous_aggregate-create_view)
+> -	[Decompress Chunk] (#Decompress_Chunk)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
 > - [drop_chunks](#drop_chunks)
@@ -878,6 +884,131 @@ SELECT reorder_chunk('_timescaledb_internal._hyper_1_10_chunk', 'conditions_devi
 
 runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the `conditions_device_id_time_idx` index.
 
+---
+## Compression :community_function: [](Compression)
+TimescaleDB allows users to configure thier hypertable for compression and compress chunks of data manually or based 
+on policy.  Policy based compression will allow the user to compress a chunk when it has reached the specified age.
+The user may also manually compress a chunk or sets of chunks.  For more detailed discussion of this fuction <insert 
+tag to tutorial>.
+
+>:WARNING: Compression is disabled when running postgres 9.6 you must upgrade your Postgresal instance to Postgresql 10
+ or later in order to use this feature. 
+ 
+ #### Restrictions
+ Version 1.5 does not support altering or inserting data into compressed chunks.  The data can be queried without any 
+ modifications, however if you need to backfill or update data in a compressed chunk you will need to decompress the chunk(s)
+ first.
+
+
+*	[Compress Table ORDER BY] (#Compress_table-orderby)
+*	[Compress Table SEGMENT BY] (#Compress_table-segmentby)
+*	[Compress Chunk](#Compress_chunk)
+*	[Compress Policy] (#Compress_policy)
+*	[Compress Policy Remove] (#Compress_policy_remove)
+*	[Decompress Chunk] (#Decompress_Chunk)
+
+## Compress Table ORDER BY (Compression) :community_function: [](#Compress_table-orderby)
+
+'ALTER TABLE' statement is used to set table data organization characteristics for a hypertable 
+that is setup to support compression.
+
+The syntax is:
+
+``` sql
+ALTER TABLE <table_name> SET (timescale.compress,timescale.compress_orderby
+= '<column_name>, <column_name>');
+```
+#### Sample Usage [](Compress_table-orderby)
+Set Hypertable to use ORDER BY pricipal for data organization
+```sql
+ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 'device_id, time');
+```
+
+## Compress Table SEGMENT BY (Compression) :community_function: [](#Compress_table-segmentby)
+
+'ALTER TABLE' statement is used to set table data organization characteristics for a hypertable 
+that is setup to support compression.
+
+The syntax is:
+
+``` sql
+ALTER TABLE <table_name> SET (timescaledb.compress, timescaledb.compress_orderby = 
+<'column'>, timescaledb.compress_segmentby = <'column'>);
+```
+#### Sample Usage [](Compress_table-orderby)
+Set Hypertable to use SEGMENT BY Pricipal for data organization
+```sql
+ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 
+'time', timescaledb.compress_segmentby = 'device_id');
+
+```
+## Compress Chunk (Compression) :community_function: [](#Compress_chunk)
+
+'SELECT' Statement is used to compression a specific chunk.
+
+The Syntax is:
+
+``` sql
+select compress_chunk( '<chunk_name>');
+```
+#### Sample Usage [](Compress_chunk)
+In this example we will compress chunk 1_2
+``` sql
+select compress_chunk( '_timescaledb_internal._hyper_1_2_chunk');
+```
+## Compress Policy (Compression) :community_function: [](#Compress_policy)
+Allows you to set a policy based on a chunks age as to when it will be compressed.
+
+The Syntax is:
+
+``` sql
+select add_compress_chunks_policy('<table_name>', '<time interval>'::interval);
+```
+#### Sample Usage [](Compress_policy)
+In this example we will compress chunks older than 60 days from the 'cpu' table.
+
+``` sql
+select add_compress_chunks_policy('cpu', '60d'::interval);
+```
+## Compress Policy Remove (Compression) :community_function: [](#Compress_policy_remove)
+If you need to suspend or remove the compression policy. To start policy basd compression again
+you will need to re-add the policy.
+
+The Syntax:
+
+``` sql
+select remove_compress_chunks_policy('<table_name>');
+
+```
+#### Sample Usage [](Compress_policy_remove)
+In this example we will remove the compression polict from the 'conditions' table:
+``` sql
+select remove_compress_chunks_policy('conditions');
+
+```
+
+## Decompress Chunk (Compression) :community_function: [](#Decompress_chunk)
+If you need to modify or add data to a chunk (backfill) you will need to decompress
+the chunk first using this process.
+
+>:TIP: Prior to decompressing chunks for the purpose of data backfill or updating you should
+first stop any compression policy that is active on the hypertable you plan to perfrom this 
+operation on.  Once the update and/or back fill is complete simplt turn the policy back on
+and the system will recompress your chucks.
+
+The Syntax is:
+
+``` sql
+select decompress_chunk( '<chunk_name>'); 
+
+```
+#### Sample Usage [](Decompress_chunk)
+In this example we are decompressing chunk 2_2
+
+``` sql
+select decompress_chunk( '_timescaledb_internal._hyper_2_2_chunk');  
+
+```
 ---
 ## Continuous Aggregates :community_function: [](continuous-aggregates)
 TimescaleDB allows users the ability to automatically recompute aggregates
