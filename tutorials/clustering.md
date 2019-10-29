@@ -122,3 +122,4 @@ inserted data across multiple data nodes, and queried that data.
 
 [architecture]: /introduction/architecture#timescaledb-clustering
 [contact]: https://www.timescale.com/contact
+[data-node-authentication]: /getting-started/setup/data-node-authentication
