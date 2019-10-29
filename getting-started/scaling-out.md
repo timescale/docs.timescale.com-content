@@ -190,6 +190,6 @@ node.
 [detach_data_node]: /api#detach_data_node
 [timescaledb_information-data_node]: /api#timescaledb_information-data_node
 [contact]: https://www.timescale.com/contact
-[data-node-authentication]: /getting-started/data-node-authentication
+[data-node-authentication]: /getting-started/setup/data-node-authentication
 [max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
 [distributed-hypertable-limitations]: /using-timescaledb/limitations#distributed-hypertable-limitations
