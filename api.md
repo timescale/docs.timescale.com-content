@@ -1224,7 +1224,7 @@ removes the existing reorder policy for the `conditions` table if it exists.
 ---
 
 
-## alter_job_schedule() :enterprise_function: [](alter_job_schedule)
+## alter_job_schedule() :community_function: [](alter_job_schedule)
 
 Policy jobs are scheduled to run periodically via a job run in a background
 worker. You can change the schedule using `alter_job_schedule`. To alter an
@@ -1256,6 +1256,7 @@ add a new one.
 | `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
 | `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
 | `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the job does not exist, a notice will be issued instead. Defaults to false. |
+| `next_start` | (TIMESTAMPTZ) The next time at which to run the job. The job can be paused by setting this value to 'infinity' (and restarted with a value of now()). |
 
 #### Returns [](alter_job_schedule-returns)
 
