@@ -72,6 +72,33 @@ operations when removing deleted data according to automated retention policies.
 The runtime can perform such operations by simply dropping chunks (internal
 tables), rather than deleting individual rows.
 
+## Native Compression [] (native-compression)
+
+Compression is powered by TimescaleDB’s built-in job scheduler framework. We 
+leverage it to asynchronously convert individual chunks from an uncompressed 
+row-based form to a compressed columnar form across a hypertable: Once a chunk 
+is old enough, the chunk will be transactionally converted from the row to columnar form.
+
+With native compression, even though a single hypertable in TimescaleDB will 
+store data in both row and columnar forms, users don’t need to worry about 
+this: they will continue to see a standard row-based schema when querying data. 
+This is similar to building a view on the decompressed columnar data.
+
+TimescaleDB enables this capability by both (1) transparently appending data 
+stored in the standard row format with decompressed data from the columnar format, 
+and (2) transparently decompressing individual columns from selected rows at query time. 
+
+During a query, uncompressed chunks will be processed normally, while data from 
+compressed chunks will first be decompressed and converted to a standard row 
+format at query time, before being appended or merged into other data. This 
+approach is compatible with everything you expect from TimescaleDB, such as 
+relational JOINs and analytical queries, as well as aggressive constraint exclusion 
+to avoid processing chunks. 
+
+For more information on using compression, please see our [Compression Operational Overview]. 
+For a deep dive on the design motivations and architecture supporting 
+compression, read our [compression blog post].
+
 
 ## Single Node vs. Clustering [](single-node-vs-clustering)
 
@@ -120,3 +147,5 @@ For more on the motivation and design of TimescaleDB, please see our
 [chunking]: https://www.timescale.com/blog/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
 [jumpSQL]: /using-timescaledb/hypertables
 [TvsP]: /introduction/timescaledb-vs-postgres
+[Compression Operational Overview]: /using-timescaledb/compression
+[compression blog post]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database
