@@ -1086,7 +1086,7 @@ index_destination_tablespace=>'tablespae3', reorder_index=>
 
 ```
 
-#### Required Arguments [](compress_policy-required-arguments)
+#### Required Arguments [](move_chunk-required-arguments)
 
 |Name|Description|
 |---|---|
