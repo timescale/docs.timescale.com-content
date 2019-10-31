@@ -1024,7 +1024,7 @@ the chunk first using this process.
 
 >:TIP: Prior to decompressing chunks for the purpose of data backfill or updating you should
 first stop any compression policy that is active on the hypertable you plan to perform this 
-operation on.  Once the update and/or back fill is complete simplt turn the policy back on
+operation on.  Once the update and/or backfill is complete simply turn the policy back on
 and the system will recompress your chucks.
  
 The Syntax is:
