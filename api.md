@@ -1006,7 +1006,7 @@ The Syntax:
 SELECT remove_compress_chunks_policy('<table_name>');
 
 ```
-#### Sample Usage [](compress_policy_remove)
+#### Sample Usage [](compress_policy_remove-sample-usage)
 In this example we will remove the compression policy from the 'conditions' table:
 ``` sql
 SELECT remove_compress_chunks_policy('conditions');
