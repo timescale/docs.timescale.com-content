@@ -343,7 +343,7 @@ order data we encourage you to consider this as you set your compression policy.
 However, we are also planning to address this (ability to modify compressed chunks) 
 in a future release.
 
-Out of order data and compression 
+#### Out of order data and compression 
 
 Depending on the boundaries set for your chunks and the likelihood that your use 
 case will produce out of order data, you may want to delay chunk compression to  
