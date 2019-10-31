@@ -1046,7 +1046,7 @@ SELECT decompress_chunk( '_timescaledb_internal._hyper_2_2_chunk');
 ---
 ## Move Chunks :enterprise_function: [](move_chunk)
 TimescaleDB allows users to move data chunks (and indexes) to alternative tablespaces.
-This allows the user the ability to move data as it ages off to more cost effective storage.
+This allows the user the ability to move data as it ages to more cost effective storage.
 
 ## Move Chunk and Index to different table space (move_chunk) :enterprise_function: [](move-chunk)
 
