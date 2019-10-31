@@ -886,7 +886,9 @@ runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the 
 
 ---
 ## Compression :community_function: [](compression)
-TimescaleDB allows users to configure thier hypertable for compression and compress chunks of data manually or based 
+TimescaleDB allows users to 
+- configure their hypertables for compression 
+- compress chunks of data manually or based 
 on policy.  Policy based compression will allow the user to compress a chunk when it has reached the specified age.
 The user may also manually compress a chunk or sets of chunks.  For more detailed discussion of this fuction <insert 
 tag to tutorial>.
