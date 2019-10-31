@@ -934,7 +934,7 @@ The syntax (ORDER BY ONLY) is:
 ALTER TABLE <table_name> SET (timescale.compress,timescale.compress_orderby
 = '<column_name>, <column_name>');
 ```
-#### Sample Usage [](compression_alter-table)
+#### Sample Usage [](compression_alter-table-sample-usage)
 Set Hypertable to use ORDER BY option for data organization
 
 ```sql
