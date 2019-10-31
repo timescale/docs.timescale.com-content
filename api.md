@@ -896,7 +896,7 @@ The user may also manually compress a chunk or sets of chunks.  For more detaile
 tag to tutorial>.
 
 >:WARNING: Compression is only available for Postgres 10.9+
- or 11 in order to use this feature. 
+ or 11.
  
  #### Restrictions
  Version 1.5 does not support altering or inserting data into compressed chunks.  The data can be queried without any 
