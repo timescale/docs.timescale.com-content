@@ -892,7 +892,7 @@ TimescaleDB allows users to
 on policy.  
 
 Policy based compression will allow the user to compress a chunk when it has reached the specified age.
-The user may also manually compress a chunk or sets of chunks.  For more detailed discussion of this fuction <insert 
+The user may also manually compress a chunk or sets of chunks.  For more detailed discussion of this function <insert 
 tag to tutorial>.
 
 >:WARNING: Compression is disabled when running postgres 9.6 you must upgrade your Postgresal instance to Postgresql 10
