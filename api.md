@@ -954,7 +954,7 @@ ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby =
 
 'SELECT' Statement is used to compression a specific chunk.
 
-The Syntax is:
+The syntax is:
 
 ``` sql
 SELECT compress_chunk( '<chunk_name>');
