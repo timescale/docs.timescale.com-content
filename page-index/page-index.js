@@ -342,11 +342,7 @@ const pageIndex = [
                 type: PAGE,
                 href: "move_chunks",
                 children: [
-                    {
-                        Title: "Move Data",
-                        type: ANCHOR,
-                        href: "#move"
-                    }
+                    
                 ]
             }, {
                 Title: "Continuous Aggregates",

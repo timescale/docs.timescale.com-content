@@ -1,20 +1,19 @@
-# Compression Operational Guide
+# Compression
 
 >:WARNING:Compression is disabled when using Timescale in conjuction with postgres 
-9.6 in oeder to use compression you must be using postgres 10 or 11 or higher.
+9.6 in order to use compression you must be using postgres 10.9 or higher.
 
 
 As of version 1.5,TimescaleDB supports the ability to natively compress data. This 
-function does not require the use of any specific file system or external software, 
-and as you will see in the coming paragraphs, is simple to set up and customizable 
+functionality does not require the use of any specific file system or external software, 
+and as you will see in the coming paragraphs, it is simple to set up and customizable 
 by the user. 
 
-Prior to reading this guide, we recommend taking a look at our architecture section 
+Prior to using this guide, we recommend taking a look at our architecture section 
 to learn more about how compression works. At a high level, TimescaleDB’s built-in 
 job scheduler framework will asynchronously convert recent data from an uncompressed 
 row-based form to a compressed columnar form across chunks of TimescaleDB hypertables. 
-Once a chunk is old enough, the chunk will be transactionally converted from the 
-row to columnar form. 
+ 
 
 This section will walk through the concepts and help you understand some of the 
 benefits and limitations of native compression. We will also walk you through the 
@@ -25,10 +24,10 @@ your important data prior to implementing compression.
 
 You can compress data as it comes into TimescaleDB in one of two ways:
 
-Policy-based compression: Set up automatic compression of data once it has reached 
+1. Policy-based compression: Set up automatic compression of data once it has reached 
 a certain age.
 
-Manually compress chunks: Use explicit commands that will compress chunks that you 
+2. Manually compress chunks: Use explicit commands that will compress chunks that you 
 specify.
 
 Before we start, we will give you a high-level overview of how compression works 
@@ -41,14 +40,14 @@ effectively ingest data while compressed.
 
 ![alt text](https://assets.timescale.com/images/diagrams/compression_diagram.png "compress")
 
-In this case, the data in Position 0 (which is our active chunk) will always be 
-uncompressed, and the current active chunk will not be a candidate for compression 
+In the above diagram, the data in Position 0 (which is our active chunk) will always be 
+uncompressed, The current active chunk will not be a candidate for compression 
 in order to protect the system’s ability to perform high volume/high velocity ingestion. 
 Once data moves out of Position 0 (the active chunk) and into something greater 
-than or equal to Position 1, which is now considered historical data, it then becomes 
+than or equal to Position 1, which is now considered historical data, it becomes 
 a compression candidate (it can now be compressed manually or via policy).  
 
-In this example we have chosen NOT to compress the chunk in position 1, however 
+We have chosen NOT to compress the chunk in position 1, however 
 all full chunks (position 1-4) are candidates for compression. As you can see in 
 this example we have chosen to wait until a chunk reaches Position 2 (in this case 
 the chunk is 3 days old) before we decide to apply compression,meaning chunks 3 days 
@@ -57,14 +56,10 @@ and older will be compressed.
 
 ### Preparing Hypertable for Compression [](prepare)
 
-Now that we have covered a visual demonstration of how compression works and some 
-of the things you need to be aware of when planning, let’s cover how your hypertable 
-will organize data for compression.
-
 The first thing we need to do when setting up your hypertable for compression is 
 decide how we are going to organize the data to achieve the best overall compression. 
 In general there are two ways to consider how your data will be organized during 
-the compression process: order by and segment by. TimescaleDB provides these options 
+the compression process: 'order by' and 'segment by'. TimescaleDB provides these options 
 which are implemented by using `ALTER TABLE`. The following will explain the differences, 
 and when to use each option. 
 
@@ -72,7 +67,7 @@ Order By
 
 The main option that needs to be set is timescaledb.compress_orderby. You can think 
 of this option as the ORDER BY clause in a SQL query, but in this case used on your 
-raw data when it is sent to the compression process. This option uses a data column 
+raw data when it is sent to the compression process. This option takes a data column 
 as an argument. Additionally, this option is important because it directly impacts 
 the compression rates as you’ll see. 
 
@@ -80,7 +75,7 @@ Compression is most effective when related data is close in magnitude or exhibit
 some sort of trend. In other words, random or out of order data will compress poorly. 
 When choosing the column list to pass to the compress_orderby function, you want 
 to choose columns that will result in the rest of the columns being ordered in a 
-way that is compressible. 
+way that maximizes compression. 
 
 Let’s walk through an example. Assume you have a table defined by: 
 
@@ -96,8 +91,8 @@ CREATE TABLE metrics
 SELECT create_hypertable('metrics', 'time');
 ```
 
-Let’s further assume that you have 2 devices. Device 1 measures temperature and 
-humidity, while device 2 measures the air quality index. Your table might look 
+Let’s further assume that you have 2 devices. Device 1 measures temperature  
+,while device 2 measures the air quality index. Your table might look 
 something like this:
 
 |time|device_id|value|
@@ -320,9 +315,9 @@ experience has shown that when data is young (positions 0-2 in our use case)
 we tend to query the data in a more shallow and wide manner. 
 
 As an example, show me current CPU usage, disc usage, energy consumption, 
-and I/O for server X. In this case the row based format that is native to PostgreSQL 
+and I/O for server "X". In this case the row based format that is native to PostgreSQL 
 will serve us well from a performance perspective. As data begins to age and our 
-queries being to become more analytical in nature (deep and narrow queries) as an 
+queries begin to become more analytical in nature (deep and narrow queries) as an 
 example we might want to calculate the average number of logins across all users. 
 In this case, the columnar nature of the query (performing a function on the number 
 of logins) will lend itself to better performance.  
@@ -330,13 +325,13 @@ of logins) will lend itself to better performance.
 The process of compression as we have implemented it involves converting row based 
 data into more of a columnar format to achieve better overall data consolidation.  
 In the long term this is one part of how you want to think about your compression 
-policy strategy (i.e. at what point do you start to use deep and narrow queries) 
+policy strategy (i.e. at what point will you start to use deep and narrow queries) 
 along with things like frequency of access and disk savings to decide when to start 
-compressing checks.
+compressing data.
 
 >:WARNING: The current release of TimescaleDB supports the ability to query data in 
 compressed chunks, however, it does not support inserts, or updates into compressed 
-chunks.  The next several sections will discuss ways to deal with that limitation.  
+chunks.   
 
 Given the nature of time series data, out of order data would be one of the use 
 cases where you would need to add data to, or update data in, an already compressed 

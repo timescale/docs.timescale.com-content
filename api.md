@@ -911,16 +911,22 @@ tag to tutorial>.
 *	[compress Policy Remove] (#compress_policy_remove)
 *	[decompress Chunk] (#decompress_chunk)
 
-## ALTER TABLE (Compression) :community_function: [](#compression_alter-table)
+## ALTER TABLE (Compression) :community_function: [](compression_alter-table)
 
 'ALTER TABLE' statement is used to set table data organization characteristics for a hypertable 
 to support compression.
 
 #### Parameters
+|Name|Description|
+|---|---|
+| `table_name` | Name of the hypertable that will support compression |
+| `column_name` | name of the column used to order by and/or segment by|
 
-ORDER BY = timescale.compress_orderby use a simple order by to organize the data for compression
-
-SEGMENT BY = Segments the data based on column specified 
+#### with cluase options [](compression_alter-table)
+|Name|Description|
+|---|---|
+| `timescale.compress_orderby` | Use of order by to organize data within hypertable |
+| `timescaledb.compress_segmentby` | Use of segment by to organize data within hypertable|
 
 The syntax (ORDER BY ONLY) is:
 
@@ -947,28 +953,29 @@ Set Hypertable to use ORDER BY and SEGMENT BY options for data organization
 ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 
 'time', timescaledb.compress_segmentby = 'device_id');
 ```
-#### Required Arguments [](compression_alter-table)
-|Name|Description|
-|---|---|
-| `table_name` | Name of the hypertable that will support compression |
-| `column_name` | name of the column used to order by and/or segment vy|
 
+## Compress Chunk (Compression) :community_function: [](compress_chunk)
 
-## Compress Chunk (Compression) :community_function: [](#Compress_chunk)
-
-'SELECT' Statement is used to compression a specific chunk.
+compress_chunk function is used to compress a specific chunk.
 
 The syntax is:
 
 ``` sql
 SELECT compress_chunk( '<chunk_name>');
 ```
-#### Sample Usage [](Compress_chunk)
+#### Sample Usage [](compress_chunk)
 In this example we will compress chunk 1_2
 ``` sql
 SELECT compress_chunk( '_timescaledb_internal._hyper_1_2_chunk');
 ```
-## Compress Policy (Compression) :community_function: [](#Compress_policy)
+
+#### Required Arguments [](compress_chunk-required-arguments)
+
+|Name|Description|
+|---|---|
+| `chunk_name` | Name of the chunck to be compressed|
+
+## Compress Policy (Compression) :community_function: [](compress_policy)
 Allows you to set a policy based on a chunks age as to when it will be compressed.
 
 The Syntax is:
@@ -976,13 +983,20 @@ The Syntax is:
 ``` sql
 SELECT add_compress_chunks_policy('<table_name>', '<time interval>'::interval);
 ```
-#### Sample Usage [](Compress_policy)
+#### Sample Usage [](compress_policy)
 In this example we will compress chunks older than 60 days from the 'cpu' table.
 
 ``` sql
 SELECT add_compress_chunks_policy('cpu', '60d'::interval);
 ```
-## Compress Policy Remove (Compression) :community_function: [](#Compress_policy_remove)
+#### Required Arguments [](compress_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `table_name` | Name of the the policy will act on.|
+| `time_interval` | Age at which the policy job will compress chunks.|
+
+## Compress Policy Remove (Compression) :community_function: [](compress_policy_remove)
 If you need to suspend or remove the compression policy. To start policy basd compression again
 you will need to re-add the policy.
 
@@ -992,14 +1006,19 @@ The Syntax:
 SELECT remove_compress_chunks_policy('<table_name>');
 
 ```
-#### Sample Usage [](Compress_policy_remove)
+#### Sample Usage [](compress_policy_remove)
 In this example we will remove the compression polict from the 'conditions' table:
 ``` sql
 SELECT remove_compress_chunks_policy('conditions');
-
 ```
+#### Required Arguments [](compress_policy_remove-required-arguments)
 
-## Decompress Chunk (Compression) :community_function: [](#Decompress_chunk)
+|Name|Description|
+|---|---|
+| `table_name` | Name of the table the policy should be removed from.|
+
+
+## Decompress Chunk (Compression) :community_function: [](decompress_chunk)
 If you need to modify or add data to a chunk (backfill) you will need to decompress
 the chunk first using this process.
 
@@ -1014,21 +1033,22 @@ The Syntax is:
 SELECT decompress_chunk( '<chunk_name>'); 
 
 ```
-#### Sample Usage [](Decompress_chunk)
+#### Sample Usage [](decompress_chunk)
 In this example we are decompressing chunk 2_2
 
 ``` sql
 SELECT decompress_chunk( '_timescaledb_internal._hyper_2_2_chunk');  
-
 ```
+#### Required Arguments [](decompress_chunk-required-arguments)
+|Name|Description|
+|---|---|
+| `chunk_name` | Name of the chunk to be decompressed.|
 ---
-## Move Chunks :enterprise_function: [](move-chunks)
+## Move Chunks :enterprise_function: [](move_chunk)
 TimescaleDb allows users to move data chunks (and indexes) to alternative tablespaces.
 This allows the user the ability to move data as it ages off to more cost effective storage.
 
-*	[move chunk] (#move_chunk)
-
-## Move Chunk and Index to different table space (move-chunks) :enterprise_function: [](#move-chunks)
+## Move Chunk and Index to different table space (move_chunk) :enterprise_function: [](move-chunk)
 
 
 The Syntax is:
@@ -1039,7 +1059,7 @@ index_destination_tablespace=>'<tblespace_name', reorder_index=>'chunk_index_nam
 verbose=>TRUE);  
 
 ```
-#### Sample Usage [](move-chunks)
+#### Sample Usage [](move_chunk)
 
 Move both the chunk and index to the same tablespace:
 
@@ -1065,6 +1085,15 @@ index_destination_tablespace=>'tablespae3', reorder_index=>
 '_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);
 
 ```
+
+#### Required Arguments [](compress_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `chunk` | Name of chunk to be moved.|
+| `destination_tablespace` |Target tablespace for chunk you are moving.|
+| `index_destination_tablespace` |Target tablespace for index associated with the chunk you are moving.|
+| `reorder_index` |Name of the index associated with the chunk you are moving.|
 ---
 ## Continuous Aggregates :community_function: [](continuous-aggregates)
 TimescaleDB allows users the ability to automatically recompute aggregates

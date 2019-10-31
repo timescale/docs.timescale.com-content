@@ -72,7 +72,7 @@ operations when removing deleted data according to automated retention policies.
 The runtime can perform such operations by simply dropping chunks (internal
 tables), rather than deleting individual rows.
 
-## Native Compression [] (Native-Compression)
+## Native Compression [] (native-compression)
 
 Compression is powered by TimescaleDB’s built-in job scheduler framework. We 
 leverage it to asynchronously convert individual chunks from an uncompressed 
@@ -95,8 +95,8 @@ approach is compatible with everything you expect from TimescaleDB, such as
 relational JOINs and analytical queries, as well as aggressive constraint exclusion 
 to avoid processing chunks. 
 
-For more information on using compression, please see our Compression Operational 
-Overview. For a deep dive on the design motivations and architecture supporting 
+For more information on using compression, please see our [Compression Operational Overview]. 
+For a deep dive on the design motivations and architecture supporting 
 compression, read this post.
 
 
@@ -147,3 +147,4 @@ For more on the motivation and design of TimescaleDB, please see our
 [chunking]: https://www.timescale.com/blog/time-series-data-why-and-how-to-use-a-relational-database-instead-of-nosql-d0cd6975e87c#2362
 [jumpSQL]: /using-timescaledb/hypertables
 [TvsP]: /introduction/timescaledb-vs-postgres
+[Compression Operational Overview]: /using-timescaledb/compression

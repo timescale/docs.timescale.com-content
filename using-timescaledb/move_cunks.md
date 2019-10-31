@@ -65,7 +65,8 @@ For example,  to identify chunks older than two days:
 SELECT show_chunks('conditions', older_than => interval '2 days');
 ```
 
-In this example, we will move 1_4 along with its index over to tablespace_2 using the following command:
+In this example, we will move  _timescaledb_internal._hyper_1_4_chunk along with 
+its index over to tablespace_2 using the following command:
 
 ```sql
 SELECT move_chunk(chunk=>'_timescaledb_internal._hyper_1_4_chunk', destination_tablespace=>'tablespace_2', 
