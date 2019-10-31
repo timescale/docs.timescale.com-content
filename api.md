@@ -983,7 +983,7 @@ The Syntax is:
 ``` sql
 SELECT add_compress_chunks_policy('<table_name>', '<time interval>'::interval);
 ```
-#### Sample Usage [](compress_policy)
+#### Sample Usage [](compress_policy-sample-usage)
 In this example we will compress chunks older than 60 days from the 'cpu' table.
 
 ``` sql
