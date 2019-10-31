@@ -319,6 +319,36 @@ const pageIndex = [
                     }
                 ]
             }, {
+                Title: "Compression",
+                type: PAGE,
+                href: "compression",
+                children: [
+                    {
+                        Title: "Prepare Hypertable",
+                        type: ANCHOR,
+                        href: "#prepare"
+                    }, {
+                        Title: "Compress Data",
+                        type: ANCHOR,
+                        href: "#compress"
+                    }, {
+						Title: "Decompress Data",
+						type: ANCHOR,
+						href: "#decompress"
+					}
+                ]
+            }, {
+                Title: "Data Tiering",
+                type: PAGE,
+                href: "move_chunks",
+                children: [
+                    {
+                        Title: "Move Data",
+                        type: ANCHOR,
+                        href: "#move"
+                    }
+                ]
+            }, {
                 Title: "Continuous Aggregates",
                 type: PAGE,
                 href: "continuous-aggregates",
