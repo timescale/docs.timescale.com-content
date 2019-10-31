@@ -895,7 +895,7 @@ Policy based compression will allow the user to compress a chunk when it has rea
 The user may also manually compress a chunk or sets of chunks.  For more detailed discussion of this function <insert 
 tag to tutorial>.
 
->:WARNING: Compression is disabled when running postgres 9.6 you must upgrade your Postgresal instance to Postgresql 10
+>:WARNING: Compression is only available for Postgres 10.9+
  or 11 in order to use this feature. 
  
  #### Restrictions
