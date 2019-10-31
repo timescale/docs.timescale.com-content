@@ -963,7 +963,7 @@ The syntax is:
 ``` sql
 SELECT compress_chunk( '<chunk_name>');
 ```
-#### Sample Usage [](compress_chunk)
+#### Sample Usage [](compress_chunk-sample-usage)
 In this example we will compress chunk 1_2
 ``` sql
 SELECT compress_chunk( '_timescaledb_internal._hyper_1_2_chunk');
