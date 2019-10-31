@@ -97,7 +97,7 @@ to avoid processing chunks.
 
 For more information on using compression, please see our [Compression Operational Overview]. 
 For a deep dive on the design motivations and architecture supporting 
-compression, read this post.
+compression, read our [compression blog post].
 
 
 ## Single Node vs. Clustering [](single-node-vs-clustering)
@@ -148,3 +148,4 @@ For more on the motivation and design of TimescaleDB, please see our
 [jumpSQL]: /using-timescaledb/hypertables
 [TvsP]: /introduction/timescaledb-vs-postgres
 [Compression Operational Overview]: /using-timescaledb/compression
+[compression blog post]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database

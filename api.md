@@ -916,6 +916,13 @@ tag to tutorial>.
 'ALTER TABLE' statement is used to set table data organization characteristics for a hypertable 
 to support compression.
 
+The syntax is:
+
+``` sql
+ALTER TABLE <table_name> SET (timescale.compress,timescale.compress_<option>
+= '<column_name> [, ...]', timescaledb.compress_<option> = <'column_name'>); );
+```
+
 #### Parameters
 |Name|Description|
 |---|---|
@@ -928,26 +935,13 @@ to support compression.
 | `timescale.compress_orderby` | Use of order by to organize data within hypertable |
 | `timescaledb.compress_segmentby` | Use of segment by to organize data within hypertable|
 
-The syntax (ORDER BY ONLY) is:
-
-``` sql
-ALTER TABLE <table_name> SET (timescale.compress,timescale.compress_orderby
-= '<column_name>, <column_name>');
-```
-#### Sample Usage [](compression_alter-table-sample-usage)
+#### Sample Usage [](compression_alter-table-sample)
 Set Hypertable to use ORDER BY option for data organization
 
 ```sql
 ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 'device_id, time');
 ```
 
-The syntax (ORDER BY and SEGMENT BY) is:
-
-``` sql
-ALTER TABLE <table_name> SET (timescaledb.compress, timescaledb.compress_orderby = 
-<'column'>, timescaledb.compress_segmentby = <'column'>);
-```
-#### Sample Usage [](compression_alter-table)
 Set Hypertable to use ORDER BY and SEGMENT BY options for data organization
 ```sql
 ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 
@@ -976,7 +970,8 @@ SELECT compress_chunk( '_timescaledb_internal._hyper_1_2_chunk');
 | `chunk_name` | Name of the chunck to be compressed|
 
 ## Compress Policy (Compression) :community_function: [](compress_policy)
-Allows you to set a policy based on a chunks age as to when it will be compressed.
+Allows you to set a policy  by which the system will compress a chunk 
+automatically in the background after it reaches a given age.
 
 The Syntax is:
 
@@ -1030,60 +1025,41 @@ and the system will recompress your chucks.
 The Syntax is:
 
 ``` sql
-SELECT decompress_chunk( '<chunk_name>'); 
+SELECT decompress_chunk('<chunk_name>'); 
 
 ```
 #### Sample Usage [](decompress_chunk)
 In this example we are decompressing chunk 2_2
 
 ``` sql
-SELECT decompress_chunk( '_timescaledb_internal._hyper_2_2_chunk');  
+SELECT decompress_chunk('_timescaledb_internal._hyper_2_2_chunk');  
 ```
 #### Required Arguments [](decompress_chunk-required-arguments)
 |Name|Description|
 |---|---|
 | `chunk_name` | Name of the chunk to be decompressed.|
 ---
-## Move Chunks :enterprise_function: [](move_chunk)
-TimescaleDB allows users to move data chunks (and indexes) to alternative tablespaces.
+
+## Move Chunk :enterprise_function: [](move_chunk)
+TimescaleDB allows users to move data  (and indexes) to alternative tablespaces.
 This allows the user the ability to move data as it ages to more cost effective storage.
 
-## Move Chunk and Index to different table space (move_chunk) :enterprise_function: [](move-chunk)
-
+## Move Chunk and Index to alternative table space :enterprise_function: [](move_chunk-alt-ts)
 
 The Syntax is:
 
 ``` sql
 SELECT move_chunk(chunk=>'<chunk_name>', destination_tablespace=>'<tablespace_name>', 
-index_destination_tablespace=>'<tblespace_name', reorder_index=>'chunk_index_name', 
+index_destination_tablespace=>'<tblespace_name>', reorder_index=>'chunk_index_name', 
 verbose=>TRUE);  
 
 ```
-#### Sample Usage [](move_chunk)
-
-Move both the chunk and index to the same tablespace:
+#### Sample Usage [](move_chunk-sample-sample-usage)
 
 ``` sql
 SELECT move_chunk(chunk=>'_timescaledb_internal._hyper_1_4_chunk', destination_tablespace=>
 'tablespace_2', index_destination_tablespace=>'tablespace_2', reorder_index=>
-'_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);
-  
-```
-Move the same set of chunks back to the default tablespace:
-
-``` sql
-SELECT move_chunk(chunk=>'_timescaledb_internal._hyper_1_4_chunk', destination_tablespace=>'pg_default',
-index_destination_tablespace=>'pg_default', reorder_index=>
-'_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);
-
-```
-Move Chunk to one tablespace and the index to another:
-
-``` sql
-SELECT move_chunk(chunk=>'_timescaledb_internal._hyper_1_4_chunk', destination_tablespace=>'tablespace2',
-index_destination_tablespace=>'tablespae3', reorder_index=>
-'_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);
-
+'_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);  
 ```
 
 #### Required Arguments [](move_chunk-required-arguments)
@@ -1093,8 +1069,9 @@ index_destination_tablespace=>'tablespae3', reorder_index=>
 | `chunk` | Name of chunk to be moved.|
 | `destination_tablespace` |Target tablespace for chunk you are moving.|
 | `index_destination_tablespace` |Target tablespace for index associated with the chunk you are moving.|
-| `reorder_index` |Name of the index associated with the chunk you are moving.|
+| `reorder_index` |Name of the index to order the data by.|
 ---
+
 ## Continuous Aggregates :community_function: [](continuous-aggregates)
 TimescaleDB allows users the ability to automatically recompute aggregates
 at predefined intervals and materialize the results. This is suitable for
