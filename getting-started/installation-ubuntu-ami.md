@@ -1,18 +1,23 @@
 ## Installing from an Amazon AMI (Ubuntu) [](installation-ubuntu-ami)
 
 TimescaleDB is currently available as an Ubuntu 18.04 Amazon EBS-backed AMI. AMIs are
-distributed by region, and our AMI is currently available in `us-east-1`, `us-east-2`,
-`us-west-1`, and `us-west-2`. Note that this image is built to use an EBS attached volume
+distributed by region, and our AMI is currently available in US and EU
+regions. Note that this image is built to use an EBS attached volume
 rather than the default disk that comes with EC2 instances.
 
 See below for the image id corresponding to each region for the most recent TimescaleDB version:
 
 Region | Image ID
 --- | ---
-us-east-1 (North Virginia) | ami-0d863913b36a0336b
-us-east-2 (Ohio) | ami-0ce6fad916bfa6c7b
-us-west-1 (North California) | ami-07943c780196d2dbd
-us-west-2 (Oregon) | ami-0c249e6d0827886a1
+us-east-1 (North Virginia) | ami-03be52f2b3bfe6de2
+us-east-2 (Ohio) | ami-0a195ab62b874a15b
+us-west-1 (North California) | ami-032af82084acd7696
+us-west-2 (Oregon) | ami-0f83bfd190d7e0709
+eu-central-1 (Germany) | ami-0a58e8081b7625873
+eu-north-1 (Sweden) | ami-0668e9a2d43faf448
+eu-west-1 (Ireland) | ami-0030397a0c3020d9d
+eu-west-2 (England) | ami-06d70ac1886d1f711
+eu-west-3 (France) | ami-070d22e291d495bff
 
 
 To launch the AMI, go to the `AMIs` section of your AWS EC2 Dashboard run the following steps:
