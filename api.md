@@ -922,7 +922,7 @@ to support compression.
 | `table_name` | Name of the hypertable that will support compression |
 | `column_name` | name of the column used to order by and/or segment by|
 
-#### with cluase options [](compression_alter-table)
+#### options [](compression_alter-table-options)
 |Name|Description|
 |---|---|
 | `timescale.compress_orderby` | Use of order by to organize data within hypertable |
