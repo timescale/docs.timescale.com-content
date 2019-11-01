@@ -201,34 +201,17 @@ use a PostgreSQL docker image that has both Pg_Prometheus and TimescaleDB
 extensions installed (found [here][docker-pg-prom-timescale]).
 
 ```bash
-docker run --network prometheus_timescale_network  --name pg_prometheus -d -p 5432:5432 timescale/pg_prometheus:latest postgres \
+docker run --network prometheus_timescale_network  --name pg_prometheus \
+     -e POSTGRES_PASSWORD=secret -d -p 5432:5432 timescale/pg_prometheus:latest-pg11 postgres \
      -csynchronous_commit=off
 ```
 
 Note that this image inherits from the official PostgreSQL image and so all
 options documented there are applicable to this image as well. This is
 especially important for users that wish to persist data outside of docker
-volumes is the PGDATA environment variable and accompanying volume mount (visit https://hub.docker.com/_/postgres/ for available configuration options)
-
-#### Set the `postgres` user's password
-
-We'll also want to set the password for the postgres user now so that our adapter can connect to it later.
-1. Connect to the pg_prometheus container:
-```bash
-docker exec -it pg_prometheus bash
-```
-2. Connect to the database:
-```bash
-psql postgres postgres
-```
-3. Bring up the password prompt:
-```bash
-\password postgres
-```
-1. At the prompt, enter a password for the postgres user.
-2. Quit the postgres prompt with `\q`.
-3. Exit the container with `exit`.
-
+volumes is the PGDATA environment variable and accompanying volume mount (visit https://hub.docker.com/_/postgres/ for available configuration options). We use the official PostgreSQL
+image's `POSTGRES_PASSWORD` environment variable to set the password for the 
+`postgres` user to *`secret`*
 
 ### Spin up the Prometheus PostgreSQL adapter
 
@@ -237,9 +220,9 @@ Since we have the database up and running now, let’s spin up a [Prometheus Pos
 ```bash
 docker run --network prometheus_timescale_network --name prometheus_postgresql_adapter -d -p 9201:9201 \
 timescale/prometheus-postgresql-adapter:latest \
--pg.host=pg_prometheus \
--pg.password=<PASSWORD SET IN PG_PROMETHEUS STEP> \
--pg.prometheus-log-samples
+-pg-host=pg_prometheus \
+-pg-password=<PASSWORD SET IN PG_PROMETHEUS STEP> \
+-pg-prometheus-log-samples
 ```
 
 ### Start collecting metrics
@@ -291,7 +274,7 @@ spin up all the docker containers together (Make sure you have `prometheus.yml` 
 version: '2.1'
 services:
  pg_prometheus:
-   image: timescale/pg_prometheus:latest
+   image: timescale/pg_prometheus:latest-pg11
    command: -c synchronous_commit=OFF
    container_name: pg_prometheus
    healthcheck:
@@ -306,7 +289,7 @@ services:
    depends_on:
      pg_prometheus:
        condition: service_healthy
-   command: "-pg.host=pg_prometheus -pg.prometheus-log-samples -pg.password=<PASSWORD SET IN PG_PROMETHEUS STEP>"
+   command: "-pg-host=pg_prometheus -pg-prometheus-log-samples -pg-password=<PASSWORD SET IN PG_PROMETHEUS STEP>"
  node_exporter:
    image: quay.io/prometheus/node-exporter
    ports:
@@ -320,7 +303,7 @@ services:
 ```
 
 To use the `docker-compose` method, follow these steps: 
-1. Set `-pg.password` in `docker-compose.yml` to a password of your choice.
+1. Set `-pg-password` in `docker-compose.yml` to a password of your choice.
 2. Fire things up with `docker-compose up`.
 3. Follow the steps in 'Spin Up Pg_Prometheus' to set the Postgres user's password to the password you choose in Step 1.
 4. Start the `prometheus-postgresql-adapter` container using `docker start`.
