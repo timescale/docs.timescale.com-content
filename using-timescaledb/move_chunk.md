@@ -28,7 +28,7 @@ disk arrays, and ensure that large hypertables (where you may be performing anal
 do not overrun the disk backing the default tablespace.
 
 
-### Move Chunks :enterprise_function:[] (move)
+### Move Chunks :enterprise_function: [](move)
 
 The move chunks function requires multiple tablespaces set up in Postgres, so let's
 start with a quick review of how this works.
@@ -130,7 +130,7 @@ now back on the Postgres default tablespace.
 
 Another set of use cases you might encounter is the need to split the indexes for
 chunks on one table space while the data chunk lives on another table space (space
-constraints, IO constraints etc.).
+constraints, I/O constraints etc.).
 
 Let's start with moving the chunk and the index to different tablespaces. Here
 is what the command would look like:
