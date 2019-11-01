@@ -326,24 +326,21 @@ const pageIndex = [
                     {
                         Title: "Prepare Hypertable",
                         type: ANCHOR,
-                        href: "#prepare"
+                        href: "#prepare_compress_hypertable"
                     }, {
                         Title: "Compress Data",
                         type: ANCHOR,
-                        href: "#compress"
+                        href: "#compress_data"
                     }, {
-						Title: "Decompress Data",
-						type: ANCHOR,
-						href: "#decompress"
-					}
+                      Title: "Decompress Data",
+                      type: ANCHOR,
+                      href: "#decompress_data"
+                    }
                 ]
             }, {
                 Title: "Data Tiering",
                 type: PAGE,
-                href: "move_chunks",
-                children: [
-                    
-                ]
+                href: "move_chunk"
             }, {
                 Title: "Continuous Aggregates",
                 type: PAGE,
@@ -421,8 +418,7 @@ const pageIndex = [
             }, {
                 Title: "Telemetry",
                 type: PAGE,
-                href: "telemetry",
-                children: []
+                href: "telemetry"
             }
         ]
     }, {
