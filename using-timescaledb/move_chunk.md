@@ -170,8 +170,6 @@ verbose=>TRUE);
  ```
 ---
 
-
-
 [tablespace]: https://www.postgresql.org/docs/10/sql-createtablespace.html
 [postgres-materialized-views]: https://www.postgresql.org/docs/current/rules-materializedviews.html
 [api-continuous-aggs]:/api#continuous-aggregates

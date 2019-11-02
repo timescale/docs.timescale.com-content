@@ -1,15 +1,14 @@
 # Compression
 
 >:WARNING:Compression is disabled when using Timescale in conjuction with
-PostgreSQL 9. in order to use compression you must be using PostgreSQL 10.2 or higher.
-
+PostgreSQL 9.6. In order to use compression, you must be using PostgreSQL 10.2 or higher.
 
 As of version 1.5, TimescaleDB supports the ability to natively compress data. This
 functionality does not require the use of any specific file system or external software,
-and as you will see, is simple to set up and configurable by the user.
+and as you will see, it is simple to set up and configure by the user.
 
 Prior to using this guide, we recommend taking a look at our architecture section
-to learn more about how compression works. At a high level, TimescaleDB’s built-in
+to learn more about how compression works. At a high level, TimescaleDB's built-in
 job scheduler framework will asynchronously convert recent data from an uncompressed
 row-based form to a compressed columnar form across chunks of TimescaleDB hypertables.
 
@@ -41,22 +40,17 @@ effectively ingest data while compressed.
 In the above diagram, the data in Position 0 (which is our active chunk) will always be
 uncompressed. The active chunk will never be a candidate for compression
 in order to protect the system’s ability to perform high volume/high velocity ingestion.
-Once data moves out of Position 0 (the active chunk) and into something greater
-than or equal to Position 1, which is now considered historical data, it becomes
-a compression candidate (it can now be compressed manually or via policy).  
-
-We have chosen NOT to compress the chunk in position 1, however
-all full chunks (position 1-4) are candidates for compression. As you can see
-we have chosen to wait until a chunk reaches Position 2 (in this case
-the chunk is 3 days old) before we decide to apply compression, meaning chunks 3 days
-and older will be compressed.
-
+Once data moves out of Position 0 (the active chunk) and becomes more historical data,
+it becomes a compression candidate (users may choose to compress it manually or
+via an automated policy).  In this illustration, we see that some of the
+compression candidates (namely, those more than 3 days old) have subsequently
+been compressed.
 
 ### Configuring Hypertables for Compression [](prepare_compress_hypertable)
 
 The first thing we need to do when configuring your hypertable for compression is
-to decide how to organize the data to achieve the best overall compression.
-In general there are two ways to consider how your data will be organized during
+to decide how to organize the data for compression.
+In general, there are two ways to consider how your data will be organized during
 the compression process: 'order by' and 'segment by'. TimescaleDB provides these options
 which are implemented by using `ALTER TABLE`. The following will explain the differences,
 and when to use each option.
@@ -67,7 +61,7 @@ The main option that needs to be configured is `timescaledb.compress_orderby`.
 You can think of this option as the ORDER BY clause in a SQL query, but in this
 case used on your raw data when it is sent to the compression process. This
 option takes a data column as an argument. Additionally, this option is important
-because it directly impacts the compression rates as you’ll see.
+because it directly impacts the compression rates you'll see.
 
 Compression is most effective when related data is close in magnitude or exhibits
 some sort of trend. In other words, random or out of order data will compress poorly.
@@ -87,8 +81,8 @@ CREATE TABLE metrics (
 SELECT create_hypertable('metrics', 'time');
 ```
 
-Let’s further assume that you have 2 devices. Device 1 measures temperature  
-,while device 2 measures the air quality index. Your table might look
+Let’s further assume that you have 2 devices. Device 1 measures temperature,
+while device 2 measures the air quality index. Your table might look
 something like this:
 
 |time|device_id|value|
@@ -125,7 +119,9 @@ In this case, your statement for turning on compression for this hypertable woul
 look like this:
 
 ``` sql
-ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 'device_id, time');
+ALTER TABLE metrics 
+  SET (timescaledb.compress, 
+       timescaledb.compress_orderby = 'device_id, time');
 ```
 
 #### Segment By
@@ -153,8 +149,10 @@ this, you can apply an additional option to segment the compressed data:
 `timescaledb.compress_segmentby`.
 
 ``` sql
-ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 'time',
-timescaledb.compress_segmentby = 'device_id');
+ALTER TABLE metrics 
+  SET (timescaledb.compress, 
+       timescaledb.compress_orderby = 'time',
+       timescaledb.compress_segmentby = 'device_id');
 ```
 
 Using `timescaledb.compress_segmentby` takes the column you pass into it and
@@ -233,25 +231,25 @@ We could then proceed to compress all of the chunks in this example that are
 more than three days old by repeating the process for the remaining chunks
 in the list we generated.
 
-### Policy Based Compression:
+### Policy-Based Compression
 
 We can set a policy that will compress chunks when they reach a given age.
 As we covered in an earlier section, a chunk becomes eligible for compression as
-soon as it is no longer the “active” chunk, that is, it has moved from position
+soon as it is no longer the "active" chunk, that is, it has moved from position
 zero to position one (in our diagram above). When this happens is determined by
 the `chunk_time_interval` parameter, set when the hypertable is created.
 
-For example, to compress chunks older than 60 days on a hypertable named 'conditions':
+For example, to compress chunks older than 7 days on a hypertable named 'conditions':
 
 ``` sql
-SELECT add_compress_chunks_policy('conditions', '60d'::interval);
+SELECT add_compress_chunks_policy('conditions', '7d'::interval);
 ```
 
-This will create a policy that will ensure all chunks older than 60 days will
+This will create a policy that will ensure all chunks older than 7 days will
 be compressed.  Please note this still requires that we configure the hypertable
 for compression and that you have issued the commands to ensure that TimescaleDB
 understands how to organize your data. This command simply automates the process
-of compressing those chunks that cross the 60 day age threshold.
+of compressing those chunks that cross the 7-day age threshold.
 
 To confirm that your policy job has been created, you can validate it by using
 the following command:
@@ -260,7 +258,7 @@ the following command:
 SELECT * from _timescaledb_config.bgw_job where job_type like 'compress%';
 ```
 
-The system will look for chunks that cross the 60 day threshold every 15
+The system will look for chunks that cross the 7 day threshold every 15
 minutes and if the job for some reason fails, it will be put in the retry queue
 and be retried in an hour.
 
@@ -297,7 +295,7 @@ Once your backfill and update operations are complete we can simply re-enable
 our compression policy job:
 
 ``` sql
-SELECT add_compress_chunks_policy('cpu', '60d'::interval);
+SELECT add_compress_chunks_policy('cpu', '7d'::interval);
 ```
 This job will run and re-compress any chunks that you may have decompressed
 during your backfill operation.
@@ -305,7 +303,8 @@ during your backfill operation.
 ---
 
 ### Best Practices [](best_practices_compression)
-Considerations around Compression Policy:
+
+#### Considerations around compression policy [](considerations_compression_policy)
 
 When setting our compression policy and the timing around when to compress a
 chunk you should consider the types of queries that that you are running. Our
@@ -328,7 +327,7 @@ along with things like frequency of access and disk savings to decide when to st
 compressing data.
 
 >:WARNING: The current release of TimescaleDB supports the ability to query data in
-compressed chunks, however, it does not support inserts, or updates into compressed
+compressed chunks. However, it does not support inserts or updates into compressed
 chunks.   
 
 Given the nature of time series data, out of order data would be a use
@@ -341,31 +340,33 @@ for adding out of order data we encourage you to consider this as you set your
 compression policy. However, we are also planning to address this (ability to
 modify compressed chunks) in a future release.
 
-#### Out of order data and compression [](out_of_order_data_compression)
+#### Out-of-order data and compression [](out_of_order_data_compression)
 
 Depending on the boundaries set for your chunks and the likelihood that your use
-case will produce out of order data, you may want to delay chunk compression to  
-minimize the risk of needing to decompress chunks to add data . This will be different
-for each use case, but remember to be mindful of out of order data, Consider when
-you have typically seen out of order data in the past when deciding when to start
+case will produce out-of=order data, you may want to delay chunk compression to
+minimize the risk of needing to decompress chunks to add data. This will be different
+for each use case, but remember to be mindful of out-of-order data. Consider when you
+have typically seen out-of-order data in the past when deciding when to start
 compression in order to avoid the manual decompression process.
-Storage considerations for decompressing chunks
+
+#### Storage considerations for decompressing chunks [](storage_for_decompression)
+
 Another scenario to be mindful of when planning your compression strategy is the
 possible need to decompress chunks. This is key when you are provisioning storage
 for use with TimescaleDB. You want to ensure that you plan for enough storage headroom
 to decompress chunks if needed.
 
-Planning for the right amount of head room (storage), and being familiar with our
-move chunks feature <insert link to docs for move chunks> will ensure you are prepared
+Planning for the right amount of head room (storage) and being familiar with our
+[move chunks][move-chunks] feature will ensure you are prepared
 to manage the need for decompression should it arise without running out of disk space.
 
-If you find yourself needing to decompress historical chunks but decompressing
-the necessary chunks will cause storage issues (i.e. you do not have enough
-storage), you can follow this process:
+If you find yourself needing to decompress historical chunks, but in a scenario
+where you do not have enough available storage capacity to decompress, you can
+follow this process:
 
 1. Add a new tablespace to your Postgres instance (backed by additional storage)
 
-1. Use the TimescaleDB `move_chunk` feature to move the chunks you need to backfill
+1. Use the TimescaleDB [`move_chunk`][move-chunk] feature to move the chunks you need to backfill
 over to the new tablespace
 
 1. Remove your compression policy
@@ -378,12 +379,12 @@ over to the new tablespace
 
 1. Move your updated chunks back to the default tablespace (optional)
 
-Alternatively you can serialize the process by decompressing smaller
+Alternatively, you can serialize the process by decompressing smaller
 numbers of chunks and processing your data backfill in smaller increments.
 
 ---
 
-### Future Work
+### Future Work [](future)
 
 One of the current limitations of TimescaleDB is that once chunks are converted
 into compressed column form, we do not currently allow any further modifications
@@ -392,20 +393,4 @@ other words, chunks are immutable in compressed form. Attempts to modify the
 chunks’ data will either error or fail silently (as preferred by users). We
 plan to remove this limitation in future releases.
 
----
-
-[postgres-materialized-views]: https://www.postgresql.org/docs/current/rules-materializedviews.html
-[api-continuous-aggs]:/api#continuous-aggregates
-[postgres-createview]: https://www.postgresql.org/docs/current/static/sql-createview.html
-[time-bucket]: /api#time_bucket
-[api-continuous-aggs-create]: /api#continuous_aggregate-create_view
-[postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
-[api-refresh-continuous-aggs]: /api#continuous_aggregate-refresh_view
-[api-continuous-aggregates-info]: /api#timescaledb_information-continuous_aggregate
-[api-continuous-aggregate-stats]: /api#timescaledb_information-continuous_aggregate_stats
-[api-drop-chunks]: /api#drop_chunks
-[api-set-chunk-interval]: /api#set_chunk_time_interval
-[api-add-drop-chunks]: /api#add_drop_chunks_policy
-[timescale-github]: https://github.com/timescale/timescaledb
-[support-slack]: https://slack-login.timescale.com
-[postgres-ordered-set]: https://www.postgresql.org/docs/current/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
+[move-chunks]: /using-timescaledb/move_chunk
