@@ -343,7 +343,7 @@ modify compressed chunks) in a future release.
 #### Out-of-order data and compression [](out_of_order_data_compression)
 
 Depending on the boundaries set for your chunks and the likelihood that your use
-case will produce out-of=order data, you may want to delay chunk compression to
+case will produce out-of-order data, you may want to delay chunk compression to
 minimize the risk of needing to decompress chunks to add data. This will be different
 for each use case, but remember to be mindful of out-of-order data. Consider when you
 have typically seen out-of-order data in the past when deciding when to start
@@ -393,4 +393,4 @@ other words, chunks are immutable in compressed form. Attempts to modify the
 chunks’ data will either error or fail silently (as preferred by users). We
 plan to remove this limitation in future releases.
 
-[move-chunks]: /using-timescaledb/move_chunk
+[move-chunk]: /using-timescaledb/move_chunk
