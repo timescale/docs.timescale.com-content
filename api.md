@@ -917,13 +917,13 @@ to support compression.
 The syntax is:
 
 ``` sql
-ALTER TABLE <table_name> SET (timescale.compress, timescale.compress_orderby
-= '<column_name> [, <column_name>, ...]', timescaledb.compress_segmentby = '<column_name>'); );
+ALTER TABLE <table_name> SET (timescaledb.compress, timescaledb.compress_orderby
+= '<column_name> [, <column_name>, ...]', timescaledb.compress_segmentby = '<column_name>');
 ```
 #### Required Options [](compression_alter-table-required-options)
 |Name|Description|
 |---|---|
-| `timescale.compress_orderby` | Use of order by to organize data within hypertable |
+| `timescaledb.compress_orderby` | Use of order by to organize data within hypertable |
 
 #### Other Options [](compression_alter-table-other-options)
 |Name|Description|
