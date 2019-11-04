@@ -49,6 +49,7 @@
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_integer_now_func](#set_integer_now_func)
 > - [set_number_partitions](#set_number_partitions)
+> - [set_replication_factor](#set_replication_factor)
 > - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
@@ -1238,6 +1239,37 @@ time (number of seconds since the unix epoch, UTC).
 CREATE OR REPLACE FUNCTION unix_now() returns BIGINT LANGUAGE SQL STABLE as $$ SELECT extract(epoch from now())::BIGINT $$;
 
 SELECT set_integer_now_func('test_table_bigint', 'unix_now');
+```
+
+---
+
+## set_replication_factor() [](set_replication_factor)
+Sets the replication factor of a distributed hypertable to the given value. 
+The setting will affect only new chunks. 
+Newly created chunks of the hypertable will be replicated to different data nodes,
+so the amount of replicas is the same as the replication factor.
+
+If existing chunks have less replicas than the given replication factor,
+the function will print a warning.
+
+#### Required Arguments [](set_replication_factor-required-arguments)
+
+|Name|Description|
+|---|---|
+| `main_table` | Identifier of the distributed hypertable to update the replication factor for.|
+| `replication_factor` | The new value of the replication factor. Must be greater than 0.|
+
+#### Sample Usage [](set_replication_factor-examples)
+
+Update the replication factor for a distributed hypertable to `2`:
+```sql
+SELECT set_replication_factor('conditions', 2);
+```
+
+Example of the warning if any existing chunk of the distributed hypertable has less than 2 replicas:
+```
+WARNING:  hypertable "conditions" is under-replicated
+DETAIL:  Some chunks have less than 2 replicas.
 ```
 
 ---

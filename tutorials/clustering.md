@@ -8,9 +8,11 @@ TimescaleDB can be run in a multi-node setup, with one primary access node distr
 writes and queries to multiple data nodes. For more information on the actual
 underlying architecture, you can view our [architecture][architecture] section.
 
-In this tutorial, we will show how you can create a distributed hypertable within
-a distributed database. We will set up the distributed database with one primary access node
-and two data nodes across three distinct TimescaleDB instances.
+This tutorial will walk you through setting up a three-node distributed
+database and creating a distributed hypertable. You will learn how to enable
+password authentication and add new roles to your distributed database.
+
+## Setting up
 
 It is assumed before starting this tutorial you will have three networked machines set up with:
 - TimescaleDB version 2.0 (beta) or greater
@@ -22,15 +24,95 @@ need a common superuser role on each postgres instance. This tutorial
 will assume the `postgres` role for this, but you may substitute any
 role common to all machines with superuser permission.
 
-Beyond this, please ensure that you've completed the following steps.
-Some or most of these may not be necessary depending on how you
-initially set up your instances:
-- Make sure you've enabled `max_prepared_transactions` on all the instances, this parameter is located in `postgresql.conf`. We recommend a setting of at least 150.
-- Make sure the data nodes are properly listening for network traffic. `postgresql.conf` should have a `listen_addresses` set to include the access node. If this parameter is missing or just `localhost`, change it to `access.example.com`, or the corresponding IP. You can also set it to `"*"` to not restrict where connections can originate from.
-- The superuser role, `postgres` in this example, must have an entry in the `pg_hba.conf` file for the data nodes. This should look something like: ```host    all    postgres    access.example.com    trust``` You can use any CIDR block covering the access node's IP in place of `access.example.com`. For using authentication mechanism's other than `trust`, please see the [authentication guide][data-node-authentication].
+### Update your Postgres configuration
 
-After making any of these changes, please restart your Postgres instance to ensure the
-new settings take effect.
+First of all, if you haven't yet run the `timescaledb-tune` utility, it's
+highly recommended that you do so before starting. Do this for all of your
+nodes.
+```bash
+sudo timescaledb-tune
+```
+
+In addition, make sure you've enabled prepared transactions on your data
+nodes. This is essential for allowing Timescale distributed transactions to
+work. Prepared transactions are disabled by default, so make sure you have
+this line in `postgresql.conf` on every data node.
+```
+max_prepared_transactions = 150
+```
+
+### Set password encryption
+
+You are now ready to set up the network communication between the nodes and
+add authentication. For more details and options for this step, please visit
+the [data node authentication][data-node-authentication] page.
+
+In this example you'll be adding `scram-sha-256` password authentication to your
+nodes. The first step of this is to enable password encryption on all the nodes
+by adding the following to `postgresql.conf`:
+
+```
+password_encryption = 'scram-sha-256'
+```
+
+>:WARNING: This setting is not automatically applied to any existing passwords.
+Any existing roles will have to update to new passwords to take advantage of
+the encryption. You can do this in Postgres by using the [`ALTER ROLE` command][postgres-alterrole]
+to specify the new password (this can be the same as the old password).
+
+After making this change, restart the postgres service so the changes made so
+far can take effect.
+
+### Set up the access node
+
+The next step is to enable `access.example.com` to send the passwords for the
+users of the system. Create a new file `passfile` in the Postgres data
+directory, and add the following lines:
+```
+*:*:*:postgres:postgres
+*:*:*:testuser:testpass
+```
+
+This will result in the access node always using password `postgres` for role
+`postgres` and `testpass` for role `testuser` whenever connecting to any data
+node. You'll be creating this `testuser` role later in this tutorial. Make sure
+that this file is readable by system user who will be running the postmaster.
+
+### Set up the data nodes
+
+Next we will set up the data nodes to accept incoming connections from the
+access node for the expected roles. The first thing you need to do here is
+to make sure that Postgres will listen for incoming connections. Add the
+following to `postgresql.conf`:
+```
+listen_addresses = '*'
+```
+
+Next, add the roles you want to allow to `pg_hba.conf`:
+```
+host    all    postgres    access.example.com    scram-sha-256
+host    all    testuser    access.example.com    scram-sha-256
+```
+
+This allows connections to the `postgres` and `testuser` roles, but only from
+the access node, and only using `scram-sha-256` authentication.
+
+Finally, make sure that the `postgres` role's password matches the password in
+the `passfile` on the access node. Run the following postgres command on all of
+your data nodes.
+
+```sql
+ALTER ROLE postgres PASSWORD 'postgres';
+```
+
+Note that if you did not restart postgres after changing the
+`password_encryption` above, the password will not be properly encrypted and
+you will not be able to connect to this data node as `postgres`. In that case
+simply rerun the command once Postgres is running with the proper password
+encryption.
+
+Restart Postgres on all of your nodes one more time to ensure it is running
+with the proper configuration.
 
 ## Define the topology for your distributed database
 
@@ -45,6 +127,8 @@ CREATE DATABASE multinode;
 \c multinode postgres
 CREATE EXTENSION timescaledb;
 ```
+
+### Add data nodes
 
 You can now add the data nodes to the access node:
 
@@ -64,14 +148,38 @@ using our informational views:
 SELECT * FROM timescaledb_information.data_node;
 ```
 
-Now that we've created a database and added a couple data nodes,
-let's go ahead and create a distributed hypertable. With the following
-commands, we'll create a distributed hypertable for collecting
-temperature readings from sensors:
+### Create a new role
+
+Now that you have created a database and added a couple data nodes, let's go
+ahead and create a new user role we can use for our distributed database.
+You can use Timescale's `distributed_exec` function to perform this action on
+the data nodes:
+```sql
+CREATE ROLE testuser WITH LOGIN PASSWORD 'testpass';
+SELECT * FROM distributed_exec($$ CREATE ROLE testuser WITH LOGIN PASSWORD 'testpass' $$);
+```
+
+This creates the same user role on all the data nodes. It is important that
+the user is created with `LOGIN` permission for them to perform distributed
+operations. Note that the text of the command, including the password, is sent
+over the network to the data node, so you may want to make sure you've
+configured postgres to use SSL before running such commands in production.
+
+The last necessary step is to grant this user access to Postgres's
+foreign server objects:
+```sql
+GRANT USAGE ON FOREIGN SERVER dn1, dn2 to testuser;
+```
+
+### Create the distributed hypertable
+
+Now you can log in as the new `testuser` and create a distributed hypertable.
+With the following commands, we'll create a distributed hypertable for
+collecting temperature readings from sensors:
 
 ```sql
+SET ROLE testuser;
 CREATE TABLE conditions (time timestamptz NOT NULL, device integer, temp float);
-
 SELECT create_distributed_hypertable('conditions', 'time', 'device');
 ```
 
@@ -87,6 +195,8 @@ INSERT INTO conditions
 SELECT time, (random()*30)::int, random()*80
 FROM generate_series('2019-01-01 00:00:00'::timestamptz, '2019-02-01 00:00:00', '1 min') AS time;
 ```
+
+### View data distribution
 
 You can now check the configuration of the distributed hypertable and
 how many chunks it holds by running the following:
@@ -123,3 +233,4 @@ inserted data across multiple data nodes, and queried that data.
 [architecture]: /introduction/architecture#timescaledb-clustering
 [contact]: https://www.timescale.com/contact
 [data-node-authentication]: /getting-started/setup/data-node-authentication
+[postgres-alterrole]: https://www.postgresql.org/docs/current/sql-alterrole.html
