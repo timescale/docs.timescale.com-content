@@ -494,6 +494,10 @@ const pageIndex = [
                 type: ANCHOR,
                 href: "#hypertable-management"
             }, {
+                Title: "Compression",
+                type: ANCHOR,
+                href: "#compression"
+            }, {
                 Title: "Continuous Aggregates",
                 type: ANCHOR,
                 href: "#continuous-aggregates"
