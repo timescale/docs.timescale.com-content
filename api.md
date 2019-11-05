@@ -39,6 +39,7 @@
 > - [remove_reorder_policy](#remove_reorder_policy)
 > - [reorder_chunk](#reorder_chunk)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
+> - [set_integer_now_func](#set_integer_now_func)
 > - [set_number_partitions](#set_number_partitions)
 > - [show_chunks](#show_chunks)
 > - [show_tablespaces](#show_tablespaces)
@@ -748,6 +749,42 @@ For a table with more than one space dimension:
 SELECT set_number_partitions('conditions', 2, 'device_id');
 ```
 
+
+---
+
+## set_integer_now_func() [](set_integer_now_func)
+This function is only relevant for hypertables with integer (as opposed to
+TIMESTAMP/TIMESTAMPTZ/DATE) time values. For such hypertables, it sets a
+function that returns the `now()` value (current time) in the units of the time
+column. This is necessary for running some policies on integer-based tables.
+In particular, many policies only apply to chunks of a certain age and a
+function that returns the current time is necessary to determine the age of a
+chunk.
+
+#### Required Arguments [](set_integer_now_func-required-arguments)
+
+|Name|Description|
+|---|---|
+| `main_table` | (REGCLASS) Identifier of hypertable to set the integer now function for .|
+| `integer_now_func` | (REGPROC) A function that returns the current time value in the same units as the time column. |
+
+#### Optional Arguments [](set_integer_now_func-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `replace_if_exists` | (BOOLEAN) Whether to override the function if one is already set. Defaults to false.|
+
+#### Sample Usage [](set_integer_now_func-examples)
+
+To set the integer now function for a hypertable with a time column in unix
+time (number of seconds since the unix epoch, UTC).
+
+```
+CREATE OR REPLACE FUNCTION unix_now() returns BIGINT LANGUAGE SQL STABLE as $$ SELECT extract(epoch from now())::BIGINT $$;
+
+SELECT set_integer_now_func('test_table_bigint', 'unix_now');
+```
+
 ---
 
 ## show_chunks() [](show_chunks)
@@ -885,50 +922,98 @@ SELECT reorder_chunk('_timescaledb_internal._hyper_1_10_chunk', 'conditions_devi
 runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the `conditions_device_id_time_idx` index.
 
 ---
+
+## move_chunk() :enterprise_function: [](move_chunk)
+TimescaleDB allows users to move data (and indexes) to alternative
+tablespaces. This allows the user the ability to move data to more cost
+effective storage as it ages. This function acts like the combination of the
+[PostgreSQL CLUSTER command][postgres-cluster] and the 
+[PostgreSQL ALTER TABLE...SET TABLESPACE command][postgres-altertable]. However, it uses lower
+lock levels so that, unlike with these PostgreSQL commands, the chunk and
+hypertable are able to be read for most of the process. It does use a bit
+more disk space during the operation.
+
+#### Required Arguments [](move_chunk-required-arguments)
+
+|Name|Description|
+|---|---|
+| `chunk` | (REGCLASS) Name of chunk to be moved. |
+| `destination_tablespace` | (Name) Target tablespace for chunk you are moving. |
+| `index_destination_tablespace` | (Name) Target tablespace for index associated with the chunk you are moving. |
+
+#### Optional Arguments [](move_chunk-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `reorder_index` | (REGCLASS) The name of the index (on either the hypertable or chunk) to order by.|
+| `verbose` | (BOOLEAN) Setting to true will display messages about the progress of the move_chunk command. Defaults to false.|
+
+
+#### Sample Usage [](move_chunk-sample-usage)
+
+``` sql
+SELECT move_chunk(
+  chunk => '_timescaledb_internal._hyper_1_4_chunk',
+  destination_tablespace => 'tablespace_2', 
+  index_destination_tablespace => 'tablespace_3',
+  reorder_index => 'conditions_device_id_time_idx',
+  verbose => TRUE
+);  
+```
+
+---
+
 ## Compression :community_function: [](compression)
-TimescaleDB allows users to
-- configure their hypertables for compression
-- compress chunks of data manually or based on policy.  
 
-Policy based compression will allow the user to compress a chunk when it has reached the specified age.
-The user may also manually compress a chunk or sets of chunks.  
-<!--For more detailed discussion of this function -insert tag to tutorial- -->.
+We highly recommend reading the [blog post][blog-compression] and
+[tutorial][using-compression] about compression before trying to set it up
+for the first time.
 
->:WARNING: Compression is only available for Postgres 10.9+ or 11.
+Setting up compression on TimescaleDB requires users to first [configure the
+hypertable for compression](#compression_alter-table) and then [set up a
+policy](#add_compress_chunk_policy) for when to compress chunks.
+
+Advanced usage of compression alows users to [compress chunks
+manually](#compress_chunk), instead of automatically as they age.
+
+>:WARNING: Compression is only available for Postgres 10.2+ or 11.
 
  #### Restrictions
- Version 1.5 does not support altering or inserting data into compressed chunks.  The data can be queried without any
- modifications, however if you need to backfill or update data in a compressed chunk you will need to decompress the chunk(s)
- first.
+ Version 1.5 does not support altering or inserting data into compressed
+ chunks. The data can be queried without any modifications, however if you
+ need to backfill or update data in a compressed chunk you will need to
+ decompress the chunk(s) first.
 
 
-*	[alter table (compression)] (#compression_alter-table))
-*	[compress Table SEGMENT BY] (#compress_table-segmentby)
-*	[compress Chunk](#compress_chunk)
-*	[compress Policy] (#compress_policy)
-*	[compress Policy Remove] (#compress_policy_remove)
-*	[decompress Chunk] (#decompress_chunk)
+#### Associated commands
+*	[ALTER TABLE](#compression_alter-table)
+*	[add_compress_chunk_policy](#add_compress_chunk_policy)
+*	[remove_compress_chunk_policy](#remove_compress_chunk_policy)
+*	[compress_chunk](#compress_chunk)
+*	[decompress_chunk](#decompress_chunk)
 
 ## ALTER TABLE (Compression) :community_function: [](compression_alter-table)
 
-'ALTER TABLE' statement is used to set table data organization characteristics for a hypertable
-to support compression.
+'ALTER TABLE' statement is used to turn on compression and set compression
+options. 
 
 The syntax is:
 
 ``` sql
-ALTER TABLE <table_name> SET (timescaledb.compress, timescaledb.compress_orderby
-= '<column_name> [, <column_name>, ...]', timescaledb.compress_segmentby = '<column_name>');
+ALTER TABLE <table_name> SET (timescale.compress, timescale.compress_orderby = '<column_name> [ASC | DESC] [ NULLS { FIRST | LAST } ] [, ...]', 
+timescaledb.compress_segmentby = '<column_name> [, ...]'
+);
 ```
 #### Required Options [](compression_alter-table-required-options)
 |Name|Description|
 |---|---|
-| `timescaledb.compress_orderby` | Use of order by to organize data within hypertable |
+| `timescaledb.compress` | Boolean to enable compression |
 
 #### Other Options [](compression_alter-table-other-options)
 |Name|Description|
 |---|---|
-| `timescaledb.compress_segmentby` | Use of segment by to organize data within hypertable |
+| `timescaledb.compress_orderby` | Order used by compression, specified in the same way as the ORDER BY clause in a SELECT query. The default is the descending order of the hypertable's time column. |
+| `timescaledb.compress_segmentby` | Column list on which to key the compressed segments. An identifier representing the source of the data such as `device_id` or `tags_id` is usually a good candidate. The default is no `segment by` columns. |
 
 #### Parameters
 |Name|Description|
@@ -937,138 +1022,101 @@ ALTER TABLE <table_name> SET (timescaledb.compress, timescaledb.compress_orderby
 | `column_name` | Name of the column used to order by and/or segment by |
 
 #### Sample Usage [](compression_alter-table-sample)
-Set Hypertable to use ORDER BY option for data organization
+Configure a hypertable that ingests device data to use compression.
 
 ```sql
-ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 'device_id, time');
+ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 'time DESC', timescaledb.compress_segmentby = 'device_id');
 ```
 
-Set Hypertable to use ORDER BY and SEGMENT BY options for data organization
-```sql
-ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby =
-'time', timescaledb.compress_segmentby = 'device_id');
-```
+## Add Compress Chunk Policy :community_function: [](add_compress_chunk_policy)
+Allows you to set a policy by which the system will compress a chunk
+automatically in the background after it reaches a given age.
 
-## Compress Chunk (Compression) :community_function: [](compress_chunk)
+#### Required Arguments [](add_compress_chunk_policy-required-arguments)
 
-compress_chunk function is used to compress a specific chunk.
+|Name|Description|
+|---|---|
+| `table_name` | (REGCLASS) Name of the table that the policy will act on.|
+| `time_interval` | (INTERVAL or integer) The age after which the policy job will compress chunks.|
 
-The syntax is:
+The `time_interval` parameter should be specifified differently depending on the type of the time column of the hypertable:
+- For hypertables with TIMESTAMP, TIMESTAMPTZ, and DATE time columns: the time interval should be an INTERVAL type
+- For hypertables with integer-based timestamps: the time interval should be an integer type (this requires
+the [integer_now_func](#set_integer_now_func) to be set).
+
+#### Sample Usage [](add_compress_chunk_policy-sample-usage)
+Add a policy to compress chunks older than 60 days on the 'cpu' hypertable.
 
 ``` sql
-SELECT compress_chunk( '<chunk_name>');
+SELECT add_compress_chunks_policy('cpu', INTERVAL '60d');
 ```
-#### Sample Usage [](compress_chunk-sample-usage)
-In this example we will compress chunk 1_2
+
+Add a compress chunks policy to a hypertable with an integer-based time column:
+
 ``` sql
-SELECT compress_chunk( '_timescaledb_internal._hyper_1_2_chunk');
+SELECT add_compress_chunks_policy('table_with_bigint_time', BIGINT '600000');
 ```
+
+## Remove Compress Chunk Policy :community_function: [](remove_compress_chunk_policy)
+If you need to remove the compression policy. To re-start policy basd compression againn you will need to re-add the policy.
+
+#### Required Arguments [](remove_compress_chunk_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `table_name` | (REGCLASS) Name of the hypertable the policy should be removed from.|
+
+#### Sample Usage [](remove_compress_chunk_policy-sample-usage)
+Remove the compression policy from the 'cpu' table:
+``` sql
+SELECT remove_compress_chunks_policy('cpu');
+```
+
+## Compress Chunk :community_function: [](compress_chunk)
+
+The compress_chunk function is used to compress a specific chunk. This is
+most often used instead of the
+[add_compress_chunk_policy](#add_compress_chunk_policy) function, when a user
+wants more control over the scheduling of compression. For most users, we
+suggest using the policy framework instead.
+
+>:TIP: You can get a list of chunks belonging to a hypertable using the 
+`show_chunks` [function](#show_chunks).
 
 #### Required Arguments [](compress_chunk-required-arguments)
 
 |Name|Description|
 |---|---|
-| `chunk_name` | Name of the chunck to be compressed|
+| `chunk_name` | (REGCLASS) Name of the chunck to be compressed|
 
-## Compress Policy (Compression) :community_function: [](compress_policy)
-Allows you to set a policy  by which the system will compress a chunk
-automatically in the background after it reaches a given age.
 
-The Syntax is:
+#### Sample Usage [](compress_chunk-sample-usage)
+Compress a single chunk. 
 
 ``` sql
-SELECT add_compress_chunks_policy('<table_name>', '<time interval>'::interval);
-```
-#### Sample Usage [](compress_policy-sample-usage)
-In this example we will compress chunks older than 60 days from the 'cpu' table.
-
-``` sql
-SELECT add_compress_chunks_policy('cpu', '60d'::interval);
-```
-#### Required Arguments [](compress_policy-required-arguments)
-
-|Name|Description|
-|---|---|
-| `table_name` | Name of the the policy will act on.|
-| `time_interval` | Age at which the policy job will compress chunks.|
-
-## Compress Policy Remove (Compression) :community_function: [](compress_policy_remove)
-If you need to suspend or remove the compression policy. To start policy basd compression again
-you will need to re-add the policy.
-
-The Syntax:
-
-``` sql
-SELECT remove_compress_chunks_policy('<table_name>');
-```
-#### Required Arguments [](compress_policy_remove-required-arguments)
-
-|Name|Description|
-|---|---|
-| `table_name` | Name of the table the policy should be removed from.|
-
-#### Sample Usage [](compress_policy_remove-sample-usage)
-Remove the compression policy from the 'conditions' table:
-``` sql
-SELECT remove_compress_chunks_policy('conditions');
+SELECT compress_chunk('_timescaledb_internal._hyper_1_2_chunk');
 ```
 
-## Decompress Chunk (Compression) :community_function: [](decompress_chunk)
-If you need to modify or add data to a chunk (backfill) you will need to decompress
-the chunk first using this process.
+## Decompress Chunk :community_function: [](decompress_chunk)
+If you need to modify or add data to a chunk that has already been
+compressed, you will need to decompress the chunk first. This is especially
+useful for backfilling old data.
 
 >:TIP: Prior to decompressing chunks for the purpose of data backfill or updating you should
 first stop any compression policy that is active on the hypertable you plan to perform this
 operation on.  Once the update and/or backfill is complete simply turn the policy back on
 and the system will recompress your chucks.
 
-The Syntax is:
-
-``` sql
-SELECT decompress_chunk('<chunk_name>');
-```
-
 #### Required Arguments [](decompress_chunk-required-arguments)
 |Name|Description|
 |---|---|
-| `chunk_name` | Name of the chunk to be decompressed. |
+| `chunk_name` | (REGCLASS) Name of the chunk to be decompressed. |
 
 #### Sample Usage [](decompress_chunk)
+Decompress a single chunk
+
 ``` sql
 SELECT decompress_chunk('_timescaledb_internal._hyper_2_2_chunk');  
-```
-
----
-
-## move_chunk() :enterprise_function: [](move_chunk)
-TimescaleDB allows users to move data (and indexes) to alternative tablespaces.
-This allows the user the ability to move data to more cost effective storage as it ages.
-
-## Move Chunk and Index to alternative table space :enterprise_function: [](move_chunk-alt-ts)
-
-The Syntax is:
-
-``` sql
-SELECT move_chunk(chunk=>'<chunk_name>', destination_tablespace=>'<tablespace_name>',
-index_destination_tablespace=>'<tablespace_name>', reorder_index=>'chunk_index_name',
-verbose=>TRUE);  
-```
-
-#### Required Arguments [](move_chunk-required-arguments)
-
-|Name|Description|
-|---|---|
-| `chunk` | Name of chunk to be moved. |
-| `destination_tablespace` | Target tablespace for chunk you are moving. |
-| `index_destination_tablespace` | Target tablespace for index associated with the chunk you are moving. |
-| `reorder_index` | Name of the index to order the data by. |
-
-#### Sample Usage [](move_chunk-sample-sample-usage)
-
-``` sql
-SELECT move_chunk(chunk=>'_timescaledb_internal._hyper_1_4_chunk', destination_tablespace=>
-'tablespace_2', index_destination_tablespace=>'tablespace_2', reorder_index=>
-'_timescaledb_internal._hyper_1_4_chunk_netdata_time_idx', verbose=>TRUE);  
 ```
 
 ---
@@ -2616,11 +2664,14 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [chunk relation size]: #chunk_relation_size
 [best practices]: #create_hypertable-best-practices
 [using-continuous-aggs]: /using-timescaledb/continuous-aggregates
+[using-compression]: /using-timescaledb/compression
+[blog-compression]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database/
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
 [postgres-tablespaces]: https://www.postgresql.org/docs/current/manage-ag-tablespaces.html
 [postgres-createindex]: https://www.postgresql.org/docs/current/sql-createindex.html
 [postgres-createtablespace]: https://www.postgresql.org/docs/current/sql-createtablespace.html
 [postgres-cluster]: https://www.postgresql.org/docs/current/sql-cluster.html
+[postgres-altertable]: https://www.postgresql.org/docs/current/sql-altertable.html
 [migrate-from-postgresql]: /getting-started/migrating-data
 [memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
 [telemetry]: /using-timescaledb/telemetry
