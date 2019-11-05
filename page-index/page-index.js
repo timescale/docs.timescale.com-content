@@ -324,17 +324,21 @@ const pageIndex = [
                 href: "compression",
                 children: [
                     {
-                        Title: "Prepare Hypertable",
+                        Title: "Quick Start",
                         type: ANCHOR,
-                        href: "#prepare_compress_hypertable"
+                        href: "#quick-start"
                     }, {
-                        Title: "Compress Data",
+                        Title: "How It Works",
                         type: ANCHOR,
-                        href: "#compress_data"
+                        href: "#how-it-works"
                     }, {
-                      Title: "Decompress Data",
+                      Title: "Advanced Usage",
                       type: ANCHOR,
-                      href: "#decompress_data"
+                      href: "#advanced-usage"
+                    }, {
+                        Title: "Future Work",
+                        type: ANCHOR,
+                        href: "#future-work"
                     }
                 ]
             }, {

@@ -1,6 +1,6 @@
 # Compression
 
->:WARNING:Compression is disabled when using Timescale in conjuction with
+>:WARNING:Compression is disabled when using Timescale in conjunction with
 PostgreSQL 9.6. In order to use compression, you must be using PostgreSQL 10.2 or higher.
 
 As of version 1.5, TimescaleDB supports the ability to natively compress data. This
@@ -19,184 +19,236 @@ basics of setting this up for use in your environment.
 >:TIP: As with any type of data altering operation, we would suggest backing up
 your important data prior to implementing compression.
 
-You can compress data as it comes into TimescaleDB in one of two ways:
 
-1. Policy-based compression: Set up automatic compression of data once it has reached
-a certain age.
+## Quick Start [](quick-start)
 
-2. Manually compress chunks: Use explicit commands that will compress chunks that you
-specify.
+Given a table called `measurements` like:
 
-Before we start, we will give you a high-level overview of how compression works
-using an example that has been implemented based on policy.
+|time|device_id|cpu|disk_io|energy_consumption|
+|---|---|---|---|---|
+| 8/22/2019 0:00 |1|88.2|20|0.8|
+| 8/22/2019 0:05 |2|300.5|30| 0.9|
+
+You can enable compression using the following commands
+```sql
+ALTER TABLE measurements SET (
+  timescaledb.compress, 
+  timescaledb.compress_segmentby = 'device_id'
+);
+
+SELECT add_compress_chunks_policy('measurements', INTERVAL '7 days');
+```
+
+Thats it! These two commands configure compression and
+tell the system to compress chunks older than 7 days. In the 
+next two sections we will describe how we choose the 
+period after which to compress and how to set the
+`compress_segmentby` option. 
+
+### Choosing the time after which to compress data [](choosing-older-than)
+
+You may be wondering why we compress data only after it ages (after 7 days in
+the example above) and not right away. There are two reasons: query
+efficiency and the ability to handle out-of-order data.
+
+In terms of query efficiency, our experience has shown that when data is just
+ingested and thus refers to the recent time interval, we tend to query the
+data in a more shallow (in time) and wide (in columns) manner. These are 
+often debugging or "whole system" queries. As an example,
+"show me current CPU usage, disk usage, energy consumption, and I/O for
+server 'X'". In this case the uncompressed, row based format that is native
+to PostgreSQL will give us the best query performance. 
+
+As data begins to age, queries tend to become more analytical in nature and
+involve fewer columns. Such deep and narrow queries might, for example, want to calculate the
+average disk usage over the last month. These type of queries greatly benefit
+from the compressed, columnar format.
+
+Our compression design thus allows you to get the best of both worlds: recent data
+is ingested in an uncompressed, row format for efficient shallow and wide queries, and then
+automatically converted to a compressed, columnar format after it ages and
+is most often queried using deep and narrow queries. Thus one consideration
+for choosing the age at which to compress the data is when your query patterns 
+change from shallow and wide to deep and narrow.
+
+The other thing to consider is that modifications to chunks that have been compressed
+are inefficient. In fact, the current version of compression disallows INSERTS, UPDATES,
+and DELETES on compressed chunks completely (although you can manually decompress
+the chunk to modify it). Thus you want to compress a chunk only after it is unlikely
+to be modified further. The amount of delay you should add to chunk compression to
+minimize the need to decompress chunks will be different
+for each use case, but remember to be mindful of out-of-order data.
+
+>:WARNING: The current release of TimescaleDB supports the ability to query data in
+compressed chunks. However, it does not support inserts or updates into compressed
+chunks. We also block modifying the schema of hypertables with compressed chunks.
 
 With regards to compression, a chunk can be in one of three states: active (uncompressed),
 compression candidate (uncompressed), compressed. Active chunks are those that are
 currently ingesting data. Due to the nature of the compression mechanism, they cannot
-effectively ingest data while compressed.
+effectively ingest data while compressed. As shown in the illustration below, as those
+chunks age, they become compression candidates that are compressed once they become
+old enough according to the compression policy.
 
 ![compression timeline](https://assets.timescale.com/images/diagrams/compression_diagram.png)
 
-In the above diagram, the data in Position 0 (which is our active chunk) will always be
-uncompressed. The active chunk will never be a candidate for compression
-in order to protect the system’s ability to perform high volume/high velocity ingestion.
-Once data moves out of Position 0 (the active chunk) and becomes more historical data,
-it becomes a compression candidate (users may choose to compress it manually or
-via an automated policy).  In this illustration, we see that some of the
-compression candidates (namely, those more than 3 days old) have subsequently
-been compressed.
+### Choosing the right columns for your segmentby option [](choosing-segmentby)
 
-### Configuring Hypertables for Compression [](prepare_compress_hypertable)
+The `segmentby` option determines the main key by which compressed data is accessed.
+In particular, queries that reference the `segmentby` columns in the WHERE clause are
+very efficient. Thus, it is important to pick the correct set of `segmentby` columns.
+We will give some intuitions below.
 
-The first thing we need to do when configuring your hypertable for compression is
-to decide how to organize the data for compression.
-In general, there are two ways to consider how your data will be organized during
-the compression process: 'order by' and 'segment by'. TimescaleDB provides these options
-which are implemented by using `ALTER TABLE`. The following will explain the differences,
-and when to use each option.
+If your table has a primary key then all of the primary key columns other than "time" should
+go into the `segmentby` list. In the example above, one can easily imagine a primary
+key on (device_id, time), and therefore the `segmentby` list is `device_id`.
 
-#### Order By
+Another way to think about this is that a concrete set of values for each `segmentby`
+column should define a "time-series" of values you can graph over time. For example,
+if we had a more EAV table like the following:
 
-The main option that needs to be configured is `timescaledb.compress_orderby`.
-You can think of this option as the ORDER BY clause in a SQL query, but in this
-case used on your raw data when it is sent to the compression process. This
-option takes a data column as an argument. Additionally, this option is important
-because it directly impacts the compression rates you'll see.
+|time|device_id|metric_name|value|
+|---|---|---|---|
+| 8/22/2019 0:00 |1|cpu|88.2|
+| 8/22/2019 0:00 |1|device_io|0.5|
+| 8/22/2019 1:00 |1|cpu|88.6|
+| 8/22/2019 1:00 |1|device_io|0.6|
 
-Compression is most effective when related data is close in magnitude or exhibits
-some sort of trend. In other words, random or out of order data will compress poorly.
-When determining the column list to pass to the `compress_orderby` option, pick
-columns that will result in the rest of the columns being ordered in a way that
-maximizes compression.
+Then the series would be defined by the pair of columns `device_id` and `metric_name`. Therefore, the `segmentby` option should be `device_id, metric_name`.
 
-Let’s walk through an example. Assume you have a table defined by:
+> :TIP: If you data is not compressing well, it may be that you have too many
+`segmentby` columns defined. Each segment of data should contain at least 100 rows
+in each chunk. If your segments are too small, you can move some columns from the
+`segmentby` list to the `orderby` list (described below), or you might be using
+chunk intervals that are too short.
+
+
+## Understanding How Compression Works [](how-it-works)
+
+Our high-level approach to building columnar storage is to convert many wide rows of data (say, 1000) into a single row of data. But now, each field (column) of that new row stores an ordered set of data comprising the entire column of the 1000 rows.
+
+So, let’s consider a simplified example using a table that looks as follows:
+
+|time|device_id|cpu|disk_io|energy_consumption|
+|---|---|---|---|---|
+| 12:00:02 |1|88.2|20|0.8|
+| 12:00:01 |2|300.5|30| 0.9|
+| 12:00:01 |1|88.6|25|0.85|
+| 12:00:01 |2|299.1|40| 0.95|
+
+After converting this data to a single row, the data in “array” form:
+
+|time|device_id|cpu|disk_io|energy_consumption|
+|---|---|---|---|---|
+| [12:00:02, 12:00:02, 12:00:01, 12:00:1 ]| [1, 2, 1, 2]|[88.2, 300.5, 88.6, 299.1]|[20, 30, 25, 40] |[0.8, 0.9, 0.85, 0.95]| 
+
+### Understanding the segmentby option [](understanding-segmentby)
+
+We can segment compressed rows by specific columns, so that each compressed
+row corresponds to data about a single item, e.g., a specific `device_id`.
+The `segmentby` option forces the system to break up the compressed array so
+that each compressed row has a single value for each segmentby column. For
+example if we set `device_id` as a `segmentby` column, then the compressed
+version of our running example would look like:
+
+
+|time|device_id|cpu|disk_io|energy_consumption|
+|---|---|---|---|---|
+| [12:00:02, 12:00:01]| 1 |[88.2, 88.6]|[20, 25] |[0.8, 0.85]| 
+| [12:00:02, 12:00:01]| 2 |[300.5, 299.1]|[30, 40] |[0.9, 0.95]| 
+ 
+The above example shows the the `device_id` column is no longer an array,
+instead it defines the single value associated with all of the compressed data in the row. 
+
+Because a single value is associated with a compressed row, no decompression
+is necessary to evaluate the value. Queries with WHERE clauses that filter by
+a `segmentby` column are much more efficient, as decompression can happen _after_
+filtering instead of before (thus avoiding the need to decompress
+filtered-out rows altogether). In fact, for even more efficient access,
+we build b-tree indexes over each `segmentby` column.
+
+`segmentby` columns are useful, but can be overused. If too many `segmentby` columns
+are specified, then the number of items in each compressed column becomes small
+and compression is not effective. Thus, we recommend that you make sure that
+each segment contains at least 100 rows per chunk. If this is not the case, 
+then you can move some segmentby columns into the orderby option (as described in the
+next section).
+
+### Understanding the orderby option [](understanding-order-by)
+
+The `orderby` option determines the order of items inside the compressed array.
+By default, this option is set to the descending order of the hypertable's 
+time column. This is sufficient for most cases if the `segmentby` option is set appropriately, 
+but can also be manually set to a different setting in advanced scenarios.
+
+The `orderby` effects both the compression ratio achieved and the query performance.
+
+Compression is most effective when adjacent data is close in magnitude or exhibits
+some sort of trend. In other words, random or out-of-order data will compress poorly.
+Thus, when compressing data it is important that the order of the input data 
+causes it to follow a trend.
+
+Let's look again at what our running example looked like without any segmentby columns.
+
+|time|device_id|cpu|disk_io|energy_consumption|
+|---|---|---|---|---|
+| [12:00:02, 12:00:02, 12:00:01, 12:00:01 ]| [1, 2, 1, 2]|[88.2, 300.5, 88.6, 299.1]|[20, 30, 25, 40] |[0.8, 0.9, 0.85, 0.95]| 
+
+Notice that the data is ordered by the `time` column. But, if we look at the
+`cpu` column, we can see that the compressor will not be able to efficiently
+compress it. Although both devices output a value that is a float, the
+measurements have different magnitudes. The float list [88.2, 300.5, 88.6,
+299.1] will compress poorly because values of the same magnitude are not
+adjacent. However,  we can order by `device_id, time DESC` by setting
+our table options as follows:
 
 ``` sql
-CREATE TABLE metrics (
-    time TIMESTAMPTZ,
-    device_id INT,
-    value float
-);
-
-SELECT create_hypertable('metrics', 'time');
-```
-
-Let’s further assume that you have 2 devices. Device 1 measures temperature,
-while device 2 measures the air quality index. Your table might look
-something like this:
-
-|time|device_id|value|
-|---|---|---|
-| 8/22/2019 0:00 |1|88.2|
-| 8/22/2019 0:05 |2|300.5|
-| 8/22/2019 1:00 |1|88.6|
-| 8/22/2019 1:05|2|302.0|
-| 8/22/2019 2:00|1|90.0|
-| 8/22/2019 2:05|2|201.0|
-
-If we pass this table as is to the compressor, the compressor will not be able to
-efficiently compress the “value” column since ordering matters. Although both devices
-output a value that is a float, they are measuring completely different quantities.
-The float list [88.2, 300.5, 88.6, 302.0, 90.0, 301.0] will compress poorly because
-values of the same range are not grouped together. However, if we order by
-`device_id, time`, we’ll get the following table:
-
-|device_id|time|value|
-|---|---|---|
-|1|8/22/2019 0:00|88.2|
-|1|8/22/2019 1:00|88.6|
-|1|8/22/2019 2:00|90.0|
-|2|8/22/2019 0:05|300.5|
-|2|8/22/2019 1:05|302.0|
-|2|8/22/2019 2:05|301.0|
-
-Notice that now, your float list of [88.2, 88.6, 90.0, 300.5, 302.0, 301.0] will
-compress much better than before, since you’ve ordered your values in a way that
-groups them closer together by range. You should use this methodology to choose
-the column list you pass to `timescaledb.compress_orderby`.
-
-In this case, your statement for turning on compression for this hypertable would
-look like this:
-
-``` sql
-ALTER TABLE metrics 
+ALTER TABLE  measurements 
   SET (timescaledb.compress, 
-       timescaledb.compress_orderby = 'device_id, time');
+       timescaledb.compress_orderby = 'device_id, time DESC');
 ```
 
-#### Segment By
+Using those settings, the compressed table will look as follows:
 
-As discussed earlier, `timescaledb.compress_orderby` defines how your compressed data
-is ordered. When only `compress_orderby` is specified, all columns are compressed into
-arrays that contain a maximum of 1000 values. So, in the example where we order by
-`device_id, time`, the table would now become three columns that get compressed,
-as shown below:
+|time|device_id|cpu|disk_io|energy_consumption|
+|---|---|---|---|---|
+| [12:00:02, 12:00:01, 12:00:02, 12:00:01 ]| [1, 1, 2, 2]|[88.2, 88.6, 300.5, 299.1]|[20, 25, 30, 40] |[0.8, 0.85, 0.9, 0.95]|
 
-|device_id|time|value|
-|---|---|---|
-|1|8/22/2019 0:00|88.2|
-|1|8/22/2019 1:00|88.6|
-|1|8/22/2019 2:00|90.0|
-|2|8/22/2019 0:05|300.5|
-|2|8/22/2019 1:05|302.0|
-|2|8/22/2019 2:05|301.0|
+Now, each devices measurement is consecutive in the ordering and
+and thus the measurement values exhibit more of a trend. The cpu
+series [88.2, 88.6, 300.5, 299.1] will compress much better.
 
-However, what happens when you want to query by `device_id`? You’ll end up having
-to decompress the compressed array in order to find values associated a particular `device_id`,
-since the values for device 1 and device 2 are grouped together in the same segment.
-That means that you can’t actually build a b-tree index on `device_id`. To get around
-this, you can apply an additional option to segment the compressed data:
-`timescaledb.compress_segmentby`.
+If you look at the above example with `device_id` as a `segmentby`,
+you will see that this will have good compression as well since
+ordering only matters within a segment and segmenting by device
+guarantees that each segment represents a series if only ordered by time.
+Thus, putting items in `orderby` and `segmentby` columns achieves similar
+results. This is why, if segmenting by a identifier causes segments to become too
+small, we recommend moving the segmentby column into a prefix of the
+orderby list.
 
-``` sql
-ALTER TABLE metrics 
-  SET (timescaledb.compress, 
-       timescaledb.compress_orderby = 'time',
-       timescaledb.compress_segmentby = 'device_id');
-```
+We also use ordering to increase query performance. If a query uses the same
+(or similar) ordering as the compression, we know that we can decompress
+incrementally and still return results in the same order. We can also 
+avoid a sort. In addition, the system automatically creates additional columns
+that store the minimum and maximum value of any `orderby` column. This way, the
+query executor can look at this special column that specifies the range of
+values (e.g., timestamps) in the compressed column – without first performing any
+decompression – in order to determine whether the row could possibly match a
+time predicate specified by a user’s SQL query.
 
-Using `timescaledb.compress_segmentby` takes the column you pass into it and
-creates a compressed array for each value in that column. The column itself is
-saved in uncompressed format, meaning it can be used in a b-tree index.
+## Advanced Usage [](advanced-usage)
 
-So now your compressed data will look more like the following, which is divided
-into two segments (by `device_id`) and we can index `device_id` directly.
+In this section we will discuss some more advanced features available with compression.
 
-|device_id|time|value|
-|---|---|---|
-|1|8/22/2019 0:00|88.2|
-| |8/22/2019 1:00|88.6|
-| |8/22/2019 2:00|90.0|
-|2|8/22/2019 0:05|300.5|
-| |8/22/2019 1:05|302.0|
-| |8/22/2019 2:05|301.0|
+### Manual Compression [](manual-compression)
 
->:TIP: We do not recommend using `compress_segmentby` if you expect less than 100 values per
-segmenting column. If you don’t have enough rows per column value you won’t get
-ideal compression characteristics.
+In the examples above we covered how to compress data using an automated compression
+policy that runs in the background and compresses chunks older than a certain age.
 
-You still need to specify a column for `timescaledb.compress_orderby`. Let’s take
-a look at device 1. Notice that the values are increasing with time. If you
-don’t order by time, you have no guarantee that the values will be in order,
-which will hurt your compression rates. Here we are passing in BOTH `compress_orderby`
-and `compress_segmentby` arguments to achieve the results described above.
-
-This part of the process only _configures_ your hypertable for compression by telling
-TimescaleDB how to organize your compressed data. The actual compression process
-comes in the next step.
-
----
-
-### Manual vs. Policy-Based Compression [](compress_data)
-
-Now that we understand a little about how compression works and how we plan to
-organize our data to maximize compression efficiency, we will start the process
-of actually compressing our data. This process can be approached one of two ways.
-
-### Manual Compression
-
-The first option we will review is the ability to manually compress chunks. Here
-you are going to issue commands that will specify chunks you would like to compress.
+Some users want more control over when compression is scheduled or simply want to
+compress chunks manually.  Here we will show you how to compress particular chunks
+explicitly.
 
 We start by getting a list of the chunks we want to compress. In this case our hypertable
 is named 'conditions', and we are looking for the chunks associated with this hypertable
@@ -211,60 +263,32 @@ SELECT show_chunks('conditions', older_than => interval '3 days');
 |1|_timescaledb_internal_hyper_1_2_chunk|
 |2|_timescaledb_internal_hyper_1_3_chunk|
 
-
 From here we can begin the process of compressing each of the listed chunks with the
 following command:
 
 ``` sql
 SELECT compress_chunk( '<chunk_name>');
 ```
+
 You can see the results of the compression of that given chunk by running the following:
 
 ``` sql
-SELECT * from _timescaledb_catalog.compression_chunk_size
-  ORDER BY chunk_id;
+SELECT * 
+FROM timescaledb_information.compressed_chunk_stats;
 ```
-This will return a result set that will show you the compressed chunks and the
-stats about those chunks.
+
+| hypertable_name | chunk_name | compression_status | uncompressed_heap_bytes | uncompressed_index_bytes | uncompressed_toast_bytes | uncompressed_total_bytes | compressed_heap_bytes | compressed_index_bytes | compressed_toast_bytes | compressed_total_bytes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |  --- |
+| my_hypertable | _timescaledb_internal._hyper_1_1_chunk | Compressed | 8192 bytes | 16 kB | 8192 bytes |   | 32 kB  | 8192 bytes   | 16 kB  | 8192 bytes | 32 kB |
+| my_hypertable | _timescaledb_internal._hyper_1_20_chunk | Uncompressed | | | | | | | | |
+
+This result set shows you the chunks for hypertables that have compression enabled, whether those chunks are compressed, and stats about those chunks.
 
 We could then proceed to compress all of the chunks in this example that are
 more than three days old by repeating the process for the remaining chunks
 in the list we generated.
 
-### Policy-Based Compression
-
-We can set a policy that will compress chunks when they reach a given age.
-As we covered in an earlier section, a chunk becomes eligible for compression as
-soon as it is no longer the "active" chunk, that is, it has moved from position
-zero to position one (in our diagram above). When this happens is determined by
-the `chunk_time_interval` parameter, set when the hypertable is created.
-
-For example, to compress chunks older than 7 days on a hypertable named 'conditions':
-
-``` sql
-SELECT add_compress_chunks_policy('conditions', '7d'::interval);
-```
-
-This will create a policy that will ensure all chunks older than 7 days will
-be compressed.  Please note this still requires that we configure the hypertable
-for compression and that you have issued the commands to ensure that TimescaleDB
-understands how to organize your data. This command simply automates the process
-of compressing those chunks that cross the 7-day age threshold.
-
-To confirm that your policy job has been created, you can validate it by using
-the following command:
-
-``` sql
-SELECT * from _timescaledb_config.bgw_job where job_type like 'compress%';
-```
-
-The system will look for chunks that cross the 7 day threshold every 15
-minutes and if the job for some reason fails, it will be put in the retry queue
-and be retried in an hour.
-
----
-
-### Decompressing Chunks [](decompress_data)
+### Decompressing Chunks [](decompress-chunks)
 
 Next we will walk through what to do in the event that you need to backfill or
 update data that lives in a compressed chunk.
@@ -273,13 +297,21 @@ TimescaleDB does not support inserts or updates into a compressed chunk. To inse
 or update data, we must first decompress the target chunks. But before we can do
 that, we need to turn off our compression policy. Otherwise that policy will attempt
 to re-compress the chunks that we are currently working on (not the desired result).
-To accomplish this we will issue the following command:
+To accomplish this we first find the job_id of the policy using:
 
-``` sql
-SELECT remove_compress_chunks_policy('conditions');
+```sql
+SELECT job_id, table_name 
+FROM _timescaledb_config.bgw_policy_compress_chunks p 
+INNER JOIN _timescaledb_catalog.hypertable h ON (h.id = p.hypertable_id);
 ```
 
-We have now removed the compress chunk policy from the hypertable conditions which
+Next, pause the job with:
+
+``` sql
+SELECT alter_job_schedule(<job_id>, next_start=>'infinity');
+```
+
+We have now paused the compress chunk policy from the hypertable which
 will leave us free to decompress the chunks we need to modify via backfill or
 update. To decompress the chunk(s) that we will be modifying, for each chunk:
 
@@ -295,101 +327,41 @@ Once your backfill and update operations are complete we can simply re-enable
 our compression policy job:
 
 ``` sql
-SELECT add_compress_chunks_policy('cpu', '7d'::interval);
+SELECT alter_job_schedule(<job_id>, next_start=>now());
 ```
 This job will run and re-compress any chunks that you may have decompressed
 during your backfill operation.
 
----
+### Storage considerations for decompressing chunks [](storage-for-decompression)
 
-### Best Practices [](best_practices_compression)
-
-#### Considerations around compression policy [](considerations_compression_policy)
-
-When setting our compression policy and the timing around when to compress a
-chunk you should consider the types of queries that that you are running. Our
-experience has shown that when data is young (positions 0-2 in our use case)
-we tend to query the data in a more shallow and wide manner.
-
-As an example, "show me current CPU usage, disk usage, energy consumption,
-and I/O for server 'X'". In this case the row based format that is native to PostgreSQL
-will serve us well from a performance perspective. As data begins to age and our
-queries become more analytical in nature (deep and narrow queries) as an example
-we might want to calculate the average disk usage over the last 48 hours. In
-this case, the columnar nature of the query (performing a function on disk usage
-over time) will lend itself to better performance.  
-
-The process of compression as we have implemented it involves converting row based
-data into more of a columnar format to achieve better overall data consolidation.  
-In the long term this is one part of how you want to think about your compression
-policy strategy (i.e. at what point will you start to use deep and narrow queries)
-along with things like frequency of access and disk savings to decide when to start
-compressing data.
-
->:WARNING: The current release of TimescaleDB supports the ability to query data in
-compressed chunks. However, it does not support inserts or updates into compressed
-chunks.   
-
-Given the nature of time series data, out of order data would be a use
-case where you would need to add data to, or update data in, an already compressed
-chunk. In these situations, you will be required to pause your compression policy,
-decompress the chunks where the data would need to be inserted or updated, add or
-update the data, and then re-enable your compression policy (which will handle
-re-compression of your modified chunks). Based on the manual process required
-for adding out of order data we encourage you to consider this as you set your
-compression policy. However, we are also planning to address this (ability to
-modify compressed chunks) in a future release.
-
-#### Out-of-order data and compression [](out_of_order_data_compression)
-
-Depending on the boundaries set for your chunks and the likelihood that your use
-case will produce out-of-order data, you may want to delay chunk compression to
-minimize the risk of needing to decompress chunks to add data. This will be different
-for each use case, but remember to be mindful of out-of-order data. Consider when you
-have typically seen out-of-order data in the past when deciding when to start
-compression in order to avoid the manual decompression process.
-
-#### Storage considerations for decompressing chunks [](storage_for_decompression)
-
-Another scenario to be mindful of when planning your compression strategy is the
-possible need to decompress chunks. This is key when you are provisioning storage
-for use with TimescaleDB. You want to ensure that you plan for enough storage headroom
-to decompress chunks if needed.
-
-Planning for the right amount of head room (storage) and being familiar with our
-[move chunks][move-chunks] feature will ensure you are prepared
-to manage the need for decompression should it arise without running out of disk space.
+Another factor to be mindful of when planning your compression strategy is the
+additional storage overhead needed to decompress chunks. This is key when you are
+provisioning storage for use with TimescaleDB. You want to ensure that you plan for
+enough storage headroom to decompress some chunks if needed. Our
+[move chunks][move-chunks] feature can help manage storage requirements by
+allowing you to move chunks between different storage volumes.
 
 If you find yourself needing to decompress historical chunks, but in a scenario
 where you do not have enough available storage capacity to decompress, you can
 follow this process:
 
-1. Add a new tablespace to your Postgres instance (backed by additional storage)
-
+1. Add a new tablespace to your PostgreSQL instance (backed by additional storage)
 1. Use the TimescaleDB [`move_chunk`][move-chunk] feature to move the chunks you need to backfill
 over to the new tablespace
-
 1. Remove your compression policy
-
 1. Decompress these chunks
-
 1. Perform your data backfill into the decompressed chunks
-
 1. Re-enable your compression policy
-
 1. Move your updated chunks back to the default tablespace (optional)
 
 Alternatively, you can serialize the process by decompressing smaller
 numbers of chunks and processing your data backfill in smaller increments.
 
----
-
-### Future Work [](future)
+## Future Work [](future-work)
 
 One of the current limitations of TimescaleDB is that once chunks are converted
 into compressed column form, we do not currently allow any further modifications
-of the data (e.g., inserts, updates, deletes) without manual decompression. In
-other words, chunks are immutable in compressed form. Attempts to modify the
+of the data (e.g., inserts, updates, deletes) or the schema without manual decompression. In other words, chunks are immutable in compressed form. Attempts to modify the
 chunks’ data will either error or fail silently (as preferred by users). We
 plan to remove this limitation in future releases.
 
