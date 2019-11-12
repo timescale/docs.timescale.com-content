@@ -32,7 +32,7 @@ Given a table called `measurements` like:
 You can enable compression using the following commands
 ```sql
 ALTER TABLE measurements SET (
-  timescaledb.compress, 
+  timescaledb.compress,
   timescaledb.compress_segmentby = 'device_id'
 );
 
@@ -40,10 +40,10 @@ SELECT add_compress_chunks_policy('measurements', INTERVAL '7 days');
 ```
 
 Thats it! These two commands configure compression and
-tell the system to compress chunks older than 7 days. In the 
-next two sections we will describe how we choose the 
+tell the system to compress chunks older than 7 days. In the
+next two sections we will describe how we choose the
 period after which to compress and how to set the
-`compress_segmentby` option. 
+`compress_segmentby` option.
 
 ### Choosing the time after which to compress data [](choosing-older-than)
 
@@ -53,11 +53,11 @@ efficiency and the ability to handle out-of-order data.
 
 In terms of query efficiency, our experience has shown that when data is just
 ingested and thus refers to the recent time interval, we tend to query the
-data in a more shallow (in time) and wide (in columns) manner. These are 
+data in a more shallow (in time) and wide (in columns) manner. These are
 often debugging or "whole system" queries. As an example,
 "show me current CPU usage, disk usage, energy consumption, and I/O for
 server 'X'". In this case the uncompressed, row based format that is native
-to PostgreSQL will give us the best query performance. 
+to PostgreSQL will give us the best query performance.
 
 As data begins to age, queries tend to become more analytical in nature and
 involve fewer columns. Such deep and narrow queries might, for example, want to calculate the
@@ -68,7 +68,7 @@ Our compression design thus allows you to get the best of both worlds: recent da
 is ingested in an uncompressed, row format for efficient shallow and wide queries, and then
 automatically converted to a compressed, columnar format after it ages and
 is most often queried using deep and narrow queries. Thus one consideration
-for choosing the age at which to compress the data is when your query patterns 
+for choosing the age at which to compress the data is when your query patterns
 change from shallow and wide to deep and narrow.
 
 The other thing to consider is that modifications to chunks that have been compressed
@@ -116,7 +116,7 @@ if we had a more EAV table like the following:
 
 Then the series would be defined by the pair of columns `device_id` and `metric_name`. Therefore, the `segmentby` option should be `device_id, metric_name`.
 
-> :TIP: If you data is not compressing well, it may be that you have too many
+> :TIP: If your data is not compressing well, it may be that you have too many
 `segmentby` columns defined. Each segment of data should contain at least 100 rows
 in each chunk. If your segments are too small, you can move some columns from the
 `segmentby` list to the `orderby` list (described below), or you might be using
@@ -140,7 +140,7 @@ After converting this data to a single row, the data in “array” form:
 
 |time|device_id|cpu|disk_io|energy_consumption|
 |---|---|---|---|---|
-| [12:00:02, 12:00:02, 12:00:01, 12:00:1 ]| [1, 2, 1, 2]|[88.2, 300.5, 88.6, 299.1]|[20, 30, 25, 40] |[0.8, 0.9, 0.85, 0.95]| 
+| [12:00:02, 12:00:02, 12:00:01, 12:00:1 ]| [1, 2, 1, 2]|[88.2, 300.5, 88.6, 299.1]|[20, 30, 25, 40] |[0.8, 0.9, 0.85, 0.95]|
 
 ### Understanding the segmentby option [](understanding-segmentby)
 
@@ -154,11 +154,11 @@ version of our running example would look like:
 
 |time|device_id|cpu|disk_io|energy_consumption|
 |---|---|---|---|---|
-| [12:00:02, 12:00:01]| 1 |[88.2, 88.6]|[20, 25] |[0.8, 0.85]| 
-| [12:00:02, 12:00:01]| 2 |[300.5, 299.1]|[30, 40] |[0.9, 0.95]| 
- 
+| [12:00:02, 12:00:01]| 1 |[88.2, 88.6]|[20, 25] |[0.8, 0.85]|
+| [12:00:02, 12:00:01]| 2 |[300.5, 299.1]|[30, 40] |[0.9, 0.95]|
+
 The above example shows the the `device_id` column is no longer an array,
-instead it defines the single value associated with all of the compressed data in the row. 
+instead it defines the single value associated with all of the compressed data in the row.
 
 Because a single value is associated with a compressed row, no decompression
 is necessary to evaluate the value. Queries with WHERE clauses that filter by
@@ -170,29 +170,29 @@ we build b-tree indexes over each `segmentby` column.
 `segmentby` columns are useful, but can be overused. If too many `segmentby` columns
 are specified, then the number of items in each compressed column becomes small
 and compression is not effective. Thus, we recommend that you make sure that
-each segment contains at least 100 rows per chunk. If this is not the case, 
+each segment contains at least 100 rows per chunk. If this is not the case,
 then you can move some segmentby columns into the orderby option (as described in the
 next section).
 
 ### Understanding the orderby option [](understanding-order-by)
 
 The `orderby` option determines the order of items inside the compressed array.
-By default, this option is set to the descending order of the hypertable's 
-time column. This is sufficient for most cases if the `segmentby` option is set appropriately, 
+By default, this option is set to the descending order of the hypertable's
+time column. This is sufficient for most cases if the `segmentby` option is set appropriately,
 but can also be manually set to a different setting in advanced scenarios.
 
 The `orderby` effects both the compression ratio achieved and the query performance.
 
 Compression is most effective when adjacent data is close in magnitude or exhibits
 some sort of trend. In other words, random or out-of-order data will compress poorly.
-Thus, when compressing data it is important that the order of the input data 
+Thus, when compressing data it is important that the order of the input data
 causes it to follow a trend.
 
 Let's look again at what our running example looked like without any segmentby columns.
 
 |time|device_id|cpu|disk_io|energy_consumption|
 |---|---|---|---|---|
-| [12:00:02, 12:00:02, 12:00:01, 12:00:01 ]| [1, 2, 1, 2]|[88.2, 300.5, 88.6, 299.1]|[20, 30, 25, 40] |[0.8, 0.9, 0.85, 0.95]| 
+| [12:00:02, 12:00:02, 12:00:01, 12:00:01 ]| [1, 2, 1, 2]|[88.2, 300.5, 88.6, 299.1]|[20, 30, 25, 40] |[0.8, 0.9, 0.85, 0.95]|
 
 Notice that the data is ordered by the `time` column. But, if we look at the
 `cpu` column, we can see that the compressor will not be able to efficiently
@@ -203,8 +203,8 @@ adjacent. However,  we can order by `device_id, time DESC` by setting
 our table options as follows:
 
 ``` sql
-ALTER TABLE  measurements 
-  SET (timescaledb.compress, 
+ALTER TABLE  measurements
+  SET (timescaledb.compress,
        timescaledb.compress_orderby = 'device_id, time DESC');
 ```
 
@@ -229,7 +229,7 @@ orderby list.
 
 We also use ordering to increase query performance. If a query uses the same
 (or similar) ordering as the compression, we know that we can decompress
-incrementally and still return results in the same order. We can also 
+incrementally and still return results in the same order. We can also
 avoid a sort. In addition, the system automatically creates additional columns
 that store the minimum and maximum value of any `orderby` column. This way, the
 query executor can look at this special column that specifies the range of
@@ -273,7 +273,7 @@ SELECT compress_chunk( '<chunk_name>');
 You can see the results of the compression of that given chunk by running the following:
 
 ``` sql
-SELECT * 
+SELECT *
 FROM timescaledb_information.compressed_chunk_stats;
 ```
 
@@ -300,8 +300,8 @@ to re-compress the chunks that we are currently working on (not the desired resu
 To accomplish this we first find the job_id of the policy using:
 
 ```sql
-SELECT job_id, table_name 
-FROM _timescaledb_config.bgw_policy_compress_chunks p 
+SELECT job_id, table_name
+FROM _timescaledb_config.bgw_policy_compress_chunks p
 INNER JOIN _timescaledb_catalog.hypertable h ON (h.id = p.hypertable_id);
 ```
 
