@@ -5,15 +5,14 @@
 > - [add_dimension](#add_dimension)
 > - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
+> -	[add_compress_chunks_policy](#add_compress_chunks_policy)
 > - [alter_job_schedule](#alter_job_schedule)
 > - [alter table (compression)](#compression_alter-table)
 > - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
-> -	[compress chunk](#compress_chunk)
-> -	[compress policy](#compress_policy)
-> -	[compress policy Remove](#compress_policy_remove)
+> -	[compress_chunk](#compress_chunk)
 > - [create_hypertable](#create_hypertable)
 > - [create index (transaction per chunk)](#create_index)
 > - [create view (continuous aggregate)](#continuous_aggregate-create_view)
@@ -35,6 +34,7 @@
 > - [locf](#locf)
 > - [move_chunk](#move_chunk)
 > - [refresh materialized view (continuous aggregate)](#continuous_aggregate-refresh_view)
+> -	[remove_compress_chunks_policy](#remove_compress_chunks_policy)
 > - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
 > - [reorder_chunk](#reorder_chunk)
@@ -927,11 +927,11 @@ runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the 
 TimescaleDB allows users to move data (and indexes) to alternative
 tablespaces. This allows the user the ability to move data to more cost
 effective storage as it ages. This function acts like the combination of the
-[PostgreSQL CLUSTER command][postgres-cluster] and the 
-[PostgreSQL ALTER TABLE...SET TABLESPACE command][postgres-altertable]. However, it uses lower
-lock levels so that, unlike with these PostgreSQL commands, the chunk and
-hypertable are able to be read for most of the process. It does use a bit
-more disk space during the operation.
+[PostgreSQL CLUSTER command][postgres-cluster] and the
+[PostgreSQL ALTER TABLE...SET TABLESPACE command][postgres-altertable].
+However, it uses lower lock levels so that, unlike with these PostgreSQL
+commands, the chunk and hypertable are able to be read for most of the
+process. It does use a bit more disk space during the operation.
 
 #### Required Arguments [](move_chunk-required-arguments)
 
@@ -954,7 +954,7 @@ more disk space during the operation.
 ``` sql
 SELECT move_chunk(
   chunk => '_timescaledb_internal._hyper_1_4_chunk',
-  destination_tablespace => 'tablespace_2', 
+  destination_tablespace => 'tablespace_2',
   index_destination_tablespace => 'tablespace_3',
   reorder_index => 'conditions_device_id_time_idx',
   verbose => TRUE
@@ -971,7 +971,7 @@ for the first time.
 
 Setting up compression on TimescaleDB requires users to first [configure the
 hypertable for compression](#compression_alter-table) and then [set up a
-policy](#add_compress_chunk_policy) for when to compress chunks.
+policy](#add_compress_chunks_policy) for when to compress chunks.
 
 Advanced usage of compression alows users to [compress chunks
 manually](#compress_chunk), instead of automatically as they age.
@@ -987,20 +987,20 @@ manually](#compress_chunk), instead of automatically as they age.
 
 #### Associated commands
 *	[ALTER TABLE](#compression_alter-table)
-*	[add_compress_chunk_policy](#add_compress_chunk_policy)
-*	[remove_compress_chunk_policy](#remove_compress_chunk_policy)
+*	[add_compress_chunks_policy](#add_compress_chunks_policy)
+*	[remove_compress_chunks_policy](#remove_compress_chunks_policy)
 *	[compress_chunk](#compress_chunk)
 *	[decompress_chunk](#decompress_chunk)
 
 ## ALTER TABLE (Compression) :community_function: [](compression_alter-table)
 
 'ALTER TABLE' statement is used to turn on compression and set compression
-options. 
+options.
 
 The syntax is:
 
 ``` sql
-ALTER TABLE <table_name> SET (timescale.compress, timescale.compress_orderby = '<column_name> [ASC | DESC] [ NULLS { FIRST | LAST } ] [, ...]', 
+ALTER TABLE <table_name> SET (timescale.compress, timescale.compress_orderby = '<column_name> [ASC | DESC] [ NULLS { FIRST | LAST } ] [, ...]',
 timescaledb.compress_segmentby = '<column_name> [, ...]'
 );
 ```
@@ -1028,11 +1028,11 @@ Configure a hypertable that ingests device data to use compression.
 ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 'time DESC', timescaledb.compress_segmentby = 'device_id');
 ```
 
-## Add Compress Chunk Policy :community_function: [](add_compress_chunk_policy)
+## add_compress_chunks_policy() :community_function: [](add_compress_chunks_policy)
 Allows you to set a policy by which the system will compress a chunk
 automatically in the background after it reaches a given age.
 
-#### Required Arguments [](add_compress_chunk_policy-required-arguments)
+#### Required Arguments [](add_compress_chunks_policy-required-arguments)
 
 |Name|Description|
 |---|---|
@@ -1044,7 +1044,7 @@ The `time_interval` parameter should be specifified differently depending on the
 - For hypertables with integer-based timestamps: the time interval should be an integer type (this requires
 the [integer_now_func](#set_integer_now_func) to be set).
 
-#### Sample Usage [](add_compress_chunk_policy-sample-usage)
+#### Sample Usage [](add_compress_chunks_policy-sample-usage)
 Add a policy to compress chunks older than 60 days on the 'cpu' hypertable.
 
 ``` sql
@@ -1057,30 +1057,30 @@ Add a compress chunks policy to a hypertable with an integer-based time column:
 SELECT add_compress_chunks_policy('table_with_bigint_time', BIGINT '600000');
 ```
 
-## Remove Compress Chunk Policy :community_function: [](remove_compress_chunk_policy)
-If you need to remove the compression policy. To re-start policy basd compression againn you will need to re-add the policy.
+## remove_compress_chunks_policy() :community_function: [](remove_compress_chunks_policy)
+If you need to remove the compression policy. To re-start policy basd compression again you will need to re-add the policy.
 
-#### Required Arguments [](remove_compress_chunk_policy-required-arguments)
+#### Required Arguments [](remove_compress_chunks_policy-required-arguments)
 
 |Name|Description|
 |---|---|
 | `table_name` | (REGCLASS) Name of the hypertable the policy should be removed from.|
 
-#### Sample Usage [](remove_compress_chunk_policy-sample-usage)
+#### Sample Usage [](remove_compress_chunks_policy-sample-usage)
 Remove the compression policy from the 'cpu' table:
 ``` sql
 SELECT remove_compress_chunks_policy('cpu');
 ```
 
-## Compress Chunk :community_function: [](compress_chunk)
+## compress_chunk() :community_function: [](compress_chunk)
 
 The compress_chunk function is used to compress a specific chunk. This is
 most often used instead of the
-[add_compress_chunk_policy](#add_compress_chunk_policy) function, when a user
+[add_compress_chunks_policy](#add_compress_chunks_policy) function, when a user
 wants more control over the scheduling of compression. For most users, we
 suggest using the policy framework instead.
 
->:TIP: You can get a list of chunks belonging to a hypertable using the 
+>:TIP: You can get a list of chunks belonging to a hypertable using the
 `show_chunks` [function](#show_chunks).
 
 #### Required Arguments [](compress_chunk-required-arguments)
@@ -1091,13 +1091,13 @@ suggest using the policy framework instead.
 
 
 #### Sample Usage [](compress_chunk-sample-usage)
-Compress a single chunk. 
+Compress a single chunk.
 
 ``` sql
 SELECT compress_chunk('_timescaledb_internal._hyper_1_2_chunk');
 ```
 
-## Decompress Chunk :community_function: [](decompress_chunk)
+## decompress_chunk() :community_function: [](decompress_chunk)
 If you need to modify or add data to a chunk that has already been
 compressed, you will need to decompress the chunk first. This is especially
 useful for backfilling old data.
@@ -1112,7 +1112,7 @@ and the system will recompress your chucks.
 |---|---|
 | `chunk_name` | (REGCLASS) Name of the chunk to be decompressed. |
 
-#### Sample Usage [](decompress_chunk)
+#### Sample Usage [](decompress_chunk-sample-usage)
 Decompress a single chunk
 
 ``` sql
