@@ -147,7 +147,7 @@ SELECT
   ORDER BY time
 ```
 
-### Delta [](rate)
+### Delta [](delta)
 
 In many monitoring (and IoT) use cases, devices or sensors report metrics that typically do not
 change. In cases where the value changes, these changes are considered anomalies. When querying
