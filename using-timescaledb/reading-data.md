@@ -153,7 +153,7 @@ In many monitoring (and IoT) use cases, devices or sensors report metrics that t
 change. In cases where the value changes, these changes are considered anomalies. When querying
 for these changes in values over time, users typically do not want to transmit all the values where
 no changes were observed since they want to minimize the amount of data that gets sent back to
-the client. 
+the client.
 
 Users can leverage a combination of window functions and subselects to achieve this. The below query
 uses diffs to filter rows where values have not changed and only transmits rows where values
@@ -348,7 +348,7 @@ This query will output data of the form:
  2018-03-09 20:53:20+00 |  1037.78
 ```
 
-### Last Observation Carried Forward [](locf)
+### Last Observation Carried Forward (locf) :timescale_function: :community_function: [](locf)
 
 If your data collections only records rows when the actual value changes,
 your visualizations might still need all data points to properly display
