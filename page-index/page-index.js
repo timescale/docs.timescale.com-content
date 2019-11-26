@@ -183,8 +183,8 @@ const pageIndex = [
                         href: "migrate-from-postgresql",
                         to: "/getting-started/migrating-data"
                     }, {
-                  			Title: "Data Node Authentication",
-                  			type: PAGE,
+                  	Title: "Data Node Authentication",
+                  	type: PAGE,
                         href: "data-node-authentication",
                     }
                 ]
@@ -441,6 +441,18 @@ const pageIndex = [
                 Title: "Limitations",
                 type: PAGE,
                 href: "limitations",
+            }
+        ]
+    }, {
+	Title: "Distributed Hypertable",
+        type: REDIRECT,
+        href: "multinode",
+        to: "/multinode/bootstrapping",
+        children: [
+            {
+                Title: "Data Node Bootstrapping",
+                type: PAGE,
+                href: "bootstrapping",
             }
         ]
     }, {
