@@ -47,6 +47,8 @@
 > - [time_bucket_gapfill](#time_bucket_gapfill)
 > - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
 > - [timescaledb_information.license](#timescaledb_information-license)
+> - [timescaledb_information.compressed_chunk_stats](#timescaledb_information-compressed_chunk_stats)
+> - [timescaledb_information.compressed_hypertable_stats](#timescaledb_information-compressed_hypertable_stats)
 > - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
 > - [timescaledb_information.continuous_aggregate_stats](#timescaledb_information-continuous_aggregate_stats)
 > - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
@@ -2115,6 +2117,94 @@ edition   | expired |    expiration_time
 ------------+---------+------------------------
 enterprise | f       | 2019-02-15 13:44:53-05
 (1 row)
+```
+
+---
+## timescaledb_information.compressed_chunk_stats [](timescaledb_information-compressed_chunk_stats)
+
+Get statistics about chunk compression.
+
+#### Available Columns  [](timescaledb_information-compressed_chunk_stats-available-columns)
+
+|Name|Description|
+|---|---|
+|`hypertable_name` | (REGCLASS) the name of the hypertable |
+|`chunk_name` | (REGCLASS) the name of the chunk |
+|`compression_status` | (TEXT) 'Compressed' or 'Uncompressed' depending on the status of the chunk |
+|`uncompressed_heap_bytes` | (TEXT) human-readable size of the heap before compression (NULL if currently uncompressed) |
+|`uncompressed_index_bytes` | (TEXT) human-readable size of all the indexes before compression (NULL if currently uncompressed) |
+|`uncompressed_toast_bytes` | (TEXT) human-readable size of the TOAST table before compression (NULL if currently uncompressed) |
+|`uncompressed_total_bytes` | (TEXT) human-readable size entire table (heap+indexes+toast) before compression (NULL if currently uncompressed) |
+|`compressed_heap_bytes` | (TEXT) human-readable size of the heap after compression (NULL if currently uncompressed) |
+|`compressed_index_bytes` | (TEXT) human-readable size of all the indexes after compression (NULL if currently uncompressed) |
+|`compressed_toast_bytes` | (TEXT) human-readable size of the TOAST table after compression (NULL if currently uncompressed) |
+|`compressed_total_bytes` | (TEXT) human-readable size entire table (heap+indexes+toast) after compression (NULL if currently uncompressed) |
+
+#### Sample Usage (timescaledb_information-compressed_chunk_stats-examples)
+```sql
+SELECT * FROM timescaledb_information.compressed_chunk_stats;
+-[ RECORD 1 ]------------+---------------------------------------
+hypertable_name          | foo
+chunk_name               | _timescaledb_internal._hyper_1_1_chunk
+compression_status       | Uncompressed
+uncompressed_heap_bytes  | 
+uncompressed_index_bytes | 
+uncompressed_toast_bytes | 
+uncompressed_total_bytes | 
+compressed_heap_bytes    | 
+compressed_index_bytes   | 
+compressed_toast_bytes   | 
+compressed_total_bytes   | 
+-[ RECORD 2 ]------------+---------------------------------------
+hypertable_name          | foo
+chunk_name               | _timescaledb_internal._hyper_1_2_chunk
+compression_status       | Compressed
+uncompressed_heap_bytes  | 8192 bytes
+uncompressed_index_bytes | 32 kB
+uncompressed_toast_bytes | 0 bytes
+uncompressed_total_bytes | 40 kB
+compressed_heap_bytes    | 8192 bytes
+compressed_index_bytes   | 32 kB
+compressed_toast_bytes   | 8192 bytes
+compressed_total_bytes   | 48 kB
+```
+---
+
+## timescaledb_information.compressed_hypertable_stats [](timescaledb_information-compressed_hypertable_stats)
+
+Get statistics about hypertable compression.
+
+#### Available Columns  [](timescaledb_information-compressed_hypertable_stats-available-columns)
+
+|Name|Description|
+|---|---|
+|`hypertable_name` | (REGCLASS) the name of the hypertable |
+|`total_chunks` | (INTEGER) the number of chunks used by the hypertable |
+|`number_compressed_chunks` | (INTEGER) the number of chunks used by the hypertable that are currently compressed |
+|`uncompressed_heap_bytes` | (TEXT) human-readable size of the heap before compression (NULL if currently uncompressed) |
+|`uncompressed_index_bytes` | (TEXT) human-readable size of all the indexes before compression (NULL if currently uncompressed) |
+|`uncompressed_toast_bytes` | (TEXT) human-readable size of the TOAST table before compression (NULL if currently uncompressed) |
+|`uncompressed_total_bytes` | (TEXT) human-readable size entire table (heap+indexes+toast) before compression (NULL if currently uncompressed) |
+|`compressed_heap_bytes` | (TEXT) human-readable size of the heap after compression (NULL if currently uncompressed) |
+|`compressed_index_bytes` | (TEXT) human-readable size of all the indexes after compression (NULL if currently uncompressed) |
+|`compressed_toast_bytes` | (TEXT) human-readable size of the TOAST table after compression (NULL if currently uncompressed) |
+|`compressed_total_bytes` | (TEXT) human-readable size entire table (heap+indexes+toast) after compression (NULL if currently uncompressed) |
+
+#### Sample Usage (timescaledb_information-compressed_hypertable_stats-examples)
+```sql
+SELECT * FROM timescaledb_information.compressed_hypertable_stats;
+-[ RECORD 1 ]------------+-----------
+hypertable_name          | foo
+total_chunks             | 4
+number_compressed_chunks | 1
+uncompressed_heap_bytes  | 8192 bytes
+uncompressed_index_bytes | 32 kB
+uncompressed_toast_bytes | 0 bytes
+uncompressed_total_bytes | 40 kB
+compressed_heap_bytes    | 8192 bytes
+compressed_index_bytes   | 32 kB
+compressed_toast_bytes   | 8192 bytes
+compressed_total_bytes   | 48 kB
 ```
 
 ---
