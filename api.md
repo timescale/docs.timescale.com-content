@@ -1813,15 +1813,15 @@ Get information about hypertables.
 
 |Name|Description|
 |---|---|
-| `schema_name` | Schema name of the hypertable. |
+| `table_schema` | Schema name of the hypertable. |
 | `table_name` | Table name of the hypertable. |
 | `table_owner` | Owner of the hypertable. |
 | `num_dimensions` | Number of dimensions. |
 | `num_chunks` | Number of chunks. |
-| `table_bytes` |Disk space used by hypertable |
-| `index_bytes` |Disk space used by indexes|
-| `toast_bytes` |Disk space of toast tables|
-| `total_bytes` |Total disk space used by the specified table, including all indexes and TOAST data|
+| `table_size` |Disk space used by hypertable |
+| `index_size` |Disk space used by indexes|
+| `toast_size` |Disk space of toast tables|
+| `total_size` |Total disk space used by the specified table, including all indexes and TOAST data|
 
 #### Sample Usage [](timescaledb_information-hypertable-examples)
 
