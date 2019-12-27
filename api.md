@@ -964,7 +964,7 @@ WITH ( timescaledb.continuous,
 AS
     SELECT time_bucket('1day', timec), min(location), sum(temperature), sum(humidity)
         FROM conditions
-        GROUP BY time_bucket('1day', timec), location, humidity, temperature;
+        GROUP BY time_bucket('1day', timec)
 ```
 
 Add additional continuous aggregates on top of the same raw hypertable.
@@ -976,7 +976,7 @@ WITH ( timescaledb.continuous,
 AS
     SELECT time_bucket('30day', timec), min(location), sum(temperature), sum(humidity)
         FROM conditions
-        GROUP BY time_bucket('30day', timec), location, humidity, temperature;
+        GROUP BY time_bucket('30day', timec);
 ```
 
 >:TIP: In order to keep the continuous aggregate up to date with incoming data,
@@ -991,7 +991,7 @@ WITH (timescaledb.continuous,
 AS
   SELECT time_bucket('1h', timec), min(location), sum(temperature), sum(humidity)
     FROM conditions
-    GROUP BY time_bucket('1h', timec), location, humidity, temperature;
+    GROUP BY time_bucket('1h', timec);
 ```
 
 ---
