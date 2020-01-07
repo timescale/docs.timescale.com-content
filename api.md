@@ -2134,13 +2134,13 @@ Get statistics about chunk compression.
 |`uncompressed_heap_bytes` | (TEXT) human-readable size of the heap before compression (NULL if currently uncompressed) |
 |`uncompressed_index_bytes` | (TEXT) human-readable size of all the indexes before compression (NULL if currently uncompressed) |
 |`uncompressed_toast_bytes` | (TEXT) human-readable size of the TOAST table before compression (NULL if currently uncompressed) |
-|`uncompressed_total_bytes` | (TEXT) human-readable size entire table (heap+indexes+toast) before compression (NULL if currently uncompressed) |
+|`uncompressed_total_bytes` | (TEXT) human-readable size of the entire table (heap+indexes+toast) before compression (NULL if currently uncompressed) |
 |`compressed_heap_bytes` | (TEXT) human-readable size of the heap after compression (NULL if currently uncompressed) |
 |`compressed_index_bytes` | (TEXT) human-readable size of all the indexes after compression (NULL if currently uncompressed) |
 |`compressed_toast_bytes` | (TEXT) human-readable size of the TOAST table after compression (NULL if currently uncompressed) |
-|`compressed_total_bytes` | (TEXT) human-readable size entire table (heap+indexes+toast) after compression (NULL if currently uncompressed) |
+|`compressed_total_bytes` | (TEXT) human-readable size of the entire table (heap+indexes+toast) after compression (NULL if currently uncompressed) |
 
-#### Sample Usage (timescaledb_information-compressed_chunk_stats-examples)
+#### Sample Usage [](timescaledb_information-compressed_chunk_stats-examples)
 ```sql
 SELECT * FROM timescaledb_information.compressed_chunk_stats;
 -[ RECORD 1 ]------------+---------------------------------------
@@ -2184,13 +2184,13 @@ Get statistics about hypertable compression.
 |`uncompressed_heap_bytes` | (TEXT) human-readable size of the heap before compression (NULL if currently uncompressed) |
 |`uncompressed_index_bytes` | (TEXT) human-readable size of all the indexes before compression (NULL if currently uncompressed) |
 |`uncompressed_toast_bytes` | (TEXT) human-readable size of the TOAST table before compression (NULL if currently uncompressed) |
-|`uncompressed_total_bytes` | (TEXT) human-readable size entire table (heap+indexes+toast) before compression (NULL if currently uncompressed) |
+|`uncompressed_total_bytes` | (TEXT) human-readable size of the entire table (heap+indexes+toast) before compression (NULL if currently uncompressed) |
 |`compressed_heap_bytes` | (TEXT) human-readable size of the heap after compression (NULL if currently uncompressed) |
 |`compressed_index_bytes` | (TEXT) human-readable size of all the indexes after compression (NULL if currently uncompressed) |
 |`compressed_toast_bytes` | (TEXT) human-readable size of the TOAST table after compression (NULL if currently uncompressed) |
-|`compressed_total_bytes` | (TEXT) human-readable size entire table (heap+indexes+toast) after compression (NULL if currently uncompressed) |
+|`compressed_total_bytes` | (TEXT) human-readable size of the entire table (heap+indexes+toast) after compression (NULL if currently uncompressed) |
 
-#### Sample Usage (timescaledb_information-compressed_hypertable_stats-examples)
+#### Sample Usage [](timescaledb_information-compressed_hypertable_stats-examples)
 ```sql
 SELECT * FROM timescaledb_information.compressed_hypertable_stats;
 -[ RECORD 1 ]------------+-----------
