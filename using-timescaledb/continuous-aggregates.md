@@ -127,12 +127,12 @@ after insert and how far behind the aggregates will remain (so as not to cause
 the same materialization to be modified multiple times and cause write amplification).
 
 We usually stay at least one `bucket_width` (the first argument to the
-`time_bucket` call in the view definition) behind the maximum inserted time
-value. The `refresh_lag` parameter determines how much further behind the
-highest inserted time value the background worker will attempt to materialize
+`time_bucket` call in the view definition) behind the current time.
+The `refresh_lag` parameter determines how much further behind the
+current time the background worker will attempt to materialize
 (we will be behind by `refresh_lag` + `bucket_width`).  So in our example, if
 the `refresh_lag` is 1 hour and the `bucket_width` is 1 hour, the
-materialization will generally be 2 hours behind the maximum inserted value.
+materialization will generally be 2 hours behind the current time.
 Tuning the `refresh_lag` parameter lower will mean that the
 aggregates will follow inserts more closely, but can cause some write
 amplification which may degrade insert performance. Setting `refresh_lag` to
@@ -199,10 +199,18 @@ aggregate, such as views that are built on top of the continuous aggregate view.
 ### Dropping Data with Continuous Aggregates Enabled [](dropping-data)
 When dropping data in a raw hypertable using the [`drop_chunks` function][api-drop-chunks]
 that has a continuous aggregate created on it, we must specify the `cascade_to_materializations`
-argument to the `drop_chunks` call. Currently, the only option for this argument is
-`true`, which will cause the continuous aggregate to drop all data associated
-with any chunks dropped from the raw hypertable. Further data retention options are
-planned for future releases (see [future work](#future-work)).
+argument to the `drop_chunks` call. A value of `true` will cause the continuous aggregate 
+to drop all data associated with any chunks dropped from the raw hypertable. A value
+of `false` will retain data in the continuous aggregate while dropping only the
+raw data.
+
+>:TIP: When dropping data from the raw hypertable while retaining data
+on a continuous aggregate, the `older_than` parameter to `drop_chunks`
+has to be longer than the `timescaledb.ignore_invalidation_older_than`
+parameter on the continuous aggregate. That is because we cannot
+process invalidations on data regions where the raw data has been
+dropped.
+
 
 The same argument must also be supplied to the [`add_drop_chunks_policy`
 function][api-add-drop-chunks] when creating a data retention policy for a
@@ -319,13 +327,6 @@ filter clauses in aggregates like
 SELECT sum(x) FILTER (WHERE y > 3) FROM foo;
 ```
 we plan to extend our support for aggregates like this in upcoming releases.
-
-**Data Retention Integration:**
-As noted [above](#dropping-data), currently, the only option available when
-dropping chunks from a raw hypertable is to cascade the drop to the
-materialization. We plan on extending the materialization mechanism to allow
-for dropping the underlying data even while keeping the aggregates for a longer
-period of time at different granularities.
 
 **Approximation Functions for Non-parallelizable Aggregates:**
 Non-parallelizable aggregates such as [ordered set aggregates][postgres-ordered-set]
