@@ -583,7 +583,7 @@ the same semantics as the `show_chunks` [function](#show_chunks).
 | `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 | `cascade` | Boolean on whether to `CASCADE` the drop on chunks, therefore removing dependent objects on chunks to be removed. Defaults to `FALSE`.
-| `cascade_to_materializations` | Set to `TRUE` to delete chunk data in associated continuous aggregates. A value of `FALSE` does not delete data in the continuous aggregates. Defaults to `NULL`, which errors if continuous aggregates exist.|
+| `cascade_to_materializations` | Set to `TRUE` to also remove chunk data from any associated continuous aggregates. Set to `FALSE` to only drop raw chunks (while keeping data in the continuous aggregates). Defaults to `NULL`, which errors if continuous aggregates exist.|
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
@@ -1164,17 +1164,37 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 | `WITH` clause | This clause specifies [options](#continuous_aggregate-create_view-with) for the continuous aggregate view.|
 | `<select_query>`| A `SELECT` query that uses the specified syntax. |
 
-#### `WITH` clause options [](continuous_aggregate-create_view-with)
-|Name|Description|Type|Default|
-|---|---|---|---|
-|**Required**|
-|`timescaledb.continuous`|If timescaledb.continuous is not specified, then this is a regular PostgresSQL view. |||
-|**Optional**|
-|`timescaledb.refresh_lag`|Refresh lag controls the amount by which the materialization will lag behind the current time. The continuous aggregate view lags behind by `bucket_width` + `refresh_lag` value. `refresh_lag` can be set to positive and negative values. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
-|`timescaledb.refresh_interval`|Refresh interval controls how often the background materializer is run. Note that if `refresh_lag` is set to `-<bucket_width>`, the continuous aggregate will run whenever new data is received, regardless of what the `refresh_interval` value is. | `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
-|`timescaledb.max_interval_per_job`|Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
-|`timescaledb.create_group_indexes`|Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
-|`timescaledb.ignore_invalidation_older_than`| Time interval after which invalidations are ignored.| Same datatype as the `bucket_width` argument from the `time_bucket` expression. | By default all invalidations are processed.|
+#### Required `WITH` clause options [](continuous_aggregate-create_view-with-required)
+||||
+|---|---|---|
+|**Name**|||
+|`timescaledb.continuous`|||
+|**Description**|**Type**|**Default**|
+|If timescaledb.continuous is not specified, then this is a regular PostgresSQL view. | BOOLEAN ||
+
+#### Optional `WITH` clause options [](continuous_aggregate-create_view-with-optional)
+||||
+|---|---|---|
+|**Name**|||
+|`timescaledb.refresh_lag`|||
+|**Description**|**Type**|**Default**|
+| Refresh lag controls the amount by which the materialization will lag behind the current time. The continuous aggregate view lags behind by `bucket_width` + `refresh_lag` value. `refresh_lag` can be set to positive and negative values. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
+|**Name**|||
+|`timescaledb.refresh_interval`|||
+|**Description**|**Type**|**Default**|
+| Refresh interval controls how often the background materializer is run. Note that if `refresh_lag` is set to `-<bucket_width>`, the continuous aggregate will run whenever new data is received, regardless of what the `refresh_interval` value is. | `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
+|**Name**|||
+|`timescaledb.max_interval_per_job`|||
+|**Description**|**Type**|**Default**|
+| Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
+|**Name**|||
+|`timescaledb.create_group_indexes`|||
+|**Description**|**Type**|**Default**|
+| Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
+|**Name**|||
+|`timescaledb.ignore_invalidation_older_than`|||
+|**Description**|**Type**|**Default**|
+| Time interval after which invalidations are ignored.| Same datatype as the `bucket_width` argument from the `time_bucket` expression. | By default all invalidations are processed.|
 
 >:TIP: Say, the continuous aggregate uses time_bucket('2h', time_column) and we want to keep the view up to date with the data. We can do this by modifying the `refresh_lag` setting. Set refresh_lag to `-2h`. E.g. `ALTER VIEW contview set (timescaledb.refresh_lag = '-2h');` Please refer to the [caveats][].
 
@@ -1349,7 +1369,14 @@ one drop_chunks policy may exist per hypertable.
 |---|---|
 | `cascade` | (BOOLEAN) Set to true to drop objects dependent upon chunks being dropped. Defaults to false.|
 | `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the drop_chunks_policy already exists. A notice is issued instead. Defaults to false. |
-| `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to delete chunk data in associated continuous aggregates. A value of `FALSE` does not delete data in the continuous aggregates. Defaults to `NULL`, which errors if continuous aggregates exist.|
+| `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to also remove chunk data from any associated continuous aggregates. Set to `FALSE` to only drop raw chunks (while keeping data in the continuous aggregates). Defaults to `NULL`, which errors if continuous aggregates exist.|
+
+>:TIP: When dropping data from the raw hypertable while retaining data
+on a continuous aggregate, the `older_than` parameter to `drop_chunks`
+has to be longer than the `timescaledb.ignore_invalidation_older_than`
+parameter on the continuous aggregate. That is because we cannot
+process invalidations on data regions where the raw data has been
+dropped.
 
 >:WARNING: If a drop chunks policy is setup which does not set `cascade_to_materializations` to either `TRUE` or `FALSE` on a hypertable that has a continuous aggregate, the policy will not drop any chunks.
 
