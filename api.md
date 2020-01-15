@@ -1165,32 +1165,36 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 | `<select_query>`| A `SELECT` query that uses the specified syntax. |
 
 #### Required `WITH` clause options [](continuous_aggregate-create_view-with-required)
-||||
-|---|---|---|
+
 |**Name**|||
+|---|---|---|
 |`timescaledb.continuous`|||
 |**Description**|**Type**|**Default**|
-|If timescaledb.continuous is not specified, then this is a regular PostgresSQL view. | BOOLEAN ||
+|If timescaledb.continuous is not specified, then this is a regular PostgresSQL view. | `BOOLEAN` ||
 
 #### Optional `WITH` clause options [](continuous_aggregate-create_view-with-optional)
-||||
-|---|---|---|
+
 |**Name**|||
+|---|---|---|
 |`timescaledb.refresh_lag`|||
 |**Description**|**Type**|**Default**|
 | Refresh lag controls the amount by which the materialization will lag behind the current time. The continuous aggregate view lags behind by `bucket_width` + `refresh_lag` value. `refresh_lag` can be set to positive and negative values. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
+|   |   |   |
 |**Name**|||
 |`timescaledb.refresh_interval`|||
 |**Description**|**Type**|**Default**|
 | Refresh interval controls how often the background materializer is run. Note that if `refresh_lag` is set to `-<bucket_width>`, the continuous aggregate will run whenever new data is received, regardless of what the `refresh_interval` value is. | `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
+|   |   |   |
 |**Name**|||
 |`timescaledb.max_interval_per_job`|||
 |**Description**|**Type**|**Default**|
 | Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
+|   |   |   |
 |**Name**|||
 |`timescaledb.create_group_indexes`|||
 |**Description**|**Type**|**Default**|
 | Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
+|   |   |   |
 |**Name**|||
 |`timescaledb.ignore_invalidation_older_than`|||
 |**Description**|**Type**|**Default**|
