@@ -18,7 +18,7 @@ Before we start, you will need [TimescaleDB installed][getting-started] and a me
 
 ### Setting up Telegraf
 
-Telegraf is written in Go, and the current build process of the tool is configured to produce one standalone binary. Because of this all the code for the different plugins must be part of that binary. We have an unofficial build of Telegraf version 1.11.3 with our plugin added. You can download from the following links:
+Telegraf is written in Go, and the current build process of the tool is configured to produce one standalone binary. Because of this all the code for the different plugins must be part of that binary. We have an unofficial build of Telegraf version 1.13.0 with our plugin added. You can download from the following links:
 
 * Linux amd64: [:DOWNLOAD_LINK: `deb`][deb-build] [:DOWNLOAD_LINK: `rpm`][rpm-build] [:DOWNLOAD_LINK: `binary`][linux-bin-build]
 * Windows amd64 [:DOWNLOAD_LINK: `binary/exe`][windows-build]
@@ -40,7 +40,7 @@ We can check the version of the installed Telegraf with
 $ telegraf --version
 ```
 
-If the installation was successful it should print out `Telegraf 1.11.3-with-pg`.
+If the installation was successful it should print out `Telegraf 1.13.0-with-pg`.
 
 ## Telegraf Configuration [](telegraf-configuration)
 
@@ -169,7 +169,7 @@ When we run Telegraf we only need to specify the config file to be used. If we e
 
 ```
 $  telegraf --config telegraf.conf
-2019-05-23T13:48:09Z I! Starting Telegraf 1.11.3-with-pg
+2019-05-23T13:48:09Z I! Starting Telegraf 1.13.0-with-pg
 2019-05-23T13:48:09Z I! Loaded inputs: cpu
 2019-05-23T13:48:09Z I! Loaded outputs: postgresql
 2019-05-23T13:48:09Z I! Tags enabled: host=local
@@ -342,8 +342,8 @@ Additionally, we have several other [tutorials][] available for you to explore a
 [public-slack]: https://slack.timescale.com/
 [mac-build]: https://telegrafreleases.blob.core.windows.net/macos/telegraf
 [windows-build]: https://telegrafreleases.blob.core.windows.net/windows/telegraf.exe
-[deb-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf_1.11.3~with~pg-1_amd64.deb
-[rpm-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf-1.11.3~with~pg-1.x86_64.rpm
+[deb-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf_1.13.0~with~pg-1_amd64.deb
+[rpm-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf-1.13.0~with~pg-1.x86_64.rpm
 [linux-bin-build]: https://telegrafreleases.blob.core.windows.net/linux/telegraf
 [pull-request]: https://github.com/influxdata/telegraf/pull/3428
 [architecture]: /introduction/architecture
