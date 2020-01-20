@@ -1002,7 +1002,7 @@ options.
 The syntax is:
 
 ``` sql
-ALTER TABLE <table_name> SET (timescale.compress, timescale.compress_orderby = '<column_name> [ASC | DESC] [ NULLS { FIRST | LAST } ] [, ...]',
+ALTER TABLE <table_name> SET (timescaledb.compress, timescaledb.compress_orderby = '<column_name> [ASC | DESC] [ NULLS { FIRST | LAST } ] [, ...]',
 timescaledb.compress_segmentby = '<column_name> [, ...]'
 );
 ```
@@ -2147,14 +2147,14 @@ SELECT * FROM timescaledb_information.compressed_chunk_stats;
 hypertable_name          | foo
 chunk_name               | _timescaledb_internal._hyper_1_1_chunk
 compression_status       | Uncompressed
-uncompressed_heap_bytes  | 
-uncompressed_index_bytes | 
-uncompressed_toast_bytes | 
-uncompressed_total_bytes | 
-compressed_heap_bytes    | 
-compressed_index_bytes   | 
-compressed_toast_bytes   | 
-compressed_total_bytes   | 
+uncompressed_heap_bytes  |
+uncompressed_index_bytes |
+uncompressed_toast_bytes |
+uncompressed_total_bytes |
+compressed_heap_bytes    |
+compressed_index_bytes   |
+compressed_toast_bytes   |
+compressed_total_bytes   |
 -[ RECORD 2 ]------------+---------------------------------------
 hypertable_name          | foo
 chunk_name               | _timescaledb_internal._hyper_1_2_chunk
