@@ -13,10 +13,7 @@ user-defined functions (UDFs), `HAVING` clauses, and so on.
 From basic queries:
 
 ```sql
--- Return the last 100 entries written to the 'conditions' hypertable
-SELECT * FROM conditions LIMIT 100;
-
--- Return the most recent 100 entries ordered newest to oldest
+-- Return the most recent 100 entries in the table 'conditions' ordered newest to oldest
 SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
 
 -- Return the number of data entries written in past 12 hours
