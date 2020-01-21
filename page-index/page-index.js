@@ -545,10 +545,6 @@ const pageIndex = [
         href: "development",
         children: [
             {
-                Title: "Changelog",
-                type: LINK,
-                href: "https://github.com/timescale/timescaledb/blob/master/CHANGELOG.md"
-            }, {
                 Title: "Code style",
                 type: LINK,
                 href: "https://github.com/timescale/timescaledb/blob/master/docs/StyleGuide.md"
@@ -562,6 +558,10 @@ const pageIndex = [
         Title: "FAQ",
         type: PAGE,
         href: "faq"
+    }, {
+        Title: "Release Notes",
+        type: PAGE,
+        href: "release-notes"
     }, {
         Title: "Github",
         type: LINK,
