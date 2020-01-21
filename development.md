@@ -4,7 +4,7 @@
   <a href="https://github.com/timescale/timescaledb/blob/master/CHANGELOG.md">
     <div class="cyoa-button">
       <img src="https://assets.iobeam.com/images/docs/development-1-changelog.png" class="cyoa-icon"/>
-      <div class="test-chooser__cyoa-menu-label">Changelog</div>
+      <div class="test-chooser__cyoa-menu-label">Release notes and future plans</div>
     </div>
   </a>
   <a href="https://github.com/timescale/timescaledb/blob/master/docs/StyleGuide.md">
