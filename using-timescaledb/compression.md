@@ -288,6 +288,14 @@ We could then proceed to compress all of the chunks in this example that are
 more than three days old by repeating the process for the remaining chunks
 in the list we generated.
 
+If you want to select which chunks to compress based on their time range in a
+more programmatic manner, you can use the output of `show_chunks` to feed a set
+of chunks to `compress_chunks` in order to compress each of the chunks:
+
+``` sql
+SELECT compress_chunk(i) from show_chunks('conditions', newer_than, older_than) i;
+```
+
 ### Decompressing Chunks [](decompress-chunks)
 
 Next we will walk through what to do in the event that you need to backfill or
@@ -317,6 +325,13 @@ update. To decompress the chunk(s) that we will be modifying, for each chunk:
 
 ``` sql
 SELECT decompress_chunk('_timescaledb_internal._hyper_2_2_chunk');
+```
+
+Similar to above, you can also decompress a set of chunks based on a
+time range by first looking up this set of chunks via `show_chunks`:
+
+``` sql
+SELECT decompress_chunk(i) from show_chunks('conditions', newer_than, older_than) i;
 ```
 
 >:TIP: You need to run 'decompress_chunk' for each chunk that will be impacted
