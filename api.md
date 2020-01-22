@@ -1245,11 +1245,11 @@ SELECT set_integer_now_func('test_table_bigint', 'unix_now');
 
 ## set_replication_factor() [](set_replication_factor)
 Sets the replication factor of a distributed hypertable to the given value. 
-The setting will affect only new chunks. 
-Newly created chunks of the hypertable will be replicated to different data nodes,
-so the amount of replicas is the same as the replication factor.
+Changing the replication factor does not affect the number of replicas for existing chunks.
+Chunks created after changing the replication factor will be replicated 
+in accordance with new value of the replication factor.
 
-If existing chunks have less replicas than the given replication factor,
+If existing chunks have less replicas than new value of the replication factor,
 the function will print a warning.
 
 #### Required Arguments [](set_replication_factor-required-arguments)
