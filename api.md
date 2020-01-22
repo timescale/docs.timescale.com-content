@@ -1246,8 +1246,8 @@ the function will print a warning.
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of the distributed hypertable to update the replication factor for.|
-| `replication_factor` | The new value of the replication factor. Must be greater than 0.|
+| `main_table` | (REGCLASS) Identifier of the distributed hypertable to update the replication factor for.|
+| `replication_factor` | (INTEGER) The new value of the replication factor. Must be greater than 0.|
 
 #### Sample Usage [](set_replication_factor-examples)
 
