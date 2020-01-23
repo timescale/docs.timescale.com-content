@@ -1257,8 +1257,7 @@ the function will print a warning.
 |Name|Description|
 |---|---|
 | `hypertable` | (REGCLASS) Identifier of the distributed hypertable to update the replication factor for.|
-| `replication_factor` | (INTEGER) The new value of the replication factor. Must be greater than 0, 
-and smaller than or equal to the number of attached data nodes.|
+| `replication_factor` | (INTEGER) The new value of the replication factor. Must be greater than 0, and smaller than or equal to the number of attached data nodes.|
 
 #### Errors
 
