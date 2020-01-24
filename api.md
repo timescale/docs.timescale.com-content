@@ -1266,7 +1266,7 @@ An error will be given if:
 - `replication_factor` is less than `1`, which cannot be set on a distributed hypertable.
 - `replication_factor` is bigger than the number of attached data ndoes.
 
-If the bigger replication factor is desired, it is necessary to attach more data nodes 
+If a bigger replication factor is desired, it is necessary to attach more data nodes 
 by using [attach_data_node](#attach_data_node).
 
 #### Sample Usage [](set_replication_factor-examples)
@@ -1282,7 +1282,7 @@ WARNING:  hypertable "conditions" is under-replicated
 DETAIL:  Some chunks have less than 2 replicas.
 ```
 
-Example of providing too big replication factor for a hypertable with 2 attached data nodes:
+Example of providing too big of a replication factor for a hypertable with 2 attached data nodes:
 ```sql
 SELECT set_replication_factor('conditions', 3);
 ERROR:  too big replication factor for hypertable "conditions"
