@@ -819,14 +819,15 @@ all attached hypertables.
 
 | Name        | Description            |
 | ----------- | -----------            |
-| `node_name` | Name of the data node. |
+| `node_name` | (NAME) Name of the data node. |
 
 #### Optional Arguments [](delete_data_node-optional-arguments)
 
-| Name        | Description                                           |
-|-------------|-------------------------------------------------------|
-| `if_exists` | Prevent error if the data node does not exist. Defaults to false. |
-| `force`     | Force removal of data nodes from hypertables unless that would result in data loss.  Defaults to false. |
+| Name          | Description                                           |
+|---------------|-------------------------------------------------------|
+| `if_exists`   | (BOOLEAN) Prevent error if the data node does not exist. Defaults to false. |
+| `force`       | (BOOLEAN) Force removal of data nodes from hypertables unless that would result in data loss.  Defaults to false. |
+| `repartition` | (BOOLEAN) Make the number of space partitions equal to the new number of data nodes (if such partitioning exists). This ensures that the remaining data nodes are used evenly. Defaults to true. |
 
 #### Returns [](delete_data_node-returns)
 
@@ -855,14 +856,15 @@ partition across
 
 | Name        | Description                       |
 |-------------|-----------------------------------|
-| `node_name` | Name of data node to detach from the distributed hypertable |
+| `node_name` | (NAME) Name of data node to detach from the distributed hypertable |
 
 #### Optional Arguments [](detach_data_node-optional-arguments)
 
-| Name         | Description                            |
-|--------------|----------------------------------------|
-| `hypertable` | Name of the distributed hypertable where the data node should be detached. If NULL, the data node will be detached from all hypertables. |
-| `force`      | Force detach of the data node even if that means that the replication factor is reduced below what was set. Note that it will never be allowed to reduce the replication factor below 1 since that would cause data loss.         |
+| Name          | Description                            |
+|---------------|----------------------------------------|
+| `hypertable`  | (REGCLASS) Name of the distributed hypertable where the data node should be detached. If NULL, the data node will be detached from all hypertables. |
+| `force`       | (BOOLEAN) Force detach of the data node even if that means that the replication factor is reduced below what was set. Note that it will never be allowed to reduce the replication factor below 1 since that would cause data loss.         |
+| `repartition` | (BOOLEAN) Make the number of space partitions equal to the new number of data nodes (if such partitioning exists). This ensures that the remaining data nodes are used evenly. Defaults to true. |
 
 #### Returns
 
