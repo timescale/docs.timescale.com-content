@@ -19,10 +19,10 @@ of `apt`, we recommend installing from source.  Otherwise, please be
 sure to remove non-`apt` installations before using this method.
 
 **If you don't already have PostgreSQL installed**, add PostgreSQL's third
-party repository to get the latest PostgreSQL packages:
+party repository to get the latest PostgreSQL packages (if you are using Ubuntu older than 19.04):
 ```bash
 # `lsb_release -c -s` should return the correct codename of your OS
-sudo sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -c -s`-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
+echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -c -s)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 sudo apt-get update
 ```
