@@ -545,11 +545,15 @@ const pageIndex = [
         href: "development",
         children: [
             {
+                Title: "Contribute to docs",
+                type: PAGE,
+                href: "contribute-to-docs"
+            }, {
                 Title: "Code style",
                 type: LINK,
                 href: "https://github.com/timescale/timescaledb/blob/master/docs/StyleGuide.md"
             }, {
-                Title: "How to contribute",
+                Title: "Contribute to code",
                 type: LINK,
                 href: "https://github.com/timescale/timescaledb/blob/master/CONTRIBUTING.md"
             }
