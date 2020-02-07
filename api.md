@@ -289,7 +289,7 @@ columns, but the reverse is not allowed. UNIQUE and PRIMARY constraints must inc
 partitioning key.
 
 >:WARNING: Running `create_hypertable` with data migration on a table with foreign key contraints to other tables 
-might result in a deadlock if parallel transactions simulteniously try to insert data into the table and 
+might result in a deadlock if parallel transactions simultaneously try to insert data into the table and 
 the referenced tables. This can result in aborting `create_hypertable`. The deadlock can be prevented by 
 manually obtaining `SHARE ROW EXCLUSIVE` lock on the referenced tables  before calling `create_hypertable` 
 in the same transaction.
