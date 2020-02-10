@@ -12,30 +12,45 @@ can view active developments on GitHub at any time.
 
 ### What to expect from our next release
 
-The next release of TimescaleDB will include basic
+The next release of TimescaleDB, v1.7, will include basic
 [PostgreSQL 12](https://www.postgresql.org/about/news/1976/)
-support and Union Views.
+support and a new TimescaleDB capability called *Just-In-Time Aggregates*.
 
-With Union Views, users will be able to query data
-from a continuous aggregate (which will contain data
-based on when the last update job ran). This feature
-will fetch the most updated data from the underlying
-table in order to satisfy your query.
+With Just-In-Time Aggregates, users will be able to leverage TimescaleDB's
+precomputed continuous aggregates while still getting a real-time view over the
+latest data.
 
-We expect to release these capabilities late in Q1
-of 2020.
+In particular, continous aggregates made it really fast to get aggregate 
+answers by precomputing these values (such as the min/max/average value over
+each
+hour). This way, if you are collecting raw data every second, querying hourly
+data over the past week means reading 24 x 7 = 168 values from the database, as
+opposed to processing 60 x 60 x 24 x 7 = 604,800 values at query time.  But one
+limitation with continous aggregates is that they don't incorporate the very
+latest data, _i.e._, since the last time the asynchronous aggregation job ran
+inside the database. So if you are generating hourly rollups, you might only
+run this job every hour.
+
+But now with Just-In-Time Aggregates, a single, simple query will combine your
+pre-computed hourly rollups with the raw data from the last
+hour, to always give you an up-to-date answer.  Now, instead of touching
+604,800 rows of raw data, the query reads 167 pre-computed rows of
+hourly data and 3600 rows of raw secondly data, leading to significant
+performance improvements.
+
+We expect to release TimescaleDB v1.7 in the March/April timeframe of 2020.
 
 ### Coming down the pipeline
 
 The team is actively working on the multi-node version
 of TimescaleDB which is currently in beta. To read more
-about how we plan to support a distributed architecture,
-click [here](https://docs.timescale.com/clustering/introduction/architecture#distributed-hypertables).
+about our architecture and design for distributed hypertables,
+[click here](https://docs.timescale.com/clustering/introduction/architecture#distributed-hypertables).
 To test out the beta version for yourself,
 follow these [instructions](https://docs.timescale.com/clustering/getting-started/scaling-out).
 
 Currently, we expect this major feature to be released
-in H1 of 2020 and we will share more information once
+in the first half of 2020, and we will share more information once
 it's available.
 
 ## Release Notes
@@ -59,7 +74,7 @@ hypertables with integer-based time columns to use continuous aggregates on
 this table.
 
 We added a timescaledb.ignore_invalidation_older_than parameter for continuous
-aggregatess. This parameter accept a time-interval (e.g. 1 month). if set,
+aggregates. This parameter accept a time-interval (e.g. 1 month). If set,
 it limits the amount of time for which to process invalidation. Thus, if
 timescaledb.ignore_invalidation_older_than = '1 month', then any modifications
 for data older than 1 month from the current timestamp at modification time may
