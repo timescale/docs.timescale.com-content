@@ -295,7 +295,8 @@ converting table itself.
 The deadlock might abort `create_hypertable`. 
 >
 >The deadlock can be prevented by manually obtaining `SHARE ROW EXCLUSIVE` lock 
-on the referenced tables before calling `create_hypertable` in the same transaction.
+on the referenced tables before calling `create_hypertable` in the same transaction,
+see [PostgreSQL documentation][postgres-lock] for the syntax.
 <!-- -->
 
 #### Units [](create_hypertable-units)
@@ -2803,6 +2804,7 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [postgres-createtablespace]: https://www.postgresql.org/docs/current/sql-createtablespace.html
 [postgres-cluster]: https://www.postgresql.org/docs/current/sql-cluster.html
 [postgres-altertable]: https://www.postgresql.org/docs/current/sql-altertable.html
+[postgres-lock]: https://www.postgresql.org/docs/current/sql-lock.html
 [migrate-from-postgresql]: /getting-started/migrating-data
 [memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
 [telemetry]: /using-timescaledb/telemetry
