@@ -563,7 +563,7 @@ const pageIndex = [
         type: PAGE,
         href: "release-notes"
     }, {
-        Title: "Github",
+        Title: "GitHub",
         type: LINK,
         href: "https://github.com/timescale/timescaledb"
     }, {
