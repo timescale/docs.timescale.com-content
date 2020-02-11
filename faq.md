@@ -11,6 +11,7 @@
 > - [What SQL features are supported (JOIN)?](#sql-features)
 > - [How do I write data?](#write)
 > - [How do I read data?](#read)
+> - [What are my compression options?](#compression)
 > - [How far can TimescaleDB scale?](#scaling)
 > - [How does TimescaleDB scale?](#how-scaling)
 > - [Is there a clustered version and how can I try it?](#clustered)
@@ -30,8 +31,6 @@
 > - [How do I update an existing installation?](#update)
 > - [What if I my use case is simple key-value reads?](#key-value)
 > - [What if I have very sparse or unstructured data?](#unstructured-data)
-> - [What are my compression options?](#compression)
-
 
 ### **What is TimescaleDB?** [](what)
 TimescaleDB is the only open source time-series database that supports full SQL.
@@ -109,6 +108,18 @@ to properly reason about time-series data, which in some cases leads to over
 Just via normal SQL, but here are some [insert examples][INSERT]. [[Top]](#top)
 ### **How do I read data?** [](read)
 Just via normal SQL, but here are some [query examples][SELECT]. [[Top]](#top)
+
+### **What are my compression options?** [](compression)
+Since v1.5,
+TimescaleDB has supported native compression that uses a hybrid row/columnar
+approach combined with type-specific compression algorithms (e.g., different
+compression algorithms for timestamps, integers, floats, strings, or other
+data).  Many users see between a 90-98% reduction in their storage footprint,
+leading to significant cost savings (and other query performance improvements).
+Note that compression must be *explicitly turned on and configured* for a
+hypertable; compression is by default off.  For more details about how to use
+TimescaleDB ncompression, please see [our compression docs][compression-docs]
+or a longer technical deep-dive [on our blog ][compression-blog]. [[Top]](#top)
 
 ### **How far can TimescaleDB scale?** [](scaling)
 We've first focused on scaling TimescaleDB up on a single node. In our internal
@@ -289,11 +300,6 @@ there are some best practices and suggestions that may apply to get optimal
 performance depending on your scenario. Please reach
 out to us at <support@timescale.com> or by [joining our Slack group][]. [[Top]](#top)
 
-### **What are my compression options?** [](compression)
-Benchmarks show TimescaleDB running on ZFS getting around 4x compression. However,
-this can vary based on your data size and type requirements. Please reach
-out to us at <support@timescale.com> or by [joining our Slack group][]. [[Top]](#top)
-
 ### **What is the TimescaleDB open-source license?** [](license)
 Apache 2.0. [[Top]](#top)
 
@@ -335,3 +341,5 @@ See our [updating documentation][update]. [[Top]](#top)
 [joining our Slack group]: https://slack-login.timescale.com/
 [install]: /getting-started/installation
 [update]: /using-timescaledb/update-db
+[compression-docs]: /using-timescaledb/compression
+[compression-blog]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database/
