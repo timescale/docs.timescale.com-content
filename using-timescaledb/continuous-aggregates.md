@@ -291,7 +291,7 @@ improvements already planned for the next releases.
 Please find some of these forthcoming capabilities described below.
 If you'd like to help implement them, test them, want to help us prioritize,
 or have other areas you think we should work on, please get in touch via our
-[Github][timescale-github] or [Slack][support-slack].
+[GitHub][timescale-github] or [Slack][support-slack].
 
 
 **Parallelized Materializations:**
