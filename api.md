@@ -290,7 +290,7 @@ columns, but the reverse is not allowed. UNIQUE and PRIMARY constraints must inc
 partitioning key.
 >
 >The deadlock is likely to happen when concurrent transactions simultaneously try 
-to insert data into tables that are referenced in the foreign key constraints, and into the
+to insert data into tables that are referenced in the foreign key constraints and into the
 converting table itself. The deadlock can be prevented by manually obtaining `SHARE ROW EXCLUSIVE` lock 
 on the referenced tables before calling `create_hypertable` in the same transaction,
 see [PostgreSQL documentation][postgres-lock] for the syntax.
