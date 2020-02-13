@@ -278,7 +278,8 @@ as a table with column headings.
 
 >:WARNING: The use of the `migrate_data` argument to convert a non-empty table can
 lock the table for a significant amount of time, depending on how much data is
-in the table.
+in the table. It can also run into deadlock if foreign key constraints exist to other
+tables.
 >
 >If you would like finer control over index formation and other aspects
     of your hypertable, [follow these migration instructions instead][migrate-from-postgresql].
@@ -287,14 +288,10 @@ in the table.
 to how you handle constraints. A hypertable can contain foreign keys to normal SQL table
 columns, but the reverse is not allowed. UNIQUE and PRIMARY constraints must include the
 partitioning key.
-
->:TIP: Running `create_hypertable` with the data migration on a table with foreign key contraints 
-might result in a deadlock. This is likely to happen when concurrent transactions simultaneously try 
-to insert data into tables, which are referenced in the foreign key constraints, and into the
-converting table itself. 
-The deadlock might abort `create_hypertable`. 
 >
->The deadlock can be prevented by manually obtaining `SHARE ROW EXCLUSIVE` lock 
+>The deadlock is likely to happen when concurrent transactions simultaneously try 
+to insert data into tables that are referenced in the foreign key constraints, and into the
+converting table itself. The deadlock can be prevented by manually obtaining `SHARE ROW EXCLUSIVE` lock 
 on the referenced tables before calling `create_hypertable` in the same transaction,
 see [PostgreSQL documentation][postgres-lock] for the syntax.
 <!-- -->
