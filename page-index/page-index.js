@@ -528,8 +528,9 @@ const pageIndex = [
         Title: "FAQ",
         type: PAGE,
         href: "faq"
-    }, {
-        Title: "Github",
+    },
+    {
+        Title: "GitHub",
         type: LINK,
         href: "https://github.com/timescale/timescaledb"
     }, {
