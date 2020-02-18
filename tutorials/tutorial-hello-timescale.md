@@ -73,13 +73,12 @@ To verify that TimescaleDB is installed, run the command in code block 3 which l
                       Code Block 3
 
 `  defaultdb-> \dx` <br>
-`                                      List of installed extensions` <br>
-`    Name     | Version |   Schema   |                            Description         `                   
-` -------------+---------+------------+-------------------------------------------------------------------
-` plpgsql     | 1.0     | pg_catalog | PL/pgSQL procedural language` <br>
-` timescaledb | 1.4.2   | public     | Enables scalable inserts and complex queries for time-series data` <br>
-` (2 rows)` <br>
-                      Code Block 4
+`                  List of installed extensions` <br>
+| Name        | Version | Schema     | Description                                  |
+|-------------|---------|------------|----------------------------------------------|
+| plpgsql     | 1.0     | pg_catalog | PL/pgSQL procedural language                 |
+| timescaledb | 1.4.2   | public     | Enables scalable inserts and complex queries |
+                     Code Block 4     
 
 
 ### 1.2 Define Your Data Schema
@@ -449,5 +448,6 @@ In Missions 2 and 3 you learned how to use TimescaleDB to conduct analysis and m
 You also learned about special Timescale SQL functions like time_bucket and how they make time-series analysis possible in fewer lines of code, as well as how Timescale is compatible with other extensions like PostGIS, for fast querying by time and location.
 
 Ready for more learning? Here’s a few suggestions:
-Time Series Forecasting using TimescaleDB, R, Apache MADlib and Python
-Continuous Aggregates
+[Time Series Forecasting using TimescaleDB, R, Apache MADlib and Python](https://docs.timescale.com/latest/tutorials/tutorial-forecasting) <br>
+[Continuous Aggregates](https://docs.timescale.com/latest/tutorials/continuous-aggs-tutorial) <br>
+[Documentation for working with TimescaleDB, the open-source time-series database](https://docs.timescale.com) <br>
