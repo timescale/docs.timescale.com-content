@@ -431,16 +431,10 @@ const pageIndex = [
         href: "tutorials",
         children: [
             {
-                Title: "Working with a dataset: Hello NYC",
+                Title: "Get started: Hello, Timescale!",
                 type: PAGE,
-                href: "tutorial-hello-nyc",
-                children: [
-                    {
-                        Title: "Advanced: PostGIS",
-                        type: ANCHOR,
-                        href: "#tutorial-postgis"
-                    }
-                ]
+                href: "tutorial-hello-timescale",
+                children: []
             }, {
                 Title: "Time-series forecasting",
                 type: PAGE,
