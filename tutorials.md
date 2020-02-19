@@ -1,6 +1,6 @@
 # Tutorials
 
-- **[Start Here - Hello NYC][Hello NYC]**: If you are new to TimescaleDB
+- **[Start Here - Hello Timescale][Hello Timescale]**: If you are new to TimescaleDB
 or even SQL, check
 out our tutorial with NYC taxicab data to get an idea of the capabilities our
 database has to offer.
@@ -17,7 +17,7 @@ data analysis and make forecasts on your data.
 - **[Sample data sets][Data Sets]**: And if you want to explore on your own
 with some sample data, we have some ready-made data sets for you to explore.
 
-[Hello NYC]: /tutorials/tutorial-hello-nyc
+[Hello Timescale]: /tutorials/tutorial-hello-timescale
 [PostGIS]: /tutorials/tutorial-hello-nyc#tutorial-postgis
 [Forecasting]: /tutorials/tutorial-forecasting
 [Replication]: /tutorials/replication
