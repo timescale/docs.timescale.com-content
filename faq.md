@@ -151,9 +151,7 @@ applies to these read-only clusters.
 Full, scale-out clustering (i.e., for data volumes > 500 billion rows
 and ingest rates > 300K row inserts / second) is in the works and will
 leverage the automated partitioning capabilities already available in
-single-node TimescaleDB today.
-
-For more information, please get in touch at <hello@timescale.com>. [[Top]](#top)
+single-node TimescaleDB today. [[Top]](#top)
 
 ### **What are hypertables and chunks?** [](hypertable-chunks)
 Our [documentation][docs-architecture] describes these design elements in more depth. [[Top]](#top)
@@ -222,7 +220,7 @@ As an extension of PostgreSQL, TimescaleDB works well with PostGIS. For example,
 [see our tutorial][postgis] using PostGIS and TimescaleDB on NYC taxicab data. We are
 actively exploring the extent of TimescaleDB's geospatial capabilities (i.e., partitioning
 by location). If you have a use case with a geospatial component,
-please email us at <hello@timescale.com> and we'd be happy to discuss. [[Top]](#top)
+please [contact us][contact] and we'd be happy to discuss. [[Top]](#top)
 
 ### **What can I use TimescaleDB for?** [](what-for)
 TimescaleDB is ideal for time-series workloads that would benefit from a SQL interface.
@@ -273,32 +271,29 @@ NoSQL system in order to scale to larger volumes of data.
 system due to scaling concerns or issues. We will provide support for the migration back.
 [[Top]](#top)
 
-### **When is TimescaleDB _not_ a good choice?**  [](when-less-good)
-TimescaleDB would not be a good choice if you have:
+### **What if I my use case is simple key-value reads?** [](key-value)
+For this scenario, in-memory or column-oriented databases are designed for
+key-value storage with fast lookup and a relational database may not be ideal.
+However, these systems clearly do not scale to large data volumes and cannot
+perform well for more complex queries (whereas relational databases
+like TimescaleDB and PostgreSQL are better suited). [[Top]](#top)
 
-* Simple-read requirements: If you simply want fast key-value lookups or single column
-rollups, an in-memory or column-oriented database might be more appropriate. The former
-clearly does not scale to the same data volumes, however, while the latter's performance
-significantly underperforms for more complex queries.
-* Very sparse or unstructured data: While TimescaleDB leverages PostgreSQL support for
-JSON/JSONB formats and handles sparsity quite efficiently (bitmaps for NULL values),
-schema-less architectures may be more appropriate in certain scenarios.
-* Heavy compression is a priority: Benchmarks show TimescaleDB running on ZFS getting around
-4x compression, but compression-optimized column stores might be more appropriate for
-higher compression rates.
-* Infrequent or offline analysis: If slow response times are acceptable (or fast response
-times limited to a small number of pre-computed metrics), and if you don't expect many
-applications/users to access that data concurrently, you might avoid using a database altogether
-and instead just store data in a distributed file system. [[Top]](#top)
+### **What if I have very sparse or unstructured data?** [](unstructured-data)
+Good question. TimescaleDB leverages PostgreSQL support for JSON/JSONB formats
+and handles sparsity quite efficiently (bitmaps for NULL values). However,
+there are some best practices and suggestions that may apply to get optimal
+performance depending on your scenario. Please see discussion in these docs
+or [join our Slack group][join_slack]. [[Top]](#top)
 
 ### **What is the TimescaleDB open-source license?** [](license)
 Apache 2.0. [[Top]](#top)
 ### **Is there a TimescaleDB community or group I can join?** [](community)
-Yes. We suggest reporting issues first to [GitHub][]
-(or by emailing us at <support@timescale.com>) and
-[joining our Slack group][]. [[Top]](#top)
+Yes!  We have a very active [online community in Slack][join_slack], and
+you can report any issues on our [GitHub][] page. [[Top]](#top)
+
 ### **Can I get support or a commercial license?** [](license-commercial)
-Yes. Please contact us for more information - <sales@timescale.com>. [[Top]](#top)
+Yes. Please [contact us][contact] for more information. [[Top]](#top)
+
 ### **Where can I get TimescaleDB source code?** [](where)
 See [GitHub][]. [[Top]](#top)
 ### **How do I install TimescaleDB?** [](install)
@@ -324,6 +319,9 @@ See our [updating documentation][update]. [[Top]](#top)
 [data-retention]: http://docs.timescale.com/using-timescaledb/data-retention
 [postgis]: /tutorials/tutorial-hello-nyc#tutorial-postgis
 [GitHub]: https://github.com/timescale/timescaledb/issues
-[joining our Slack group]: https://slack-login.timescale.com/
+[contact]: https://www.timescale.com/contact
+[join_slack]: https://slack-login.timescale.com/
 [install]: /getting-started/installation
 [update]: /using-timescaledb/update-db
+[compression-docs]: /using-timescaledb/compression
+[compression-blog]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database/
