@@ -169,9 +169,7 @@ applies to these read-only clusters.
 Full, scale-out clustering (i.e., for data volumes > 500 billion rows
 and ingest rates > 300K row inserts / second) is in the works and will
 leverage the automated partitioning capabilities already available in
-single-node TimescaleDB today.
-
-For more information, please get in touch at <hello@timescale.com>. [[Top]](#top)
+single-node TimescaleDB today. [[Top]](#top)
 
 ### **What are hypertables and chunks?** [](hypertable-chunks)
 Our [documentation][docs-architecture] describes these design elements in more depth. [[Top]](#top)
@@ -240,7 +238,7 @@ As an extension of PostgreSQL, TimescaleDB works well with PostGIS. For example,
 [see our tutorial][postgis] using PostGIS and TimescaleDB on NYC taxicab data. We are
 actively exploring the extent of TimescaleDB's geospatial capabilities (i.e., partitioning
 by location). If you have a use case with a geospatial component,
-please email us at <hello@timescale.com> and we'd be happy to discuss. [[Top]](#top)
+please [contact us][contact] and we'd be happy to discuss. [[Top]](#top)
 
 ### **Is TimescaleDB currently being used in production?** [](in-production)
 Yes. TimescaleDB is currently deployed in production across a variety of industries
@@ -286,8 +284,8 @@ like TimescaleDB and PostgreSQL are better suited). [[Top]](#top)
 Good question. TimescaleDB leverages PostgreSQL support for JSON/JSONB formats
 and handles sparsity quite efficiently (bitmaps for NULL values). However,
 there are some best practices and suggestions that may apply to get optimal
-performance depending on your scenario. Please reach
-out to us at <support@timescale.com> or by [joining our Slack group][]. [[Top]](#top)
+performance depending on your scenario. Please see discussion in these docs
+or [join our Slack group][join_slack]. [[Top]](#top)
 
 ### **What are my compression options?** [](compression)
 Benchmarks show TimescaleDB running on ZFS getting around 4x compression. However,
@@ -298,12 +296,12 @@ out to us at <support@timescale.com> or by [joining our Slack group][]. [[Top]](
 Apache 2.0. [[Top]](#top)
 
 ### **Is there a TimescaleDB community or group I can join?** [](community)
-Yes. We suggest reporting issues first to [GitHub][]
-(or by emailing us at <support@timescale.com>) and
-[joining our Slack group][]. [[Top]](#top)
+Yes!  We have a very active [online community in Slack][join_slack], and
+you can report any issues on our [GitHub][] page. [[Top]](#top)
 
 ### **Can I get support or a commercial license?** [](license-commercial)
-Yes. Please contact us for more information - <sales@timescale.com>. [[Top]](#top)
+Yes. Please [contact us][contact] for more information. [[Top]](#top)
+
 ### **Where can I get TimescaleDB source code?** [](where)
 See [GitHub][]. [[Top]](#top)
 
@@ -332,6 +330,6 @@ See our [updating documentation][update]. [[Top]](#top)
 [postgis]: /tutorials/tutorial-hello-nyc#tutorial-postgis
 [GitHub]: https://github.com/timescale/timescaledb/issues
 [contact]: https://www.timescale.com/contact
-[joining our Slack group]: https://slack-login.timescale.com/
+[join_slack]: https://slack-login.timescale.com/
 [install]: /getting-started/installation
 [update]: /using-timescaledb/update-db
