@@ -18,7 +18,7 @@ data analysis and make forecasts on your data.
 with some sample data, we have some ready-made data sets for you to explore.
 
 [Hello Timescale]: /tutorials/tutorial-hello-timescale
-[PostGIS]: /tutorials/tutorial-hello-nyc#tutorial-postgis
+[PostGIS]: /tutorials/tutorial-hello-timescale#postgis
 [Forecasting]: /tutorials/tutorial-forecasting
 [Replication]: /tutorials/replication
 [Continuous Aggregates]: /tutorials/continuous-aggs-tutorial
