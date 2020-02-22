@@ -211,6 +211,10 @@ const pageIndex = [
                 type: PAGE,
                 href: "configuring"
             }, {
+                Title: "Installing psql",
+                type: PAGE,
+                href: "install-psql-tutorial"
+            }, {
                 Title: "Creating Hypertables",
                 type: PAGE,
                 href: "creating-hypertables"
