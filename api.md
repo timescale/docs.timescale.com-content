@@ -2253,23 +2253,25 @@ Get metadata and settings information for continuous aggregates.
 |`refresh_lag` | Amount by which the materialization for the continuous aggregate lags behind the current time |
 |`refresh_interval` | Interval between updates of the continuous aggregate materialization|
 |`max_interval_per_job` | Maximum amount of data processed by a materialization job in a single run|
+|`ignore_invalidation_older_than` | Age for which modified rows will not trigger update of the continuous aggregate|
 |`materialization_hypertable` | Name of the underlying materialization table|
 |`view_definition` | `SELECT` query for continuous aggregate view|
 
 #### Sample Usage
 ```sql
-select * from timescaledb_information.continuous_aggregates;
--[ RECORD 1 ]--------------+-------------------------------------------------
-view_name                  | contagg_view
-view_owner                 | postgres
-refresh_lag                | 2
-refresh_interval           | 12:00:00
-max_interval_per_job       | 20
-materialization_hypertable | _timescaledb_internal._materialized_hypertable_2
-view_definition            |  SELECT foo.a,                                  +
-                           |     count(foo.b) AS countb                      +
-                           |    FROM foo                                     +
-                           |   GROUP BY (time_bucket(1, foo.a)), foo.a;
+SELECT * FROM timescaledb_information.continuous_aggregates;
+-[ RECORD 1 ]------------------+-------------------------------------------------
+view_name                      | contagg_view
+view_owner                     | postgres
+refresh_lag                    | 02:00:00
+refresh_interval               | 00:30:00
+ignore_invalidation_older_than | 7 days
+max_interval_per_job           | 20
+materialization_hypertable     | _timescaledb_internal._materialized_hypertable_2
+view_definition                |  SELECT foo.a,                                  +
+                               |     COUNT(foo.b) AS countb                      +
+                               |    FROM foo                                     +
+                               |   GROUP BY (time_bucket('1 day', foo.a)), foo.a;
 
 -- description of foo
 \d foo

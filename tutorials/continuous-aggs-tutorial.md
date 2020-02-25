@@ -99,7 +99,7 @@ continuous aggregate query every 30 minutes.
 
 ```sql
 CREATE VIEW cagg_rides_view WITH
-(timescaledb.continuous, timescaledb.refresh_interval = ’30m’)
+(timescaledb.continuous, timescaledb.refresh_interval = '30m')
 AS
 SELECT vendor_id, time_bucket('1h', pickup_datetime) as day,
      count(*) total_rides,
@@ -129,14 +129,16 @@ We can view the metadata for the continuous aggregate in the
 **timescaledb_information.continuous_aggregates** view.
 
 ``` sql
-SELECT view_name, refresh_lag, refresh_interval, max_interval_per_job, materialization_hypertable
+SELECT view_name, refresh_lag, refresh_interval, max_interval_per_job,
+       ignore_invalidation_older_than, materialization_hypertable
 FROM timescaledb_information.continuous_aggregates;
 -[ RECORD 1 ]--------------+-------------------------------------------------
-view_name                  | cagg_rides_view
-refresh_lag                | 02:00:00
-refresh_interval           | 00:30:00
-max_interval_per_job       | 20:00:00
-materialization_hypertable | _timescaledb_internal._materialized_hypertable_2
+view_name                      | cagg_rides_view
+refresh_lag                    | 02:00:00
+refresh_interval               | 00:30:00
+max_interval_per_job           | 20:00:00
+ignore_invalidation_older_than | 7 days
+materialization_hypertable     | _timescaledb_internal._materialized_hypertable_2
 ```
 The `refresh_interval` is set to 30 minutes. The computed aggregates are saved
 in the materialization table, `_timescaledb_internal._materialized_hypertable_2`.
@@ -146,13 +148,17 @@ What are `refresh_lag` and `max_interval_per_job`? We use the
  aggregate query lag behind the data in the *rides* table. For example, if we
 expect frequent updates to the *rides*  table for the current hour, we do not
 want to precompute the aggregates for that range. We would set the
-`refresh_lag = ‘1h'` to indicate that. (The default value is twice the
+`refresh_lag = '1h'` to indicate that. (The default value is twice the
 bucket_width used by the `time_bucket` expression. This is the 2 hours shown for
 `refresh_lag` in the view output above). So the continuous aggregate will get
 refreshed every 30 minutes (`refresh_interval`) but will update the continuous
 aggregates only for the data that satisfies the condition:
-`time_bucket(‘1h’, pickup_datetime) <   max(pickup_time) - ‘1h’ `(if the
+`time_bucket('1h', pickup_datetime) < max(pickup_time) - '1h'` (if the
 `refresh_lag` is set to 1 hour)
+
+Both `refresh_lag` or `refresh_interval` can be set to an integer
+value, which is then interpreted as the number of microseconds for the
+lag or interval respectively.
 
 To keep the continuous aggregate up-to-date,
 you can set `timescaledb.refresh_lag` to a negative value. This will allow the continuous aggregate
@@ -167,6 +173,13 @@ smaller or bigger batch sizes (the batching is done automatically by TimescaleDB
 `refresh_lag` and `max_interval_per_job` are additional parameters that can be
 specified while creating or altering a continuous aggregate. Refer to the
 documentation for the syntax.
+
+The `timescaledb.ignore_invalidation_older_than` parameter is used
+when you want to avoid updating a continuous aggregate when modifying
+(that is, inserting, updating, or deleting) older record. Setting this
+to, for example, "1 week" will ensure that any update for a record
+that is older than 1 week will not trigger an update of the continuous
+aggregate.
 
 ### 3. Queries using continuous aggregates
 We can use the continuous aggregate, just like any other view, in a `SELECT` query.
