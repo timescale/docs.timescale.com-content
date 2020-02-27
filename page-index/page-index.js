@@ -199,6 +199,10 @@ const pageIndex = [
 
                 ]
             }, {
+                Title: "Setting up Timescale Cloud",
+                type: PAGE,
+                href: "exploring-cloud"
+            }, {
                 Title: "Setting up Enterprise",
                 type: PAGE,
                 href: "exploring-enterprise"

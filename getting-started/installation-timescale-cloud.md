@@ -13,13 +13,14 @@ After you create an account and login for the first time,
 a default project is created for you. In this project is where
 you create your first TimescaleDB service.
 
->:TIP: Timescale Cloud automatically gives you access to the features
-and capabilities in [TimescaleDB Enterprise][timescale-enterprise].
+>:TIP: Timescale Cloud automatically gives you access to all the features
+and capabilities in [TimescaleDB][timescale-features].
 
-For more information on how to get started with Timescale Cloud,
-visit [here][intercom].
+Now that your database account is setup, it's time to
+[setup Timescale Cloud][timescale-cloud-setup].
 
 [sign-up]: https://www.timescale.com/cloud-signup
 [portal]: http://portal.timescale.cloud
-[timescale-enterprise]: https://www.timescale.com/products
+[timescale-features]: https://www.timescale.com/products
+[timescale-cloud-setup]: /getting-started/exploring-cloud
 [intercom]: https://kb.timescale.cloud/

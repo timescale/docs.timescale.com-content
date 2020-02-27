@@ -792,7 +792,7 @@ Ready for more learning? Here’s a few suggestions:
 [timescale-cloud]: https://www.timescale.com/products
 [timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
 [timescale-community-install]: /getting-started/installation
-[setup-psql]: https://blog.timescale.com/tutorials/how-to-install-psql-on-mac-ubuntu-debian-windows/
+[setup-psql]: /getting-started/install-psql-tutorial
 [install]: /getting-started/installation
 [NYCTLC]: https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 [nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
