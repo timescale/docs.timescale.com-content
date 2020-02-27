@@ -6,6 +6,9 @@
 > - [Why build another time-series database?](#why-build)
 > - [Why should I use TimescaleDB?](#why-use)
 > - [What can I use TimescaleDB for?](#what-for)
+> - [Why should I choose Timescale Cloud](#why-cloud)
+> - [Which regions and cloud providers are supported by Timescale Cloud?](#which-cloud-regions)
+> - [What is the difference between Timescale, TimescaleDB, and Timescale Cloud?](#what-does-timescale-mean)
 > - [Do you really support "all of SQL"](#sql-support)
 > - [Why SQL?](#why-sql)
 > - [What SQL features are supported (JOIN)?](#sql-features)
@@ -78,6 +81,35 @@ and more. Use cases include complex monitoring and analytics; predicting the per
 behavior of applications, models, consumers and connected machines; powering operational
 analytical workflows and dashboards; for QA and performance testing. [[Top]](#top)
 
+### **Why should I choose Timescale Cloud?** [](why-cloud)
+If you want all the benefits of TimescaleDB without the hassle of installing,
+maintaining, and administering the database itself, then Timescale Cloud is the
+best choice for you.
+
+Timescale Cloud manages all of the operational elements of your database so you can 
+focus on building your applications and not making sure the infrastructure works. We 
+ensure you have a secure, high availability environment where we manage the infrastructure 
+all the way down to setting up replications, point-in-time recovery, read replicas, 
+backups, and more. [[Top]](#top)
+
+### **Which cloud providers and regions are supported by Timescale Cloud?** [](which-cloud-regions)
+Timescale Cloud is available in the following Clouds and Regions:
+
+* **Amazon Web Services (AWS)**: N. Virginia (`us-east-1`), Ohio (`us-east-2`), 
+N. California (`us-west-1`), Oregon (`us-west-2`), São Paulo (`sa-east-1`), 
+Stockholm (`eu-north-1`), Ireland (`eu-west-1`), London (`eu-west-2`), Paris (`eu-west-3`), 
+Frankfurt (`eu-central-1`), Canada (`ca-central-1`), Singapore (`ap-southeast-1`), 
+Sydney (`ap-southeast-2`), Tokyo (`ap-northeast-1`), Mumbai (`ap-south-1`), Seoul (`ap-northeast-2`)
+* **Microsoft Azure (Azure)**: East US, East US 2, West Europe, Southeast Asia
+* **Google Cloud Platform (GCP)**: Northern Virginia, Los Angeles, South Carolina, 
+Iowa, Oregon, São Paulo, Zürich, London, Frankfurt, Finland, Belgium, Netherlands, 
+Montréal, Sydney, Taiwan, Mumbai, Hong Kong, Tokyo, Singapore
+[[Top]](#top)
+
+### **What is the difference between Timescale, TimescaleDB, and Timescale Cloud?** [](what-does-timescale-mean)
+**Timescale** is the company. Timescale builds a category-defining time-series database called **TimescaleDB**. 
+Timescale hosts and manages TimescaleDB on behalf of its customers via a product called **Timescale Cloud**. [[Top]](#top)
+
 ### **Do you really support “all of SQL”?** [](sql-support)
 Yes, all of SQL, including: secondary indexes, JOINs, window functions. In fact,
 to the outside world, TimescaleDB looks like a PostgreSQL database: You connect
@@ -106,6 +138,7 @@ to properly reason about time-series data, which in some cases leads to over
 
 ### **How do I write data?** [](write)
 Just via normal SQL, but here are some [insert examples][INSERT]. [[Top]](#top)
+
 ### **How do I read data?** [](read)
 Just via normal SQL, but here are some [query examples][SELECT]. [[Top]](#top)
 
@@ -230,10 +263,11 @@ indexed lookups or table scans are similarly performant between PostgreSQL and T
 vanilla PostgreSQL requires expensive "vacuuming" operations to defragment
 the disk storage associated with such tables. TimescaleDB avoids vacuuming operations
 and easily enforces data retention policies by specifying the data you wish to be
-deleted that is older than a specified time period. For more information, see [Data Retention][data-retention]. [[Top]](#top)
+deleted that is older than a specified time period. For more information, see [Data Retention][data-retention].
 * Extended time-oriented features: TimescaleDB includes time-series specific features
 not included in vanilla PostgreSQL and entirely unique to TimescaleDB
 (e.g., [`time_bucket`][time_bucket],[`first`][first] and [`last`][last]), with more to come.
+[[Top]](#top)
 
 ### **How compatible is TimescaleDB with PostgreSQL?** [](postgresql-compatibility)
 TimescaleDB is implemented as an extension to PostgreSQL that introduces
@@ -254,7 +288,7 @@ please [contact us][contact] and we'd be happy to discuss. [[Top]](#top)
 ### **Is TimescaleDB currently being used in production?** [](in-production)
 Yes. TimescaleDB is currently deployed in production across a variety of industries
 including manufacturing, energy, utilities, mining, oil and gas, finance, ad tech,
-smart spaces, and more.
+smart spaces, and more. [[Top]](#top)
 
 ### **When is TimescaleDB a good choice?**  [](when-good)
 TimescaleDB is a good choice:
