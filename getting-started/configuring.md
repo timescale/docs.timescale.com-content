@@ -20,11 +20,12 @@ PgTune may also be helpful.
 ## Disk-write settings [](disk-write)
 
 In order to increase write throughput, there are [multiple
-settings][async-commit] to adjust the behaviour that postgres uses to write data
-to disk. We find the performance to be good with the default (safest) settings. If
-you want a bit of additional performance, you can  set `synchronous_commit =
-'off'`([PostgreSQL docs][synchronous-commit]). Please note that when disabling
-`sychronous_commit` in this way, an operating system or database crash might
+settings][async-commit] to adjust the behavior that PostgreSQL uses to write
+data to disk. We find the performance to be good with the default (safest)
+settings. If you want a bit of additional performance, you can set
+`synchronous_commit = 'off'`([PostgreSQL docs][synchronous-commit]).
+Please note that when disabling
+`synchronous_commit` in this way, an operating system or database crash might
 result in some recent allegedly-committed transactions being lost. We actively
 discourage changing the `fsync` setting.
 
