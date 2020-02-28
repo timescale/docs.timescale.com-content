@@ -1,14 +1,41 @@
 # Data Retention [](data-retention)
 
-TimescaleDB allows efficient deletion of old data at the chunk level
-using the `drop_chunks` function.
+An intrinsic part of time-series data is that new data is accumulated
+and old data is rarely, if ever, updated and the relevance of the data
+diminishes over time.  It is therefore often desirable to delete old
+data to save disk space.
+
+As an example, if you have a hypertable definition of `conditions`
+where you collect raw data into chunks of one day:
+
+```sql
+CREATE TABLE conditions(
+    time TIMESTAMPTZ NOT NULL,
+    device INTEGER,
+    temperature FLOAT
+);
+
+SELECT * FROM create_hypertable('conditions', 'time',
+       chunk_time_interval => '1 day'::interval);
+```
+
+If you collect a lot of data and realize that you never actually use
+raw data older than 30 days, you might want to delete data older than
+30 days from `conditions`.
+
+However, deleting large swaths of data from tables can be costly and
+slow if done row-by-row using the standard `DELETE` command. Instead,
+TimescaleDB provides a function `drop_chunks` that quickly drop data
+at the granularity of chunks without incurring the same overhead.
+
+For example:
 
 ```sql
 SELECT drop_chunks(interval '24 hours', 'conditions');
 ```
 
-This will drop all chunks from the hypertable 'conditions' that _only_ include
-data older than this duration, and will _not_ delete any
+This will drop all chunks from the hypertable `conditions` that _only_
+include data older than this duration, and will _not_ delete any
 individual rows of data in chunks.
 
 For example, if one chunk has data more than 36 hours old, a second
@@ -19,6 +46,70 @@ the `conditions` hypertable will still have data stretching back 36 hours.
 
 For more information on the `drop_chunks` function and related
 parameters, please review the [API documentation][drop_chunks].
+
+### Data Retention with Continuous Aggregates
+
+Continuing on the example above, you have discovered that you need
+daily summary of the average, minimum, and maximum temperature for
+each day, so you have created a continuous aggregate
+`conditions_summary_daily` to collect this data:
+
+```sql
+CREATE VIEW conditions_summary_daily
+WITH (timescaledb.continuous) AS
+SELECT device,
+       time_bucket('1 day'::interval, "time") AS bucket,
+       AVG(temperature),
+       MAX(temperature),
+       MIN(temperature)
+FROM conditions
+GROUP BY device, bucket;
+```
+
+When you now try to drop chunks from `conditions` you get an error:
+
+```
+postgres=# SELECT drop_chunks('30 days'::interval, 'conditions');
+ERROR:  cascade_to_materializations options must be set explicitly
+HINT:  Hypertables with continuous aggs must have the cascade_to_materializations option set to either true or false explicitly.
+```
+
+Since the data in `conditions_summary_daily` is now dependent on the
+data in `conditions` you have to explicitly say if you want to remove
+this data from the continuous aggregate using the
+`cascade_to_materializations` option. Not giving a value when there is
+a continuous aggregate defined on a hypertable will generate an error,
+as you can see above. To drop the chunks from `condition` and cascade
+it to drop the corresponding chunks in the continuous aggregate you
+set `cascade_to_materializations` to `TRUE`:
+
+```
+postgres=# SELECT COUNT(*)
+postgres-#   FROM drop_chunks('30 days'::INTERVAL, 'conditions',
+postgres-#                    cascade_to_materializations => TRUE);
+ count 
+-------
+    61
+(1 row)
+```
+
+To only remove chunks from the hypertable `conditions` and not cascade
+to dropping chunks on the continuous aggregate
+`conditions_summary_daily` you can provide the value `FALSE` to
+`cascade_to_materialization`, but only after you have removed the
+dependency on the corresponding chunks in the continuous aggregate. To
+do that, use `ALTER VIEW` to change the
+`ignore_invalidation_older_than` parameter in the continuous aggregate
+to the same range that you intend to remove from the hypertable.
+
+```sql
+ALTER VIEW conditions_summary_daily SET (
+   timescaledb.ignore_invalidation_older_than = '29 days'
+);
+
+SELECT drop_chunks('30 days'::interval, 'conditions',
+                   cascade_to_materialization => FALSE);
+```
 
 ### Automatic Data Retention Policies
 
