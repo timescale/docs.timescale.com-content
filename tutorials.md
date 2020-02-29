@@ -18,6 +18,7 @@ data analysis and make forecasts on your data.
 
 ### How to use specific TimescaleDB features
 
+- **[Analyze Cryptocurrency Data][Crypto]**: Use TimescaleDB to analyze historic cryptocurrency data. Learn how to build your own schema, ingest data, and analyze information in TimescaleDB.
 - **[Replication][]**: TimescaleDB takes advantage of well established PostgreSQL methods for replication.  Here we provide a detailed guide along with additional resources for setting up streaming replicas.
 - **[Continuous Aggregates][]**: Getting started with continuous aggregates.
 
@@ -26,12 +27,14 @@ data analysis and make forecasts on your data.
 - **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers
 - **[Collecting metrics with Telegraf][Telegraf Output Plugin]**: Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf
 - **[Migrate from InfluxDB with Outflux][Outflux]**: Use our open-source migration tool to transfer your data from InfluxDB to TimescaleDB.
+- **[Visualize Time-Series Data using Tableau][Tableau]**: Learn how to configure Tableau to connect to TimescaleDB and visualize your time-series data.
 
 ### Additional resources
 
 - **[Sample data sets][Data Sets]**: And if you want to explore on your own
 with some sample data, we have some ready-made data sets for you to explore.
-- **[psql installation][psql]**: Learn how to install psql on Mac, Ubuntu, Debian, Windows, and pick up some valuable `psql` tips and tricks along the way.
+- **[psql installation][psql]**: Learn how to install psql on Mac, Ubuntu, Debian, Windows, 
+and pick up some valuable `psql` tips and tricks along the way.
 
 [Hello Timescale]: /tutorials/tutorial-hello-timescale
 [Forecasting]: /tutorials/tutorial-forecasting
@@ -45,3 +48,5 @@ with some sample data, we have some ready-made data sets for you to explore.
 [timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
 [timescale-community-install]: /getting-started/installation
 [psql]: /getting-started/install-psql-tutorial
+[Crypto]: /tutorials/analyze-cryptocurrency-data
+[Tableau]: /tutorials/visualizing-time-series-data-in-tableau

@@ -449,6 +449,11 @@ const pageIndex = [
                 href: "tutorial-forecasting",
                 children: []
             }, {
+                Title: "Analyzing cryptocurrency data",
+                type: PAGE,
+                href: "analyze-cryptocurrency-data",
+                children: []
+            }, {
                 Title: "Replication",
                 type: PAGE,
                 href: "replication",
@@ -472,6 +477,11 @@ const pageIndex = [
                 Title: "Collecting metrics with Telegraf",
                 type: PAGE,
                 href: "telegraf-output-plugin",
+                children: []
+            }, {
+                Title: "Visualizing data in Tableau",
+                type: PAGE,
+                href: "visualizing-time-series-data-in-tableau",
                 children: []
             },{
                 Title: "Other sample datasets",
