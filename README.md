@@ -76,6 +76,8 @@ being written with arguments within the parentheses.
 1. "PostgreSQL" is the way to write the elephant database name, rather than
 "Postgres".  "TimescaleDB" refers to the database, "Timescale" refers to the
 company.
+1. Use single quotes when referring to the object of a user interface action.
+For example: Click 'Get started' to proceed with the tutorial.
 
 ### Special rules
 There are some custom modifications to the markdown parser to allow for special
