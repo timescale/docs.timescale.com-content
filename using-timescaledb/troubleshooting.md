@@ -85,8 +85,8 @@ can get even more information by enabling the
 [track\_io\_timing][track_io_timing] variable with `SET track_io_timing = 'on';`
 before running the above EXPLAIN.
 
-When asking query-performance related questions by
-email(<support@timescale.com>) or [slack][], providing the EXPLAIN output of a
+When asking query-performance related questions in our [support portal][]
+or via [slack][], providing the EXPLAIN output of a
 query is immensely helpful.
 
 ---
@@ -112,3 +112,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [using explain]: https://www.postgresql.org/docs/current/static/using-explain.html
 [track_io_timing]: https://www.postgresql.org/docs/current/static/runtime-config-statistics.html#GUC-TRACK-IO-TIMING
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
+[support portal]: https://www.timescale.com/support

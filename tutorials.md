@@ -31,6 +31,7 @@ data analysis and make forecasts on your data.
 
 - **[Sample data sets][Data Sets]**: And if you want to explore on your own
 with some sample data, we have some ready-made data sets for you to explore.
+- **[psql installation][psql]**: Learn how to install psql on Mac, Ubuntu, Debian, Windows, and pick up some valuable `psql` tips and tricks along the way.
 
 [Hello Timescale]: /tutorials/tutorial-hello-timescale
 [Forecasting]: /tutorials/tutorial-forecasting
@@ -43,4 +44,3 @@ with some sample data, we have some ready-made data sets for you to explore.
 [timescale-cloud]: https://www.timescale.com/products
 [timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
 [timescale-community-install]: /getting-started/installation
-
