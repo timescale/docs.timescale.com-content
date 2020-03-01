@@ -266,7 +266,7 @@ interval (here, `1 day`) across a specified period.
 
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, '2017-09-01', '2017-10-01')::date AS date,
+  time_bucket_gapfill('1 day', time)::date AS date,
   sum(volume) AS volume
 FROM trades
 WHERE asset_code = 'TIMS'
@@ -295,26 +295,26 @@ Note that we can do basic arithmetic operations on intervals easily in order to 
 value to pass to time_bucket.
 ```sql
 SELECT
-  time_bucket_gapfill(interval '2 weeks' / 1080, now() - interval '2 weeks', '2017-09-01', '2017-10-01'),
+  time_bucket_gapfill(interval '2 weeks' / 1080, time, now() - interval '2 weeks', now()) AS btime,
   sum(volume) AS volume
 FROM trades
 WHERE asset_code = 'TIMS'
-  AND time >= '2017-09-01' AND time < '2017-10-01'
-GROUP BY date
-ORDER BY date DESC;
+  AND time >= now() - interval '2 weeks' AND time < now()
+GROUP BY btime
+ORDER BY btime;
 ```
 This query will output data of the form:
 ```
-         btime          | avg_data
+         btime          | volume
 ------------------------+----------
  2018-03-09 17:28:00+00 |  1085.25
  2018-03-09 17:46:40+00 |  1020.42
- 2018-03-09 18:05:20+00 |  NULL
+ 2018-03-09 18:05:20+00 |
  2018-03-09 18:24:00+00 |  1031.25
  2018-03-09 18:42:40+00 |  1049.09
  2018-03-09 19:01:20+00 |  1083.80
  2018-03-09 19:20:00+00 |  1092.66
- 2018-03-09 19:38:40+00 |  NULL
+ 2018-03-09 19:38:40+00 |
  2018-03-09 19:57:20+00 |  1048.42
  2018-03-09 20:16:00+00 |  1063.17
  2018-03-09 20:34:40+00 |  1054.10
