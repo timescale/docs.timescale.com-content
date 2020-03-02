@@ -151,6 +151,36 @@ will be spawned immediately following completion. This means that the part of th
 data processed by previous jobs will be available even before the
 materialization is fully caught up.
 
+The `timescaledb.ignore_invalidation_older_than` parameter controls
+how modifications (inserts, updates, and deletes) will trigger update
+of the continuous aggregate. If modifications are done to the
+underlying table, it invalidates the already computed
+aggregate and the aggregate has to be updated.
+
+By default, all modifications trigger a update of the continuous
+aggregate. If the `ignore_invalidation_older_than` parameter is set to
+a duration, modifications with a timestamp that is older will be
+ignored and not trigger an update of the continuous aggregate. As a
+result, refresh jobs will complete faster since they are only dealing
+with new data as part of the refresh.
+
+A common use case is to drop the raw data from the hypertable and just
+keep the downsampled data in the continuous aggregate. So, for
+example, if you want to keep all downsampled data, but drop anything
+from the raw tables that is older than 30 days, you set
+`ignore_invalidation_older_than` to `30 days` and can then drop old
+chunks from the table using `drop_chunks`:
+
+```sql
+ALTER VIEW device_readings SET (
+  timescaledb.ignore_invalidation_older_than = '30 days'
+);
+SELECT drop_chunks(INTERVAL '30 days', 'device_readings')
+```
+
+You can read more about data retention with continuous aggregates in
+the [*Data retention*][sec-data-retention] section.
+
 >:TIP: Most times the continuous aggregate view will be updated by the background job;
   however, if you would like to run it yourself, you may use the
   [`REFRESH MATERIALIZED VIEW` command][api-refresh-continuous-aggs].
@@ -340,6 +370,7 @@ implement a number of these aggregates.
 ---
 
 
+[sec-data-retention]: /using-timescaledb/data_retention#data-retention
 [postgres-materialized-views]: https://www.postgresql.org/docs/current/rules-materializedviews.html
 [api-continuous-aggs]:/api#continuous-aggregates
 [postgres-createview]: https://www.postgresql.org/docs/current/static/sql-createview.html
