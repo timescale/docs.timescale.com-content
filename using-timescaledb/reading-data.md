@@ -237,7 +237,7 @@ traded every day for the month of September:
 
 ```sql
 SELECT
-    time_bucket('1 day', time)::date AS date,
+    time_bucket('1 day', time) AS date,
     sum(volume) AS volume
   FROM trades
   WHERE asset_code = 'TIMS'
@@ -247,14 +247,14 @@ SELECT
 ```
 This query will output data in the following form:
 ```
-    date    | volume
-------------+--------
- 2017-09-29 |  11315
- 2017-09-28 |   8216
- 2017-09-27 |   5591
- 2017-09-26 |   9182
- 2017-09-25 |  14359
- 2017-09-22 |   9855
+          date          | volume
+------------------------+--------
+ 2017-09-29 00:00:00+00 |  11315
+ 2017-09-28 00:00:00+00 |   8216
+ 2017-09-27 00:00:00+00 |   5591
+ 2017-09-26 00:00:00+00 |   9182
+ 2017-09-25 00:00:00+00 |  14359
+ 2017-09-22 00:00:00+00 |   9855
 ```
 
 Note that no records are included for 09-23, 09-24, or 09-30 as no
@@ -266,7 +266,7 @@ interval (here, `1 day`) across a specified period.
 
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time)::date AS date,
+  time_bucket_gapfill('1 day', time) AS date,
   sum(volume) AS volume
 FROM trades
 WHERE asset_code = 'TIMS'
@@ -276,17 +276,17 @@ ORDER BY date DESC;
 ```
 This query will then output data in the following form:
 ```
-    date    | volume
-------------+--------
- 2017-09-30 |
- 2017-09-29 |  11315
- 2017-09-28 |   8216
- 2017-09-27 |   5591
- 2017-09-26 |   9182
- 2017-09-25 |  14359
- 2017-09-24 |
- 2017-09-23 |
- 2017-09-22 |   9855
+          date          | volume
+------------------------+--------
+ 2017-09-30 00:00:00+00 |
+ 2017-09-29 00:00:00+00 |  11315
+ 2017-09-28 00:00:00+00 |   8216
+ 2017-09-27 00:00:00+00 |   5591
+ 2017-09-26 00:00:00+00 |   9182
+ 2017-09-25 00:00:00+00 |  14359
+ 2017-09-24 00:00:00+00 |
+ 2017-09-23 00:00:00+00 |
+ 2017-09-22 00:00:00+00 |   9855
 ```
 For example, let's say you want 1080 data points in the last two weeks and, as many graphing
 libraries require time data points with null values to draw gaps in a graph, we need to
