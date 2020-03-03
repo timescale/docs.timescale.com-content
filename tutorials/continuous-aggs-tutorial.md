@@ -156,23 +156,14 @@ aggregates only for the data that satisfies the condition:
 `time_bucket('1h', pickup_datetime) < max(pickup_time) - '1h'` (if the
 `refresh_lag` is set to 1 hour)
 
-Both `refresh_lag` or `refresh_interval` can be set to an integer
-value, which is then interpreted as the number of microseconds for the
-lag or interval respectively.
-
-To keep the continuous aggregate up-to-date,
-you can set `timescaledb.refresh_lag` to a negative value. This will allow the continuous aggregate
-to update when new data comes in. However, do note that this comes with performance implications,
-since the aggregate query will be run more often. 
-
 The `timescaledb.max_interval_per_job` parameter is used when we want to limit
 the amount of data processed by an update of the continuous aggregate and use
 smaller or bigger batch sizes (the batching is done automatically by TimescaleDB).
 `timescaledb.max_interval_per_job` specifies the batch size.
 
-`refresh_lag` and `max_interval_per_job` are additional parameters that can be
-specified while creating or altering a continuous aggregate. Refer to the
-documentation for the syntax.
+The parameters `refresh_lag` and `max_interval_per_job` can be
+specified while creating or altering a continuous aggregate. Refer to
+the documentation for the syntax.
 
 The `timescaledb.ignore_invalidation_older_than` parameter is used
 when you want to avoid updating a continuous aggregate when modifying
@@ -249,13 +240,6 @@ refresh_lag                | 01:00:00
 refresh_interval           | 00:30:00
 max_interval_per_job       | 20:00:00
 materialization_hypertable | _timescaledb_internal._materialized_hypertable_2
-```
-
-We can also manually update the continuous aggregate query by using the
-`REFRESH` command.
-
-``` sql
-REFRESH MATERIALIZED VIEW cagg_rides_view;
 ```
 
 You will find more details about the API in the [documentation][tsdb_doc].

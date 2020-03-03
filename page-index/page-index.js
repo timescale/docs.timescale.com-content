@@ -383,6 +383,10 @@ const pageIndex = [
                         type: ANCHOR,
                         href: "#dropping-data"
                     }, {
+                        Title: "Advanced Topics",
+                        type: ANCHOR,
+                        href: "#advanced-usage"
+                    }, {
                         Title: "Best Practices",
                         type: ANCHOR,
                         href: "#best-practices"
