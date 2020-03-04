@@ -28,7 +28,7 @@ built-in Postgres connector. To connect to your database add a new connection an
 ‘to a server’ section, select PostgreSQL as the connection type. Then enter your database 
 credentials.
 
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/tutorial-tableau/postgres-connection.png" alt="Configure your PostgreSQL connection"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/postgres-connection.png" alt="Configure your PostgreSQL connection"/>
 
 ### Step 2: Run a simple query in Tableau
 
@@ -53,7 +53,7 @@ You should see the same results in Tableau that you see when you run the query i
 
 Let's also name our data source 'btc_7_days', which you can see below.
 
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/tutorial-tableau/tableau-simple-query-results.png" alt="Using Tableau to view time-series data"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tableau-simple-query-results.png" alt="Using Tableau to view time-series data"/>
 
 ### Step 3: Visualize data in Tableau
 
@@ -64,7 +64,7 @@ graph in Tableau.
 To do this, create a new worksheet (or dashboard) and then select your desired data source 
 (in our case ‘btc_7_days’), as shown below.
 
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/tutorial-tableau/tableau-new-worksheet.png" alt="New worksheet in Tableau to examine time-series data"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tableau-new-worksheet.png" alt="New worksheet in Tableau to examine time-series data"/>
 
 In the far left pane, you'll see a section Tableau calls 'Dimensions' and 'Measures'.
 Whenever you use Tableau, it will classify your fields as either dimensions or
@@ -83,13 +83,13 @@ our worksheet, while we want to examine the measure `last_closing_price` dependi
 on a given `period`. In Tableau, we can drag and drop these elements into the
 proper place, like so:
 
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/tutorial-tableau/tableau-dimension-measure-setup.png" alt="New dimensions and measures in Tableau to examine time-series data"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tableau-dimension-measure-setup.png" alt="New dimensions and measures in Tableau to examine time-series data"/>
 
 Now this graph doesn’t quite have the level of fidelity we’re looking for because 
 the data points are being grouped by year. To fix this, click on the drop down 
 arrow on period and select 'exact date'.
 
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/tutorial-tableau/tableau-granular.png" alt="Analyze granular data in Tableau to examine time-series data"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tableau-granular.png" alt="Analyze granular data in Tableau to examine time-series data"/>
 
 Tableau is a powerful business intelligence tool and an ideal companion to data
 stored in TimescaleDB. We've only scratched the surface of the kinds of data
