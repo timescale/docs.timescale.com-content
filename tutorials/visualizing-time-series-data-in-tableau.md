@@ -28,8 +28,6 @@ built-in Postgres connector. To connect to your database add a new connection an
 ‘to a server’ section, select PostgreSQL as the connection type. Then enter your database
 credentials.
 
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/tutorial-tableau/postgres-connection.png" alt="Configure your PostgreSQL connection"/>
-
 ### Step 2: Run a simple query in Tableau
 
 Let's use the built-in SQL editor in Tableau. To run a query, add custom SQL to your data source
