@@ -135,7 +135,7 @@ SELECT
 FROM rides 
 ```
 
-#### The Grafana __timeFilter function
+#### The Grafana \_\_timeFilter function
 
 Grafana time-series panels include a tool that enables the end-user to filter on a given 
 time range. A “time filter,” if you will. Not surprisingly, Grafana has a way to link the 
