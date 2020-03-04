@@ -24,7 +24,7 @@ browse to this service and click on the 'Overview' tab. In the 'Connection Infor
 section, you will see the port number that is used for database connections. This is 
 the port we will protect by managing inbound access.
 
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/securing-timescale-cloud/overview-tab.png" alt="Timescale Cloud Overview tab"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/overview-tab.png" alt="Timescale Cloud Overview tab"/>
 
 ### Step 2 - Find the allowed IP addresses section
 
@@ -36,7 +36,7 @@ Scroll down to find the 'Allowed IP Addresses' section. By default, this value i
 If you are curious about how to interpret this [Classless Inter-Domain Routing][cidr-wiki] (CIDR) syntax, 
 check out [this great online tool][cidr-tool] to help decipher CIDR.
 
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/securing-timescale-cloud/allowed-ip.png" alt="Allowed IP addresses"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/allowed-ip.png" alt="Allowed IP addresses"/>
 
 ### Step 3 - Change the allowed IP addresses section
 

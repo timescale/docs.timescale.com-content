@@ -15,10 +15,10 @@ or even SQL, check out our tutorial with NYC taxicab data to get an idea of the
 capabilities our database has to offer.
 - **[Time-series Forecasting][Forecasting]**: Use R, Apache MADlib and Python to perform
 data analysis and make forecasts on your data.
+- **[Analyze Cryptocurrency Data][Crypto]**: Use TimescaleDB to analyze historic cryptocurrency data. Learn how to build your own schema, ingest data, and analyze information in TimescaleDB.
 
 ### How to use specific TimescaleDB features
 
-- **[Analyze Cryptocurrency Data][Crypto]**: Use TimescaleDB to analyze historic cryptocurrency data. Learn how to build your own schema, ingest data, and analyze information in TimescaleDB.
 - **[Replication][]**: TimescaleDB takes advantage of well established PostgreSQL methods for replication.  Here we provide a detailed guide along with additional resources for setting up streaming replicas.
 - **[Continuous Aggregates][]**: Getting started with continuous aggregates.
 
@@ -34,7 +34,8 @@ data analysis and make forecasts on your data.
 
 - **[Sample data sets][Data Sets]**: And if you want to explore on your own
 with some sample data, we have some ready-made data sets for you to explore.
-- **[psql installation][psql]**: Learn how to install psql on Mac, Ubuntu, Debian, Windows, 
+- **[psql installation][psql]**: `psql` is a terminal-based front-end for PostgreSQL.
+Learn how to install `psql` on Mac, Ubuntu, Debian, Windows, 
 and pick up some valuable `psql` tips and tricks along the way.
 
 [Hello Timescale]: /tutorials/tutorial-hello-timescale
