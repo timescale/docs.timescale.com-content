@@ -20,7 +20,7 @@ the `conditions` hypertable will still have data stretching back 36 hours.
 For more information on the `drop_chunks` function and related
 parameters, please review the [API documentation][drop_chunks].
 
-### Automatic Data Retention Policies :enterprise_function:
+### Automatic Data Retention Policies
 
 TimescaleDB includes a background job scheduling framework for automating data
 management tasks, such as enabling easy data retention policies.
