@@ -13,7 +13,7 @@ prefer to run your own instance of TimescaleDB, follow [the installation instruc
 and the remainder of the tutorial should be fairly straightforward to follow.
 
 If you’ve followed the setup instructions, you should have a working version 
-of TimescaleDB (preferably Timescale Cloud) with data preloaded. In our case, 
+of TimescaleDB with data preloaded. In our case, 
 we will use the New York City taxicab data found in the 
 [Hello, Timescale!][hello-timescale] tutorial. Be sure to follow the full 
 tutorial if you’re interested in background on how to use TimescaleDB.
@@ -21,17 +21,17 @@ tutorial if you’re interested in background on how to use TimescaleDB.
 If you’re using Timescale Cloud, you can setup a Grafana Metrics Dashboard 
 from the **Create Service** flow.
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/create_service.png" alt="Create a new Grafana service"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/create_service.png" alt="Create a new Grafana service"/>
 
 >:TIP: Alternatively, you can setup [Grafana Cloud][grafana-cloud] and follow the rest of the instructions below. Note that Grafana Cloud is more feature-rich than the open source version of Grafana included with Timescale Cloud, but does require a paid subscription from Grafana.
 
 Finally, you need to configure Grafana to connect to your Timescale Cloud 
-instance.
+instance (or your own installation of TimescaleDB).
 
 Start by selecting 'Add Data Source' and choosing the 'PostgreSQL' option 
 in the SQL group:
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/add_data_source.png" alt="Adding Postgres to Grafana"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/add_data_source.png" alt="Adding Postgres to Grafana"/>
 
 In the configuration screen, supply the `Host`, `Database`, `User`, and `Password` for 
 your Timescale Cloud instance (or TimescaleDB server). 
@@ -39,7 +39,7 @@ your Timescale Cloud instance (or TimescaleDB server).
 If you’re a Timescale Cloud user, you can see this in the Service Dashboard for your 
 Timescale Cloud instance.
 
->:TIP: Don’t forget to add the port number after your host URI. For example, `hostname.timescaledb.io:19660`. And don’t forget to change the Database name, if necessary.
+>:TIP: Don’t forget to add the port number after your host URI. For example, `hostname.timescaledb.io:19660`. And don’t forget to change the database name, if necessary.
 
 Since we will be connecting to a TimescaleDB instance (in Timescale Cloud) for this 
 tutorial, we will also want to check the option for 'TimescaleDB' in the 
@@ -52,7 +52,7 @@ contains.
 Once done, click 'Save & Test'. You should receive confirmation that your database 
 connection is working.
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/save_and_test.png" alt="Test your Grafana database connection"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/save_and_test.png" alt="Test your Grafana database connection"/>
 
 ### Creating a Grafana Dashboard and Panel
 
@@ -61,12 +61,12 @@ onto the performance of a system, and each dashboard consists of one or more pan
 which represents information about a specific metric related to that system.
 
 We will start by creating a new dashboard. In the far left of the Grafana user 
-interface, you’ll see a `+` icon. If you hover over it, you’ll see a 'Create' menu, 
+interface, you’ll see a '+' icon. If you hover over it, you’ll see a 'Create' menu, 
 within which is a 'Dashboard' option. Select that 'Dashboard' option.
 
 After creating a new dashboard, you’ll see a 'New Panel' screen, with options 
 for 'Add Query' and 'Choose Visualization'. In the future, if you already have a 
-dashboard with panels, you can click on the `+` icon at the **top** of the Grafana user 
+dashboard with panels, you can click on the '+' icon at the **top** of the Grafana user 
 interface, which will enable you to add a panel to an existing dashboard.
 
 To proceed with our tutorial, let’s add a new visualization by clicking on the 'Choose 
@@ -75,24 +75,24 @@ Visualization' option.
 At this point, you’ll have several options for different Grafana visualizations. We will 
 choose the first option, the 'Graph' visualization.
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/grafana_visualizations.png" alt="Grafana visualizations to choose from"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/grafana_visualizations.png" alt="Grafana visualizations to choose from"/>
 
 There are multiple ways to configure our panel, but we will accept all the defaults 
 and create a simple 'Lines' graph.
 
 In the far left section of the Grafana user interface, select the 'Queries' tab.
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/create_grafana_query.png" alt="How to create a new Grafana query"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/create_grafana_query.png" alt="How to create a new Grafana query"/>
 
 Instead of using the Grafana query builder, we will edit our query directly. In the 
 view, click on the 'Edit SQL' button at the bottom.
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/edit_sql_in_grafana.png" alt="Edit custom SQL queries in Grafana"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/edit_sql_in_grafana.png" alt="Edit custom SQL queries in Grafana"/>
 
 Before we can begin authoring our query, we also want to set the Query database to the New 
 York City taxi cab datasource we connected to earlier:
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/set_datasource.png" alt="Switching data sources in Grafana"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/set_datasource.png" alt="Switching data sources in Grafana"/>
 
 ### Visualize metrics stored in TimescaleDB
 
@@ -102,8 +102,8 @@ from the [Hello, Timescale!][hello-timescale] tutorial.
 From the tutorial, you can see the standard SQL syntax for our query:
 
 ```sql
-SELECT date_trunc('day', pickup_datetime) as day, 
-COUNT(*) 
+SELECT date_trunc('day', pickup_datetime) AS day, 
+  COUNT(*) 
 FROM rides 
 GROUP BY day 
 ORDER BY day;
@@ -135,25 +135,24 @@ SELECT
 FROM rides 
 ```
 
-#### The Grafana __timeFilter command
+#### The Grafana __timeFilter function
 
 Grafana time-series panels include a tool that enables the end-user to filter on a given 
 time range. A “time filter,” if you will. Not surprisingly, Grafana has a way to link the 
 user interface construct in a Grafana panel with the query itself. In this case, 
 the `$__timefilter()` function.
 
-In the modified query below, we will enable the Grafana filtering user interface element 
-to set the range for the `pickup_datetime` column in our original New York City taxicab 
-database.
+In the modified query below, we will use the `$__timefilter()` function
+to set the `pickup_datetime` column as the filtering range for our visualizations.
 
 ```sql
 SELECT 
   --1--
   time_bucket('1 day', pickup_datetime) AS "time",
   --2--
-  count(*)
+  COUNT(*)
 FROM rides
-where $__timeFilter(pickup_datetime)
+WHERE $__timeFilter(pickup_datetime)
 ```
 
 #### Referencing elements in our query
@@ -171,16 +170,16 @@ SELECT
   --1--
   time_bucket('1 day', pickup_datetime) AS "time",
   --2--
-  count(*)
+  COUNT(*)
 FROM rides
-where $__timeFilter(pickup_datetime)
+WHERE $__timeFilter(pickup_datetime)
 GROUP BY 1
 ORDER BY 1
 ```
 
 When we visualize this query in Grafana, we see the following:
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/grafana_query_results.png" alt="Visualizing time-series data in Grafana"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/grafana_query_results.png" alt="Visualizing time-series data in Grafana"/>
 
 ### Visualize geospatial data stored in TimescaleDB
 
@@ -192,18 +191,20 @@ near Times Square. Let’s build on that query and
 We can do this in Grafana using the 'Worldmap Panel'. We will start by creating a 
 new panel, selecting 'New Visualization', and selecting the 'Worldmap Panel'.
 
-Once again, we will edit our query directly. In the resulting Query screen, be sure 
+Once again, we will edit our query directly. In the Query screen, be sure 
 to select your NYC Taxicab Data as the data source. In the 'Format as' dropdown, 
 select 'Table'. Click on 'Edit SQL' and enter the following query in the text window:
 
 ```sql
 SELECT time_bucket('1 day', rides.pickup_datetime) AS time,
-       count(rides.trip_distance > 5) AS value, 
+       COUNT(rides.trip_distance > 5) AS value, 
        rides.pickup_latitude AS latitude, 
        rides.pickup_longitude AS longitude
 FROM rides
-where $__timeFilter(rides.pickup_datetime) AND
-ST_Distance(pickup_geom, ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)) < 2000
+WHERE $__timeFilter(rides.pickup_datetime) AND
+  ST_Distance(pickup_geom, 
+              ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)
+  ) < 2000
 GROUP BY time,
          rides.trip_distance,
          rides.pickup_latitude,
@@ -214,7 +215,7 @@ LIMIT 50;
 
 Let’s dissect this query. First, we’re looking to count the number of rides that were 
 greater than five miles in distance. The Grafana Worldmap panel cannot plot discrete 
-points. It can only plot aggregations. So, we will `count` the number of rides whose 
+points. It can only plot aggregations. So, we will `COUNT` the number of rides whose 
 `trip_distance` matches our parameters. We will store this result in the `value` 
 field.
 
@@ -237,11 +238,11 @@ and more. We are concerned with the 'Field Mappings' section. We will set the
 variable, the 'Longitude Field' to our `longitude` variable, and the 'Metric' field to our 
 `value` variable. Your configuration should look like this:
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/grafana_fieldmapping.png" alt="Mapping Worldmap fields to query results in Grafana"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/grafana_fieldmapping.png" alt="Mapping Worldmap fields to query results in Grafana"/>
 
 At this point, data should be flowing into our Worldmap visualization, like so:
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/tutorial-grafana/grafana_worldmap_query_results.png" alt="Visualizing time series data in PostgreSQL using the Grafana Worldmap"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/grafana_worldmap_query_results.png" alt="Visualizing time series data in PostgreSQL using the Grafana Worldmap"/>
 
 You should be able to edit the time filter at the top of your visualization to see trip pickup data 
 for different timeframes.
@@ -254,7 +255,7 @@ you’re storing in TimescaleDB.
 
 [grafana-website]: https://grafana.com
 [timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/setup-timescale-cloud
+[timescale-cloud-install]: /getting-started/explore-cloud
 [timescaledb-install]: /getting-started/installation
 [hello-timescale]: /tutorials/tutorial-hello-timescale
 [grafana-cloud]: https://grafana.com/get
