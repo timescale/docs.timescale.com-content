@@ -24,10 +24,10 @@ data analysis and make forecasts on your data.
 
 ### Integrating with other products
 
-- **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers.
-- **[Visualizing Data with Grafana][grafana]**: Visualize time-series data with this primer on getting started with Grafana.
-- **[Collecting metrics with Telegraf][Telegraf Output Plugin]**: Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf.
 - **[Migrate from InfluxDB with Outflux][Outflux]**: Use our open-source migration tool to transfer your data from InfluxDB to TimescaleDB.
+- **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers.
+- **[Collecting metrics with Telegraf][Telegraf Output Plugin]**: Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf.
+- **[Visualizing Data with Grafana][grafana]**: Visualize time-series data with this primer on getting started with Grafana.
 - **[Visualize Time-Series Data using Tableau][Tableau]**: Learn how to configure Tableau to connect to TimescaleDB and visualize your time-series data.
 
 ### Additional resources
