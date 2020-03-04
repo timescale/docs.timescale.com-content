@@ -92,7 +92,7 @@ view, click on the 'Edit SQL' button at the bottom.
 Before we can begin authoring our query, we also want to set the Query database to the New 
 York City taxi cab datasource we connected to earlier:
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/set_datasource.png" alt="Switching data sources in Grafana"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/set_data_source.png" alt="Switching data sources in Grafana"/>
 
 ### Visualize metrics stored in TimescaleDB
 
