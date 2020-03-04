@@ -1341,7 +1341,7 @@ aggregate, such as views that are built on top of the continuous aggregate view.
 
 
 ---
-## Automation policies :enterprise_function: [](automation-policies)
+## Automation policies [](automation-policies)
 
 TimescaleDB includes an automation framework for allowing background tasks to
 run inside the database, controllable by user-supplied policies. These tasks
@@ -1354,7 +1354,7 @@ are meant to implement data retention or perform tasks that will improve query
 performance on older chunks. Each policy is assigned a scheduled job
 which will be run in the background to enforce it.
 
-## add_drop_chunks_policy() :enterprise_function: [](add_drop_chunks_policy)
+## add_drop_chunks_policy() [](add_drop_chunks_policy)
 Create a policy to drop chunks older than a given interval of a particular
 hypertable on a schedule in the background. (See [drop_chunks](#drop_chunks)).
 This implements a data retention policy and will remove data on a schedule. Only
@@ -1401,7 +1401,7 @@ SELECT add_drop_chunks_policy('conditions', INTERVAL '6 months');
 creates a data retention policy to discard chunks greater than 6 months old.
 
 ---
-## remove_drop_chunks_policy() :enterprise_function: [](remove_drop_chunks_policy)
+## remove_drop_chunks_policy() [](remove_drop_chunks_policy)
 Remove a policy to drop chunks of a particular hypertable.
 
 #### Required Arguments [](remove_drop_chunks_policy-required-arguments)
@@ -1429,7 +1429,7 @@ removes the existing data retention policy for the `conditions` table.
 
 
 ---
-## add_reorder_policy() :enterprise_function: [](add_reorder_policy)
+## add_reorder_policy() [](add_reorder_policy)
 Create a policy to reorder chunks older on a given hypertable index in the
 background. (See [reorder_chunk](#reorder_chunk)). Only one reorder policy may
 exist per hypertable. Only chunks that are the 3rd from the most recent will be
@@ -1471,7 +1471,7 @@ SELECT add_reorder_policy('conditions', 'conditions_device_id_time_idx');
 creates a policy to reorder completed chunks by the existing `(device_id, time)` index. (See [reorder_chunk](#reorder_chunk)).
 
 ---
-## remove_reorder_policy() :enterprise_function: [](remove_reorder_policy)
+## remove_reorder_policy() [](remove_reorder_policy)
 Remove a policy to reorder a particular hypertable.
 
 #### Required Arguments [](remove_reorder_policy-required-arguments)
