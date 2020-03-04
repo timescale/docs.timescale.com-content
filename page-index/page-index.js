@@ -482,21 +482,21 @@ const pageIndex = [
                 href: "prometheus-adapter",
                 children: []
             }, {
-                Title: "Visualizing data with Grafana",
-                type: PAGE,
-                href: "tutorial-grafana",
-                children: []
-            }, {
                 Title: "Collecting metrics with Telegraf",
                 type: PAGE,
                 href: "telegraf-output-plugin",
+                children: []
+            }, {
+                Title: "Visualizing data with Grafana",
+                type: PAGE,
+                href: "tutorial-grafana",
                 children: []
             }, {
                 Title: "Visualizing data in Tableau",
                 type: PAGE,
                 href: "visualizing-time-series-data-in-tableau",
                 children: []
-            },{
+            }, {
                 Title: "Other sample datasets",
                 type: PAGE,
                 href: "other-sample-datasets",
