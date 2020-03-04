@@ -157,24 +157,22 @@ WHERE $__timeFilter(pickup_datetime)
 
 #### Referencing elements in our query
 
-Finally, we will reference elements of the `SELECT` statement in our query. 
-In our case, we want to group our visualization by the time buckets we’ve selected, 
+Finally, we want to group our visualization by the time buckets we’ve selected, 
 and we want to order the results by the time buckets as well. So, our `GROUP BY` 
-and `ORDER BY` statements will refer to the first element of the `SELECT` statement, 
-in this case the `time_bucket` query.
+and `ORDER BY` statements will reference `time`.
 
 With these changes, this is our final Grafana query:
 
 ```sql
 SELECT 
   --1--
-  time_bucket('1 day', pickup_datetime) AS "time",
+  time_bucket('1 day', pickup_datetime) AS time,
   --2--
   COUNT(*)
 FROM rides
 WHERE $__timeFilter(pickup_datetime)
-GROUP BY 1
-ORDER BY 1
+GROUP BY time
+ORDER BY time
 ```
 
 When we visualize this query in Grafana, we see the following:
