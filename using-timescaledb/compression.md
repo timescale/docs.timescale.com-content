@@ -353,7 +353,7 @@ Another factor to be mindful of when planning your compression strategy is the
 additional storage overhead needed to decompress chunks. This is key when you are
 provisioning storage for use with TimescaleDB. You want to ensure that you plan for
 enough storage headroom to decompress some chunks if needed. Our
-[move chunks][move-chunks] feature can help manage storage requirements by
+[`move_chunk`][move-chunk] feature can help manage storage requirements by
 allowing you to move chunks between different storage volumes.
 
 If you find yourself needing to decompress historical chunks, but in a scenario
