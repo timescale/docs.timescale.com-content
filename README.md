@@ -79,28 +79,28 @@ company.
 1. Use single quotes when referring to the object of a user interface action.
 For example: Click 'Get started' to proceed with the tutorial.
 
-### Special rules
+<style>
+  table br {
+    display: block !important;
+  }
+</style>
+
+## Special rules
 There are some custom modifications to the markdown parser to allow for special
 formatting within the docs.
 
-+ Adding `sss ` to the start of every list item in an ordered list will result in
-  a switch to "steps" formatting which is used to denote instructional steps, as
-  for a tutorial.
-+ Adding `>:TIP: ` to the start of a blockquote (using '>') will create a "tip" callout.
-+ Adding `>:WARNING: ` to the start of a blockquote (using '>') will create a "warning" callout.
-+ Adding `>:TOPLIST: ` as the first line of a blockquote (using '>') will
-create a fixed right-oriented box, useful for a table of contents or list of
-functions, etc.  See the FAQ page (faq.md) for an example.
-    - The first headline in the toplist will act as the title and will be separated from the remainder of the content stylewise (on the FAQ page, it's the headline "Questions").
-    - Everything else acts as a normal blockquote does.
-+ Adding a text free link to a header with a text address (Ex. `## Important Header [](indexing)`) will create an anchor icon that links to that header with the hash name of the text.
-+ Adding `:FOOTER_LINK: ` to the start of a paragraph(line) will format it as a "footer link".
-+ Adding `:DOWNLOAD_LINK: ` to the start of a link will append a 'download link' icon to the end of the link inline.
-+ Adding `x.y.z` anywhere in the text will be replaced by the version number of the branch.  Ex. `look at file foo-x.y.z` >> `look at file foo-0.4.2`.
-+ Adding `:pg_version:` to text displayed in an installation section (i.e. any page with a filename beginning `installation-`) will display the PostgreSQL version number.  This is primarily to be used for displayed filenames in install instructions that need to be modular based on the version.
-+ Designating functions
-    + Adding `:community_function:` to a header (for example, in the api section) adds decorator text "community function".
-    + Adding `:enterprise_function:` to a header adds decorator text "enterprise function".
+- [SSS](#sss)
+- [Tip callout](#tip-callout)
+- [Warning callout](#warning-callout)
+- [TopList](#toplist)
+- [Important header](#important-header)
+- [Footer link](#footer-link)
+- [Download link](#download-link)
+- [Version link](#version-link)
+- [PG version](#pg-version)
+- [Designating functions](#designating-functions)
+- [Multiple language example](#multiple-language-example)
+- [Card grid](#card-grid)
 
 _Make sure to include the space after the formatting command!_
 
@@ -111,6 +111,195 @@ paragraph tag.  This is due to the way that the markdown parser interprets
 blockquotes with the new modifications.
 This will be fixed in future versions if it becomes a big issue, but we don't
 anticipate that.
+
+### SSS
+Adding `sss ` to the start of every list item in an ordered list will result in a switch to "steps" formatting which is used to denote instructional steps, as for a tutorial.
+
+---  
+
+### Tip callout
+Adding `>:TIP: ` to the start of a blockquote (using '>') will create a "tip" callout.
+
+**Markdown**
+```markdown
+>:TIP: If you are planning on doing any performance testing on TimescaleDB, 
+we strongly recommend that you [configure][] TimescaleDB properly.
+```
+
+**Output**
+
+<img src="https://assets.timescale.com/docs/images/docs-tip-example.png" width="600" />
+
+---
+
+### Warning callout
+Adding `>:WARNING: ` to the start of a blockquote (using '>') will create a "warning" callout.
+    
+**Markdown**
+```markdown
+>:WARNING: Starting in v0.12.0, TimescaleDB enables[telemetry reporting][] by default. You can 
+opt-out by following the instructions detailed in our[telemetry documentation][]. However, please 
+do note thattelemetry is anonymous, and by keeping it on, you help us[improve our product][].
+```
+
+**Output**
+
+<img src="https://assets.timescale.com/docs/images/docs-warning-example.png" width="600" />
+
+---
+    
+### Toplist
+Adding `>:TOPLIST: ` as the first line of a blockquote (using '>') will
+create a fixed right-oriented box, useful for a table of contents or list of
+functions, etc.  See the FAQ page (faq.md) for an example.
+   - The first headline in the toplist will act as the title and will be separated from the remainder of the content stylewise (on the FAQ page, it's the headline "Questions").
+   - Everything else acts as a normal blockquote does.
+
+**Markdown**
+
+```markdown
+>:TOPLIST:
+> ### Command List (A-Z)
+> - [add_dimension](#add_dimension) 
+> - [add_drop_chunks_policy](#add_drop_chunks_policy)
+> - [add_reorder_policy](#add_reorder_policy)
+> -   [add_compress_chunks_policy](#add_compress_chunks_policy)
+> - [alter_job_schedule](#alter_job_schedule)
+> - [alter table (compression)](#compression_alter-table) 
+> - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
+> - [attach_tablespace](#attach_tablespace)
+> - [chunk_relation_size](#chunk_relation_size)
+> - ...
+```
+
+**Output**
+
+<img src="https://assets.timescale.com/docs/images/docs-toplist-example.png" width="300" />
+    
+---
+
+### Important header
+
+Adding a text free link to a header with a text address (Ex. `## Important Header [](indexing)`) will create an anchor icon that links to that header with the hash name of the text.
+
+**Markdown**
+
+<pre><code>&#35;&#35; Recommended: `timescaledb-tune` &lsqb;](ts-tune)</pre></code>
+
+**Output**
+
+<img src="https://assets.timescale.com/docs/images/docs-important-header-example.png" width="300" />
+
+---
+
+### Footer link
+Adding `:FOOTER_LINK: ` to the start of a paragraph(line) will format it as a "footer link".
+
+---
+
+### Download link
+Adding `:DOWNLOAD_LINK: ` to the start of a link will append a 'download link' icon to the end of the link inline.
+
+**Markdown**
+
+```markdown
+Schema creation script: [:DOWNLOAD_LINK: `schema.sql`][schema-creation]
+```
+
+**Output**
+
+<img src="https://assets.timescale.com/docs/images/docs-download-link-example.png" width="300" />
+
+---
+
+### Version link
+
+Adding `x.y.z` anywhere in the text will be replaced by the version number of the branch.  Ex. `look at file foo-x.y.z` >> `look at file foo-0.4.2`.
+
+---
+
+### Pg version
+Adding `:pg_version:` to text displayed in an installation section (i.e. any page with a filename beginning `installation-`) will display the PostgreSQL version number.  This is primarily to be used for displayed filenames in install instructions that need to be modular based on the version.
+
+---
+
+### Designating functions
+   + Adding `:community_function:` to a header (for example, in the api section) adds decorator text "community function".
+   + Adding `:enterprise_function:` to a header adds decorator text "enterprise function".
+
+**Markdown**
+
+<pre><code>&#35;&#35; add_compress_chunks_policy() :community_function: [](add_compress_chunks_policy)
+&#35;&#35; add_compress_chunks_policy() :community_function: [](add_compress_chunks_policy)
+</code></pre>
+
+**Output**
+
+<img src="https://assets.timescale.com/docs/images/docs-community-edition-example.png" width="550" />
+
+<img src="https://assets.timescale.com/docs/images/docs-enterprise-edition-example.png" width="400" />
+
+---
+
+### Multiple language example
+Wrapping multiple triple tick (&#96;&#96;&#96;) code blocks with  a `<multiple-code-examples>...</multiple-code-examples>`  node will result in a tabbed outputted component
+- You must include the language of the code block in the opening triple tick (For example &#96;&#96;&#96;sql)
+- Make sure that there is newline after `<multiple-code-examples>` and before `</multiple-code-examples>`
+
+**Markdown**
+
+<pre><code>&lt;multiple-code-examples>
+&nbsp;
+&#96;&#96;&#96;js
+const foo = 'bar'
+&#96;&#96;&#96;
+&#96;&#96;&#96;php
+$foo = 'bar'
+&#96;&#96;&#96;
+&#96;&#96;&#96;java
+String foo = 'bar'
+&#96;&#96;&#96;
+&#96;&#96;&#96;python
+let foo = 'bar'
+&#96;&#96;&#96;
+&nbsp;
+&lt;/multiple-code-examples>
+</code></pre>
+
+**Output**
+
+<img src="https://assets.timescale.com/docs/images/docs-multiple-language-example.png" />
+
+---
+
+### Card grid
+
+Wrapping a list with `<card-grid>...</card-grid>` will style each list item as a card.  It will style anything bolded as the title on the card (see below for styles.
+
+- Make sure that there is newline after `<card-grid>` and before `</card-grid>`
+- You can add a `columns` attribute to the open `card-grid` tag to specify how many 
+
+**Markdown**
+
+```markdown
+<card-grid>
+
+- ![](...image url...) **[Start Here - Hello NYC]
+  [Hello NYC]** If you are new to TimescaleDB or 
+  even SQL, check out our  tutorial with NYC taxicab 
+  data to get an idea of the capabilities our database
+  has to offer.
+- ![(...image url...) **[Geospatial data][postGIS]** 
+  If you want to delve into the further potential 
+  of TimescaleDB, we have guidance for more advanced
+  topics like PostGIS integration.
+
+</card-grid>
+```
+
+**Output**
+
+<img src="https://assets.timescale.com/docs/images/docs-card-grid-example.png" width="600" />
 
 ### Editing the API section
 
