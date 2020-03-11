@@ -1185,6 +1185,11 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 | Refresh interval controls how often the background materializer is run. Note that if `refresh_lag` is set to `-<bucket_width>`, the continuous aggregate will run whenever new data is received, regardless of what the `refresh_interval` value is. | `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
 |   |   |   |
 |**Name**|||
+|`timescaledb.materialized_only`|||
+|**Description**|**Type**|**Default**|
+| Return only materialized data when querying the continuous aggregate view. | `BOOLEAN` | false |
+|   |   |   |
+|**Name**|||
 |`timescaledb.max_interval_per_job`|||
 |**Description**|**Type**|**Default**|
 | Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
