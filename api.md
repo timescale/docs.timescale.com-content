@@ -1354,16 +1354,17 @@ performance on older chunks. Each policy is assigned a scheduled job
 which will be run in the background to enforce it.
 
 ## add_drop_chunks_policy() [](add_drop_chunks_policy)
+
 Create a policy to drop chunks older than a given interval of a particular
-hypertable on a schedule in the background. (See [drop_chunks](#drop_chunks)).
+hypertable or continuous aggregate on a schedule in the background. (See [drop_chunks](#drop_chunks)).
 This implements a data retention policy and will remove data on a schedule. Only
-one drop_chunks policy may exist per hypertable.
+one drop-chunks policy may exist per hypertable.
 
 #### Required Arguments [](add_drop_chunks_policy-required-arguments)
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) Name of the hypertable to create the policy for. |
+| `table_name` | (REGCLASS) Name of the hypertable or continuous aggregate to create the policy for. |
 | `older_than` | (INTERVAL) Chunks fully older than this interval when the policy is run will be dropped|
 
 #### Optional Arguments [](add_drop_chunks_policy-optional-arguments)
@@ -1371,7 +1372,7 @@ one drop_chunks policy may exist per hypertable.
 |Name|Description|
 |---|---|
 | `cascade` | (BOOLEAN) Set to true to drop objects dependent upon chunks being dropped. Defaults to false.|
-| `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the drop_chunks_policy already exists. A notice is issued instead. Defaults to false. |
+| `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the policy already exists. A notice is issued instead. Defaults to false. |
 | `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to also remove chunk data from any associated continuous aggregates. Set to `FALSE` to only drop raw chunks (while keeping data in the continuous aggregates). Defaults to `NULL`, which errors if continuous aggregates exist.|
 
 >:TIP: When dropping data from the raw hypertable while retaining data
@@ -1407,14 +1408,14 @@ Remove a policy to drop chunks of a particular hypertable.
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) Name of the hypertable to create the policy for. |
+| `table_name` | (REGCLASS) Name of the hypertable or continuous aggregate to create the policy for. |
 
 
 #### Optional Arguments [](remove_drop_chunks_policy-optional-arguments)
 
 |Name|Description|
 |---|---|
-| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the drop_chunks_policy does not exist. Defaults to false.|
+| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the policy does not exist. Defaults to false.|
 
 
 #### Sample Usage [](remove_drop_chunks_policy-examples)
