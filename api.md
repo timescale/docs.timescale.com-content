@@ -581,16 +581,18 @@ the same semantics as the `show_chunks` [function](#show_chunks).
 |Name|Description|
 |---|---|
 | `older_than` | Specification of cut-off point where any full chunks older than this timestamp should be removed. |
+| `table_name` | Hypertable or continuous aggregate from which to drop chunks.
 | `newer_than` | Specification of cut-off point where any full chunks newer than this timestamp should be removed. |
 
 #### Optional Arguments [](drop_chunks-optional-arguments)
 
 |Name|Description|
 |---|---|
-| `table_name` | Hypertable name from which to drop chunks. If not supplied, all hypertables are affected.
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
 | `cascade` | Boolean on whether to `CASCADE` the drop on chunks, therefore removing dependent objects on chunks to be removed. Defaults to `FALSE`.
 | `cascade_to_materializations` | Set to `TRUE` to also remove chunk data from any associated continuous aggregates. Set to `FALSE` to only drop raw chunks (while keeping data in the continuous aggregates). Defaults to `NULL`, which errors if continuous aggregates exist.|
+
+>:TIP: The `table_name` argument was optional in previous versions, but this is now deprecated: `table_name` should always be given.
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
@@ -618,15 +620,15 @@ intersection between two ranges will result in an error.
 
 #### Sample Usage [](drop_chunks-examples)
 
-Drop all chunks older than 3 months ago:
+Drop all chunks older than 3 months ago from hypertable `conditions`:
 ```sql
-SELECT drop_chunks(interval '3 months');
+SELECT drop_chunks(interval '3 months', 'conditions');
 ```
 
 Example output:
 
 ```sql
-              drop_chunks               
+              drop_chunks
 ----------------------------------------
  _timescaledb_internal._hyper_3_5_chunk
  _timescaledb_internal._hyper_3_6_chunk
@@ -636,14 +638,9 @@ Example output:
 (5 rows)
 ```
 
-Drop all chunks more than 3 months in the future. This is useful for correcting data ingested with incorrect clocks:
+Drop all chunks more than 3 months in the future from hypertable `conditions`. This is useful for correcting data ingested with incorrect clocks:
 ```sql
-SELECT drop_chunks(newer_than => now() + interval '3 months');
-```
-
-Drop all chunks from hypertable `conditions` older than 3 months:
-```sql
-SELECT drop_chunks(interval '3 months', 'conditions');
+SELECT drop_chunks(newer_than => now() + interval '3 months', table_name => 'conditions');
 ```
 
 Drop all chunks from hypertable `conditions` before 2017:
@@ -661,12 +658,7 @@ Drop all chunks from hypertable `conditions` older than 3 months, including depe
 SELECT drop_chunks(interval '3 months', 'conditions', cascade => TRUE);
 ```
 
-Drop all chunks newer than 3 months ago:
-```sql
-SELECT drop_chunks(newer_than => interval '3 months');
-```
-
-Drop all chunks older than 3 months ago and newer than 4 months ago:
+Drop all chunks older than 3 months ago and newer than 4 months ago from hypertable `conditions`:
 ```sql
 SELECT drop_chunks(older_than => interval '3 months', newer_than => interval '4 months', table_name => 'conditions')
 ```
@@ -967,7 +959,7 @@ SELECT move_chunk(
   index_destination_tablespace => 'tablespace_3',
   reorder_index => 'conditions_device_id_time_idx',
   verbose => TRUE
-);  
+);
 ```
 
 ---
@@ -1125,7 +1117,7 @@ and the system will recompress your chucks.
 Decompress a single chunk
 
 ``` sql
-SELECT decompress_chunk('_timescaledb_internal._hyper_2_2_chunk');  
+SELECT decompress_chunk('_timescaledb_internal._hyper_2_2_chunk');
 ```
 
 ---
