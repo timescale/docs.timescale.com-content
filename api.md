@@ -1966,7 +1966,7 @@ Get information about background jobs and statistics related to continuous aggre
 #### Sample Usage [](timescaledb_information-continuous_aggregate_stats-examples)
 
 ```sql
-select * from timescaledb_information.continuous_aggregate_stats;
+SELECT * FROM timescaledb_information.continuous_aggregate_stats;
 -[ RECORD 1 ]----------+------------------------------
 view_name              | contagg_view
 completed_threshold    | 1
