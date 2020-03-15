@@ -1548,9 +1548,26 @@ add a new one.
 ```sql
 SELECT alter_job_schedule(job_id, schedule_interval => INTERVAL '2 days')
 FROM timescaledb_information.reorder_policies
-WHERE hypertable = 'conditions';
+WHERE hypertable = 'conditions'::regclass;
 ```
 reschedules the reorder policy job for the `conditions` table so that it runs every two days.
+
+```sql
+SELECT alter_job_schedule(job_id, schedule_interval => INTERVAL '5 minutes')
+FROM timescaledb_information.continuous_aggregate_stats
+WHERE view_name = 'conditions_agg'::regclass;
+```
+reschedules the continuous aggregate job for the `conditions_agg` view so that it runs every five minutes.
+
+```sql
+SELECT alter_job_schedule(1015, next_start => '2020-03-15 09:00:00.0+00');
+```
+
+reschedules continuous aggregate job `1015` so that the next execution of the
+job starts at the specified time (9:00:00 am on March 15, 2020).  This same
+query could have simultaneously changed the `schedule_interval` or queried the
+`timescaledb_information.continuous_aggregate_stats` informational view to
+extract the `job_id`, as shown above.
 
 ---
 ## Analytics [](analytics)
