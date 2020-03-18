@@ -98,16 +98,16 @@ For this release only, you will need to restart the database after upgrade befor
 *  #1756 Fix handling of dropped chunks in compression background worker
 
 **Thanks**
-@RJPhillips01 for reporting an issue with drop chunks.
-@b4eEx for reporting an issue with disabling compression.
-@darko408 for reporting an issue with order by on compressed hypertables
-@mrechte for reporting an issue with compressing INTERVAL columns
-@tstaehli for reporting an issue with ConstraintAwareAppend
-@chadshowalter for reporting an issue with partial index on hypertables
-@geoffreybennett for reporting an issue with create_hypertable when interrupting operations
-@alxndrdude for reporting an issue with background workers during restore
-@zcavaliero for reporting and fixing an issue with dropped columns in hypertable_relation_size
-@ismailakpolat for reporting an issue with cagg materialization on hypertables with TIMESTAMP column
+*  @RJPhillips01 for reporting an issue with drop chunks.
+*  @b4eEx for reporting an issue with disabling compression.
+*  @darko408 for reporting an issue with order by on compressed hypertables
+*  @mrechte for reporting an issue with compressing INTERVAL columns
+*  @tstaehli for reporting an issue with ConstraintAwareAppend
+*  @chadshowalter for reporting an issue with partial index on hypertables
+*  @geoffreybennett for reporting an issue with create_hypertable when interrupting operations
+*  @alxndrdude for reporting an issue with background workers during restore
+*  @zcavaliero for reporting and fixing an issue with dropped columns in hypertable_relation_size
+*  @ismailakpolat for reporting an issue with cagg materialization on hypertables with TIMESTAMP column
 
 ### 1.6.0 (2020-01-14)
 
