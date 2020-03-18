@@ -14,9 +14,9 @@ can view active developments on GitHub at any time.
 
 The next release of TimescaleDB, v1.7, will include basic
 [PostgreSQL 12](https://www.postgresql.org/about/news/1976/)
-support and a new TimescaleDB capability called *Just-In-Time Aggregates*.
+support and a new TimescaleDB capability called *Real Time Aggregates*.
 
-With Just-In-Time Aggregates, users will be able to leverage TimescaleDB's
+With Real Time Aggregates, users will be able to leverage TimescaleDB's
 precomputed continuous aggregates while still getting a real-time view over the
 latest data.
 
@@ -31,7 +31,7 @@ latest data, _i.e._, since the last time the asynchronous aggregation job ran
 inside the database. So if you are generating hourly rollups, you might only
 run this job every hour.
 
-But now with Just-In-Time Aggregates, a single, simple query will combine your
+But now with Real Time Aggregates, a single, simple query will combine your
 pre-computed hourly rollups with the raw data from the last
 hour, to always give you an up-to-date answer.  Now, instead of touching
 604,800 rows of raw data, the query reads 167 pre-computed rows of
@@ -57,6 +57,52 @@ it's available.
 
 In this section, we will cover historical information on
 past releases and how you can learn more.
+
+### 1.6.1 (2020-03-18)
+
+This maintenance release contains bugfixes since the 1.6.0 release. We deem it medium priority for upgrading.
+In particular the fixes contained in this maintenance release address bugs in continuous aggregates, time_bucket_gapfill, partial index handling and drop_chunks.
+For this release only, you will need to restart the database after upgrade before restoring a backup.
+
+**Minor Features**
+*  #1666 Support drop_chunks API for continuous aggregates
+*  #1711 Change log level for continuous aggregate materialization messages
+
+**Bugfixes**
+*  #1630 Print notice for COPY TO on hypertable
+*  #1648 Drop chunks from materialized hypertable
+*  #1668 Cannot add dimension if hypertable has empty chunks
+*  #1673 Fix crash when interrupting create_hypertable
+*  #1674 Fix time_bucket_gapfill's interaction with GROUP BY
+*  #1686 Fix order by queries on compressed hypertables that have char segment by column
+*  #1687 Fix issue with disabling compression when foreign keys are present
+*  #1688 Handle many BGW jobs better
+*  #1698 Add logic to ignore dropped chunks in hypertable_relation_size
+*  #1704 Fix bad plan for continuous aggregate materialization
+*  #1709 Prevent starting background workers with NOLOGIN
+*  #1713 Fix miscellaneous background worker issues
+*  #1715 Fix issue with overly aggressive chunk exclusion in outer joins
+*  #1719 Fix restoring/scheduler entrypoint to avoid BGW death
+*  #1720 Add scheduler cache invalidations
+*  #1727 Fix compressing INTERVAL columns
+*  #1728 Handle Sort nodes in ConstraintAwareAppend
+*  #1730 Fix partial index handling on hypertables
+*  #1739 Use release OpenSSL DLLs for debug builds on Windows
+*  #1740 Fix invalidation entries from multiple caggs on same hypertable
+*  #1743 Fix continuous aggregate materialization timezone handling
+*  #1748 Fix remove_drop_chunks_policy for continuous aggregates
+
+**Thanks**
+@RJPhillips01 for reporting an issue with drop chunks.
+@b4eEx for reporting an issue with disabling compression.
+@darko408 for reporting an issue with order by on compressed hypertables
+@mrechte for reporting an issue with compressing INTERVAL columns
+@tstaehli for reporting an issue with ConstraintAwareAppend
+@chadshowalter for reporting an issue with partial index on hypertables
+@geoffreybennett for reporting an issue with create_hypertable when interrupting operations
+@alxndrdude for reporting an issue with background workers during restore
+@zcavaliero for reporting and fixing an issue with dropped columns in hypertable_relation_size
+@ismailakpolat for reporting an issue with cagg materialization on hypertables with TIMESTAMP column
 
 ### 1.6.0 (2020-01-14)
 
