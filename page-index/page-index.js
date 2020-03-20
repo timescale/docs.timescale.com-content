@@ -472,9 +472,19 @@ const pageIndex = [
                 href: "continuous-aggs-tutorial",
                 children: []
             }, {
-                Title: "Migration with Outflux",
+                Title: "Setup Timescale and Prometheus",
                 type: PAGE,
-                href: "outflux",
+                href: "tutorial-setup-timescale-prometheus",
+                children: []
+            }, {
+                Title: "Visualize Prometheus data in Grafana",
+                type: PAGE,
+                href: "tutorial-use-timescale-prometheus-grafana",
+                children: []
+            }, {
+                Title: "Monitor Timescale Cloud with Prometheus",
+                type: PAGE,
+                href: "tutorial-setting-up-timescalecloud-endpoints-for-prometheus",
                 children: []
             }, {
                 Title: "Integration with Prometheus",
@@ -495,6 +505,11 @@ const pageIndex = [
                 Title: "Visualizing data in Tableau",
                 type: PAGE,
                 href: "visualizing-time-series-data-in-tableau",
+                children: []
+            }, {
+                Title: "Migration with Outflux",
+                type: PAGE,
+                href: "outflux",
                 children: []
             }, {
                 Title: "Other sample datasets",

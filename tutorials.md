@@ -24,11 +24,14 @@ data analysis and make forecasts on your data.
 
 ### Integrating with other products
 
-- **[Migrate from InfluxDB with Outflux][Outflux]**: Use our open-source migration tool to transfer your data from InfluxDB to TimescaleDB.
+- **[Setup Timescale and Prometheus][prometheus-setup]**: Setup Prometheus to store long-term metrics data in TimescaleDB.
+- **[Visualize Prometheus long-term metrics using Grafana][prometheus-grafana]**: Build visualizations in Grafana to obtain insight into your long-term Prometheus metrics stored in TimescaleDB.
+- **[Setup a Prometheus endpoint to monitor Timescale Cloud][prometheus-tsc-endpoint]**: Configure Prometheus to collect monitoring data about your Timescale Cloud instance.
 - **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers.
 - **[Collecting metrics with Telegraf][Telegraf Output Plugin]**: Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf.
 - **[Visualizing Data with Grafana][grafana]**: Visualize time-series data with this primer on getting started with Grafana.
 - **[Visualize Time-Series Data using Tableau][Tableau]**: Learn how to configure Tableau to connect to TimescaleDB and visualize your time-series data.
+- **[Migrate from InfluxDB with Outflux][Outflux]**: Use our open-source migration tool to transfer your data from InfluxDB to TimescaleDB.
 
 ### Additional resources
 
@@ -53,3 +56,6 @@ and pick up some valuable `psql` tips and tricks along the way.
 [psql]: /getting-started/install-psql-tutorial
 [Crypto]: /tutorials/analyze-cryptocurrency-data
 [Tableau]: /tutorials/visualizing-time-series-data-in-tableau
+[prometheus-tsc-endpoint]: /tutorials/tutorial-setting-up-timescalecloud-endpoints-for-prometheus
+[prometheus-setup]: /tutorials/tutorial-setup-timescale-prometheus
+[prometheus-grafana]: /tutorials/tutorial-use-timescale-prometheus-grafana
