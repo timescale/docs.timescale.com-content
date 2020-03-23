@@ -1,163 +1,220 @@
 # Continuous Aggregates
-Aggregate queries which touch large swathes of time-series data can take a long
-time to compute because the system needs to scan large amounts of data on every
-query execution. TimescaleDB continuous aggregates automatically calculate the
-results of a query in the background and materialize the results. Queries to the
-continuous aggregate view are then significantly faster as they do not need to
-touch the raw data in the hypertable, instead using the pre-computed aggregates
-in the view.
 
-Continuous aggregates are somewhat similar to PostgreSQL
-[materialized views][postgres-materialized-views], but unlike a materialized view,
-continuous aggregates do not need to be refreshed manually; the view will be refreshed
-automatically in the background as new data is added, or old data is
-modified. Additionally, it does not need to re-calculate all of the data on
-every refresh. Only new and/or invalidated data will be calculated.  Since this
-re-aggregation is automatic, it doesn’t add any maintenance burden to your
-database.
+Aggregate queries which touch large swathes of time-series data can
+take a long time to compute because the system needs to scan large
+amounts of data on every query execution. TimescaleDB continuous
+aggregates automatically calculate the results of a query in the
+background and materialize the results. Queries to the continuous
+aggregate view are then significantly faster as they touch less raw
+data in the hypertable and instead mostly use the pre-computed
+aggregates to build the view.
 
-Another approach would be to use triggers to update a materialized view
-immediately upon writing to the database; however, this approach causes
-significant write amplification, which slows inserts. We have designed
-continuous aggregations to run in the background and have a minimal impact on
-insertion rate by avoiding write amplification.
+Continuous aggregates are somewhat similar to PostgreSQL [materialized
+views][postgres-materialized-views], but unlike a materialized view,
+continuous aggregates do not need to be refreshed manually; the view
+will be refreshed automatically in the background as new data is
+added, or old data is modified. Additionally, it does not need to
+re-calculate all of the data on every refresh. Only new and/or
+invalidated data will be calculated.  Since this re-aggregation is
+automatic, it doesn’t add any maintenance burden to your database.
 
-**How it Works:**
-In general, a continuous aggregate *materialization job* takes raw data from the
-original hypertable, aggregates it, and stores intermediate state in a
-*materialization hypertable*. When you query the *continuous aggregate view*,
-the state is finalized and returned to you as needed. We also create highly
-performant triggers on the raw hypertable which determine when raw data needs to
-be re-materialized due to INSERTs, UPDATEs, or DELETEs.  The re-materialization
-will happen the next time the materialization job runs.
+**How it Works:** A *materialization background job* regularly takes
+raw data from the hypertable and computes a partial aggregate that it
+stores (materializes) in the continuous aggregate.
+
+Querying the *continuous aggregate view* will then compute an
+up-to-date final aggregate result by combining the materialized
+partial aggregate with recent data from the hypertable that has yet to
+be materialized by the continuous aggregate. By combining raw and
+materialized data in this way, one gets accurate and up-to-date
+results while still enjoying the speedups of pre-computing a large
+portion of the result.
+
+When new data is inserted, updated, or deleted in the hypertable, the
+continuous aggregate will automatically decide what data needs to be
+re-materialized and schedule a re-materialization to happen the next
+time the materialization job runs.
 
 ### Creating a Continuous Aggregate View [](create)
 [Continuous aggregates][api-continuous-aggs] are created by setting the
 `timescaledb.continuous` option in the `WITH` clause of a
 PostgreSQL [`CREATE VIEW`][postgres-createview] statement.
 
-Let's suppose we have a hypertable `device_readings` created like so:
+Suppose we have a hypertable `conditions`:
 ```sql
-CREATE TABLE device_readings (
-      observation_time  TIMESTAMPTZ       NOT NULL,
-      device_id         TEXT              NOT NULL,
-      metric            DOUBLE PRECISION  NOT NULL,
-      PRIMARY KEY(observation_time, device_id)
+CREATE TABLE conditions (
+      time TIMESTAMPTZ NOT NULL,
+      device INTEGER NOT NULL,
+      temperature FLOAT NOT NULL,
+      PRIMARY KEY(time, device)
 );
-SELECT create_hypertable('device_readings', 'observation_time');
+SELECT create_hypertable('conditions', 'time');
 ```
 
-If we want to query per-device readings aggregated on an hourly basis, we might
-create a continuous aggregate like so:
+You can then use [`CREATE VIEW`][api-continuous-aggs-create] to create
+a continuous aggregate using the `timescaledb.continuous` view
+option. This view aggregates the temperatures into hourly buckets
+using the [`time_bucket`][time-bucket] function.
 
 ```sql
-CREATE VIEW device_summary
-WITH (timescaledb.continuous) --This flag is what makes the view continuous
-AS
-SELECT
-  time_bucket('1 hour', observation_time) as bucket, --time_bucket is required
-  device_id,
-  avg(metric) as metric_avg, --We can use any parallelizable aggregate
-  max(metric)-min(metric) as metric_spread --We can also use expressions on aggregates and constants
-FROM
-  device_readings
-GROUP BY bucket, device_id; --We have to group by the bucket column, but can also add other group-by columns
+CREATE VIEW conditions_summary_hourly
+WITH (timescaledb.continuous) AS
+SELECT device,
+       time_bucket(INTERVAL '1 hour', time) AS bucket,
+       AVG(temperature),
+       MAX(temperature),
+       MIN(temperature)
+FROM conditions
+GROUP BY device, bucket;
 ```
-This creates a continuous view called `device_summary` for the aggregation
-query, as well as all of the infrastructure needed for materializing the data
-and keeping the view up-to-date. A `time_bucket` on the time partitioning column
-of the raw hypertable is required in all continuous aggregate views. The
-[`time_bucket`][time-bucket] function in this case has a `bucket_width` of 1
-hour. See the [`CREATE VIEW (Continuous Aggregate)`][api-continuous-aggs-create]
-section of our documentation for all of the options and requirements for the
-command.
 
-You can also create multiple continuous aggregates on the same raw hypertable. For example, we may
-want to query per-device readings aggregated on a daily basis. To do so, we can create a continuous
-aggregate like so:
+A `time_bucket` on the time partitioning column of the hypertable is required in all continuous aggregate views. If you do
+not provide one, you will get an error. The `time_bucket` function in
+this case has a bucket width of 1 hour.
+
+You can create multiple continuous aggregates on the same
+hypertable. For example, you can create a continuous aggregate
+`condition_summary_daily` over the data with daily buckets:
 
 ```sql
-CREATE VIEW device_summary
-WITH (timescaledb.continuous) --This flag is what makes the view continuous
-AS
-SELECT
-  time_bucket('1 day', observation_time) as bucket, --time_bucket is required
-  device_id,
-  avg(metric) as metric_avg, --We can use any parallelizable aggregate
-  max(metric)-min(metric) as metric_spread --We can also use expressions on aggregates and constants
-FROM
-  device_readings
-GROUP BY bucket, device_id; --We have to group by the bucket column, but can also add other group-by columns
+CREATE VIEW conditions_summary_daily
+WITH (timescaledb.continuous) AS
+SELECT device,
+       time_bucket(INTERVAL '1 day', time) AS bucket,
+       AVG(temperature),
+       MAX(temperature),
+       MIN(temperature)
+FROM conditions
+GROUP BY device, bucket;
 ```
 
-In general, aggregates which can be [parallelized by PostgreSQL][postgres-parallel-agg]
-are allowed in the view definition, this includes most aggregates distributed
-with PostgreSQL. This means that aggregates with `ORDER BY` clauses or `DISTINCT` clauses cannot appear,
-additionally we require that no `FILTER` clauses appear ([though we will allow them in future
-releases](#future-work)).
+Continuous aggregates are supported for most aggregates that can be
+[parallelized by PostgreSQL][postgres-parallel-agg], which includes
+the normal aggregation functions like `SUM` and `AVG`. However,
+aggregates using `ORDER BY` and `DISTINCT` cannot be used with
+continuous aggregates since they are not possible to parallelize by
+PostgreSQL. In addition, TimescaleDB continuous aggregates does not
+currently support the `FILTER` clause even though it is possible to
+parallelize but we might add support for this in a future version.
 
 ---
 
 ### Using Continuous Aggregates [](using)
 
-To select data from the continuous aggregates, simply run a `SELECT` query on
-the continuous view. For instance, to return the average and spread for the
-first quarter of 2018 for device `D132`, we would run:
+To select data from a continuous aggregate, use a
+`SELECT` query on the continuous aggregate view. For instance, you can get the
+average, minimum, and maximum for the first quarter of 2018 for device
+5:
+
 ```sql
-SELECT * FROM device_summary
-WHERE device_id = 'D132'
+SELECT * FROM conditions_summary_daily
+WHERE device = 5
   AND bucket >= '2018-01-01' AND bucket < '2018-04-01';
 ```
+
 Or we can do more complex queries on the aggregates themselves, for instance, if
 we wanted to know the top 20 largest metric spreads in that quarter, we could do
 something like:
 ```sql
-SELECT * FROM device_summary
-WHERE metric_spread > 1800
+SELECT * FROM conditions_summary_daily
+WHERE max - min > 1800
   AND bucket >= '2018-01-01' AND bucket < '2018-04-01'
 ORDER BY bucket DESC, device_id DESC LIMIT 20;
 ```
 
-**How Far Behind Will Continuous Aggregates Be?** [](how-far-behind)  
-When designing continuous aggregates, we wanted to avoid write amplification as
-that could drastically affect insert rate for write-heavy time-series workloads.
-We also wanted to deal gracefully with out-of-order data. There are several
-tunable parameters that allow us to control how quickly data is materialized
-after insert and how far behind the aggregates will remain (so as not to cause
-the same materialization to be modified multiple times and cause write amplification).
+### Advanced Usage
 
-We usually stay at least one `bucket_width` (the first argument to the
-`time_bucket` call in the view definition) behind the current time.
-The `refresh_lag` parameter determines how much further behind the
-current time the background worker will attempt to materialize
-(we will be behind by `refresh_lag` + `bucket_width`).  So in our example, if
-the `refresh_lag` is 1 hour and the `bucket_width` is 1 hour, the
-materialization will generally be 2 hours behind the current time.
-Tuning the `refresh_lag` parameter lower will mean that the
-aggregates will follow inserts more closely, but can cause some write
-amplification which may degrade insert performance. Setting `refresh_lag` to
-`-<bucket_width>` will keep the continuous aggregate up-to-date.
+The `timescaledb.refresh_interval` option controls how frequently
+materialization jobs will be launched. Setting a shorter interval will
+mean materializations happen more frequently but each job consumes
+background worker resources while it is running.
 
-The `refresh_interval` controls how frequently materialization jobs will be
-launched. Setting a shorter interval will mean materializations happen more
-"eagerly" but can consume background worker resources while it is running.
+When querying the continuous aggregate view (for example,
+`conditions_summary_daily`) by default you will get a complete view of
+the data including both the partially aggregated data and newer,
+unaggregated data in the hypertable (for example, `conditions`).
 
-The `timescaledb.max_interval_per_job` parameter can also be useful, especially
-when a continuous aggregate is created on a hypertable that already contains
-data and the materialization job needs to catch up. It determines the maximum
-amount of data processed in a single job. If there is still more work to do to
-catch up to where we need to be based on the `refresh_lag` setting, another job
-will be spawned immediately following completion. This means that the part of the
-data processed by previous jobs will be available even before the
-materialization is fully caught up.
+If you, however, want to just get partially aggregated data and not
+include recent data that has yet to be materialized, you can set the option
+`timescaledb.materialized_only` to `true` using `ALTER VIEW`:
+
+```sql
+ALTER VIEW conditions_summary_hourly SET (
+    timescaledb.materialized_only = true
+);
+```
+
+>:TIP: You can find the names of all the materialized hypertables by
+>querying `timescaledb_information.continuous_aggregates`.
+>
+> ```sql
+> SELECT view_name, materialization_hypertable
+>     FROM timescaledb_information.continuous_aggregates;
+>          view_name         |            materialization_hypertable             
+> ---------------------------+---------------------------------------------------
+>  conditions_summary_hourly | _timescaledb_internal._materialized_hypertable_30
+>  conditions_summary_daily  | _timescaledb_internal._materialized_hypertable_31
+> (2 rows)
+> ```
+
+Each continuous aggregate uses the *bucket width* of the `time_bucket`
+(given by the parameter `bucket_width`) function in the view
+definition to decide what to update. Time-series data is typically
+ordered, so it is usually the last bucket that gets most of the
+updates. Recomputing the last bucket when new data arrives negates many
+of the benefits of using continuous aggregation. Older buckets rarely
+get updated and are usually aggregated only once.
+
+As a result, the materialization lags behind by one bucket and up to an additional `refresh_interval` as a
+result of the job not running continuously. However, you can change
+this lag to either increase it (or decrease it) by setting the value
+for the `timescaledb.refresh_lag` option of the view and the
+background worker will attempt to materialize everything before
+`refresh_lag` + `bucket_width`.
+
+For example, using `conditions_summary_hourly` above, the bucket width
+is 1 hour, so if we set the `refresh_lag` to 1 hour, the
+materialization will be 2 hours behind the current time.
+
+```sql
+ALTER VIEW conditions_summary_hourly SET (
+  timescaledb.refresh_lag = '1 hour'
+);
+```
+
+Lowering the `refresh_lag` parameter means that the materialization
+follows the raw data more closely, but can cause write amplification
+that might degrade insert performance. The `refresh_lag` can also be
+set to negative values. For example, setting `refresh_lag` to
+`-bucket_width` will make the continuous aggregate materialize new
+data as soon as it is available.
+
+The `refresh_lag` parameter controls the balance between the
+on-the-fly aggregation and pre-computed aggregation when querying the
+continuous aggregate. A lower `refresh_lag` will reduce the amount of
+on-the-fly aggregation by more aggressive materialization and a higher
+`refresh_lag` will increase the amount of on-the-fly aggregation by
+not materializing as agressively.
+
+>:TIP: Changing the value of `refresh_lag` is rarely necessary.
+
+The `timescaledb.max_interval_per_job` determines the maximum amount
+of data processed in a single job. If there is more work to do after
+the job completes, another job will be spawned immediately. This means
+that the part of the data processed by previous jobs will be available
+even before the materialization is fully caught up.
+
+This parameter can be useful when a continuous aggregate is created on
+a hypertable that already contains data and the materialization job
+needs to catch up.
 
 The `timescaledb.ignore_invalidation_older_than` parameter controls
 how modifications (inserts, updates, and deletes) will trigger update
 of the continuous aggregate. If modifications are done to the
-underlying table, it invalidates the already computed
-aggregate and the aggregate has to be updated.
+hypertable, it invalidates already computed parts of the aggregate and
+the aggregate has to be updated.
 
-By default, all modifications trigger a update of the continuous
+By default, all modifications trigger an update of the continuous
 aggregate. If the `ignore_invalidation_older_than` parameter is set to
 a duration, modifications with an older time will be ignored and not
 trigger an update of the continuous aggregate. As a result, refresh
@@ -205,11 +262,11 @@ Other alterations to the continuous aggregate view are currently disallowed. To
 alter a continuous aggregate view in other ways it must be dropped and
 re-created; this can entail some time to re-calculate aggregations.
 
-A continuous aggregate may be dropped by using the `DROP VIEW` command, which
-deletes the hypertable that stores the materialized data for the continuous
-aggregate; it does not affect the data in the underlying hypertable from which
-the continuous aggregate is derived (i.e., the raw data).  The `CASCADE`
-parameter is required for this command.
+A continuous aggregate may be dropped by using the `DROP VIEW`
+command, which deletes the hypertable that stores the materialized
+data for the continuous aggregate; it does not affect the data in the
+hypertable from which the continuous aggregate is derived (i.e., the
+raw data).  The `CASCADE` parameter is required for this command.
 
 ```sql
 DROP VIEW device_summary CASCADE;
@@ -379,11 +436,11 @@ CREATE VIEW device_summary
 WITH (timescaledb.continuous)
 AS
 SELECT
-  time_bucket('1 hour', observation_time ) as bucket,
-  min(observation_time::timestamp) as min_time, --note the cast to localtime
+  time_bucket('1 hour', observation_time ) AS bucket,
+  min(observation_time::timestamp) AS min_time,
   device_id,
-  avg(metric) as metric_avg,
-  max(metric)-min(metric) as metric_spread
+  avg(metric) AS metric_avg,
+  max(metric) - min(metric) AS metric_spread
 FROM
   device_readings
 GROUP BY bucket, device_id;
@@ -396,11 +453,11 @@ CREATE VIEW device_summary
 WITH (timescaledb.continuous)
 AS
 SELECT
-  time_bucket('1 hour', observation_time) as bucket,
-  min(observation_time AT TIME ZONE 'EST') as min_time, --note the explicit timezone
+  time_bucket('1 hour', observation_time) AS bucket,
+  min(observation_time AT TIME ZONE 'EST') AS min_time,
   device_id,
-  avg(metric) as metric_avg,
-  max(metric)-min(metric) as metric_spread
+  avg(metric) AS metric_avg,
+  max(metric) - min(metric) AS metric_spread
 FROM
   device_readings
 GROUP BY bucket, device_id;
@@ -429,23 +486,10 @@ materialization. This can be especially helpful in the initial population of the
 continuous aggregate, if it's created after the raw hypertable has a significant
 amount of data.
 
-**Fully Up-to-date Views:**
-As noted [above](#how-far-behind), aggregates are intentionally a bit behind where the most recent
-inserts are occurring, this reduces write amplification. However, we recognize
-the need for fully up-to-date views and can accomplish this by automatically
-querying the raw data and calculating the aggregates on the fly for the most
-recent periods that have not yet been materialized. This union view of both the
-materialization and the aggregate will then replace the normal continuous
-aggregate view (though whether one selected fully up-to-date data would be
-tunable at query time).
-
-In the meantime, you can force the continuous aggregate to run whenever new data is received
-by setting `refresh_lag` to `-<bucket_width>`.
-
 **Synchronous Invalidation:**
 Similarly, invalidated portions of the materialization are re-calculated the
 next time the materialization is run. We plan on adding different options to
-enable further tuning of the tradeoffs between write amplification, query speed,
+enable further tuning of the trade-offs between write amplification, query speed,
 and fully correct aggregates.
 
 **Support Filtered Aggregates:**
