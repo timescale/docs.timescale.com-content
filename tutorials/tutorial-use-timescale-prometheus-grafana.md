@@ -1,4 +1,4 @@
-# Tutorial: Using TimescaleDB, Prometheus, and Grafana to visualize long-term metrics data
+# Tutorial: Using TimescaleDB, Prometheus, and Grafana to Visualize Long-Term Metrics Data
 
 This is the second part of our tutorial on how to use TimescaleDB, 
 Prometheus, and Grafana to store and analyze long-term metrics data. In the 
@@ -12,8 +12,8 @@ containing a host of Prometheus metrics from monitoring a PostgreSQL database.
 If you choose to use this sample dataset, be sure to follow steps 1 and 2 
 of the [first part of this tutorial][setup-prometheus] to set up 
 Timescale with `pg_prometheus` and the postgresql adapter, which will automatically 
-create the needed schema for you. Then you can load in the sample data into 
-the `metrics_labels` and `metrics_values` tables respectively - the filenames 
+create the needed schema for you. Then you can load the sample data into 
+the `metrics_labels` and `metrics_values` tables respectively; the filenames 
 reflect which table data from that file should be inserted into. Step 4 of the 
 first part of this tutorial will help you connect your TimescaleDB instance with 
 Grafana, so that you can complete the steps in this part of the tutorial.
@@ -32,7 +32,7 @@ There are several ways to optimize your TimescaleDB to maximize storage, query
 time, and overall cost efficiency:
 
 - Use compression to save storage space
-- Apply a data retention policy and decide how much metrics to keep
+- Apply a data retention policy and decide how much metrics data to keep
 - Use continuous aggregations to reduce the frequency of queries that tax the database
 
 #### Compression
@@ -95,7 +95,7 @@ days, and then only keep rollups of that data around indefinitely. Here’s how 
 can enable that, using the scenario of keeping data around for 2 days:
 
 ```sql
---Adding a data retention policy to drop chuks that only consist of data older than 2 days old
+--Adding a data retention policy to drop chunks that only consist of data older than 2 days old
 -- available on Timescale Cloud and in Timescale Community v 1.7+
 SELECT add_drop_chunks_policy('metrics_values', INTERVAL '2 days', cascade_to_materializations=>FALSE);
 ```
@@ -117,7 +117,7 @@ can be less than or equal to your data retention policy interval. That is to say
 your data retention policy interval is DRI and your aggregate intervals are AI, then 
 AI < = DRI.
 
-To create a continuous aggregate for five minute (`5min`) rollups of the maximum, 
+To create a continuous aggregate for five minute (`5m`) rollups of the maximum, 
 average and minimum of metrics, where the underlying data will be dropped according 
 to the data retention policy we set up above:
 
@@ -146,13 +146,13 @@ In the `WITH` statement, we specify that:
 since that data will be dropped according to our automated retention policy, 
 set up in the Data retention policies section above
 - The aggregate will be up to date with the most recent data available every time 
-it refreshes. We can have it be slightly behind live data to make it less 
+it refreshes. We can also configure it to be slightly behind live data to make it less 
 computationally intensive, by setting `timescaledb.refresh_lag` to a positive 
 value like `10m` or `1d` depending on our requirements.
-- The aggregate data refreshes every 5 minutes, since that’s the time the 
-interval specified in our time_bucket statement.
+- The aggregate data refreshes every 5 minutes, since that’s the time  
+interval specified in our `time_bucket` statement.
 
-To check for successfully creation of aggregates, as well as for information about 
+To check for the successful creation of aggregates, as well as for information about 
 them, run:
 
 ```sql
@@ -202,10 +202,10 @@ metrics are stored in the `metrics_labels` table. If you match the `id` from the
 `metrics_labels` table with all values corresponding to that `label_id` in the 
 `metrics_values` table, you will be able to see all values for that particular metric.
 
-After consulting the [PostgreSQL documentation[postgres-docs], we know we are 
+After consulting the [PostgreSQL documentation][postgres-docs], we know we are 
 interested in the `postgresql_pg_stat_activity_conn_count` label. First, let’s 
 identify which `id` corresponds to the metrics we are interested in by running 
-this SQL query in `psql`:
+this query:
 
 ```sql
 SELECT * 
@@ -216,8 +216,8 @@ WHERE metric_name LIKE 'postgresql_pg_stat_activity_conn_count';
 The result will look like this:
 
 ```bash
-id  |              metric_name                                  |         labels                                                                                                                                                      
------+-------------------------------------------------------+------------------------------------------------------
+id   |              metric_name               |      labels                                                                                                                                                      
+-----+----------------------------------------+------------------
  296 | postgresql_pg_stat_activity_conn_count | { labels here }
  297 | postgresql_pg_stat_activity_conn_count | { labels here }
 ```
@@ -303,14 +303,14 @@ or instance size.
 
 The problem with obtaining this information is that running this query over _all_ 
 of your data several times a day can take a long time. TimescaleDB includes a 
-feature called [continuous aggregation][continuous-aggregates]. A continuous aggregate 
-recomputes a query automatically at user-specified time intervals and stores the results 
-in a table. Thus, instead of everyone running an aggregation query each time, the 
-database can run a common aggregation periodically in the background, and users can 
-query the results of the aggregation. Continuous aggregates should improve database 
+feature called [continuous aggregation][continuous-aggregates] that solves this. 
+A continuous aggregation recomputes a query automatically at user-specified time intervals 
+and stores the results in a table. Thus, instead of everyone running an aggregation query 
+each time, the database can run a common aggregation periodically in the background, and 
+users can query the results of the aggregation. Continuous aggregates generally improve database 
 performance and query speed for common calculations.
 
-In our case, we want to maintain a continuous aggregation for the average, maximum, and 
+In our case, we want to maintain a continuous aggregate for the average, maximum, and 
 minimum memory usage of our PostgreSQL database. Let’s first create a continuous aggregate, 
 then use it in a query to visualize data in Grafana.
 
@@ -364,9 +364,9 @@ The result of your query should look like this:
 So far, we’ve built queries to understand the memory usage patterns of our 
 PostgreSQL database. We also want to understand how the database itself is 
 queried by others. In effect, we want to know what are the max, min and average 
-number of blocks read from my database in 5min intervals?
+number of blocks read from my database in 5 minute intervals?
 
-Once again, we will build a continuous aggregate for five minute intervals to 
+Once again, we will build a continuous aggregate for 5 minute intervals to 
 obtain the information we’re interested in:
 
 ```sql

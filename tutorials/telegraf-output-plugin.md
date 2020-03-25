@@ -1,4 +1,4 @@
-# Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf
+# Collecting Metrics with the PostgreSQL and TimescaleDB Output Plugin for Telegraf
 
 Telegraf can collect metrics from a wide array of inputs and write them to a wide array of outputs.
 It is plugin-driven for both collection and output of data so it is easily extendable.
