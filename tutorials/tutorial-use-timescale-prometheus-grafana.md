@@ -2,7 +2,7 @@
 
 This is the second part of our tutorial on how to use TimescaleDB, 
 Prometheus, and Grafana to store and analyze long-term metrics data. In the 
-first part, you’ll learn how to [setup TimescaleDB and Prometheus][setup-prometheus]. 
+first part, you’ll learn how to [set up TimescaleDB and Prometheus][setup-prometheus]. 
 In this part, you’ll learn how to use your metrics data to answer questions 
 about how your infrastructure is performing.
 
@@ -45,7 +45,7 @@ using compression. Compression allows you to keep raw prometheus metrics around 
 longer, using less disk space.
 
 Using compression is easy. First, decide on an interval after which you’d like data 
-to be compressed, eg. after 6 hours, then add an automated compression policy on the 
+to be compressed (e.g., after 6 hours), then add an automated compression policy on the 
 `metrics_values` hypertable, since that's the table that will grow as more samples 
 are collected. To do so, run the following command in `psql`:
 
@@ -72,7 +72,7 @@ FROM timescaledb_information.compressed_hypertable_stats;
 Your output should look like this:
 
 ```bash
-uncompressed_total_bytes | compressed_total_bytes 
+uncompressed_total_bytes  | compressed_total_bytes 
 --------------------------+------------------------
  5054 MB                  | 17 MB
 (1 row)
@@ -91,7 +91,7 @@ underlying data that compose those aggregates to save on storage space.
 
 For example, if you’re generating a large amount of metrics data daily, you might 
 want to only keep raw data around for a certain period of time, say 15 days or 30 
-days, and then only keep rollups of that data around indefinitely. Here’s how you 
+days, and then keep rollups of that data around indefinitely. Here’s how you 
 can enable that, using the scenario of keeping data around for 2 days:
 
 ```sql
@@ -423,7 +423,7 @@ Timescale to analyze Prometheus metrics by using our
 [get-grafana]: http://grafana.org
 [sample-database]: https://s3.amazonaws.com/docs.iobeam.com/examples/prometheus-grafana/prom_data_csvs.zip
 [timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/explore-cloud
+[timescale-cloud-install]: /getting-started/exploring-cloud
 [timescale-cloud-prometheus-endpoint]: /tutorials/tutorial-setting-up-timescale-cloud-endpoint-for-prometheus
 [timescaledb-install]: /getting-started/installation
 [grafana-cloud]: https://grafana.com/get
