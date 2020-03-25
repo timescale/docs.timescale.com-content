@@ -1,4 +1,4 @@
-# Getting started with Outflux
+# Getting Started with Outflux
 
 Designed to help users seamlessly migrate from InfluxDB to TimescaleDB, Outflux enables users to pipe exported data directly into TimescaleDB.
 Outflux manages the schema discovery, validation, and creation for you.

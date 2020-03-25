@@ -1,4 +1,4 @@
-# Getting started with Prometheus and TimescaleDB
+# Getting Started with Prometheus and TimescaleDB
 
 If you've ever needed a monitoring solution for your infrastructure, then you've
 probably heard about [Prometheus][]. Prometheus is an
