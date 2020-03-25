@@ -56,6 +56,6 @@ and pick up some valuable `psql` tips and tricks along the way.
 [psql]: /getting-started/install-psql-tutorial
 [Crypto]: /tutorials/analyze-cryptocurrency-data
 [Tableau]: /tutorials/visualizing-time-series-data-in-tableau
-[prometheus-tsc-endpoint]: /tutorials/tutorial-setting-up-timescalecloud-endpoint-for-prometheus
+[prometheus-tsc-endpoint]: /tutorials/tutorial-setting-up-timescale-cloud-endpoint-for-prometheus
 [prometheus-setup]: /tutorials/tutorial-setup-timescale-prometheus
 [prometheus-grafana]: /tutorials/tutorial-use-timescale-prometheus-grafana

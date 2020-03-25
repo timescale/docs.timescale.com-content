@@ -67,7 +67,7 @@ monitor and click the 'Overview' tab.
 
 Navigate down to the 'Service Integrations' section and click the 'Manage Integrations' button.
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-prometheus-endpoint-tutorial/Prometheus_service_integration_4.png" alt="Manage Service integrations on your managed service"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-prometheus-endpoint-tutorial/Prometheus_service_integrations_4.png" alt="Manage Service integrations on your managed service"/>
 
 Find the Prometheus integration option and select 'Use Prometheus'.
 
