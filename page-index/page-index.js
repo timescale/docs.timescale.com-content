@@ -464,7 +464,7 @@ const pageIndex = [
                 href: "continuous-aggs-tutorial",
                 children: []
             }, {
-                Title: "Setup Timescale and Prometheus",
+                Title: "Setup TimescaleDB and Prometheus",
                 type: PAGE,
                 href: "tutorial-setup-timescale-prometheus",
                 children: []
@@ -476,7 +476,7 @@ const pageIndex = [
             }, {
                 Title: "Monitor Timescale Cloud with Prometheus",
                 type: PAGE,
-                href: "tutorial-setting-up-timescalecloud-endpoints-for-prometheus",
+                href: "tutorial-setting-up-timescalecloud-endpoint-for-prometheus",
                 children: []
             }, {
                 Title: "Integration with Prometheus",

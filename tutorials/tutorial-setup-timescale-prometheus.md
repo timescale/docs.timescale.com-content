@@ -3,12 +3,13 @@
 [Prometheus][get-prometheus] is the leading open-source systems monitoring 
 solution. With Prometheus, you can obtain metrics about your cloud 
 infrastructure. [Grafana][get-grafana] is an open-source visualization engine, 
-enabling you to gain powerful insight into your infrastructure metrics. 
-[TimescaleDB][timescale-products] is a time-series database, providing the 
+that enables you to gain powerful insight into your infrastructure metrics. 
+[TimescaleDB][timescale-cloud] is a time-series database, providing the 
 tools and services you need to store long-term infrastructure metrics and 
 gain insight for cost-management, capacity planning, and root-cause analysis.
 
-Together, Timescale, Prometheus, and Grafana are an ideal open-source analytics stack.
+Together, TimescaleDB, Prometheus, and Grafana are an ideal open-source analytics 
+stack.
 
 This tutorial comes in two parts. In this first part, you’ll learn how to 
 set up TimescaleDB and Prometheus. In the second part, you’ll learn how 
@@ -21,7 +22,7 @@ without setting up a full monitoring harness.
 
 Prometheus is an open-source systems monitoring and alerting toolkit that can 
 be used to easily and cost-effectively monitor infrastructure and applications. 
-You might be already familiar with it, especially if you’re using Kubernetes. 
+You might be already familiar with it, especially if you use Kubernetes. 
 Prometheus’ greatest advantage is its unapologetic approach to solving monitoring 
 in a simple and straightforward way. Its philosophy is to do one thing, and do 
 it well. 
@@ -46,7 +47,7 @@ the cost of doing business for various scenarios. How much does it cost to run
 your site on Black Friday? How much does it cost to add new sensors to your IoT 
 infrastructure?
 - **Plan capacity**. You can understand how much infrastructure you will require 
-to support various business scenarios.
+to support various use cases.
 - **Identify root causes**. Having long-term views of metrics enables you to 
 look for correlations when outages, degradation, or other periodic mishaps occur 
 in your infrastructure.
@@ -61,7 +62,7 @@ EC2 instance. Before we setup the monitoring environment, you’ll need:
 - An [AWS account][aws-signup]
 - A new or existing Amazon EC2 instance. We’ll use the `t2.large` instance 
 type, but you can use whatever is within your budget, including the free-tier 
-eligible instances. Ensure to store your `.pem` key safely. In this tutorial, 
+eligible instances. Ensure that you store your `.pem` key safely. In this tutorial, 
 we’ll use the Ubuntu Server 18.04 LTS AMI:
 
 <img class="main-content__illustration" src="https://s3.amazonaws.com/docs.iobeam.com/images/AWS_Ubuntu_DIYMonitoring.png" alt="Ubuntu AMI used for Monitoring setup"/>
@@ -74,22 +75,22 @@ on your key file, you can learn more [here][ssl-setup-key-instructions]
 [StackOverflow post][stack-overflow-filezilla] for help on how to connect to your 
 Amazon EC2 instance running Ubuntu using FileZilla. You’ll need the Public DNS 
 of the server, found on the Amazon EC2 Description page. The `username` will be 
-`ubuntu` and the password will be blank.
+'ubuntu' and the password will be blank.
 - A Prometheus metrics endpoint, for Prometheus to scrape, on the infrastructure 
 you are interested in monitoring. If you are using Timescale Cloud as your 
 database, [follow the instructions to setup an endpoint for Prometheus][timescale-cloud-prometheus-endpoint]. 
 See here for a [list of Prometheus exporters][prometheus-exporters] for various 
-infrastructure. A popular one is the [Node/system metrics exporter][prometheus-node-exporter], 
-which sends hardware and OS metrics exposed by *NIX kernels.
+infrastructure setups. A popular one is the [Node/system metrics exporter][prometheus-node-exporter], 
+which sends hardware and OS metrics exposed by \*NIX kernels.
 
 If you’d prefer not to use AWS, the instructions below will still work for machines 
 running Ubuntu and Docker. The instructions can also be used if you only have a Docker 
-environment set up, provided you’re willing to Google around a bit.
+environment set up, though they may require additional steps.
 
 ### Step 1: Setup TimescaleDB with the PostgreSQL Prometheus extension
 
 Now we will configure TimescaleDB with the PostgreSQL Prometheus extension, 
-known as `pg_prometheus`. From the command line, run the following:
+known as [pg_prometheus][pg-prometheus-extension]. From the command line, run the following:
 
 ```bash
 docker run --name pg_prometheus -e POSTGRES_PASSWORD=secret -d -p 5432:5432 timescale/pg_prometheus:latest-pg11  postgres -csynchronous_commit=off
@@ -97,14 +98,14 @@ docker run --name pg_prometheus -e POSTGRES_PASSWORD=secret -d -p 5432:5432 time
 
 This command pulls a new instance of the latest release of TimescaleDB, with 
 the [pg_prometheus extension][pg-prometheus-extension] installed and uses 
-the `-- name` flag to name it `pg_prometheus`. This will automatically create 
+the `--name` flag to name it `pg_prometheus`. This will automatically create 
 tables, hypertables, and schema to store and query metrics from Prometheus in 
 an optimized way.
 
 We also use the the `-e` flag to set the password to our TimescaleDB instance 
 to be `secret`, but please change it and/or use the relevant secret management 
-and password methods at your company. We also use the default PostgreSQL port of 
-5432, but you can change it if you have other things running on that port.
+and password methods you prefer. We also use the default PostgreSQL port of 
+`5432`, but you can change it if you have other things running on that port.
 
 >:TIP: If you’re new to TimescaleDB, the [Hello! Timescale tutorial][hello-timescale] will give you the base knowledge you need to proceed.
 
@@ -184,7 +185,7 @@ means that all of your metrics are immediately backed up, so that any disk failu
 Prometheus node will be less painful.
 
 To do this, add the following lines at the end of your prometheus configuration file, 
-assuming you’ve setup the Prometheus PostgreSQL adapter from step 2 at port 9201:
+assuming you’ve setup the Prometheus PostgreSQL adapter from step 2 at port `9201`:
 
 ```yaml
  remote_write:
@@ -194,7 +195,7 @@ remote_read:
 ```
 
 If you don’t have a running instance of Prometheus or a `prometheus.yml` configuration 
-file, here’s a sample one for the node exporter, running at port 9100:
+file, here’s a sample one for the node exporter, running at port `9100`:
 
 ```yaml
 #prometheus.yml for node exporter job
@@ -305,7 +306,7 @@ default PostgreSQL port of `5432`.
 if you don’t want to use the `postgres` superuser.
 - Password would be the password for your Timescale instance, configured in Step 1.
 - SSL mode will be `disable`
-- Version: 11 - we will update this tutorial once PG12 support is added
+- Version: 11
 - TimescaleDB selected - this tells Grafana you’re using TimescaleDB and will allow 
 you to use Timescale specific functions for analysis and creating visualizations.
 
@@ -347,5 +348,5 @@ how to create sample dashboards using TimescaleDB and Grafana.
 [filezilla]: https://www.filezilla.org
 [stack-overflow-filezilla]: https://stackoverflow.com/questions/16744863/connect-to-amazon-ec2-file-directory-using-filezilla-and-sftp
 [prometheus-exporters]: https://prometheus.io/docs/instrumenting/exporters/
-[prometheus-node-exporters]: https://github.com/prometheus/node_exporter
+[prometheus-node-exporter]: https://github.com/prometheus/node_exporter
 [sample-dashboards]: https://github.com/timescale/examples/tree/master/prometheus-grafana
