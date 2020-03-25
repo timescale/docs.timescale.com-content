@@ -476,7 +476,7 @@ const pageIndex = [
             }, {
                 Title: "Monitor Timescale Cloud with Prometheus",
                 type: PAGE,
-                href: "tutorial-setting-up-timescalecloud-endpoint-for-prometheus",
+                href: "tutorial-setting-up-timescale-cloud-endpoint-for-prometheus",
                 children: []
             }, {
                 Title: "Integration with Prometheus",

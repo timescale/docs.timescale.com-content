@@ -67,7 +67,7 @@ we’ll use the Ubuntu Server 18.04 LTS AMI:
 
 <img class="main-content__illustration" src="https://s3.amazonaws.com/docs.iobeam.com/images/AWS_Ubuntu_DIYMonitoring.png" alt="Ubuntu AMI used for Monitoring setup"/>
 
-- An SSH connection to your Amazon EC2 instance. Learn how to setup 
+- An SSH connection to your Amazon EC2 instance. Learn how to set up 
 one [here][ssl-setup-instructions]. Remember to set the correct permissions 
 on your key file, you can learn more [here][ssl-setup-key-instructions] 
 - Docker installed on Ubuntu. [Follow the instructions][docker-ubuntu] to install.
@@ -78,7 +78,7 @@ of the server, found on the Amazon EC2 Description page. The `username` will be
 'ubuntu' and the password will be blank.
 - A Prometheus metrics endpoint, for Prometheus to scrape, on the infrastructure 
 you are interested in monitoring. If you are using Timescale Cloud as your 
-database, [follow the instructions to setup an endpoint for Prometheus][timescale-cloud-prometheus-endpoint]. 
+database, [follow the instructions to set up an endpoint for Prometheus][timescale-cloud-prometheus-endpoint]. 
 See here for a [list of Prometheus exporters][prometheus-exporters] for various 
 infrastructure setups. A popular one is the [Node/system metrics exporter][prometheus-node-exporter], 
 which sends hardware and OS metrics exposed by \*NIX kernels.
@@ -185,7 +185,7 @@ means that all of your metrics are immediately backed up, so that any disk failu
 Prometheus node will be less painful.
 
 To do this, add the following lines at the end of your prometheus configuration file, 
-assuming you’ve setup the Prometheus PostgreSQL adapter from step 2 at port `9201`:
+assuming you’ve set up the Prometheus PostgreSQL adapter from step 2 at port `9201`:
 
 ```yaml
  remote_write:
@@ -240,7 +240,7 @@ remote_read:
  - url: "http://{ADAPTER_IP}:9201/read"
 ```
 
-Now that your Prometheus configuration file has been configured, next we use 
+Now that your Prometheus configuration file has been set, we will use 
 FileZilla (or similar tool) to transfer your file to your Amazon EC2 instance. 
 Finally, we can run the command below in order to start up Prometheus in a container 
 using the configs specified in `prometheus.yml`:
@@ -249,8 +249,8 @@ using the configs specified in `prometheus.yml`:
 sudo docker run -p 9090:9090 -v prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
 ```
 
-To check that Prometheus metrics are indeed being stored in Timescale, run the 
-following command in `psql` when connected to your Timescale instance and check 
+To check that Prometheus metrics are indeed being stored in TimescaleDB, run the 
+following command in `psql` when connected to your TimescaleDB instance and check 
 that you see rows in the `metrics_values` table:
 
 ```sql
@@ -325,7 +325,7 @@ how to create sample dashboards using TimescaleDB and Grafana.
 [get-grafana]: http://grafana.org
 [sample-database]: https://s3.amazonaws.com/docs.iobeam.com/examples/prometheus-grafana/prom_data_csvs.zip
 [timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/explore-cloud
+[timescale-cloud-install]: /getting-started/exploring-cloud
 [timescale-cloud-prometheus-endpoint]: /tutorials/tutorial-setting-up-timescale-cloud-endpoint-for-prometheus
 [timescaledb-install]: /getting-started/installation
 [grafana-cloud]: https://grafana.com/get
