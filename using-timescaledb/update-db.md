@@ -28,10 +28,10 @@ upgrade process is involves three-steps:
 ALTER EXTENSION timescaledb UPDATE;
 ```
 
->:WARNING: When executing `ALTER EXTENSION`, you should connect using psql
-with the `-X` flag to prevent any .psqlrc commands from accidentally triggering
-the load of a previous DB version on session startup.
-
+>:WARNING: When executing `ALTER EXTENSION`, you should connect using `psql`
+with the `-X` flag to prevent any `.psqlrc` commands from accidentally
+triggering the load of a previous TimescaleDB version on session startup.
+It must also be the first command you execute in the session.
 <!-- -->
 
 >:WARNING: If upgrading from a TimescaleDB version older than 0.9.0,
