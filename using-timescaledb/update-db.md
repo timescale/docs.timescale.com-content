@@ -25,6 +25,35 @@ to update to the latest version.  It's a four-step process:
 ALTER EXTENSION timescaledb UPDATE;
 ```
 
+>:WARNING: When executing `ALTER EXTENSION`, you should connect using `psql`
+with the `-X` flag to prevent any `.psqlrc` commands from accidentally
+triggering the load of a previous TimescaleDB version on session startup.
+It must also be the first command you execute in the session.
+<!-- -->
+
+>:WARNING: If upgrading from a TimescaleDB version older than 0.12.0,
+you will need to restart your database before calling `ALTER EXTENSION`.
+Remember that restarting PostgreSQL is accomplished via different
+commands on different platforms:
+- Linux services: `sudo service postgresql restart`
+- Mac Homebrew: `brew services restart postgresql`
+- Docker: see below
+
+<!-- -->
+
+>:WARNING: If you are upgrading from a version before 0.11.0 make sure your
+root table does not contain data otherwise the update will fail.
+Data can be migrated as follows:
+```sql
+BEGIN;
+SET timescaledb.restoring = 'off';
+INSERT INTO hypertable SELECT * FROM ONLY hypertable;
+SET timescaledb.restoring = 'on';
+TRUNCATE ONLY hypertable;
+SET timescaledb.restoring = 'off';
+COMMIT;
+```
+
 This will upgrade TimescaleDB to the latest installed version, even if you
 are several versions behind. For example, if you install 0.5 but currently
 have 0.4.1 running, the above command will first upgrade to 0.4.2 then to 0.5.
