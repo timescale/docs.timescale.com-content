@@ -2,7 +2,9 @@
 
 This will install both TimescaleDB *and* PostgreSQL via Homebrew.
 
-**Note: TimescaleDB requires PostgreSQL 9.6.3+, 10.9+, or 11.4+**
+**Note: TimescaleDB requires PostgreSQL 11.4+ or 12.0+. Support for
+PostgreSQL 9.6.3+ and 10.9+ is deprecated and will be removed in a
+future release.**
 
 #### Prerequisites
 
@@ -44,9 +46,6 @@ parallelism, and other settings.
 
 To get started you'll now need to restart PostgreSQL and add
 a `postgres` superuser (used in the rest of the docs):
->:WARNING: If you are still on PostgreSQL 9.6 or 10 via Homebrew, you should
-replace `postgresql` with <code>postgresql&#64;9.6</code> for 9.6 or
-<code>postgresql&#64;10</code> for 10.
 
 ```bash
 # Restart PostgreSQL instance
