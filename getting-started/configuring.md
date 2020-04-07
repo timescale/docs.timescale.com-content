@@ -99,11 +99,15 @@ point in time. You need a background worker allocated to each database to run
 a lightweight scheduler that schedules jobs. On top of that, any additional
 workers you allocate here will run background jobs when needed.
 
-For larger queries, PostgreSQL automatically uses parallel workers if they are
-available. To configure this on PostgreSQL 10+, use the `max_parallel_workers`
-setting; for PostgreSQL 9.6, nothing needs to be done.
-Increasing this setting will improve query performance for larger queries.
-Smaller queries may not trigger parallel workers.
+For larger queries, PostgreSQL automatically uses parallel workers if
+they are available. To configure this on PostgreSQL 10 or later, use
+the `max_parallel_workers` setting; for PostgreSQL 9.6, nothing needs
+to be done. Increasing this setting will improve query performance for
+larger queries.  Smaller queries may not trigger parallel workers.
+
+>:WARNING: Support for PostgresSQL 9.6 and 10 is deprecated and will
+>be removed in a future release. We recommend that you use at least
+>PostgreSQL 11.4 or 12.0.
 
 Finally, you must configure `max_worker_processes` to be at least the sum of
 `timescaledb.max_background_workers` and `max_parallel_workers`.
