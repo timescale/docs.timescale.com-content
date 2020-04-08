@@ -10,7 +10,7 @@ TimescaleDB with [R](#tutorial-r), [Apache MADlib](#tutorial-madlib),
 and [Python](#tutorial-python) to perform
 various methods of time-series forecasting. We will be using
 New York City taxicab data that is also used in our
-[Hello NYC Tutorial][hello_nyc]. The dataset contains information
+[Hello Timescale Tutorial][hello_timescale]. The dataset contains information
 about all yellow cab trips in New York City in January 2016,
 including pickup and dropoff times, GPS coordinates, and total
 price of a trip. We seek to extract some interesting insights
@@ -21,7 +21,7 @@ forecasting and machine learning tools.
 Prerequisites:
 
 1. [Installed TimescaleDB][install]
-1. Downloaded and loaded dataset from [Hello NYC Tutorial][hello_nyc]
+1. Downloaded and loaded dataset from [Hello Timescale Tutorial][hello_timescale]
 1. [Installed and set up PostGIS in database][tutorial-postgis]
 1. [Installed R][install_r]
 1. [Installed Python][install_python]
@@ -755,7 +755,7 @@ wide variety of statistical models and machine learning algorithms
 that you can use to analyze and make predictions on time-series
 data in your TimescaleDB database.
 
-[hello_nyc]: /tutorials/tutorial-hello-nyc
+[hello_timescale]: /tutorials/tutorial-hello-timescale
 [install]: /getting-started/installation
 [tutorial-postgis]: /tutorials/tutorial-hello-nyc#tutorial-postgis
 [install_r]: https://www.r-project.org/
