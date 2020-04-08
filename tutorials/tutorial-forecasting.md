@@ -54,7 +54,7 @@ WITH data AS (
     ),
     period AS (
   SELECT time_bucket('1 hour', no_gaps) one_hour
-  FROM  generate_series('2016-01-01 00:00:00'::timestamp, '2016-01-31 23:59:59', '1 hour') no_gaps
+  FROM  generate_series(TIMESTAMP '2016-01-01 00:00:00', TIMESTAMP '2016-01-31 23:59:59', INTERVAL '1 hour') no_gaps
      )
 INSERT INTO rides_count
   SELECT period.one_hour, coalesce(data.count, 0)

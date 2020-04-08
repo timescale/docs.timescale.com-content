@@ -158,7 +158,7 @@ for the name of the table and the column definitions.
 Let's update `table_template` in the config for TimescaleDB:
 
 ```
-  table_template=`CREATE TABLE IF NOT EXISTS {TABLE}({COLUMNS}); SELECT create_hypertable({TABLELITERAL},'time',chunk_time_interval := '1 week'::interval,if_not_exists := true);`
+  table_template=`CREATE TABLE IF NOT EXISTS {TABLE}({COLUMNS}); SELECT create_hypertable({TABLELITERAL},'time',chunk_time_interval := INTERVAL '1 week',if_not_exists := true);`
 ```
 
 This way when a new table is created it is converted into a hypertable, with each chunk holding 1 week intervals. Nothing else is needed to use the plugin with TimescaleDB.

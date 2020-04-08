@@ -63,7 +63,7 @@ To determine which chunks to move, we can list chunks that fit a specific criter
 For example,  to identify chunks older than two days:
 
 ```sql
-SELECT show_chunks('conditions', older_than => interval '2 days');
+SELECT show_chunks('conditions', older_than => INTERVAL '2 days');
 ```
 
 In this example, we will move  `_timescaledb_internal._hyper_1_4_chunk` along with

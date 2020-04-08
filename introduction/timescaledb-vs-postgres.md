@@ -171,7 +171,7 @@ SELECT time_bucket('3 hours', time) AS period
     first(price, time) AS opening, last(price, time) AS closing,
     max(price) AS high, min(price) AS low
   FROM prices
-  WHERE time > NOW() - interval '7 days'
+  WHERE time > NOW() - INTERVAL '7 days'
   GROUP BY period, asset_code
   ORDER BY period DESC, asset_code;
 ```
@@ -219,7 +219,7 @@ TimescaleDB allows efficient deletion of old data at the **chunk** level,
 rather than at the row level, via its `drop_chunks` functionality.
 
 ```sql
-SELECT drop_chunks(interval '7 days', 'conditions');
+SELECT drop_chunks(INTERVAL '7 days', 'conditions');
 ```
 
 This will delete all chunks (files) from the hypertable 'conditions'
