@@ -18,7 +18,7 @@ SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
 
 -- Return the number of data entries written in past 12 hours
 SELECT COUNT(*) FROM conditions
-  WHERE time > NOW() - interval '12 hours';
+  WHERE time > NOW() - INTERVAL '12 hours';
 ```
 To more advanced SQL queries:
 
@@ -30,7 +30,7 @@ SELECT time_bucket('15 minutes', time) AS fifteen_min,
     MAX(temperature) AS max_temp,
     MAX(humidity) AS max_hum
   FROM conditions
-  WHERE time > NOW() - interval '3 hours'
+  WHERE time > NOW() - INTERVAL '3 hours'
   GROUP BY fifteen_min, location
   ORDER BY fifteen_min DESC, max_temp DESC;
 
@@ -41,7 +41,7 @@ SELECT COUNT(DISTINCT location) FROM conditions
   JOIN locations
     ON conditions.location = locations.location
   WHERE locations.air_conditioning = True
-    AND time > NOW() - interval '1 day'
+    AND time > NOW() - INTERVAL '1 day'
 ```
 
 ---
@@ -90,7 +90,7 @@ SELECT time, AVG(temperature) OVER(ORDER BY time
       ROWS BETWEEN 9 PRECEDING AND CURRENT ROW)
     AS smooth_temp
   FROM conditions
-  WHERE location = 'garage' and time > NOW() - interval '1 day'
+  WHERE location = 'garage' and time > NOW() - INTERVAL '1 day'
   ORDER BY time DESC;
 ```
 
@@ -113,7 +113,7 @@ SELECT
     END
   ) AS "bytes"
   FROM net
-  WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
+  WHERE interface = 'eth0' AND time > NOW() - INTERVAL '1 day'
   WINDOW w AS (ORDER BY time)
   ORDER BY time
 ```
@@ -139,7 +139,7 @@ SELECT
     END
   ) / extract(epoch from time - lag(time) OVER w) AS "bytes_per_second"
   FROM net
-  WHERE interface = 'eth0' AND time > NOW() - interval '1 day'
+  WHERE interface = 'eth0' AND time > NOW() - INTERVAL '1 day'
   WINDOW w AS (ORDER BY time)
   ORDER BY time
 ```
@@ -209,7 +209,7 @@ values in the stated range and the last is for values above 85.
 SELECT location, COUNT(*),
     histogram(temperature, 60.0, 85.0, 5)
    FROM conditions
-   WHERE time > NOW() - interval '7 days'
+   WHERE time > NOW() - INTERVAL '7 days'
    GROUP BY location;
 ```
 This query will output data in the following form:
@@ -295,11 +295,11 @@ Note that we can do basic arithmetic operations on intervals easily in order to 
 value to pass to time_bucket.
 ```sql
 SELECT
-  time_bucket_gapfill(interval '2 weeks' / 1080, time, now() - interval '2 weeks', now()) AS btime,
+  time_bucket_gapfill(INTERVAL '2 weeks' / 1080, time, now() - INTERVAL '2 weeks', now()) AS btime,
   sum(volume) AS volume
 FROM trades
 WHERE asset_code = 'TIMS'
-  AND time >= now() - interval '2 weeks' AND time < now()
+  AND time >= now() - INTERVAL '2 weeks' AND time < now()
 GROUP BY btime
 ORDER BY btime;
 ```
@@ -330,12 +330,12 @@ value.
 
 ```sql
 SELECT
-  time_bucket_gapfill('5 min'::interval, time, now() - '2 weeks'::interval, now()) as 5min,
+  time_bucket_gapfill(INTERVAL '5 min', time, now() - INTERVAL '2 weeks', now()) as 5min,
   meter_id,
   locf(avg(data_value)) AS data_value
 FROM my_hypertable
 WHERE
-  time > now() - '2 weeks'::interval
+  time > now() - INTERVAL '2 weeks'
   AND meter_id IN (1,2,3,4)
 GROUP BY 5min, meter_id
 ```

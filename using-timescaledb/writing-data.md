@@ -178,7 +178,7 @@ down to the appropriate chunks that comprise the hypertable.
 ```sql
 DELETE FROM conditions WHERE temperature < 35 OR humidity < 60;
 
-DELETE FROM conditions WHERE time < NOW() - interval '1 month';
+DELETE FROM conditions WHERE time < NOW() - INTERVAL '1 month';
 ```
 
 After running a large `DELETE` operation, users are recommended to

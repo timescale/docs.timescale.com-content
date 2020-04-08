@@ -255,7 +255,7 @@ is named 'conditions', and we are looking for the chunks associated with this hy
 with data older than three days.
 
 ``` sql
-SELECT show_chunks('conditions', older_than => interval '3 days');
+SELECT show_chunks('conditions', older_than => INTERVAL '3 days');
 ```
 
 ||show_chunks|

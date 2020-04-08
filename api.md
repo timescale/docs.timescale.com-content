@@ -173,7 +173,7 @@ space partitioning (2 partitions) on `location`, then add two additional dimensi
 
 ```sql
 SELECT create_hypertable('conditions', 'time', 'location', 2);
-SELECT add_dimension('conditions', 'time_received', chunk_time_interval => interval '1 day');
+SELECT add_dimension('conditions', 'time_received', chunk_time_interval => INTERVAL '1 day');
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_exists => true);
 ```
@@ -354,7 +354,7 @@ SELECT create_hypertable('conditions', 'time');
 Convert table `conditions` to hypertable, setting `chunk_time_interval` to 24 hours.
 ```sql
 SELECT create_hypertable('conditions', 'time', chunk_time_interval => 86400000000);
-SELECT create_hypertable('conditions', 'time', chunk_time_interval => interval '1 day');
+SELECT create_hypertable('conditions', 'time', chunk_time_interval => INTERVAL '1 day');
 ```
 
 Convert table `conditions` to hypertable with time partitioning on `time` and
@@ -622,7 +622,7 @@ intersection between two ranges will result in an error.
 
 Drop all chunks older than 3 months ago from hypertable `conditions`:
 ```sql
-SELECT drop_chunks(interval '3 months', 'conditions');
+SELECT drop_chunks(INTERVAL '3 months', 'conditions');
 ```
 
 Example output:
@@ -640,12 +640,12 @@ Example output:
 
 Drop all chunks more than 3 months in the future from hypertable `conditions`. This is useful for correcting data ingested with incorrect clocks:
 ```sql
-SELECT drop_chunks(newer_than => now() + interval '3 months', table_name => 'conditions');
+SELECT drop_chunks(newer_than => now() + INTERVAL '3 months', table_name => 'conditions');
 ```
 
 Drop all chunks from hypertable `conditions` before 2017:
 ```sql
-SELECT drop_chunks('2017-01-01'::date, 'conditions');
+SELECT drop_chunks(DATE '2017-01-01', 'conditions');
 ```
 
 Drop all chunks from hypertable `conditions` before 2017, where time column is given in milliseconds from the UNIX epoch:
@@ -655,17 +655,17 @@ SELECT drop_chunks(1483228800000, 'conditions');
 
 Drop all chunks from hypertable `conditions` older than 3 months, including dependent objects (e.g., views):
 ```sql
-SELECT drop_chunks(interval '3 months', 'conditions', cascade => TRUE);
+SELECT drop_chunks(INTERVAL '3 months', 'conditions', cascade => TRUE);
 ```
 
 Drop all chunks older than 3 months ago and newer than 4 months ago from hypertable `conditions`:
 ```sql
-SELECT drop_chunks(older_than => interval '3 months', newer_than => interval '4 months', table_name => 'conditions')
+SELECT drop_chunks(older_than => INTERVAL '3 months', newer_than => INTERVAL '4 months', table_name => 'conditions')
 ```
 
 Drop all chunks older than 3 months, and delete this data from any continuous aggregates based on it:
 ```sql
-SELECT drop_chunks(interval '3 months', 'conditions', cascade_to_materializations => true);
+SELECT drop_chunks(INTERVAL '3 months', 'conditions', cascade_to_materializations => true);
 ```
 
 ---
@@ -692,7 +692,7 @@ hypertable time column:
 
 - **TIMESTAMP, TIMESTAMPTZ, DATE:** The specified
     `chunk_time_interval` should be given either as an INTERVAL type
-    (`interval '1 day'`) or as an
+    (`INTERVAL '1 day'`) or as an
     integer or bigint value (representing some number of microseconds).
 
 - **INTEGER:** The specified `chunk_time_interval` should be an
@@ -705,7 +705,7 @@ hypertable time column:
 
 For a TIMESTAMP column, set `chunk_time_interval` to 24 hours.
 ```sql
-SELECT set_chunk_time_interval('conditions', interval '24 hours');
+SELECT set_chunk_time_interval('conditions', INTERVAL '24 hours');
 SELECT set_chunk_time_interval('conditions', 86400000000);
 ```
 
@@ -848,32 +848,32 @@ SELECT show_chunks('conditions');
 
 Get all chunks older than 3 months:
 ```sql
-SELECT show_chunks(older_than => interval '3 months');
+SELECT show_chunks(older_than => INTERVAL '3 months');
 ```
 
 Get all chunks more than 3 months in the future. This is useful for showing data ingested with incorrect clocks:
 ```sql
-SELECT show_chunks(newer_than => now() + interval '3 months');
+SELECT show_chunks(newer_than => now() + INTERVAL '3 months');
 ```
 
 Get all chunks from hypertable `conditions` older than 3 months:
 ```sql
-SELECT show_chunks('conditions', older_than => interval '3 months');
+SELECT show_chunks('conditions', older_than => INTERVAL '3 months');
 ```
 
 Get all chunks from hypertable `conditions` before 2017:
 ```sql
-SELECT show_chunks('conditions', older_than => '2017-01-01'::date);
+SELECT show_chunks('conditions', older_than => DATE '2017-01-01');
 ```
 
 Get all chunks newer than 3 months:
 ```sql
-SELECT show_chunks(newer_than => interval '3 months');
+SELECT show_chunks(newer_than => INTERVAL '3 months');
 ```
 
 Get all chunks older than 3 months and newer than 4 months:
 ```sql
-SELECT show_chunks(older_than => interval '3 months', newer_than => interval '4 months');
+SELECT show_chunks(older_than => INTERVAL '3 months', newer_than => INTERVAL '4 months');
 ```
 
 ---
@@ -1204,7 +1204,7 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 |**Description**|**Type**|**Default**|
 | Time interval after which invalidations are ignored.| Same datatype as the `bucket_width` argument from the `time_bucket` expression. | By default all invalidations are processed.|
 
->:TIP: Say, the continuous aggregate uses time_bucket('2h', time_column) and we want to keep the view up to date with the data. We can do this by modifying the `refresh_lag` setting. Set refresh_lag to `-2h`. E.g. `ALTER VIEW contview set (timescaledb.refresh_lag = '-2h');` Please refer to the [caveats][].
+>:TIP: Say, the continuous aggregate uses time_bucket(INTERVAL '2h', time_column) and we want to keep the view up to date with the data. We can do this by modifying the `refresh_lag` setting. Set refresh_lag to `-2h`. E.g. `ALTER VIEW contview set (timescaledb.refresh_lag = '-2h');` Please refer to the [caveats][].
 
 #### Restrictions
 - `SELECT` query should be of the form specified in the syntax above.
@@ -1699,12 +1699,12 @@ The datatype of value needs to be the same as the `value` datatype of the `inter
 Get the temperature every day for each device over the last week interpolating for missing readings:
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('1 day', time, now() - INTERVAL '1 week', now()) AS day,
   device_id,
   avg(temperature) AS value,
   interpolate(avg(temperature))
 FROM metrics
-WHERE time > now () - interval '1 week'
+WHERE time > now () - INTERVAL '1 week'
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1723,15 +1723,15 @@ ORDER BY day;
 Get the average temperature every day for each device over the last 7 days interpolating for missing readings with lookup queries for values before and after the gapfill time range:
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('1 day', time, now() - INTERVAL '1 week', now()) AS day,
   device_id,
   avg(value) AS value,
   interpolate(avg(temperature),
-    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - interval '1 week' AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1),
+    (SELECT (time,temperature) FROM metrics m2 WHERE m2.time < now() - INTERVAL '1 week' AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1),
     (SELECT (time,temperature) FROM metrics m2 WHERE m2.time > now() AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1)
   ) AS interpolate
 FROM metrics m
-WHERE time > now () - interval '1 week'
+WHERE time > now () - INTERVAL '1 week'
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1768,7 +1768,7 @@ Get the temperature every 5 minutes for each device over the past day:
 SELECT device_id, time_bucket('5 minutes', time) AS interval,
   last(temp, time)
 FROM metrics
-WHERE time > now () - interval '1 day'
+WHERE time > now () - INTERVAL '1 day'
 GROUP BY device_id, interval
 ORDER BY interval DESC;
 ```
@@ -1815,12 +1815,12 @@ by the outer query (i.e., the first bucket in the queried time range is empty).
 Get the average temperature every day for each device over the last 7 days carrying forward the last value for missing readings:
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('1 day', time, now() - INTERVAL '1 week', now()) AS day,
   device_id,
   avg(temperature) AS value,
   locf(avg(temperature))
 FROM metrics
-WHERE time > now () - interval '1 week'
+WHERE time > now () - INTERVAL '1 week'
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1839,15 +1839,15 @@ ORDER BY day;
 Get the average temperature every day for each device over the last 7 days carrying forward the last value for missing readings with out-of-bounds lookup
 ```sql
 SELECT
-  time_bucket_gapfill('1 day', time, now() - interval '1 week', now()) AS day,
+  time_bucket_gapfill('1 day', time, now() - INTERVAL '1 week', now()) AS day,
   device_id,
   avg(temperature) AS value,
   locf(
     avg(temperature),
-    (SELECT temperature FROM metrics m2 WHERE m2.time < now() - interval '2 week' AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1)
+    (SELECT temperature FROM metrics m2 WHERE m2.time < now() - INTERVAL '2 week' AND m.device_id = m2.device_id ORDER BY time DESC LIMIT 1)
   )
 FROM metrics m
-WHERE time > now () - interval '1 week'
+WHERE time > now () - INTERVAL '1 week'
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -1965,7 +1965,7 @@ the last bucket would have only 4 days of data.
 
 Bucketing a TIMESTAMPTZ at local time instead of UTC(see note above):
 ```sql
-SELECT time_bucket('2 hours', timetz::TIMESTAMP)
+SELECT time_bucket(INTERVAL '2 hours', timetz::TIMESTAMP)
   AS five_min, avg(cpu)
 FROM metrics
 GROUP BY five_min
@@ -2036,7 +2036,7 @@ SELECT
   device_id,
   avg(value) AS value
 FROM metrics
-WHERE time > now() - interval '1 week' AND time < now()
+WHERE time > now() - INTERVAL '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -2061,7 +2061,7 @@ SELECT
   avg(value) AS value,
   locf(avg(value))
 FROM metrics
-WHERE time > now() - interval '1 week' AND time < now()
+WHERE time > now() - INTERVAL '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
@@ -2085,7 +2085,7 @@ SELECT
   avg(value) AS value,
   interpolate(avg(value))
 FROM metrics
-WHERE time > now() - interval '1 week' AND time < now()
+WHERE time > now() - INTERVAL '1 week' AND time < now()
 GROUP BY day, device_id
 ORDER BY day;
 
