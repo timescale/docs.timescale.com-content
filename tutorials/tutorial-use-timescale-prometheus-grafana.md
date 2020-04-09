@@ -18,15 +18,17 @@ reflect which table data from that file should be inserted into. Step 4 of the
 first part of this tutorial will help you connect your TimescaleDB instance with 
 Grafana, so that you can complete the steps in this part of the tutorial.
 
-In this tutorial, you will learn how to optimize TimescaleDB for Prometheus 
-metrics and build visualizations that help you use metrics to answer common 
-questions, such as:
+In this tutorial, you will learn how to 
+[optimize TimescaleDB for Prometheus metrics](#optimize-timescale) and build 
+visualizations that help you use metrics to answer common questions, such as:
 
-- How many active connections are there to the database?
-- What is the maximum and average percent of memory usage?
-- When is the database being read most often?
+- [How many active connections are there to the database?](#active-connections)
+- [What is the maximum and average percent of memory usage?](#memory-usage)
+- [When is the database being read most often?](#db-reads)
+- [How much disk space is being used?](#disk-space)
+- [What is the cache hit rate?](#cache-hit)
 
-### Optimizing TimescaleDB for Prometheus metrics
+### Optimizing TimescaleDB for Prometheus metrics [](optimize-timescale)
 
 There are several ways to optimize your TimescaleDB to maximize storage, query 
 time, and overall cost efficiency:
@@ -186,16 +188,7 @@ in the `time_bucket` part of the statement.
 With these optimizations, we’re ready to dive in and start using our 
 data to answer common questions.
 
-### Which metrics make the most sense to collect? 
-
-Let’s start by building the queries and visualizations for the following 
-three questions:
-
-- How many connections are active to the database right now?
-- What’s the max and average percentage of memory used in 10 minute intervals in the past day?
-- What are the max, min, and average number of blocks read from my database in 5min intervals?
-
-### How many connections are there to the database?
+### How many connections are there to the database? [](active-connections)
 
 Prometheus metrics are stored in the `metrics_values` table, while the labels for 
 metrics are stored in the `metrics_labels` table. If you match the `id` from the 
@@ -295,7 +288,7 @@ The result of your query should look like this:
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-prometheus-tutorial/grafana_query_1_screenshot.png" alt="Visualizing PostgreSQL connections in Grafana"/>
 
-### What is the maximum and average percent of memory usage?
+### What is the maximum and average percent of memory usage? [](memory-usage)
 
 Knowing the maximum and average memory usage of your infrastructure gives 
 you an idea of when you are about to require an upgrade to your service plan 
@@ -359,7 +352,7 @@ The result of your query should look like this:
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-prometheus-tutorial/grafana_query_2_screenshot.png" alt="Visualizing PostgreSQL connections in Grafana"/>
 
-### When is the database being read most often?
+### When is the database being read most often? [](db-reads)
 
 So far, we’ve built queries to understand the memory usage patterns of our 
 PostgreSQL database. We also want to understand how the database itself is 
@@ -406,7 +399,73 @@ The result of your query should look like this:
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-prometheus-tutorial/grafana_query_3_screenshot.png" alt="Visualizing PostgreSQL connections in Grafana"/>
 
+### How much disk space is being used? [](disk-space)
 
+Knowing how much disk space is being used for a given time period can be
+helpful in troubleshooting a host of errors with your application. We can
+get the current percentage of disk space being used by querying the value of
+the `disk_used_percent` metric, which corresponds to a `labels_id` of 57.
+
+Our Grafana query will look like this:
+
+```sql
+SELECT
+  $__timeGroupAlias("time", 1m),
+  avg(value) AS "% disk used"
+FROM metrics_values
+WHERE
+  $__timeFilter("time") AND
+  labels_id = 57
+GROUP BY 1
+ORDER BY 1
+```
+
+We can visualize this in Grafana by first adding a new panel. Choose the
+`Gauge` visualization. Click `Edit SQL` in the query editor and paste
+the query above. Make sure your data source is selected properly.
+
+Now, go to the Visualization tab to configure your gauge's visual
+properties. It's helpful to play around with the options a little bit.
+In order to obtain the result below, you'll want to do the following:
+
+- In the 'Display' section, select 'Last (not null)' in the 'Calc' field
+- Turn on both 'Labels' and 'Markers'
+- In the 'Field' section, provide a title, set your 'Unit' to be 'percent (0-100)'.
+- In the 'Threshold' section, set the red field to 90, add a yellow field and set it to 75, and set the green field to 0.
+
+Your resulting gauge should look like this:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-prometheus-tutorial/grafana_query_4_screenshot.png" alt="Visualizing disk space usage using a Gauge in Grafana"/>
+
+### What is the cache-hit rate? [](cache-hit)
+
+A cache hit rate measures the effectiveness of the caching system and is 
+influenced by factors such as the cache policy, the number of cacheable 
+objects, the size of the cache memory, and the expiry time of the object. A higher 
+cache hit rate is a good indicator of lower latency and better resource utilization. 
+
+In order to compute the cache hit rate for our instance, we will apply the following formula:
+
+```bash
+sum(heap_blks_hit) / ( sum(heap_blks_hit) + sum(heap_blks_read) )
+```
+
+The `heap_blks_hit` value has a `labels_id` of 313, while the `heap_blks_read`
+value has a `labels_id` of 315. This leads to the following Grafana query, using
+an `INNER JOIN` to combine metric values from the same table:
+
+```sql
+SELECT m_313.time, SUM(m_313.value)/(SUM(m_313.value) + SUM(m_315.value)) as cache_hit_rate
+FROM metrics_values m_313 
+INNER JOIN metrics_values m_315 ON m_313.time = m_315.time
+WHERE  m_313.labels_id = 313 AND m_315.labels_id = 315
+GROUP BY m_313.time
+ORDER BY m_313.time;
+```
+
+In Grafana, this looks like this:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-prometheus-tutorial/grafana_query_5_screenshot.png" alt="Visualizing PostgreSQL cache hit rate in Grafana"/>
 
 ### Summary
 
