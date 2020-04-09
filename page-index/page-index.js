@@ -215,10 +215,6 @@ const pageIndex = [
                 type: PAGE,
                 href: "configuring"
             }, {
-                Title: "Securing Timescale Cloud Network Access",
-                type: PAGE,
-                href: "securing-timescale-cloud"
-            }, {
                 Title: "Installing psql",
                 type: PAGE,
                 href: "install-psql-tutorial"
