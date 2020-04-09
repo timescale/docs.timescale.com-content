@@ -179,6 +179,28 @@ When we visualize this query in Grafana, we see the following:
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_query_results.png" alt="Visualizing time-series data in Grafana"/>
 
+>:TIP: Remember to set the time filter in the upper right corner of your Grafana dashboard. If you're using the pre-built sample dataset for this example, you will want to set your time filter around January 1st, 2016.
+
+Currently, the data is bucketed into 1 day groupings. Adjust the `time_bucket`
+function to be bucketed into 5 minute groupings instead and compare the graphs:
+
+```sql
+SELECT 
+  --1--
+  time_bucket('5m', pickup_datetime) AS time,
+  --2--
+  COUNT(*)
+FROM rides
+WHERE $__timeFilter(pickup_datetime)
+GROUP BY time
+ORDER BY time
+```
+
+When we visualize this query, it will look like this:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_query_results_5m.png" alt="Visualizing time-series data in Grafana"/>
+
+
 ### Visualize geospatial data stored in TimescaleDB
 
 The NYC Taxi Cab data also contains the location of each ride pickup. In the 
@@ -194,8 +216,8 @@ to select your NYC Taxicab Data as the data source. In the 'Format as' dropdown,
 select 'Table'. Click on 'Edit SQL' and enter the following query in the text window:
 
 ```sql
-SELECT time_bucket('1 day', rides.pickup_datetime) AS time,
-       COUNT(rides.trip_distance > 5) AS value, 
+SELECT time_bucket('5m', rides.pickup_datetime) AS time,
+       rides.trip_distance AS value, 
        rides.pickup_latitude AS latitude, 
        rides.pickup_longitude AS longitude
 FROM rides
@@ -208,14 +230,13 @@ GROUP BY time,
          rides.pickup_latitude,
          rides.pickup_longitude 
 ORDER BY time
-LIMIT 50;
+LIMIT 500;
 ```
 
-Let’s dissect this query. First, we’re looking to count the number of rides that were 
-greater than five miles in distance. The Grafana Worldmap panel cannot plot discrete 
-points. It can only plot aggregations. So, we will `COUNT` the number of rides whose 
-`trip_distance` matches our parameters. We will store this result in the `value` 
-field.
+Let’s dissect this query. First, we’re looking to plot rides with visual markers that 
+denote the trip distance. Trips with longer distances will get different visual treatments 
+on our map. We will use the `trip_distance` as the value for our plot. We will store 
+this result in the `value` field.
 
 In the second and third lines of the `SELECT` statement, we are using the `pickup_longitude` 
 and `pickup_latitude` fields in the database and mapping them to variables `longitude` 
@@ -231,10 +252,21 @@ so that Grafana can plot data properly.
 
 Now let’s configure our Worldmap visualization. Select the 'Visualization' tab in the far 
 left of the Grafana user interface. You’ll see options for 'Map Visual Options', 'Map Data Options', 
-and more. We are concerned with the 'Field Mappings' section. We will set the 
-'Table Query Format' to be ‘Table’. Then we can map the 'Latitude Field' to our `latitude` 
-variable, the 'Longitude Field' to our `longitude` variable, and the 'Metric' field to our 
-`value` variable. Your configuration should look like this:
+and more.
+
+First, make sure the 'Map Data Options' are set to 'table' and 'current'.  Then in 
+the 'Field Mappings' section. We will set the 'Table Query Format' to be ‘Table’. 
+We can map the 'Latitude Field' to our `latitude` variable, the 'Longitude Field' to 
+our `longitude` variable, and the 'Metric' field to our `value` variable. 
+
+In the 'Map Visual Options', set the 'Min Circle Size' to 1 and the 'Max Circle Size' to 5.
+
+In the 'Threshold Options' set the 'Thresholds' to '2,5,10'. This will auto configure a set
+of colors. Any plot whose `value` is below 2 will be a color, any `value` between 2 and 5 will 
+be another color, any `value` between 5 and 10 will be a third color, and any `value` over 10 
+will be a fourth color.
+
+Your configuration should look like this:
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana-fieldmapping.png" alt="Mapping Worldmap fields to query results in Grafana"/>
 
@@ -244,6 +276,144 @@ At this point, data should be flowing into our Worldmap visualization, like so:
 
 You should be able to edit the time filter at the top of your visualization to see trip pickup data 
 for different timeframes.
+
+### Using Grafana variables
+
+Our goal here will be to create a variable which controls the type of ride displayed in the 
+visual, based on the payment type used for the ride.
+
+There are several types of payments, which we can see in the `payment_types` table:
+
+```text
+ payment_type | description 
+--------------+-------------
+            1 | credit card
+            2 | cash
+            3 | no charge
+            4 | dispute
+            5 | unknown
+            6 | voided trip
+(6 rows)
+```
+
+Grafana includes many types of variables, and variables in Grafana function just like 
+variables in programming languages. We define a variable, and then we can reference it
+in our queries.
+
+#### Define a new Grafana variable
+To create a new variable, go to your Grafana dashboard settings, navigate to the 'Variable' 
+option in the side-menu, and then click the 'Add variable' button.
+
+In this case, we use the 'Query' type, where our variable will be defined as the results 
+of SQL query.
+
+Under the 'General' section, we’ll name our variable `payment_type` and give it a type of `Query`. 
+Then, we’ll assign it the label of “Payment Type", which is how it will appear in a drop-down menu.
+
+We will select our data source and supply the query:
+
+```sql
+SELECT payment_type FROM payment_types;
+```
+
+Turn on 'Multi-value' and 'Include All option'. This will enable users of your dashboard to
+select more than one payment type. Our configuration should look like this:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_define_variable.png" alt="Using a variable to filter the results in a Grafana visualization"/>
+
+Click 'Add' to save your variable.
+
+#### Use the variable in a Grafana panel
+
+Let's edit the WorldMap panel we created in the previous section. The first thing you'll
+notice is that now that we've defined a variable for this dashboard, there's now a drop-down
+for that variable in the upper left hand corner of the panel.
+
+We can use this variable to filter the results of our query using the `WHERE` clause in SQL.
+We will check and see if `rides.payment_type` is in the array of the variable, which we've
+named `$payment_type`.
+
+Let's modify our earlier query like so:
+
+```sql
+SELECT time_bucket('5m', rides.pickup_datetime) AS time,
+       rides.trip_distance AS value, 
+       rides.pickup_latitude AS latitude, 
+       rides.pickup_longitude AS longitude
+FROM rides
+WHERE $__timeFilter(rides.pickup_datetime) AND
+  ST_Distance(pickup_geom, 
+              ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)
+  ) < 2000 AND
+  rides.payment_type IN ($payment_type)
+GROUP BY time,
+         rides.trip_distance,
+         rides.pickup_latitude,
+         rides.pickup_longitude 
+ORDER BY time
+LIMIT 500;
+```
+
+Now we can use the drop-down to filter our rides based on the type of payment used:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_worldmap_query_with_variable.png" alt="Visualizing time series data in PostgreSQL using the Grafana Worldmap and filtering using a variable"/>
+
+#### Improving the Grafana filter to be human readable
+
+But this filter isn't very attractive. We can't tell what '1' means. Fortunately, 
+when we set up our NYC Taxi Cab dataset, we created a `payment_types` table (which 
+we queried earlier). The `payment_types.description` field has a more readable 
+explanation of what each payment code means, for example, 'credit card', 'cash', 
+and so on. Those readable descriptions are what we want in our drop-down.
+
+Click 'Dashboard settings' (the "gear" icon in the upper-right of your Grafana 
+visualizations). Select the 'Variables' tab on the left, and click the `$payment_types`
+variable. Modify your query to retrieve the `description` instead of the `payment_type`,
+like so:
+
+```sql
+SELECT description FROM payment_types;
+```
+
+Your configuration should look like this now:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_modify_variable.png" alt="Modify our grafana variable to be more human readable"/>
+
+Now, go back to your WorldMap visualization and modify your query to use the
+`$payment_type` variable in a sub-query. This sub-query enables us to receive the integer
+value of the friendly description in the drop-down, which we can then use
+to compare to the integer value for the `payment_type` column in our `rides` 
+table:
+
+```sql
+SELECT time_bucket('5m', rides.pickup_datetime) AS time,
+       rides.trip_distance AS value, 
+       rides.pickup_latitude AS latitude, 
+       rides.pickup_longitude AS longitude
+FROM rides
+WHERE $__timeFilter(rides.pickup_datetime) AND
+  ST_Distance(
+    pickup_geom, ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)
+  ) < 2000 AND
+  rides.payment_type IN (
+      SELECT payment_types.payment_type 
+      FROM payment_types 
+      WHERE payment_types.description IN ($payment_type)
+  )
+GROUP BY time,
+         rides.trip_distance,
+         rides.pickup_latitude,
+         rides.pickup_longitude 
+ORDER BY time
+LIMIT 500;
+```
+
+Our resulting panel should look like this now:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_worldmap_query_with_variable_modified.png" alt="Visualizing time series data in PostgreSQL using the Grafana Worldmap and filtering using a variable"/>
+
+As you can see, a variable can be used in a query in much the same way you'd
+use a variable in any programming language.
 
 ### Graphing nirvana with Grafana
 
