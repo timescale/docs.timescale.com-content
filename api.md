@@ -1016,49 +1016,46 @@ SELECT distributed_exec($$CREATE USER davide WITH PASSWORD 'jw8s0F4'$$, node_lis
 
 ## drop_chunks() [](drop_chunks)
 
-Removes data chunks whose time range falls completely before (or after) a
-specified time, operating either across all hypertables or for a specific one.
-Shows a list of the chunks that were dropped in the same style as the
-`show_chunks` [function](#show_chunks).
+Removes data chunks whose time range falls completely before (or
+after) a specified time.  Shows a list of the chunks that were
+dropped, in the same style as the `show_chunks` [function](#show_chunks).
 
-Chunks are defined by a certain start and end time.  If `older_than` is
-specified, a chunk is dropped if its end time is older than the specified
-timestamp. Alternatively, if `newer_than` is specified, a chunk is dropped if
-its start time is newer than the specified timestamp.  Note that, because
-chunks are removed if and only if their time range falls fully before (or
-after) the specified timestamp, the remaining data may still contain timestamps
-that are before (or after) the specified one.
+Chunks are constrained by a start and end time and the start time is
+always before the end time.  A chunk is dropped if its end time is
+older than the `older_than` timestamp or, if `newer_than` is given,
+its start time is newer than the `newer_than` timestamp.
+
+Note that, because chunks are removed if and only if their time range
+falls fully before (or after) the specified timestamp, the remaining
+data may still contain timestamps that are before (or after) the
+specified one.
 
 #### Required Arguments [](drop_chunks-required-arguments)
 
-Function requires at least one of the following arguments. These arguments have
-the same semantics as the `show_chunks` [function](#show_chunks).
-
 |Name|Description|
 |---|---|
+| `hypertable_or_cagg` | Hypertable or continuous aggregate from which to drop chunks.
 | `older_than` | Specification of cut-off point where any full chunks older than this timestamp should be removed. |
-| `table_name` | Hypertable or continuous aggregate from which to drop chunks.
-| `newer_than` | Specification of cut-off point where any full chunks newer than this timestamp should be removed. |
 
 #### Optional Arguments [](drop_chunks-optional-arguments)
 
 |Name|Description|
 |---|---|
-| `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
-| `cascade_to_materializations` | Set to `TRUE` to also remove chunk data from any associated continuous aggregates. Set to `FALSE` to only drop raw chunks (while keeping data in the continuous aggregates). Defaults to `NULL`, which errors if continuous aggregates exist.|
-
->:TIP: The `table_name` argument was optional in previous versions, but this is now deprecated: `table_name` should always be given.
+| `newer_than` | Specification of cut-off point where any full chunks newer than this timestamp should be removed. |
+| `verbose` | (BOOLEAN) Setting to true will display messages about the progress of the reorder command. Defaults to false.|
+| `cascade_to_materializations` | Set to `TRUE` to delete chunk data in associated continuous aggregates. Defaults to `NULL`. `FALSE` is not yet supported.
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
 - **interval type:** The cut-off point is computed as `now() -
-    older_than` and similarly `now() - newer_than`.  An error will be returned if an INTERVAL is supplied
-    and the time column is not one of a TIMESTAMP, TIMESTAMPTZ, or
-    DATE.
+    older_than` and similarly `now() - newer_than`.  An error will be
+    returned if an INTERVAL is supplied and the time column is not one
+    of a `TIMESTAMP`, `TIMESTAMPTZ`, or `DATE`.
 
 - **timestamp, date, or integer type:** The cut-off point is
-    explicitly given as a TIMESTAMP / TIMESTAMPTZ / DATE or as a
-    SMALLINT / INT / BIGINT. The choice of timestamp or integer must follow the type of the hypertable's time column.
+    explicitly given as a `TIMESTAMP` / `TIMESTAMPTZ` / `DATE` or as a
+    `SMALLINT` / `INT` / `BIGINT`. The choice of timestamp or integer
+    must follow the type of the hypertable's time column.
 
 
 >:WARNING: When using just an interval type, the function assumes that
@@ -1075,9 +1072,9 @@ intersection between two ranges will result in an error.
 
 #### Sample Usage [](drop_chunks-examples)
 
-Drop all chunks older than 3 months ago from hypertable `conditions`:
+Drop all chunks from hypertable `conditions` older than 3 months:
 ```sql
-SELECT drop_chunks(INTERVAL '3 months', 'conditions');
+SELECT drop_chunks('conditions', INTERVAL '3 months');
 ```
 
 Example output:
@@ -1093,34 +1090,34 @@ Example output:
 (5 rows)
 ```
 
-Drop all chunks more than 3 months in the future from hypertable `conditions`. This is useful for correcting data ingested with incorrect clocks:
+Drop all chunks more than 3 months in the future from hypertable
+`conditions`. This is useful for correcting data ingested with
+incorrect clocks:
+
 ```sql
-SELECT drop_chunks(newer_than => now() + INTERVAL '3 months', table_name => 'conditions');
+SELECT drop_chunks('conditions', newer_than => now() + interval '3 months');
 ```
 
 Drop all chunks from hypertable `conditions` before 2017:
 ```sql
-SELECT drop_chunks(DATE '2017-01-01', 'conditions');
+SELECT drop_chunks('conditions', '2017-01-01'::date);
 ```
 
-Drop all chunks from hypertable `conditions` before 2017, where time column is given in milliseconds from the UNIX epoch:
-```sql
-SELECT drop_chunks(1483228800000, 'conditions');
-```
+Drop all chunks from hypertable `conditions` before 2017, where time
+column is given in milliseconds from the UNIX epoch:
 
-Drop all chunks from hypertable `conditions` older than 3 months:
 ```sql
-SELECT drop_chunks(INTERVAL '3 months', 'conditions');
+SELECT drop_chunks('conditions', 1483228800000);
 ```
 
 Drop all chunks older than 3 months ago and newer than 4 months ago from hypertable `conditions`:
 ```sql
-SELECT drop_chunks(older_than => INTERVAL '3 months', newer_than => INTERVAL '4 months', table_name => 'conditions')
+SELECT drop_chunks('conditions', older_than => interval '3 months', newer_than => interval '4 months')
 ```
 
 Drop all chunks older than 3 months, and delete this data from any continuous aggregates based on it:
 ```sql
-SELECT drop_chunks(INTERVAL '3 months', 'conditions', cascade_to_materializations => true);
+SELECT drop_chunks('conditions', interval '3 months', cascade_to_materializations => true);
 ```
 
 ---
@@ -1881,15 +1878,8 @@ one drop-chunks policy may exist per hypertable.
 
 |Name|Description|
 |---|---|
-| `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the policy already exists. A notice is issued instead. Defaults to false. |
-| `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to also remove chunk data from any associated continuous aggregates. Set to `FALSE` to only drop raw chunks (while keeping data in the continuous aggregates). Defaults to `NULL`, which errors if continuous aggregates exist.|
-
->:TIP: When dropping data from the raw hypertable while retaining data
-on a continuous aggregate, the `older_than` parameter to `drop_chunks`
-has to be longer than the `timescaledb.ignore_invalidation_older_than`
-parameter on the continuous aggregate. That is because we cannot
-process invalidations on data regions where the raw data has been
-dropped.
+| `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the drop_chunks_policy already exists. A notice is issued instead. Defaults to false. |
+| `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to delete chunk data in associated continuous aggregates. Defaults to `NULL`. `FALSE` is not yet supported. |
 
 >:WARNING: If a drop chunks policy is setup which does not set `cascade_to_materializations` to either `TRUE` or `FALSE` on a hypertable that has a continuous aggregate, the policy will not drop any chunks.
 
