@@ -31,7 +31,7 @@ at the granularity of chunks without incurring the same overhead.
 For example:
 
 ```sql
-SELECT drop_chunks(INTERVAL '24 hours', 'conditions');
+SELECT drop_chunks('conditions', INTERVAL '24 hours');
 ```
 
 This will drop all chunks from the hypertable `conditions` that _only_
@@ -164,7 +164,7 @@ like `crontab` or `systemd`, to schedule such commands.
 The following cron job will drop chunks every day at 3am:
 
 ```bash
-0 3 * * * /usr/bin/psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT drop_chunks(INTERVAL '24 hours', 'conditions');" >/dev/null 2>&1
+0 3 * * * /usr/bin/psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT drop_chunks('conditions', INTERVAL '24 hours');" >/dev/null 2>&1
 ```
 
 The above cron job can easily be installed by running `crontab -e`.
@@ -184,7 +184,7 @@ Description=Drop chunks from the 'conditions' table
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT drop_chunks(INTERVAL '24 hours', 'conditions');"
+ExecStart=/usr/bin/psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT drop_chunks('conditions', INTERVAL '24 hours');"
 ```
 
 Then create a timer to run this unit, e.g., `/etc/systemd/system/retention.timer`:
