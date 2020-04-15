@@ -35,6 +35,11 @@ Learn how to monitor your Django application using Prometheus.
 - **[Visualize Time-Series Data using Tableau][Tableau]**: Learn how to configure Tableau to connect to TimescaleDB and visualize your time-series data.
 - **[Migrate from InfluxDB with Outflux][Outflux]**: Use our open-source migration tool to transfer your data from InfluxDB to TimescaleDB.
 
+### Language quick-starts
+
+- **[Python and TimescaleDB][python-quickstart]**: A quick start guide for Python developers looking to use TimescaleDB.
+- **[Ruby on Rails and TimescaleDB][ruby-quickstart]**: A quick start guide for Ruby on Rails developers looking to use TimescaleDB.
+
 ### Additional resources
 
 - **[Sample data sets][Data Sets]**: And if you want to explore on your own
@@ -61,3 +66,5 @@ and pick up some valuable `psql` tips and tricks along the way.
 [prometheus-setup]: /tutorials/tutorial-setup-timescale-prometheus
 [prometheus-grafana]: /tutorials/tutorial-use-timescale-prometheus-grafana
 [monitor-django-prometheus]: /tutorials/tutorial-howto-monitor-django-prometheus
+[python-quickstart]: /tutorials/quickstart-python
+[ruby-quickstart]: /tutorials/quickstart-ruby
