@@ -37,10 +37,15 @@ Note that:
   used to create this object.
 
 * You should already have a running PostgreSQL server on an instance
-  that will host a data node. The data node's database will
-  be created when executing the [`add_data_node`][add_data_node]
-  command on the access node and should _not_ exist prior to adding
-  the data node.
+  that will host a data node. The data node's database will be created
+  when executing the [`add_data_node`][add_data_node] command on the
+  access node and should _not_ exist prior to adding the data
+  node.
+
+* The instance need to have a compatible version of the TimescaleDB
+  extension available on the data node: typically the same version of
+  the extension should be used on both the access node and the data
+  node.
 
 * PostgreSQL instances that will act as data nodes are assumed to
   contain the same roles and permissions as the access node
