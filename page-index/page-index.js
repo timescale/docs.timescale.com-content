@@ -496,6 +496,11 @@ const pageIndex = [
                 href: "prometheus-adapter",
                 children: []
             }, {
+                Title: "Monitor a Django application with Prometheus",
+                type: PAGE,
+                href: "tutorial-howto-monitor-django-prometheus",
+                children: []
+            }, {
                 Title: "Collecting metrics with Telegraf",
                 type: PAGE,
                 href: "telegraf-output-plugin",
