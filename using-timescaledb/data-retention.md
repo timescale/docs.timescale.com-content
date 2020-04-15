@@ -111,6 +111,20 @@ SELECT drop_chunks('30 days'::interval, 'conditions',
                    cascade_to_materialization => FALSE);
 ```
 
+Dropping chunks from the materialized view is similar to dropping
+chunks from the tables with raw data. You can drop the chunks of the
+continuous aggregate using `drop_chunks`, but you need to set
+`ignore_invalidation_older_than` to ensure that new data outside the
+dropped region does not update the materialized table.
+
+```sql
+ALTER VIEW conditions_summary_daily SET (
+   timescaledb.ignore_invalidation_older_than = '29 days'
+);
+
+SELECT drop_chunks(INTERVAL '30 days', 'conditions_summary_daily');
+```
+
 ### Automatic Data Retention Policies
 
 TimescaleDB includes a background job scheduling framework for automating data
