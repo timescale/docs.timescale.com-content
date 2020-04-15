@@ -368,49 +368,21 @@ and so on. Those readable descriptions are what we want in our drop-down.
 
 Click 'Dashboard settings' (the "gear" icon in the upper-right of your Grafana 
 visualizations). Select the 'Variables' tab on the left, and click the `$payment_types`
-variable. Modify your query to retrieve the `description` instead of the `payment_type`,
-like so:
+variable. Modify your query to retrieve the `description` and store it in the `__text`
+field and retrieve the `payment_type` and store it in the `__value` field, like so:
 
 ```sql
-SELECT description FROM payment_types;
+SELECT description AS "__text", payment_type AS "__value" FROM payment_types
 ```
 
 Your configuration should look like this now:
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_modify_variable.png" alt="Modify our grafana variable to be more human readable"/>
 
-Now, go back to your WorldMap visualization and modify your query to use the
-`$payment_type` variable in a sub-query. This sub-query enables us to receive the integer
-value of the friendly description in the drop-down, which we can then use
-to compare to the integer value for the `payment_type` column in our `rides` 
-table:
-
-```sql
-SELECT time_bucket('5m', rides.pickup_datetime) AS time,
-       rides.trip_distance AS value, 
-       rides.pickup_latitude AS latitude, 
-       rides.pickup_longitude AS longitude
-FROM rides
-WHERE $__timeFilter(rides.pickup_datetime) AND
-  ST_Distance(
-    pickup_geom, ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)
-  ) < 2000 AND
-  rides.payment_type IN (
-      SELECT payment_types.payment_type 
-      FROM payment_types 
-      WHERE payment_types.description IN ($payment_type)
-  )
-GROUP BY time,
-         rides.trip_distance,
-         rides.pickup_latitude,
-         rides.pickup_longitude 
-ORDER BY time
-LIMIT 500;
-```
-
-Our resulting panel should look like this now:
-
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_worldmap_query_with_variable_modified.png" alt="Visualizing time series data in PostgreSQL using the Grafana Worldmap and filtering using a variable"/>
+There's no need to alter the query for the WorldMap visualization itself. 
+Whatever database column is assigned as `__text` is used whenever the variable 
+is displayed and whatever is assigned to `__value` is used as the actual value 
+when Grafana makes a query.
 
 As you can see, a variable can be used in a query in much the same way you'd
 use a variable in any programming language.
