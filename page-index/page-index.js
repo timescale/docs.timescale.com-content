@@ -521,6 +521,16 @@ const pageIndex = [
                 href: "outflux",
                 children: []
             }, {
+                Title: "Python Quick Start",
+                type: PAGE,
+                href: "quickstart-python",
+                children: []
+            }, {
+                Title: "Ruby on Rails Quick Start ",
+                type: PAGE,
+                href: "quickstart-ruby",
+                children: []
+            }, {
                 Title: "Other sample datasets",
                 type: PAGE,
                 href: "other-sample-datasets",
