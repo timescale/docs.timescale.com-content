@@ -31,18 +31,25 @@ past releases and how you can learn more.
 
 ### 1.7.0 (2020-04-16)
 
-This release adds major new features and bugfixes since the 1.6.1 release. We deem it moderate priority for upgrading.
-This release adds the long-awaited support for PostgreSQL 12 to TimescaleDB.
-This release also adds a new default behavior when querying continuous aggregates that we call real-time aggregation. A query on a 
-continuous aggregate will now combine materialized data with recent data that has yet to be materialized.
+This release adds major new features and bugfixes since the 1.6.1 release. 
+We deem it moderate priority for upgrading.
 
-Note that only newly created continuous aggregates will have this real-time query behavior, although it can be enabled on existing continuous aggregates 
+This release adds the long-awaited support for PostgreSQL 12 to TimescaleDB.
+
+This release also adds a new default behavior when querying continuous
+aggregates that we call real-time aggregation. A query on a continuous
+aggregate will now combine materialized data with recent data that has
+yet to be materialized.
+
+Note that only newly created continuous aggregates will have this real-time
+query behavior, although it can be enabled on existing continuous aggregates 
 with a configuration setting as follows:
 
 ALTER VIEW continuous_view_name SET (timescaledb.materialized_only=false);
 
-This release also moves several data management lifecycle features to the Community version of TimescaleDB (from Enterprise), 
-including data reordering and data retention policies.
+This release also moves several data management lifecycle features to the
+Community version of TimescaleDB (from Enterprise), including data reordering
+and data retention policies.
 
 **Deprecation Notice:**  Please note that with the release of Timescale 1.7, we are deprecating support for PostgreSQL 9.6.x and 10.x.
 The current plan is that the Timescale 2.0 release later this year will only support PostgreSQL major versions 11.x, 12.x, or newer.
