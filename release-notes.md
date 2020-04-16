@@ -45,7 +45,7 @@ This release also moves several data management lifecycle features to the Commun
 including data reordering and data retention policies.
 
 **Major Features**
-*	#1456 Add support for PostgreSQL 12
+*	#1807 Add support for PostgreSQL 12
 *	#1685 Add support for real-time aggregation on continuous aggregates
 
 **Bugfixes**
