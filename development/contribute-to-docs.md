@@ -109,12 +109,11 @@ it using the following commands:
 
 ```bash
 git add .
-git commit --amend
+git commit -m "Add a description of what your commit is for"
 git push -f origin my-branch-name
 ```
 
-Note that using `git amend` and force pushing are our preferred methods 
-because this is content and not code.
+>:TIP: If your change is minor (e.g., a spelling or punctuation error), you can use the command `git commit --amend` instead of the `git commit` command above. For more involved changes, use a new commit.
 
 Then go back to the specific pull request page in the 
 [Timescale Docs GitHub repository][timescale-docs-github] 
@@ -125,19 +124,58 @@ You may go through several such review cycles, which is normal.
 
 ### Wrapping up
 
-After your pull request has been approved, you will have to go to the
-Pull Requests tab on the [Timescale Docs GitHub repository][timescale-docs-github]
-and click the "Rebase and merge" button.
-
-Once you’re done and your pull request has been merged, you can clean up 
-your workspace by first going back to the master branch and re-fetching the 
+After your pull request has been approved, you will have to rebase and 
+squash your commits. To do so, go back to the master branch and re-fetch the 
 repository as it is stored on GitHub. This will not only get all changes 
-you’ve made, but also all changes other people have made to the repository.
+you’ve made, but also all changes other people have made to the repository
+to that point.
 
 ```bash
 git checkout master
 git fetch origin && git reset --hard origin/master && git clean -f -d
 ```
+
+Now, go back to your branch and rebase from `master`, like so:
+
+```bash
+git rebase --interactive master
+```
+
+This should open an editor with a list of commits you (or others) have made
+for this branch. This interface enables you to manipulate your git history for
+this commit. Squashing enables you to combine multiple commits into one. It should 
+look something like this:
+
+```bash
+pick abc123g This is the main commit that I want to squash everything else into
+pick def456h This is another commit I made during the edit process
+pick ghi789i This is yet another commit I made during the edit process
+```
+
+To squash these commits, change the word `pick` in each commit that is **not** the
+main commit to the word `squash`. For example:
+
+```bash
+pick abc123g This is the main commit that I want to squash everything else into
+squash def456h This is another commit I made during the edit process
+squash ghi789i This is yet another commit I made during the edit process
+```
+
+The squashed commits will all be combined into the nearest unsquashed commit
+above them (in our example, that would be the commit with the hash `abc123g`).
+
+Once you save and exit this editor, you will get a chance to edit the commit
+message for the combined commit.
+
+Now, push your changes once more:
+
+```bash
+git push -f origin my-branch-name
+```
+
+Finally, to complete your pull request and submit changes, go to the
+'Pull Requests' tab on the [Timescale Docs GitHub repository][timescale-docs-github]
+and click the 'Rebase and merge' button.
 
 [timescale-docs-github]: https://github.com/timescale/docs.timescale.com-content
 [install-git]: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
