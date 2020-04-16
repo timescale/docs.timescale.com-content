@@ -5,6 +5,12 @@ Future Plans section. Interested in learning more about
 what's already available? Jump down below to see what's
 been released.
 
+## PostgreSQL Version deprecation Notice
+
+Please note that with the release of Timescale 1.7 we are deprecating support for 
+PostgreSQL 9.x and PostgreSQL 10.x  The current plan is to remove support for these versions of PostgreSQL
+as part of the Timescale 2.0 release later this year. 
+
 ## Future Plans
 
 As a reminder, TimescaleDB is open-source and you
