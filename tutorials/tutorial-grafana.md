@@ -284,7 +284,7 @@ visual, based on the payment type used for the ride.
 
 There are several types of payments, which we can see in the `payment_types` table:
 
-```text
+```
  payment_type | description
 --------------+-------------
             1 | credit card
