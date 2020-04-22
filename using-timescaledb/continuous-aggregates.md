@@ -39,11 +39,10 @@ continuous aggregate will automatically decide what data needs to be
 re-materialized and schedule a re-materialization to happen the next
 time the materialization job runs.
 
-This is now the default behavior for any new continuous aggregate built
-after the 1.7 upgrade or for any new instance built with version 1.7.  
-To revert the continuous aggregate to the pre 1.7 behavior (that is not 
-including data that has not been materialized in your query) you can simply 
-add the following parameter at creation time:
+Real-time aggregates are now the default behavior for any continuous aggregates.  
+To revert to previous behavior, in which the query touches materialized data only 
+and doesn't combine with the latest raw data, add the following parameter when 
+creating the continuous agggregate view
 
 timescaledb.materialized_only=true
 
