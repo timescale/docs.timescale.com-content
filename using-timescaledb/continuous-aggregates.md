@@ -65,7 +65,7 @@ timescaledb.materialized_only=true
 You can also use this in conjunction with the ALTER VIEW to turn this feature
 on or off at any time.
 
->:TIP: Upgrading continuous aggregates that were created in a version earlier that
+>:TIP: Upgrading continuous aggregates that were created in a version earlier than
 TimescaleDB 1.7 to use real-time aggregates should also ALTER the view to
 set `timescaledb.materialized_only=false`.   Subsequent to this change, queries 
 to the view will immediately use the real-time aggregate feature at query time.
