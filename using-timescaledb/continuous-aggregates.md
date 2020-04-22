@@ -38,17 +38,19 @@ materialized data in this way, one gets accurate and up-to-date
 results while still enjoying the speedups of pre-computing a large
 portion of the result.
 
-As an example, continuous aggregates made it really fast to get aggregate 
+As an example, continuous aggregates _without_ this real-time capability
+make it really fast to get aggregate 
 answers by precomputing these values (such as the min/max/average value over
 each hour). This way, if you are collecting raw data every second, querying hourly
 data over the past week means reading 24 x 7 = 168 values from the database, as
-opposed to processing 60 x 60 x 24 x 7 = 604,800 values at query time.  But one
-limitation with continuous aggregates is that they don't incorporate the very
+opposed to processing 60 x 60 x 24 x 7 = 604,800 values at query time.  
+
+But this type of continuous aggregate does not incorporate the very
 latest data, _i.e._, since the last time the asynchronous aggregation job ran
 inside the database. So if you are generating hourly rollups, you might only
-run this job every hour.
+run this materialization job every hour.
 
-But now with real-time aggregates, a single, simple query will combine your
+With real-time aggregates, a single, simple query will combine your
 pre-computed hourly rollups with the raw data from the last
 hour, to always give you an up-to-date answer.  Now, instead of touching
 604,800 rows of raw data, the query reads 167 pre-computed rows of
