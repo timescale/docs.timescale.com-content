@@ -25,7 +25,7 @@ stores (materializes) in the continuous aggregate.
 
 **Real-Time Aggregate** 
 
-Real-Time Aggregates are a concept that was introduced in TimescaleDB 1.7
+Real-time aggregates are a capability (first introduced in TimescaleDB 1.7)
 whereby Querying the *continuous aggregate view* will then compute an
 up-to-date final aggregate result by combining the materialized
 partial aggregate with recent data from the hypertable that has yet to
