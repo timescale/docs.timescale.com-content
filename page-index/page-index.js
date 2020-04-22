@@ -499,6 +499,11 @@ const pageIndex = [
                 href: "tutorial-grafana",
                 children: []
             }, {
+                Title: "Visualizing missing data with Grafana",
+                type: PAGE,
+                href: "tutorial-howto-visualize-missing-data-grafana",
+                children: []
+            }, {
                 Title: "Visualizing data in Tableau",
                 type: PAGE,
                 href: "visualizing-time-series-data-in-tableau",
@@ -507,6 +512,11 @@ const pageIndex = [
                 Title: "Migration with Outflux",
                 type: PAGE,
                 href: "outflux",
+                children: []
+            }, {
+                Title: "Simulate IoT Sensor Data",
+                type: PAGE,
+                href: "tutorial-howto-simulate-iot-sensor-data",
                 children: []
             }, {
                 Title: "Other sample datasets",

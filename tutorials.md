@@ -32,6 +32,7 @@ data analysis and make forecasts on your data.
 Learn how to monitor your Django application using Prometheus.
 - **[Collecting metrics with Telegraf][Telegraf Output Plugin]**: Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf.
 - **[Visualizing Data with Grafana][grafana]**: Visualize time-series data with this primer on getting started with Grafana.
+- **[Visualizing Missing Data with Grafana][grafana-missing-data]**: Learn how to visualize and aggregate missing time-series data in Grafana.
 - **[Visualize Time-Series Data using Tableau][Tableau]**: Learn how to configure Tableau to connect to TimescaleDB and visualize your time-series data.
 - **[Migrate from InfluxDB with Outflux][Outflux]**: Use our open-source migration tool to transfer your data from InfluxDB to TimescaleDB.
 
@@ -39,8 +40,10 @@ Learn how to monitor your Django application using Prometheus.
 
 - **[Sample data sets][Data Sets]**: And if you want to explore on your own
 with some sample data, we have some ready-made data sets for you to explore.
+- **[Simulate IoT Sensor Data][simul-iot-data]**: Simulate a basic IoT sensor dataset
+on PostgreSQL or TimescaleDB.
 - **[psql installation][psql]**: `psql` is a terminal-based front-end for PostgreSQL.
-Learn how to install `psql` on Mac, Ubuntu, Debian, Windows, 
+Learn how to install `psql` on Mac, Ubuntu, Debian, Windows,
 and pick up some valuable `psql` tips and tricks along the way.
 
 [Hello Timescale]: /tutorials/tutorial-hello-timescale
@@ -50,6 +53,7 @@ and pick up some valuable `psql` tips and tricks along the way.
 [Outflux]: /tutorials/outflux
 [Prometheus adapter]: /tutorials/prometheus-adapter
 [Grafana]: /tutorials/tutorial-grafana
+[grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
 [Telegraf Output Plugin]: /tutorials/telegraf-output-plugin
 [Data Sets]: /tutorials/other-sample-datasets
 [timescale-cloud]: https://www.timescale.com/products
@@ -62,3 +66,4 @@ and pick up some valuable `psql` tips and tricks along the way.
 [prometheus-setup]: /tutorials/tutorial-setup-timescale-prometheus
 [prometheus-grafana]: /tutorials/tutorial-use-timescale-prometheus-grafana
 [monitor-django-prometheus]: /tutorials/tutorial-howto-monitor-django-prometheus
+[simul-iot-data]: /tutorials/tutorial-howto-simulate-iot-sensor-data
