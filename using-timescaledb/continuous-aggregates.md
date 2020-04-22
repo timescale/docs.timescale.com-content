@@ -23,7 +23,7 @@ raw data from the hypertable and computes a partial aggregate that it
 stores (materializes) in the continuous aggregate.
 
 
-**Real-Time Aggregate** 
+**Real-Time Aggregates** 
 
 Real-time aggregates are a capability (first introduced in TimescaleDB 1.7)
 whereby Querying the *continuous aggregate view* will then compute an
