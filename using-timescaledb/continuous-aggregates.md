@@ -58,7 +58,7 @@ performance improvements.
 Real-time aggregates are now the default behavior for any continuous aggregates.  
 To revert to previous behavior, in which the query touches materialized data only 
 and doesn't combine with the latest raw data, add the following parameter when 
-creating the continuous agggregate view
+creating the continuous aggregate view:
 
 timescaledb.materialized_only=true
 
