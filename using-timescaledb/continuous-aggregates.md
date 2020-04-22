@@ -47,10 +47,12 @@ creating the continuous agggregate view
 timescaledb.materialized_only=true
 
 You can also use this in conjunction with the ALTER VIEW to turn this feature
-on or off at any time, this is also the process for upgrading any continuous
-aggregates that were created prior to the 1.7 upgrade (setting this flag to FALSE).  
-Once you issue the ALTER VIEW and set the above parameter your continuous aggregate 
-will then use the real-time feature at query time.
+on or off at any time.
+
+>:TIP: Upgrading continuous aggregates that were created in a version earlier that
+TimescaleDB 1.7 to use real-time aggregates should also ALTER the view to
+set `timescaledb.materialized_only=false`.   Subsequent to this change, queries 
+to the view will immediately use the real-time aggregate feature at query time.
 
 ### Creating a Continuous Aggregate View [](create)
 [Continuous aggregates][api-continuous-aggs] are created by setting the
