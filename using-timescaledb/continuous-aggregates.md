@@ -62,14 +62,16 @@ To revert to previous behavior, in which the query touches materialized data onl
 and doesn't combine with the latest raw data, add the following parameter when 
 creating the continuous aggregate view:
 
+```
 timescaledb.materialized_only=true
+```
 
 You can also use this in conjunction with the ALTER VIEW to turn this feature
 on or off at any time.
 
->:TIP: Upgrading continuous aggregates that were created in a version earlier than
-TimescaleDB 1.7 to use real-time aggregates should also ALTER the view to
-set ```timescaledb.materialized_only=false```.   Subsequent to this change, queries 
+>:TIP: To upgrade continuous aggregates that were created in a version earlier than
+TimescaleDB 1.7 to use real-time aggregates, ALTER the view to
+set `timescaledb.materialized_only=false`.   All Subsequent queries 
 to the view will immediately use the real-time aggregate feature at query time.
 
 ### Creating a Continuous Aggregate View [](create)
