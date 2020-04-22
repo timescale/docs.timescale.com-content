@@ -20,13 +20,17 @@ automatic, it doesn’t add any maintenance burden to your database.
 
 **How it Works:** A *materialization background job* regularly takes
 raw data from the hypertable and computes a partial aggregate that it
-stores (materializes) in the continuous aggregate.
+stores (materializes) in the continuous aggregate. When new data is 
+inserted, updated, or deleted in the hypertable, the continuous aggregate
+will automatically decide what data needs to be re-materialized and 
+schedule a re-materialization to happen the next time the materialization 
+job runs.
 
 
 **Real-Time Aggregates** 
 
 Real-time aggregates are a capability (first introduced in TimescaleDB 1.7)
-whereby Querying the *continuous aggregate view* will then compute an
+whereby querying the *continuous aggregate view* will then compute an
 up-to-date final aggregate result by combining the materialized
 partial aggregate with recent data from the hypertable that has yet to
 be materialized by the continuous aggregate. By combining raw and
@@ -34,10 +38,22 @@ materialized data in this way, one gets accurate and up-to-date
 results while still enjoying the speedups of pre-computing a large
 portion of the result.
 
-When new data is inserted, updated, or deleted in the hypertable, the
-continuous aggregate will automatically decide what data needs to be
-re-materialized and schedule a re-materialization to happen the next
-time the materialization job runs.
+As an example, continuous aggregates made it really fast to get aggregate 
+answers by precomputing these values (such as the min/max/average value over
+each hour). This way, if you are collecting raw data every second, querying hourly
+data over the past week means reading 24 x 7 = 168 values from the database, as
+opposed to processing 60 x 60 x 24 x 7 = 604,800 values at query time.  But one
+limitation with continuous aggregates is that they don't incorporate the very
+latest data, _i.e._, since the last time the asynchronous aggregation job ran
+inside the database. So if you are generating hourly rollups, you might only
+run this job every hour.
+
+But now with real-time aggregates, a single, simple query will combine your
+pre-computed hourly rollups with the raw data from the last
+hour, to always give you an up-to-date answer.  Now, instead of touching
+604,800 rows of raw data, the query reads 167 pre-computed rows of
+hourly data and 3600 rows of raw secondly data, leading to significant
+performance improvements.
 
 Real-time aggregates are now the default behavior for any continuous aggregates.  
 To revert to previous behavior, in which the query touches materialized data only 
