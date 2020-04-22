@@ -22,7 +22,11 @@ automatic, it doesn’t add any maintenance burden to your database.
 raw data from the hypertable and computes a partial aggregate that it
 stores (materializes) in the continuous aggregate.
 
-Querying the *continuous aggregate view* will then compute an
+
+**Real-Time Aggregate** 
+
+Real-Time Aggregates are a concept that was introduced in TimescaleDB 1.7
+whereby Querying the *continuous aggregate view* will then compute an
 up-to-date final aggregate result by combining the materialized
 partial aggregate with recent data from the hypertable that has yet to
 be materialized by the continuous aggregate. By combining raw and
@@ -34,6 +38,20 @@ When new data is inserted, updated, or deleted in the hypertable, the
 continuous aggregate will automatically decide what data needs to be
 re-materialized and schedule a re-materialization to happen the next
 time the materialization job runs.
+
+This is now the default behavior for any new continuous aggregate built
+after the 1.7 upgrade or for any new instance built with version 1.7.  
+To revert the continuous aggregate to the pre 1.7 behavior (that is not 
+including data that has not been materialized in your query) you can simply 
+add the following parameter at creation time:
+
+timescaledb.materialized_only=true
+
+You can also use this in conjunction with the ALTER VIEW to turn this feature
+on or off at any time, this is also the process for upgrading any continuous
+aggregates that were created prior to the 1.7 upgrade (setting this flag to FALSE).  
+Once you issue the ALTER VIEW and set the above parameter your continuous aggregate 
+will then use the real-time feature at query time.
 
 ### Creating a Continuous Aggregate View [](create)
 [Continuous aggregates][api-continuous-aggs] are created by setting the
