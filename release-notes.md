@@ -12,36 +12,6 @@ can view active developments on GitHub at any time.
 
 ### What to expect from our next release
 
-The next release of TimescaleDB, v1.7, will include basic
-[PostgreSQL 12](https://www.postgresql.org/about/news/1976/)
-support and a new TimescaleDB capability called *Real Time Aggregates*.
-
-With Real Time Aggregates, users will be able to leverage TimescaleDB's
-precomputed continuous aggregates while still getting a real-time view over the
-latest data.
-
-In particular, continous aggregates made it really fast to get aggregate 
-answers by precomputing these values (such as the min/max/average value over
-each
-hour). This way, if you are collecting raw data every second, querying hourly
-data over the past week means reading 24 x 7 = 168 values from the database, as
-opposed to processing 60 x 60 x 24 x 7 = 604,800 values at query time.  But one
-limitation with continous aggregates is that they don't incorporate the very
-latest data, _i.e._, since the last time the asynchronous aggregation job ran
-inside the database. So if you are generating hourly rollups, you might only
-run this job every hour.
-
-But now with Real Time Aggregates, a single, simple query will combine your
-pre-computed hourly rollups with the raw data from the last
-hour, to always give you an up-to-date answer.  Now, instead of touching
-604,800 rows of raw data, the query reads 167 pre-computed rows of
-hourly data and 3600 rows of raw secondly data, leading to significant
-performance improvements.
-
-We expect to release TimescaleDB v1.7 in the March/April timeframe of 2020.
-
-### Coming down the pipeline
-
 The team is actively working on the multi-node version
 of TimescaleDB which is currently in beta. To read more
 about our architecture and design for distributed hypertables,
@@ -50,13 +20,64 @@ To test out the beta version for yourself,
 follow these [instructions](https://docs.timescale.com/clustering/getting-started/scaling-out).
 
 Currently, we expect this major feature to be released
-in the first half of 2020, and we will share more information once
+in the second half 2020, and we will share more information once
 it's available.
 
 ## Release Notes
 
 In this section, we will cover historical information on
 past releases and how you can learn more.
+
+
+### 1.7.0 (2020-04-16)
+
+This release adds major new features and bugfixes since the 1.6.1 release. 
+We deem it moderate priority for upgrading.
+
+This release adds the long-awaited support for PostgreSQL 12 to TimescaleDB.
+
+This release also adds a new default behavior when querying continuous
+aggregates that we call real-time aggregation. A query on a continuous
+aggregate will now combine materialized data with recent data that has
+yet to be materialized.
+
+Note that only newly created continuous aggregates will have this real-time
+query behavior, although it can be enabled on existing continuous aggregates 
+with a configuration setting as follows:
+
+ALTER VIEW continuous_view_name SET (timescaledb.materialized_only=false);
+
+This release also moves several data management lifecycle features to the
+Community version of TimescaleDB (from Enterprise), including data reordering
+and data retention policies.
+
+**Deprecation Notice:**  Please note that with the release of Timescale 1.7, we are deprecating support for PostgreSQL 9.6.x and 10.x.
+The current plan is that the Timescale 2.0 release later this year will only support PostgreSQL major versions 11.x, 12.x, or newer.
+
+**Major Features**
+*	#1807 Add support for PostgreSQL 12
+*	#1685 Add support for real-time aggregation on continuous aggregates
+
+**Bugfixes**
+*	#1665 Add ignore_invalidation_older_than to timescaledb_information.continuous_aggregates view
+*	#1750 Handle undefined ignore_invalidation_older_than
+*	#1757 Restrict watermark to max for continuous aggregates
+*	#1769 Add rescan function to CompressChunkDml CustomScan node
+*	#1785 Fix last_run_success value in continuous_aggregate_stats view
+*	#1801 Include parallel leader in plan execution
+*	#1808 Fix ts_hypertable_get_all for compressed tables
+*	#1828 Ignore dropped chunks in compressed_chunk_stats
+
+**Licensing changes**
+Reorder and policies around reorder and drop chunks are now accessible to community users, not just enterprise
+Gapfill functionality no longer warns about expired license
+
+**Thanks**
+*	@t0k4rt for reporting an issue with parallel chunk append plans
+*	@alxndrdude for reporting an issue when trying to insert into compressed chunks
+*	@Olernov for reporting and fixing an issue with show_chunks and drop_chunks for compressed hypertables
+*	@mjb512 for reporting an issue with INSERTs in CTEs in cached plans
+*	@dmarsh19 for reporting and fixing an issue with dropped chunks in compressed_chunk_stats
 
 ### 1.6.1 (2020-03-18)
 
