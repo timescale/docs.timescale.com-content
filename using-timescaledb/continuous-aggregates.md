@@ -21,17 +21,18 @@ automatic, it doesn’t add any maintenance burden to your database.
 **How it Works:** A *materialization background job* regularly takes
 raw data from the hypertable and computes a partial aggregate that it
 stores (materializes) in the continuous aggregate.
-
-When new data is inserted, updated, or deleted in the hypertable, the
+So whenever new data is inserted, updated, or deleted in the hypertable, the
 continuous aggregate will automatically decide what data needs to be
-re-materialized and schedule a re-materialization to happen the next time
-the materialization job runs.
+re-materialized, and it schedules a re-materialization to happen the next time
+the background job runs. This way, the materalization is kept mostly
+up-to-date to the raw data (and the recency and frequency of these tasks
+are fully configurable; more below).
 
 ### Real-Time Aggregates [](real-time-aggregates)
 
 Real-time aggregates are a capability (first introduced in TimescaleDB 1.7)
-whereby querying the *continuous aggregate view* will then compute an
-up-to-date final aggregate result by combining the materialized
+whereby querying the *continuous aggregate view* will then compute
+fully up-to-date aggregate results by combining the materialized
 partial aggregate with recent data from the hypertable that has yet to
 be materialized by the continuous aggregate. By combining raw and
 materialized data in this way, one gets accurate and up-to-date
