@@ -68,9 +68,8 @@ This will ensure that our extension is properly added to the parameter
 parallelism, and other settings.
 
 To get started you'll need to restart PostgreSQL and add
-a `postgres` superuser (used in the rest of the docs). Please
-refer to your distribution for how to restart services and
-[these instructions for adding a `postgres` user][createuser].
+a `postgres` [superuser][createuser] (used in the rest of the docs). Please
+refer to your distribution for how to restart services.
 
 >:TIP: Our standard binary releases are licensed under the Timescale License.
 This means that you can use all of our free Community capabilities and
@@ -83,5 +82,5 @@ about the subject.
 [pgdg]: https://yum.postgresql.org/repopackages.php
 [yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation
 [config]: /getting-started/configuring
-[createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
+[createuser]: https://www.postgresql.org/docs/current/sql-createrole.html
 [blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480

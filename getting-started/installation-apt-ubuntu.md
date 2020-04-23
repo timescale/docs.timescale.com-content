@@ -56,7 +56,7 @@ This will ensure that our extension is properly added to the parameter
 parallelism, and other settings.
 
 To get started you'll now need to restart PostgreSQL and add
-a `postgres` superuser (used in the rest of the docs):
+a `postgres` [superuser][createuser] (used in the rest of the docs):
 ```bash
 # Restart PostgreSQL instance
 sudo service postgresql restart
@@ -70,9 +70,7 @@ code, you should install the package `timescaledb-oss-postgresql-:pg_version:`.
 For more information about licensing, please read our [blog post][blog-post]
 about the subject.
 
-[Here are some instructions to create the `postgres` superuser][createuser].
-
 [ubuntu-releases]: http://releases.ubuntu.com/
 [config]: /getting-started/configuring
+[createuser]: https://www.postgresql.org/docs/current/sql-createrole.html
 [blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480
-[createuser]: http://suite.opengeo.org/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
