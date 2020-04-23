@@ -207,10 +207,6 @@ const pageIndex = [
                 type: PAGE,
                 href: "exploring-enterprise"
             }, {
-                Title: "Setting up Timescale Labs",
-                type: PAGE,
-                href: "exploring-labs"
-            }, {
                 Title: "Configuration",
                 type: PAGE,
                 href: "configuring"
