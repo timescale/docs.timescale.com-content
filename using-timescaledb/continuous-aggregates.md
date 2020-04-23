@@ -22,7 +22,15 @@ automatic, it doesn’t add any maintenance burden to your database.
 raw data from the hypertable and computes a partial aggregate that it
 stores (materializes) in the continuous aggregate.
 
-Querying the *continuous aggregate view* will then compute an
+When new data is inserted, updated, or deleted in the hypertable, the
+continuous aggregate will automatically decide what data needs to be
+re-materialized and schedule a re-materialization to happen the next time
+the materialization job runs.
+
+### Real-Time Aggregates [](real-time-aggregates)
+
+Real-time aggregates are a capability (first introduced in TimescaleDB 1.7)
+whereby querying the *continuous aggregate view* will then compute an
 up-to-date final aggregate result by combining the materialized
 partial aggregate with recent data from the hypertable that has yet to
 be materialized by the continuous aggregate. By combining raw and
@@ -30,10 +38,43 @@ materialized data in this way, one gets accurate and up-to-date
 results while still enjoying the speedups of pre-computing a large
 portion of the result.
 
-When new data is inserted, updated, or deleted in the hypertable, the
-continuous aggregate will automatically decide what data needs to be
-re-materialized and schedule a re-materialization to happen the next
-time the materialization job runs.
+As an example, continuous aggregates _without_ this real-time capability make
+it really fast to get aggregate answers by precomputing these values (such as
+the min/max/average value over each hour). This way, if you are collecting raw
+data every second, querying hourly data over the past week means reading 24 x 7
+= 168 values from the database, as opposed to processing 60 x 60 x 24 x 7 =
+604,800 values at query time.
+
+But this type of continuous aggregate does not incorporate the very
+latest data, _i.e._, since the last time the asynchronous aggregation job ran
+inside the database. So if you are generating hourly rollups, you might only
+run this materialization job every hour.
+
+With real-time aggregates, a single, simple query will combine your
+pre-computed hourly rollups with the raw data from the last
+hour, to always give you an up-to-date answer.  Now, instead of touching
+604,800 rows of raw data, the query reads 167 pre-computed rows of
+hourly data and 3600 rows of raw secondly data, leading to significant
+performance improvements.
+
+Real-time aggregates are now the default behavior for any continuous aggregates.
+To revert to previous behavior, in which the query touches materialized data only
+and doesn't combine with the latest raw data, add the following parameter when
+creating the continuous aggregate view:
+
+```
+timescaledb.materialized_only=true
+```
+
+You can also use this in conjunction with the ALTER VIEW to turn this feature
+on or off at any time.
+
+>:TIP: To upgrade continuous aggregates that were created in a version earlier than
+TimescaleDB 1.7 to use real-time aggregates, ALTER the view to
+set `timescaledb.materialized_only=false`.  All subsequent queries
+to the view will immediately use the real-time aggregate feature.
+
+---
 
 ### Creating a Continuous Aggregate View [](create)
 [Continuous aggregates][api-continuous-aggs] are created by setting the
@@ -196,7 +237,8 @@ on-the-fly aggregation by more aggressive materialization and a higher
 `refresh_lag` will increase the amount of on-the-fly aggregation by
 not materializing as agressively.
 
->:TIP: Changing the value of `refresh_lag` is rarely necessary.
+>:TIP: Changing the value of `refresh_lag` is rarely necessary, particularly
+given the default behavior of [real-time aggregates](#real-time-aggregates).
 
 The `timescaledb.max_interval_per_job` determines the maximum amount
 of data processed in a single job. If there is more work to do after
