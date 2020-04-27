@@ -464,7 +464,7 @@ const pageIndex = [
                 children: []
             }, {
                 Title: "Setup TimescaleDB and Prometheus",
-                type: PAGE,
+                type: NON_MENU_PAGE,
                 href: "tutorial-setup-timescale-prometheus",
                 children: []
             }, {
