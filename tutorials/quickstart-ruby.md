@@ -13,12 +13,12 @@ you’ll learn how to:
 
 ### Pre-requisites
 
-You should have a TimescaleDB setup and ready for use. [Timescale Cloud][timescale-cloud] 
-is the fastest way to get started with TimescaleDB. You can 
-follow [the setup instructions for Timescale Cloud][timescale-cloud-install] and 
-get up and running in less than 3 minutes.
+To complete this tutorial, you will need a cursory knowledge of the Structured Query 
+Language (SQL). The tutorial will walk you through each SQL command, but it will be 
+helpful if you've seen SQL before.
 
->:TIP: You can also configure a version of TimescaleDB [on your own machine or cloud infrastructure][timescale-community-install].
+To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
+we can proceed to ingesting or creating sample data and finishing the tutorial.
 
 Obviously, you will need to [install Rails][rails-install] as well.
 
@@ -36,11 +36,7 @@ Rails will finish creating and bundling your application, installing all require
 
 #### Step 2: Configure the TimescaleDB database
 
-Locate your database credentials in order to connect to your TimescaleDB instance.
-
-If you're using Timescale Cloud, you can find your credentials in the 'Overview' tab:
-
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/hello-timescale/NYC_figure1_1.png" alt="NYC Taxis"/>
+Locate your TimescaleDB credentials in order to connect to your TimescaleDB instance.
 
 You’ll need the following credentials:
 
@@ -147,7 +143,7 @@ to our database:
 rake db:migrate
 ```
 
->:WARNING: In order for the command to work, you will need to make sure there is a database named `postgres` in your TimescaleDB deployment. This database is not present by default with Timescale Cloud.
+>:WARNING: In order for the command to work, you will need to make sure there is a database named `postgres` in your TimescaleDB deployment. This database is sometimes not present by default.
 
 In `psql` you can test that the extension has been added by running the `\dx`
 command and seeing something like the following:
@@ -426,9 +422,7 @@ tutorials:
 - [Migrate your own Data][migrate]
 
 
-[timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
-[timescale-community-install]: /getting-started/installation
+[install-timescale]: /getting-started/installation
 [setup-psql]: /getting-started/install-psql-tutorial
 [install]: /getting-started/installation
 [indexing-api-guide]: /using-timescaledb/schema-management#indexing

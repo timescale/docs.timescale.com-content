@@ -2,7 +2,7 @@
 
 [Tableau][get-tableau] is a popular analytics platform that enables you to gain
 greater intelligence about your business. It is an ideal tool for visualizing
-data stored in [TimescaleDB][timescale-cloud].
+data stored in [TimescaleDB][timescale-products].
 
 In this tutorial, we will cover:
 
@@ -10,8 +10,16 @@ In this tutorial, we will cover:
 - Running queries on TimescaleDB from within Tableau
 - Visualize data in Tableau
 
-Before we begin, you will want to [sign up for Timescale Cloud][timescale-cloud-install] and
-[get a copy or license of Tableau][get-tableau].
+### Pre-requisites
+
+To complete this tutorial, you will need a cursory knowledge of the Structured Query 
+Language (SQL). The tutorial will walk you through each SQL command, but it will be 
+helpful if you've seen SQL before.
+
+To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
+we can proceed to ingesting or creating sample data and finishing the tutorial.
+
+Also, [get a copy or license of Tableau][get-tableau].
 
 You will also want to [complete the Cryptocurrency tutorial][crypto-tutorial], as it will
 setup and configure the data you need to complete the remainder of this
@@ -20,10 +28,9 @@ tutorial.
 
 ### Step 1: Setup Tableau to connect to TimescaleDB
 
-If you are using Timescale Cloud, navigate to the [Timescale Cloud portal][timescale-cloud-portal]
-and locate your `host`, `port`, and `password`.
+Locate the `host`, `port`, and `password` of your TimescaleDB instance.
 
-Connecting your Timescale Cloud instance to Tableau takes just a few clicks, thanks to Tableau’s 
+Connecting your TimescaleDB instance to Tableau takes just a few clicks, thanks to Tableau’s 
 built-in Postgres connector. To connect to your database add a new connection and under the 
 ‘to a server’ section, select PostgreSQL as the connection type. Then enter your database 
 credentials.
@@ -106,10 +113,8 @@ Ready for more learning? Here’s a few suggestions:
 
 [get-tableau]: https://www.tableau.com/products/trial
 [crypto-tutorial]: /tutorials/analyze-cryptocurrency-data
-[timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
-[timescale-community-install]: /getting-started/installation
-[timescale-cloud-portal]: https://portal.timescale.cloud
+[timescale-products]: https://www.timescale.com/products
+[install-timescale]: /getting-started/installation
 [time-series-forecasting]: /tutorials/tutorial-forecasting
 [continuous-aggregates]: /tutorials/continuous-aggs-tutorial
 [other-samples]: /tutorials/other-sample-datasets
