@@ -374,7 +374,7 @@ tutorials:
 [virtual-env]: https://opensource.com/article/19/6/virtual-environments-python-macos
 [psycopg2-docs]: https://pypi.org/project/psycopg2/
 [psycopg2-connect]: https://www.psycopg.org/docs/module.html?highlight=connect#psycopg2.connect
-[libpq connection string]: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
+[pg-libpq-string]: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
 [hello-timescale-tutorial]: https://docs.timescale.com/latest/tutorials/tutorial-hello-timescale
 [results-retrieval-methods]:https://www.psycopg.org/docs/cursor.html
 [create-hypertable-docs]: https://docs.timescale.com/latest/api#create_hypertable
