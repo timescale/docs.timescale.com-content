@@ -20,9 +20,14 @@ You can also download the resources for this tutorial:
 - Dataset creation script: [:DOWNLOAD_LINK: `crypto_data_extraction.py`][dataset-creation]
 - Dataset: [:DOWNLOAD_LINK: Crypto Currency Dataset September 2019][dataset] (note that this data is from September 2019. You will want to follow the steps in Section 2 of this tutorial if you require fresh data)
 
-This tutorial requires TimescaleDB. [Timescale Cloud][timescale-cloud] is the
-easiest way to get started with TimescaleDB. Follow the [Timescale Cloud installation][timescale-cloud-install]
-steps to be up and running in seconds. If you prefer, you can also [install TimescaleDB locally][timescale-community-install].
+### Pre-requisites
+
+To complete this tutorial, you will need a cursory knowledge of the Structured Query 
+Language (SQL). The tutorial will walk you through each SQL command, but it will be 
+helpful if you've seen SQL before.
+
+To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
+we can proceed to ingesting or creating sample data and finishing the tutorial.
 
 Finally, this tutorial leads directly into a second tutorial that covers
 [how Timescale can be used with Tableau][tableau-tutorial] to visualize
@@ -322,8 +327,7 @@ python crypto_data_extraction.py
 
 ### Step 3: Load the dataset into TimescaleDB [](timescaledbsection)
 
-To continue, you will want to [setup Timescale Cloud][timescale-cloud-install] or 
-[install TimescaleDB locally][timescale-community-install].
+To proceed, be sure you have a [working installation of TimescaleDB][install-timescale].
 
 #### Setup our schema
 
@@ -331,8 +335,8 @@ Now all our hard work in Step 1 comes in handy! We will use the SQL script we cr
 setup our instance of TimescaleDB. If you don't want to enter the SQL script by yourself,
 you can always download [:DOWNLOAD_LINK: `schema.sql`][schema-creation].
 
-Let's first login to our TimescaleDB instance. Navigate to the [Timescale Cloud portal][timescale-cloud-portal]
-and locate your `host`, `port`, and `password`.
+Let's first login to our TimescaleDB instance. Locate your `host`, `port`, and `password`
+and then connect to the database:
 
 ```bash
 psql -x "postgres://tsdbadmin:{YOUR_PASSWORD_HERE}@{YOUR_HOSTNAME_HERE}:{YOUR_PORT_HERE}/defaultdb?sslmode=require"
@@ -399,7 +403,7 @@ Time: 84.650 ms
 Time: 81.864 ms
 ```
 
-Now when we log back into our Timescale Cloud instance using `psql`, we can run the `\dt` command
+Now when we log back into our TimescaleDB instance using `psql`, we can run the `\dt` command
 and see that our tables have been created properly:
 
 ```sql
@@ -418,7 +422,7 @@ and see that our tables have been created properly:
 Now that we’ve created the tables with our desired schema, all that’s left is to insert the data 
 from the CSV files we’ve created into the tables.
 
-Make sure you are logged into Timescale Cloud using `psql` so that you can run each of the
+Make sure you are logged into TimescaleDB using `psql` so that you can run each of the
 following commands successively:
 
 ```sql
@@ -626,14 +630,11 @@ Ready for even more learning? Here’s a few suggestions:
 - [Try Other Sample Datasets][other-samples]
 - [Migrate your own Data][migrate]
 
+[install-timescale]: /getting-started/installation
 [crypto-blog]: https://blog.timescale.com/blog/analyzing-bitcoin-ethereum-and-4100-other-cryptocurrencies-using-postgresql-and-timescaledb/
 [schema-creation]: https://github.com/timescale/examples/blob/master/crypto_tutorial/schema.sql
 [dataset-creation]: https://github.com/timescale/examples/blob/master/crypto_tutorial/crypto_data_extraction.py
 [dataset]: https://github.com/timescale/examples/tree/master/crypto_tutorial/Cryptocurrency%20dataset%20Sept%2016%202019
-[timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
-[timescale-community-install]: /getting-started/installation
-[timescale-cloud-portal]: https://portal.timescale.cloud
 [hypertable-docs]: /using-timescaledb/hypertables
 [hypertable-blog]: https://blog.timescale.com/blog/when-boring-is-awesome-building-a-scalable-time-series-database-on-postgresql-2900ea453ee2/
 [cryptocompare]: https://www.cryptocompare.com

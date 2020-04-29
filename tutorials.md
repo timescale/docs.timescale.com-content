@@ -2,11 +2,7 @@
 We've created a host of code-focused tutorials that will help you get
 started with *TimescaleDB*.
 
-For most of these tutorials, you will also need a working instance of *TimescaleDB*. The fastest way
-to get started with *TimescaleDB* is [setting up *Timescale Cloud*][timescale-cloud-install].
-*Timescale Cloud* is a hosted version of *TimescaleDB*. If you prefer,
-you can download the [TimescaleDB Community Edition][timescale-community-install]
-and run it on your desktop or your own cloud infrastructure.
+Most of these tutorials require a working [installation of TimescaleDB][install-timescale].
 
 ### Common scenarios for using TimescaleDB
 
@@ -61,9 +57,7 @@ and pick up some valuable `psql` tips and tricks along the way.
 [grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
 [Telegraf Output Plugin]: /tutorials/telegraf-output-plugin
 [Data Sets]: /tutorials/other-sample-datasets
-[timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
-[timescale-community-install]: /getting-started/installation
+[install-timescale]: /getting-started/installation
 [psql]: /getting-started/install-psql-tutorial
 [Crypto]: /tutorials/analyze-cryptocurrency-data
 [Tableau]: /tutorials/visualizing-time-series-data-in-tableau

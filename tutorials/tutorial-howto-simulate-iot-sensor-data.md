@@ -29,13 +29,13 @@ try the Time-series Benchmarking Suite (TSBS) ([Github][github-tsbs]).*
 
 ### Prerequisites [](prereqs)
 
-* A PostgreSQL or TimescaleDB
-([installation instructions][get-timescale-cloud]) instance
+To complete this tutorial, you will need a cursory knowledge of the Structured Query 
+Language (SQL). The tutorial will walk you through each SQL command, but it will be 
+helpful if you've seen SQL before.
 
-* `psql` ([installation instruction][get-psql])
+To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
+we can proceed to ingesting or creating sample data and finishing the tutorial.
 
->:TIP: If you install PostgreSQL or TimescaleDB locally, `psql` may come
-> preinstalled
 
 ### Step 1 - Set up your tables [](step1)
 First, connect to your database via `psql`.
@@ -244,7 +244,7 @@ documentation:
 
 
 [github-tsbs]: https://github.com/timescale/tsbs
-[get-timescale-cloud]: /getting-started/exploring-cloud
+[install-timescale]: /getting-started/installation
 [get-psql]: /getting-started/install-psql-tutorial
 [docs-hypertable]: /using-timescaledb/hypertables
 [docs-timebucket]: /api#time_bucket

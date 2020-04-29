@@ -26,12 +26,17 @@ handling missing time-series data (using the TimescaleDB/PostgreSQL data
 source natively available in Grafana).
 
 ### Prerequisites [](prereqs)
+To complete this tutorial, you will need a cursory knowledge of the Structured Query 
+Language (SQL). The tutorial will walk you through each SQL command, but it will be 
+helpful if you've seen SQL before.
+
+You will also need:
 
 * Time-series dataset with missing data (Note: in case you don’t have
 one handy, we include an optional step for creating one below.)
 
-* TimescaleDB instance running locally or in the cloud ([installation
-instructions][get-timescale-cloud])
+* A working [installation of TimescaleDB][install-timescale]. Once your installation 
+is complete, we can proceed to ingesting or creating sample data and finishing the tutorial.
 
 * Grafana dashboard connected to your TimescaleDB instance ([setup
 instructions][get-grafana])
@@ -174,7 +179,7 @@ how to use TimescaleDB, check out our other [tutorials][tutorials]
 (which range from beginner to advanced).
 
 [grafana-external]: https://grafana.com/
-[get-timescale-cloud]: /getting-started/exploring-cloud
+[install-timescale]: /getting-started/installation
 [get-grafana]: /tutorials/tutorial-grafana
 [tutorial-simulate-iot]: /tutorials/tutorial-howto-simulate-iot-sensor-data
 [docs-hypertable]: /using-timescaledb/hypertables
