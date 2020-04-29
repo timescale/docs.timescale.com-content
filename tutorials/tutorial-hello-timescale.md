@@ -9,20 +9,13 @@ In this tutorial, you will learn:
 Dataset: [:DOWNLOAD_LINK: `nyc_data.tar.gz`][nyc_data]
 Estimated time for completion: 25 minutes.
 
->:TIP: This tutorial is primarily designed for users of [Timescale Cloud][timescale-cloud]. However, you can follow along just fine if you’re using a self-hosted and/or self-managed version of TimescaleDB.
-
 ### Pre-requisites
 To complete this tutorial, you will need a cursory knowedge of the
 Structured Query Language (SQL). The tutorial will walk you through each
 SQL command, but it will be helpful if you've seen SQL before.
 
-You will also need a working instance of *TimescaleDB*. The fastest way
-to get started with *TimescaleDB* is [setting up *Timescale Cloud*][timescale-cloud-install].
-*Timescale Cloud* is a hosted version of *TimescaleDB*. If you prefer,
-you can download the [TimescaleDB Community Edition][timescale-community-install]
-and run it on your desktop or your own cloud infrastructure.
-
->:WARNING: You may have to wait a few minutes after creating your Timescale Cloud account for it to finish provisioning resources. You'll see a green `RUNNING` icon next to your database instance in the Timescale Cloud dashboard when it's safe to begin the tutorial. If you are running Timescale Community Edition locally on your own desktop, you may begin right away.
+To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
+we can proceed to ingesting or creating sample data and finishing the tutorial.
 
 ### Background
 
@@ -37,7 +30,7 @@ domains use to plan upgrades, set budgets, allocate resources, and more.
 
 In this tutorial, you will complete three missions:
 
-- **Mission 1: Gear up [5 minutes]** You will learn how to connect to a hosted *TimescaleDB* database in *Timescale Cloud* and load data from a CSV file in your local terminal using *psql*.
+- **Mission 1: Gear up [5 minutes]** You will learn how to setup and connect to a *TimescaleDB* instance and load data from a CSV file in your local terminal using *psql*.
 - **Mission 2: Analysis [10 minutes]** You will learn how to analyze a time-series dataset using TimescaleDB and *PostgreSQL*.
 - **Mission 3: Monitoring [10 minutes]** You will learn how to use TimescaleDB to monitor IoT devices. You’ll also learn about using TimescaleDB in conjunction with other PostgreSQL extensions like *PostGIS*, for querying geospatial data.
 
@@ -57,8 +50,6 @@ is time-series data, proper analysis requires a purpose-built
 time-series database. We will use the unique functions
 of TimescaleDB to complete our missions in this tutorial.
 
->:TIP: The steps below assume you’ve already created a Timescale Cloud account and have an instance running (you can still follow the same steps for a local installation of TimescaleDB, just be sure to change the username, password and port numbers.
-
 #### Download and Load Data
 
 Let's start by downloading the dataset. In the interest of (downloading) time
@@ -72,22 +63,21 @@ You can download the files from the below link:
 
 [:DOWNLOAD_LINK: `nyc_data.tar.gz`][nyc_data]
 
-#### Get Connected to Timescale Cloud
+#### Get Connected to TimescaleDB
 
 To connect to the database, you’ll need to make sure the `psql`
 utility is installed on your command line. Follow the instructions for
 your platform in order to
 [setup the psql command-line utility][setup-psql].
 
-Next, navigate to the ‘Overview Tab’ of your Timescale Cloud dashboard
-and locate your `host`, `port`, and `password`, as highlighted below.
+Next, locate your `host`, `port`, and `password`.
 
 <img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/hello-timescale/NYC_figure1_1.png" alt="NYC Taxis"/>
 
-Afterward, connect to your Timescale Cloud database from `psql`
+Afterward, connect to your TimescaleDB instance from `psql`
 by typing the command below into your terminal,
 ensuring that you replace the {curly brackets} with your real
-password, hostname, and port number found in the overview tab.
+password, hostname, and port number.
 
 ```bash
 psql -x "postgres://tsdbadmin:{YOUR_PASSWORD_HERE}@{YOUR_HOSTNAME_HERE}:{YOUR_PORT_HERE}/defaultdb?sslmode=require"
@@ -150,7 +140,7 @@ automatically configures your TimescaleDB instance with the appropriate
 `rides`, `payment_types`, and `rates` tables.
 
 In the command below, be sure to substitute the items in the curly braces with
-information from your Timescale Cloud account, as you did earlier. Also take
+information from your TimescaleDB instance, as you did earlier. Also take
 note that this command includes the `nyc_data` database we created a moment ago.
 
 ```bash
@@ -236,9 +226,9 @@ in the `psql` command line. You should see the following:
 (3 rows)
 ```
 
-#### Load trip data into Timescale Cloud
+#### Load trip data into TimescaleDB
 
-Next, let’s upload the taxi cab data into your Timescale Cloud instance.
+Next, let’s upload the taxi cab data into your TimescaleDB instance.
 The data is in the file called `nyc_data_rides.csv` and we will load it
 into the `rides` hypertable. To do this, we’ll use the `psql` `\copy` command below.
 
@@ -768,10 +758,10 @@ hours, as people headed to breakfast and other New Years activities. New York is
 truly the city that never sleeps and Times Square is a good reflection of that!
 
 ### Conclusions and Next Steps
-In this tutorial you learned how to get started with TimescaleDB and Timescale Cloud.
+In this tutorial you learned how to get started with TimescaleDB.
 
-In **Mission 1**, you learned how to connect to a TimescaleDB database in
-Timescale Cloud and load data from a CSV file using `psql`.
+In **Mission 1**, you learned how to setup and connect to a TimescaleDB instance
+and load data from a CSV file using `psql`.
 
 In **Missions 2 and 3** you learned how to use TimescaleDB to conduct analysis and
 monitoring on a large dataset. You learned about hypertables, saw how TimescaleDB
@@ -789,11 +779,8 @@ Ready for more learning? Here’s a few suggestions:
 - [Try Other Sample Datasets][other-samples]
 - [Migrate your own Data][migrate]
 
-[timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
-[timescale-community-install]: /getting-started/installation
+[install-timescale]: /getting-started/installation
 [setup-psql]: /getting-started/install-psql-tutorial
-[install]: /getting-started/installation
 [NYCTLC]: https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 [nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
 [postgis]: http://postgis.net/documentation

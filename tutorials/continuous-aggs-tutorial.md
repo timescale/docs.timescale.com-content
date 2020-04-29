@@ -21,10 +21,16 @@ queries the view, the system reads and processes the much smaller materialized
 table. This speeds up the query significantly. This is particularly useful when
 recomputing aggregates frequently for large data sets.
 
-We will explore this feature using the data set from the [Hello NYC Tutorial][hello_nyc]
+We will explore this feature using the data set from the [Hello Timescale Tutorial][hello_timescale]
 
-Prerequisites:
-TimescaleDB installed (version 1.3 or greater)
+### Pre-requisites
+
+To complete this tutorial, you will need a cursory knowledge of the Structured Query 
+Language (SQL). The tutorial will walk you through each SQL command, but it will be 
+helpful if you've seen SQL before.
+
+To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
+we can proceed to ingesting or creating sample data and finishing the tutorial.
 
 ### 1. Download and Load Data
 
@@ -244,6 +250,8 @@ materialization_hypertable | _timescaledb_internal._materialized_hypertable_2
 
 You will find more details about the API in the [documentation][tsdb_doc].
 
-[hello_nyc]: /tutorials/tutorial-hello-nyc
+[hello_timescale]: /tutorials/tutorial-hello-timescale
 [nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
 [tsdb_doc]: https://docs.timescale.com/api
+[install-timescale]: /getting-started/installation
+

@@ -3,14 +3,20 @@
 [Grafana][grafana-website] is an open source analytics and monitoring solution
 often used to visualize time-series data. In this tutorial, you’ll learn how to:
 
-- Setup Grafana and [Timescale Cloud][timescale-cloud]
+- Setup Grafana and [TimescaleDB][install-timescale]
 - Use Grafana to visualize metrics stored in TimescaleDB
 - Visualize geospatial data using Grafana
 
-### Setup Grafana and Timescale Cloud
-First, you’ll want to [setup Timescale Cloud][timescale-cloud-install]. If you’d
-prefer to run your own instance of TimescaleDB, follow [the installation instructions][timescaledb-install]
-and the remainder of the tutorial should be fairly straightforward to follow.
+### Pre-requisites
+
+To complete this tutorial, you will need a cursory knowledge of the Structured Query 
+Language (SQL). The tutorial will walk you through each SQL command, but it will be 
+helpful if you've seen SQL before.
+
+To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
+we can proceed to ingesting or creating sample data and finishing the tutorial.
+
+### Setup Grafana and TimescaleDB
 
 If you’ve followed the setup instructions, you should have a working version
 of TimescaleDB with data preloaded. In our case,
@@ -23,10 +29,10 @@ from the **Create Service** flow.
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/create_service.png" alt="Create a new Grafana service"/>
 
->:TIP: Alternatively, you can setup [Grafana Cloud][grafana-cloud] and follow the rest of the instructions below. Note that Grafana Cloud is more feature-rich than the open source version of Grafana included with Timescale Cloud, but does require a paid subscription from Grafana.
+>:TIP: Alternatively, you can setup [Grafana Cloud][grafana-cloud] and follow the rest of the instructions below. Note that Grafana Cloud requires a paid subscription from Grafana.
 
-Finally, you need to configure Grafana to connect to your Timescale Cloud
-instance (or your own installation of TimescaleDB).
+Finally, you need to configure Grafana to connect to your TimescaleDB
+instance.
 
 Start by selecting 'Add Data Source' and choosing the 'PostgreSQL' option
 in the SQL group:
@@ -34,14 +40,11 @@ in the SQL group:
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/add_data_source.png" alt="Adding Postgres to Grafana"/>
 
 In the configuration screen, supply the `Host`, `Database`, `User`, and `Password` for
-your Timescale Cloud instance (or TimescaleDB server).
-
-If you’re a Timescale Cloud user, you can see this in the Service Dashboard for your
-Timescale Cloud instance.
+your TimescaleDB instance.
 
 >:TIP: Don’t forget to add the port number after your host URI. For example, `hostname.timescaledb.io:19660`. And don’t forget to change the database name, if necessary.
 
-Since we will be connecting to a TimescaleDB instance (in Timescale Cloud) for this
+Since we will be connecting to a TimescaleDB instance for this
 tutorial, we will also want to check the option for 'TimescaleDB' in the
 'PostgreSQL details' section of the PostgreSQL configuration screen.
 
@@ -393,9 +396,8 @@ Grafana is a fantastic way to visualize your time-series data. It’s powerful a
 flexible and makes it possible for you to get better insight into the information
 you’re storing in TimescaleDB.
 
+[install-timescale]: /getting-started/installation
 [grafana-website]: https://grafana.com
-[timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/exploring-cloud
 [timescaledb-install]: /getting-started/installation
 [hello-timescale]: /tutorials/tutorial-hello-timescale
 [grafana-cloud]: https://grafana.com/get

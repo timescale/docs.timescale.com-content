@@ -13,12 +13,12 @@ you’ll learn how to:
 
 ### Pre-requisites
 
-You should have a TimescaleDB setup and ready for use. [Timescale Cloud][timescale-cloud]
-is the fastest way to get started with TimescaleDB. You can
-follow [the setup instructions for Timescale Cloud][timescale-cloud-install] and
-get up and running in less than 3 minutes.
+To complete this tutorial, you will need a cursory knowledge of the Structured Query 
+Language (SQL). The tutorial will walk you through each SQL command, but it will be 
+helpful if you've seen SQL before.
 
->:TIP: You can also configure a version of TimescaleDB [on your own machine or cloud infrastructure][timescale-community-install].
+To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
+we can proceed to ingesting or creating sample data and finishing the tutorial.
 
 You will also need:
 
@@ -35,12 +35,9 @@ Add the following import statements to the top of your python script:
 ```
 
 #### Step 2: Compose a connection string
-Locate your database credentials in order to compose a connection string for `psycopg2`
-to use in order to connect to your Timescale instance.
 
-If you're using Timescale Cloud, you can find your credentials in the 'Overview' tab:
-
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/hello-timescale/NYC_figure1_1.png" alt="NYC Taxis"/>
+Locate your TimescaleDB credentials in order to compose a connection string for `psycopg2`
+to use in order to connect to your TimescaleDB instance.
 
 You’ll need the following credentials:
 
@@ -57,7 +54,8 @@ using the following format:
 CONNECTION = "postgres://username:password@host:port/dbname"
 ```
 
-If you’re using Timescale Cloud, or generally require an SSL connection, use this version instead:
+If you’re using a hosted version of TimescaleDB, or generally require an SSL connection, 
+use this version instead:
 
 ```python
 CONNECTION = "postgres://username:password@host:port/dbname?sslmode=require"
@@ -370,9 +368,7 @@ tutorials:
 - [Migrate your own Data][migrate]
 
 
-[timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
-[timescale-community-install]: /getting-started/installation
+[install-timescale]: /getting-started/installation
 [setup-psql]: /getting-started/install-psql-tutorial
 [install]: /getting-started/installation
 [virtual-env]: https://opensource.com/article/19/6/virtual-environments-python-macos

@@ -13,7 +13,7 @@ have `psql` installed.
 psql --version
 ```
 
-### Install on MacOS using Homebrew
+### Install on macOS using Homebrew
 First, install the [Brew Package Manager][brew-package-manager]. Homebrew simplifies
 the installation of software on macOS.
 
@@ -60,12 +60,6 @@ connection parameters:
 - Password
 - Database name
 
-For example, if you're using [Timescale Cloud][timescale-cloud-install], you can 
-navigate to the ‘Overview Tab’ of your dashboard and locate your `host`, `port`, 
-and `password`, as highlighted below.
-
-<img class="main-content__illustration" src="https://s3.amazonaws.com/docs.timescale.com/hello-timescale/NYC_figure1_1.png" alt="NYC Taxis"/>
-
 There are two ways to use these parameters to connect to your PostgreSQL database.
 
 #### Option 1: Supply parameters at the command line
@@ -80,8 +74,7 @@ Once you run that command, the prompt will ask you for your password. (This is t
 of the `-W` flag.)
 
 #### Option 2: Use a service URI
-The Service URI often begins with `postgres://`. You can see an example of a Service URI
-in the [Timescale Cloud][timescale-cloud] dashboard above.
+The Service URI begins with `postgres://`.
 
 ```bash
 psql postgres://[USERNAME]:[PASSWORD]@[HOSTNAME]:[PORT]/[DATABASENAME]?sslmode=require
@@ -111,7 +104,7 @@ Here is a table of common commands you'll find yourself using a lot:
 You may often find yourself running SQL queries with lengthy results. You can save these
 results to a comma-separated file (CSV) using the `COPY` command:
 
-```bash
+```sql
 \copy (SELECT * FROM ...) TO '/tmp/myoutput.csv' (format CSV);
 ```
 
@@ -146,6 +139,4 @@ Congrats! Now you have connected via `psql`.
 
 [brew-package-manager]: https://brew.sh/
 [windows-installer]: https://www.postgresql.org/download/windows/
-[timescale-cloud]: https://www.timescale.com/products
-[timescale-cloud-install]: /getting-started/installation/timescale-cloud/installation-timescale-cloud
 [hello-timescale]: /tutorials/tutorial-hello-timescale
