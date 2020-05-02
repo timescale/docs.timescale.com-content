@@ -283,8 +283,9 @@ PostGIS geospatial indexes).  During testing, you might check your
 total chunk sizes via the [`chunk_relation_size`](#chunk_relation_size)
 function.
 
-**Space partitions**: The use of additional partitioning is a very
-specialized use case.  **Most users will not need to use it.**
+**Space partitions**: In most cases, it is advised for users not to use
+space partitions. The rare cases in which space partitions may be useful
+are described in the [add_dimension](#add_dimension) section.
 
 Space partitions use hashing: Every distinct item is hashed to one of
 *N* buckets.  Remember that we are already using (flexible) time
