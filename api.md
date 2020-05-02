@@ -379,7 +379,7 @@ function.
 
 **Space partitions**: In most cases, it is advised for users not to use
 space partitions. The rare cases in which space partitions may be useful
-are described in the [add dimension][] section.
+are described in the [add_dimension](#add_dimension) section.
 
 ---
 
