@@ -12,6 +12,7 @@ Follow these tutorials:
 - [Creating a Grafana dashboard and panel][tutorial-grafana-dashboards] to visualize data in TimescaleDB.
 - [Visualize Geospatial data in Grafana][tutorial-grafana-geospatial].
 - [Use Grafana variables][tutorial-grafana-variables] to filter and customize your visualizations.
+- [Visualize missing data in Grafana][tutorial-grafana-missing-data] using TimescaleDB features.
 
 ### Pre-requisites for Grafana tutorials
 
@@ -28,3 +29,5 @@ helpful if you've seen SQL before.
 [tutorial-grafana-dashboards]: /tutorials/tutorial-grafana-dashboard
 [tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial
 [tutorial-grafana-variables]: /tutorials/tutorial-grafana-variables
+[tutorial-grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
+[grafana-website]: https://www.grafana.org

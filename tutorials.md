@@ -18,7 +18,7 @@ data analysis and make forecasts on your data.
 - **[Replication][]**: TimescaleDB takes advantage of well established PostgreSQL methods for replication.  Here we provide a detailed guide along with additional resources for setting up streaming replicas.
 - **[Continuous Aggregates][]**: Getting started with continuous aggregates.
 
-### Integrating with other products
+### Integrating with Prometheus
 
 - **[Setup TimescaleDB and Prometheus][prometheus-setup]**: Setup Prometheus to store long-term metrics data in TimescaleDB.
 - **[Visualize Prometheus long-term metrics using Grafana][prometheus-grafana]**: Build visualizations in Grafana to obtain insight into your long-term Prometheus metrics stored in TimescaleDB.
@@ -26,9 +26,17 @@ data analysis and make forecasts on your data.
 - **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers.
 - **[Monitoring Django with Prometheus][monitor-django-prometheus]**:
 Learn how to monitor your Django application using Prometheus.
+
+### Integrating with Grafana
+
+- **[Creating a Grafana dashboard and panel][tutorial-grafana-dashboards]**: Basic tutorial on using Grafana to visualize data in TimescaleDB.
+- **[Visualize Geospatial data in Grafana][tutorial-grafana-geospatial]**: Use the Grafana WorldMap visualization to view your TimescaleDB data.
+- **[Use Grafana variables][tutorial-grafana-variables]**: Filter and customize your Grafana visualizations.
+- **[Visualizing Missing Data with Grafana][tutorial-grafana-missing-data]**: Learn how to visualize and aggregate missing time-series data in Grafana.
+
+### Integrating with other products
+
 - **[Collecting metrics with Telegraf][Telegraf Output Plugin]**: Collecting metrics with the PostgreSQL and TimescaleDB output plugin for Telegraf.
-- **[Visualizing Data with Grafana][grafana]**: Visualize time-series data with this primer on getting started with Grafana.
-- **[Visualizing Missing Data with Grafana][grafana-missing-data]**: Learn how to visualize and aggregate missing time-series data in Grafana.
 - **[Visualize Time-Series Data using Tableau][Tableau]**: Learn how to configure Tableau to connect to TimescaleDB and visualize your time-series data.
 - **[Migrate from InfluxDB with Outflux][Outflux]**: Use our open-source migration tool to transfer your data from InfluxDB to TimescaleDB.
 
@@ -54,7 +62,6 @@ and pick up some valuable `psql` tips and tricks along the way.
 [Outflux]: /tutorials/outflux
 [Prometheus adapter]: /tutorials/prometheus-adapter
 [Grafana]: /tutorials/tutorial-grafana
-[grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
 [Telegraf Output Plugin]: /tutorials/telegraf-output-plugin
 [Data Sets]: /tutorials/other-sample-datasets
 [install-timescale]: /getting-started/installation
@@ -65,6 +72,10 @@ and pick up some valuable `psql` tips and tricks along the way.
 [prometheus-setup]: /tutorials/tutorial-setup-timescale-prometheus
 [prometheus-grafana]: /tutorials/tutorial-use-timescale-prometheus-grafana
 [monitor-django-prometheus]: /tutorials/tutorial-howto-monitor-django-prometheus
+[tutorial-grafana-dashboards]: /tutorials/tutorial-grafana-dashboard
+[tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial
+[tutorial-grafana-variables]: /tutorials/tutorial-grafana-variables
+[tutorial-grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
 [python-quickstart]: /tutorials/quickstart-python
 [ruby-quickstart]: /tutorials/quickstart-ruby
 [simul-iot-data]: /tutorials/tutorial-howto-simulate-iot-sensor-data
