@@ -589,7 +589,6 @@ the same semantics as the `show_chunks` [function](#show_chunks).
 |Name|Description|
 |---|---|
 | `schema_name` | Schema name of the hypertable from which to drop chunks. Defaults to `public`.
-| `cascade` | Boolean on whether to `CASCADE` the drop on chunks, therefore removing dependent objects on chunks to be removed. Defaults to `FALSE`.
 | `cascade_to_materializations` | Set to `TRUE` to also remove chunk data from any associated continuous aggregates. Set to `FALSE` to only drop raw chunks (while keeping data in the continuous aggregates). Defaults to `NULL`, which errors if continuous aggregates exist.|
 
 >:TIP: The `table_name` argument was optional in previous versions, but this is now deprecated: `table_name` should always be given.
@@ -653,9 +652,9 @@ Drop all chunks from hypertable `conditions` before 2017, where time column is g
 SELECT drop_chunks(1483228800000, 'conditions');
 ```
 
-Drop all chunks from hypertable `conditions` older than 3 months, including dependent objects (e.g., views):
+Drop all chunks from hypertable `conditions` older than 3 months:
 ```sql
-SELECT drop_chunks(INTERVAL '3 months', 'conditions', cascade => TRUE);
+SELECT drop_chunks(INTERVAL '3 months', 'conditions');
 ```
 
 Drop all chunks older than 3 months ago and newer than 4 months ago from hypertable `conditions`:
@@ -1376,7 +1375,6 @@ one drop-chunks policy may exist per hypertable.
 
 |Name|Description|
 |---|---|
-| `cascade` | (BOOLEAN) Set to true to drop objects dependent upon chunks being dropped. Defaults to false.|
 | `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the policy already exists. A notice is issued instead. Defaults to false. |
 | `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to also remove chunk data from any associated continuous aggregates. Set to `FALSE` to only drop raw chunks (while keeping data in the continuous aggregates). Defaults to `NULL`, which errors if continuous aggregates exist.|
 
@@ -2361,7 +2359,6 @@ about drop_chunks policies).
 |---|---|
 | `hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
 | `older_than` | (INTERVAL) Chunks fully older than this amount of time will be dropped when the policy is run |
-| `cascade` | (BOOLEAN) Whether the policy will be run with the cascade option turned on, which will cause dependent objects to be dropped as well as chunks. |
 | `job_id` | (INTEGER) The id of the background job set up to implement the drop_chunks policy|
 | `schedule_interval` | (INTERVAL)  The interval at which the job runs |
 | `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
@@ -2374,9 +2371,9 @@ Get information about drop_chunks policies.
 ```sql
 SELECT * FROM timescaledb_information.drop_chunks_policies;
 
-       hypertable       | older_than | cascade | job_id | schedule_interval | max_runtime | max_retries | retry_period
-------------------------+------------+---------+--------+-------------------+-------------+-------------+--------------
-       conditions       | @ 4 mons   | t       |   1001 | @ 1 sec           | @ 5 mins    |          -1 | @ 12 hours
+       hypertable       | older_than | job_id | schedule_interval | max_runtime | max_retries | retry_period
+------------------------+------------+--------+-------------------+-------------+-------------+--------------
+       conditions       | @ 4 mons   |   1001 | @ 1 sec           | @ 5 mins    |          -1 | @ 12 hours
 (1 row)
 ```
 
