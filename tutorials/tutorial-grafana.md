@@ -12,11 +12,11 @@ First, you’ll want to [setup Timescale Cloud][timescale-cloud-install]. If you
 prefer to run your own instance of TimescaleDB, follow [the installation instructions][timescaledb-install]
 and the remainder of the tutorial should be fairly straightforward to follow.
 
-If you’ve followed the setup instructions, you should have a working version
-of TimescaleDB with data preloaded. In our case,
-we will use the New York City taxicab data found in the
-[Hello, Timescale!][hello-timescale] tutorial. Be sure to follow the full
-tutorial if you’re interested in background on how to use TimescaleDB.
+- [Creating a Grafana dashboard and panel][tutorial-grafana-dashboards] to visualize data in TimescaleDB.
+- [Visualize Geospatial data in Grafana][tutorial-grafana-geospatial].
+- [Use Grafana variables][tutorial-grafana-variables] to filter and customize your visualizations.
+- [Visualize missing data in Grafana][tutorial-grafana-missing-data] using TimescaleDB features.
+- [Setup Grafana alerts][tutorial-grafana-alerts] on time-series data using Slack, PagerDuty, and more.
 
 If you’re using Timescale Cloud, you can setup a Grafana Metrics Dashboard
 from the **Create Service** flow.
@@ -398,5 +398,9 @@ you’re storing in TimescaleDB.
 [timescale-cloud-install]: /getting-started/exploring-cloud
 [timescaledb-install]: /getting-started/installation
 [hello-timescale]: /tutorials/tutorial-hello-timescale
-[grafana-cloud]: https://grafana.com/get
-[time-bucket-reference]: /api#time_bucket
+[tutorial-grafana-dashboards]: /tutorials/tutorial-grafana-dashboard
+[tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial
+[tutorial-grafana-variables]: /tutorials/tutorial-grafana-variables
+[tutorial-grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
+[tutorial-grafana-alerts]: /tutorials/tutorial-grafana-alerts
+[grafana-website]: https://www.grafana.org
