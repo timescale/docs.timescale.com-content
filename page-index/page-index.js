@@ -502,14 +502,9 @@ const pageIndex = [
                 href: "telegraf-output-plugin",
                 children: []
             }, {
-                Title: "Visualizing data with Grafana",
+                Title: "Integrating TimescaleDB with Grafana",
                 type: PAGE,
                 href: "tutorial-grafana",
-                children: []
-            }, {
-                Title: "Visualizing missing data with Grafana",
-                type: PAGE,
-                href: "tutorial-howto-visualize-missing-data-grafana",
                 children: []
             }, {
                 Title: "Visualizing data in Tableau",
