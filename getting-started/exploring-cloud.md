@@ -33,7 +33,7 @@ You can create a new service by clicking on the `Create a new service` button.
 In the resulting screen, you'll see several options that enable you to choose:
 
 - **Service type**. Today, we support TimescaleDB and Grafana services.
-- **Cloud provider**. We support Amazon Web Services, Google Cloud, or Microosft Azure.
+- **Cloud provider**. We support Amazon Web Services, Google Cloud, or Microsoft Azure.
 - **Cloud region**. We support most cloud regions offered by each cloud provider.
 - **Service plan**. We support many common configurations of CPU, memory, storage, backup, and nodes. *If you're still a Timescale Cloud trial user*, we recommend using the `Dev` plan as it will be most cost effective during your evaluation period.
 
