@@ -83,6 +83,12 @@ password, hostname, and port number.
 psql -x "postgres://tsdbadmin:{YOUR_PASSWORD_HERE}@{YOUR_HOSTNAME_HERE}:{YOUR_PORT_HERE}/defaultdb?sslmode=require"
 ```
 
+Similarly, if you are using our managed Timescale database, simply copy-paste your connection URL from the UI
+
+```bash
+psql "connection URL"
+```
+
 You should see the following connection message:
 
 ```bash
