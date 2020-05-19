@@ -211,6 +211,10 @@ const pageIndex = [
                 type: PAGE,
                 href: "configuring"
             }, {
+                Title: "Set up Grafana",
+                type: PAGE,
+                href: "installation-grafana"
+            }, {
                 Title: "Installing psql",
                 type: PAGE,
                 href: "install-psql-tutorial"
@@ -502,9 +506,34 @@ const pageIndex = [
                 href: "telegraf-output-plugin",
                 children: []
             }, {
-                Title: "Integrating TimescaleDB with Grafana",
+                Title: "Visualizing data in Grafana",
                 type: PAGE,
                 href: "tutorial-grafana",
+                children: []
+            }, {
+                Title: "Creating Grafana dashboards",
+                type: PAGE,
+                href: "tutorial-grafana-dashboard",
+                children: []
+            }, {
+                Title: "Build geospatial dashboards in Grafana",
+                type: PAGE,
+                href: "tutorial-grafana-geospatial",
+                children: []
+            }, {
+                Title: "Using Grafana variables",
+                type: PAGE,
+                href: "tutorial-grafana-variables",
+                children: []
+            }, {
+                Title: "Visualizing missing data in Grafana",
+                type: PAGE,
+                href: "tutorial-howto-visualize-missing-data-grafana",
+                children: []
+            }, {
+                Title: "Set up Grafana alerts",
+                type: PAGE,
+                href: "tutorial-grafana-alerts",
                 children: []
             }, {
                 Title: "Visualizing data in Tableau",
