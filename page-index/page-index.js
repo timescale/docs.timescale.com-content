@@ -140,19 +140,6 @@ const pageIndex = [
                             }
                         ]
                     }, {
-                        Title: "Azure",
-                        type: DIRECTORY,
-                        href: "azure",
-                        src: "//assets.iobeam.com/images/docs/Azure_logo_icon_50.svg",
-                        children: [
-                            {
-                                Title: "Windows Azure",
-                                type: NON_MENU_PAGE,
-                                options: {pg_version: ["10", "9.6"]},
-                                href: "installation-windows-azure"
-                            }
-                        ]
-                    }, {
                         Title: "MacOS",
                         type: DIRECTORY,
                         href: "macos",
