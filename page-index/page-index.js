@@ -513,7 +513,7 @@ const pageIndex = [
             }, {
                 Title: "Creating Grafana dashboards",
                 type: PAGE,
-                href: "tutorial-grafana-dashboard",
+                href: "tutorial-grafana-dashboards",
                 children: []
             }, {
                 Title: "Build geospatial dashboards in Grafana",
