@@ -27,7 +27,7 @@ helpful if you've seen SQL before.
 [install-timescale]: /getting-started/installation
 [install-grafana]: /getting-started/installation-grafana
 [hello-timescale]: /tutorials/tutorial-hello-timescale
-[tutorial-grafana-dashboards]: /tutorials/tutorial-grafana-dashboard
+[tutorial-grafana-dashboards]: /tutorials/tutorial-grafana-dashboards
 [tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial
 [tutorial-grafana-variables]: /tutorials/tutorial-grafana-variables
 [tutorial-grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
