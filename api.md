@@ -289,9 +289,9 @@ to how you handle constraints. A hypertable can contain foreign keys to normal S
 columns, but the reverse is not allowed. UNIQUE and PRIMARY constraints must include the
 partitioning key.
 >
->The deadlock is likely to happen when concurrent transactions simultaneously try 
+>The deadlock is likely to happen when concurrent transactions simultaneously try
 to insert data into tables that are referenced in the foreign key constraints and into the
-converting table itself. The deadlock can be prevented by manually obtaining `SHARE ROW EXCLUSIVE` lock 
+converting table itself. The deadlock can be prevented by manually obtaining `SHARE ROW EXCLUSIVE` lock
 on the referenced tables before calling `create_hypertable` in the same transaction,
 see [PostgreSQL documentation][postgres-lock] for the syntax.
 <!-- -->
@@ -1987,6 +1987,20 @@ filling for the interval between `start` and `finish`. It can only be used with 
 query. Values outside of `start` and `finish` will pass through but no gap filling will be
 done outside of the specified range.
 
+Starting with version 1.3.0, `start` and `finish` are optional arguments and will
+be inferred from the WHERE clause if not supplied as arguments.
+
+>:TIP: We recommend using a WHERE clause whenever possible (instead of just
+`start` and `finish` arguments), as start and finish arguments will not filter
+input rows.  Thus without a WHERE clause, this will lead TimescaleDB's planner
+to select all data and not perform constraint exclusion to exclude chunks from
+further processing, which would be less performant.
+
+The `time_bucket_gapfill` must be a top-level expression in a query or
+subquery, as shown in the above examples.  You cannot, for example, do
+something like `round(time_bucket_gapfill(...))` or cast the result of the gapfill
+call (unless as a subquery where the outer query does the type cast).
+
 #### Required Arguments [](time_bucket_gapfill-required-arguments)
 
 |Name|Description|
@@ -2000,9 +2014,6 @@ done outside of the specified range.
 |---|---|
 | `start` | The start of the gapfill period (timestamp/timestamptz/date)|
 | `finish` | The end of the gapfill period (timestamp/timestamptz/date)|
-
-Starting with version 1.3.0 `start` and `finish` are optional arguments and will
-be inferred from the WHERE clause if not supplied as arguments.
 
 ### For Integer Time Inputs
 
