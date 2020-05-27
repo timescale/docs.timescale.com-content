@@ -224,7 +224,7 @@ Congratulations, you’ve successfully inserted data into TimescaleDB using Pyth
 
 While using `psycopg2` by itself may be sufficient for you to insert rows into your
 hypertable, if you need quicker performance, you can use
-[pgcopy][pg-copy-docs]. To do this, install `pycopy` using `pip3` or the like and
+[pgcopy][pg-copy-docs]. To do this, install `pgcopy` using `pip3` or the like and
 then add this line to your list of `import` statements:
 
 ```python
@@ -358,7 +358,7 @@ For more information on how to execute more complex queries, see the
 ### Next steps
 
 Now that you’re able to connect, read, and write to a TimescaleDB instance from your
-Rails application, and generate the scaffolding necessary to build a new application
+Python application, and generate the scaffolding necessary to build a new application
 from an existing TimescaleDB instance, be sure to check out these advanced TimescaleDB
 tutorials:
 
