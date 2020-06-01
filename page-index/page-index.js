@@ -533,6 +533,11 @@ const pageIndex = [
                 href: "outflux",
                 children: []
             }, {
+                Title: "Node Quick Start",
+                type: PAGE,
+                href: "quickstart-node",
+                children: []
+            }, {
                 Title: "Python Quick Start",
                 type: PAGE,
                 href: "quickstart-python",
@@ -541,6 +546,7 @@ const pageIndex = [
                 Title: "Ruby on Rails Quick Start ",
                 type: PAGE,
                 href: "quickstart-ruby",
+                children: []
             }, {
                 Title: "Simulate IoT Sensor Data",
                 type: PAGE,
