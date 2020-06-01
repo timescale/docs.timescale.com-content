@@ -42,6 +42,7 @@ Learn how to monitor your Django application using Prometheus.
 
 ### Language quick-starts
 
+- **[Node and TimescaleDB][node-quickstart]**: A quick start guide for Node developers looking to use TimescaleDB.
 - **[Python and TimescaleDB][python-quickstart]**: A quick start guide for Python developers looking to use TimescaleDB.
 - **[Ruby on Rails and TimescaleDB][ruby-quickstart]**: A quick start guide for Ruby on Rails developers looking to use TimescaleDB.
 
@@ -76,6 +77,7 @@ and pick up some valuable `psql` tips and tricks along the way.
 [tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial
 [tutorial-grafana-variables]: /tutorials/tutorial-grafana-variables
 [tutorial-grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
+[node-quickstart]: /tutorials/quickstart-node
 [python-quickstart]: /tutorials/quickstart-python
 [ruby-quickstart]: /tutorials/quickstart-ruby
 [simul-iot-data]: /tutorials/tutorial-howto-simulate-iot-sensor-data
