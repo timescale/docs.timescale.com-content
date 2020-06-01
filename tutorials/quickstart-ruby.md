@@ -207,7 +207,7 @@ Indexes:
 
 ### Generate hypertable [](create_hypertable)
 
-In TimescaleDB, the primary point of interaction with your data is a [hypertable][hypertable], 
+In TimescaleDB, the primary point of interaction with your data is a [hypertable][hypertables], 
 the abstraction of a single continuous table across all space and time 
 intervals, such that one can query it via standard SQL.
 
