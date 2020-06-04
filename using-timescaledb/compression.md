@@ -1,8 +1,5 @@
 # Compression
 
->:WARNING:Compression is disabled when using Timescale in conjunction with
-PostgreSQL 9.6. In order to use compression, you must be using PostgreSQL 10.2 or higher.
-
 As of version 1.5, TimescaleDB supports the ability to natively compress data. This
 functionality does not require the use of any specific file system or external software,
 and as you will see, it is simple to set up and configure by the user.

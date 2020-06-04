@@ -84,8 +84,6 @@ queries should be able to read from different disks in parallel, or
 (b) a single query should be able to use query parallelization to read
 from multiple disks in parallel.
 
-Note that queries to multiple chunks can be executed in parallel when TimescaleDB is running on Postgres 11, but PostgreSQL 9.6 or 10 does not support such parallel chunk execution.
-
 Thus, users looking for parallel I/O have two options:
 
 1. Use a RAID setup across multiple physical disks, and expose a

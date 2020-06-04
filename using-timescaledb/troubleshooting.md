@@ -24,15 +24,15 @@ points to may not be for the version you expect. To check which
 version TimescaleDB used:
 ```bash
 $ pg_config --version
-PostgreSQL 9.6.6
+PostgreSQL 12.3
 ```
 
 If that is the correct version, double check that the installation path is
-the one you'd expect. For example, for PostgreSQL 10.1 installed via
-Homebrew on macOS it should be `/usr/local/Cellar/postgresql/10.1/bin`:
+the one you'd expect. For example, for PostgreSQL 11.0 installed via
+Homebrew on macOS it should be `/usr/local/Cellar/postgresql/11.0/bin`:
 ```bash
 $ pg_config --bindir
-/usr/local/Cellar/postgresql/10.1/bin
+/usr/local/Cellar/postgresql/11.0/bin
 ```
 
 If either of those steps is not the version you are expecting, you need
@@ -40,7 +40,7 @@ to either (a) uninstall the incorrect version of PostgreSQL if you can or
 (b) update your `PATH` environmental variable to have the correct
 path of `pg_config` listed first, i.e., by prepending the full path:
 ```bash
-$ export PATH = /usr/local/Cellar/postgresql/10.1/bin:$PATH
+$ export PATH = /usr/local/Cellar/postgresql/11.0/bin:$PATH
 ```
 Then, reinstall TimescaleDB and it should find the correct installation
 path.

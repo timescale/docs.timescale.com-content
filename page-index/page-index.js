@@ -47,7 +47,7 @@ const pageIndex = [
                 Title: "Installing",
                 type: REACT_PAGE,
                 href: "installation",
-                options: {pg_version: ["12", "11", "10", "9.6"]},
+                options: {pg_version: ["12", "11"]},
                 component: "InstallationPage",
                 children: [
                     {
