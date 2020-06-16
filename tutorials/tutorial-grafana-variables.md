@@ -63,7 +63,8 @@ Click 'Add' to save your variable.
 
 #### Use the variable in a Grafana panel
 
-Let's edit the WorldMap panel we created in the previous section. The first thing you'll
+Let's edit the WorldMap panel we created in the 
+[Grafana geo-spatial queries][tutorial-grafana-geospatial] tutorial. The first thing you'll
 notice is that now that we've defined a variable for this dashboard, there's now a drop-down
 for that variable in the upper left hand corner of the panel.
 
@@ -98,7 +99,7 @@ Now we can use the drop-down to filter our rides based on the type of payment us
 
 #### Improving the Grafana filter to be human readable
 
-But this filter isn't very attractive. We can't tell what '1' means. Fortunately,
+But our filter isn't very attractive. We can't tell what '1' means. Fortunately,
 when we set up our NYC Taxi Cab dataset, we created a `payment_types` table (which
 we queried earlier). The `payment_types.description` field has a more readable
 explanation of what each payment code means, for example, 'credit card', 'cash',
@@ -125,6 +126,52 @@ when Grafana makes a query.
 As you can see, a variable can be used in a query in much the same way you'd
 use a variable in any programming language.
 
+#### Building dynamic panels using Grafana variables
+
+We've seen how you can use a Grafana variable in a query. You can also use a
+Grafana variable to build dynamic panels, where panels are created automatically
+based on the values selected for a variable. In our case, we've enabled people to
+select data based on the `payment_type` used for a taxi ride. We want to 
+automatically create a graph panel for **each** of the payment types
+selected so that we can see those queries side-by-side.
+
+Let's first create a new graph panel that uses the `$payment_type` variable.
+This will be our query:
+
+```sql
+SELECT 
+  --1--
+  time_bucket('5m', pickup_datetime) AS time,
+  --2--
+  COUNT(*)
+FROM rides
+WHERE $__timeFilter(pickup_datetime)
+AND rides.payment_type IN ($payment_type)
+GROUP BY time
+ORDER BY time
+```
+
+Now, let's make this panel dynamic so that we have a separate panel for each
+variable that is checked in the drop-down. Start by changing the title of
+the panel to include the variable name. Go to the panel's 'General' tab and
+change the 'Title' to the following:
+
+```bash
+{$payment_type} Taxi Rides
+```
+
+In the 'Repeating' section, select the variable you want to generate dynamic
+panels based on. In this case, `payment_type`. You can have your dynamic panels
+generate vertically or horizontally. In our case we will opt for repeating
+panels, 2 per row, horizontally:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_create_dynamic_panels.png" alt="Create a dynamic panel in Grafana"/>
+
+Save and refresh your dashboard. Select some payment types using the drop-down.
+Your dashboard should look something like this:
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/screenshots-for-grafana-tutorial/grafana_dynamic_panels.png" alt="Dynamic panels in Grafana"/>
+
 ### Summary
 
 Complete your Grafana knowledge by following [all the TimescaleDB + Grafana tutorials][tutorial-grafana].
@@ -133,3 +180,4 @@ Complete your Grafana knowledge by following [all the TimescaleDB + Grafana tuto
 [install-grafana]: /getting-started/installation-grafana
 [hello-timescale]: /tutorials/tutorial-hello-timescale
 [tutorial-grafana]: /tutorials/tutorial-grafana
+[tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial
