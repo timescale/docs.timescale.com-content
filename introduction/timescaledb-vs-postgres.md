@@ -219,7 +219,7 @@ TimescaleDB allows efficient deletion of old data at the **chunk** level,
 rather than at the row level, via its `drop_chunks` functionality.
 
 ```sql
-SELECT drop_chunks(interval '7 days', 'conditions');
+SELECT drop_chunks('conditions', INTERVAL '7 days');
 ```
 
 This will delete all chunks (files) from the hypertable 'conditions'
