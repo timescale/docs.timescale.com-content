@@ -41,6 +41,16 @@ this line in `postgresql.conf` on every data node.
 max_prepared_transactions = 150
 ```
 
+To achieve good query performance you need to enable partitionwise aggregation,
+at least on the access node. This pushes down aggregation queries to the 
+data nodes. This setting can be enabled in a session or, ideally, in 
+`postgresql.conf`:
+
+```
+enable_partitionwise_aggregate = true
+```
+
+
 ### Set password encryption
 
 You are now ready to set up the network communication between the nodes and
