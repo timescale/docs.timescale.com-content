@@ -975,7 +975,8 @@ policy](#add_compress_chunks_policy) for when to compress chunks.
 Advanced usage of compression alows users to [compress chunks
 manually](#compress_chunk), instead of automatically as they age.
 
->:WARNING: Compression is only available for Postgres 10.2+ or 11.
+>:WARNING: Compression is not available when using TimescaleDB on 
+PostgreSQL 9.6.
 
  #### Restrictions
  Version 1.5 does not support altering or inserting data into compressed
