@@ -976,14 +976,12 @@ policy](#add_compress_chunks_policy) for when to compress chunks.
 Advanced usage of compression alows users to [compress chunks
 manually](#compress_chunk), instead of automatically as they age.
 
->:WARNING: Compression is not available when using TimescaleDB on 
-PostgreSQL 9.6.
+#### Restrictions
 
- #### Restrictions
- Version 1.5 does not support altering or inserting data into compressed
- chunks. The data can be queried without any modifications, however if you
- need to backfill or update data in a compressed chunk you will need to
- decompress the chunk(s) first.
+Version 1.5 does not support altering or inserting data into compressed
+chunks. The data can be queried without any modifications, however if you
+need to backfill or update data in a compressed chunk you will need to
+decompress the chunk(s) first.
 
 
 #### Associated commands
