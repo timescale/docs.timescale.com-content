@@ -190,6 +190,10 @@ const pageIndex = [
                 type: PAGE,
                 href: "exploring-cloud"
             }, {
+                Title: "Setting up Timescale Forge",
+                type: NON_MENU_PAGE,
+                href: "exploring-forge"
+            }, {
                 Title: "Setting up Enterprise",
                 type: PAGE,
                 href: "exploring-enterprise"
