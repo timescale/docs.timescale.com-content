@@ -1,7 +1,3 @@
->:WARNING: Our clustering capabilities are currently in private beta and
-are not available through this installation method. For more information,
-please [contact us][contact].
-
 ## Installation (Timescale Cloud) [](installation-timescale-cloud)
 
 Timescale Cloud is a Database as a Service (DBaaS) offering that provides
@@ -28,4 +24,3 @@ Now that your database account is setup, it's time to
 [timescale-features]: https://www.timescale.com/products
 [timescale-cloud-setup]: /getting-started/exploring-cloud
 [intercom]: https://kb.timescale.cloud/
-[contact]: https://www.timescale.com/contact

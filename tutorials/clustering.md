@@ -1,9 +1,5 @@
 # Tutorial: Scaling out TimescaleDB
 
->:WARNING: Distributed hypertables are currently in PRIVATE BETA and
-are not yet meant for production use. For more information, please
-[contact us][contact].
-
 TimescaleDB can be run in a multi-node setup, with one primary access node distributing
 writes and queries to multiple data nodes. For more information on the actual
 underlying architecture, you can view our [architecture][architecture] section.
@@ -241,6 +237,5 @@ inserted data across multiple data nodes, and queried that data.
 
 
 [architecture]: /introduction/architecture#timescaledb-clustering
-[contact]: https://www.timescale.com/contact
 [data-node-authentication]: /getting-started/setup/data-node-authentication
 [postgres-alterrole]: https://www.postgresql.org/docs/current/sql-alterrole.html

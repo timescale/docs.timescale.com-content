@@ -103,8 +103,7 @@ compression, read our [compression blog post].
 ## Single Node vs. Multi-Node [](single-node-vs-clustering)
 
 TimescaleDB performs extensive partitioning both
-on **single-node** deployments as well as **clustered** deployments
-(in private beta).  While
+on **single-node** deployments as well as **clustered** deployments. While
 partitioning is traditionally only used for scaling out across multiple
 machines, it also allows us to scale up to high write rates (and improved
 parallelized queries) even on single machines.
@@ -138,11 +137,7 @@ while maintaining support for multiple indexes.
 For more on the motivation and design of TimescaleDB, please see our
 [technical blog post][chunking].
 
-## Distributed Hypertables (PRIVATE BETA) [](distributed-hypertables)
-
->:WARNING: Distributed hypertables are currently in PRIVATE BETA.
-This feature is not meant for production use. For more information,
-please [contact us][contact].
+## Distributed Hypertables [](distributed-hypertables)
 
 TimescaleDB supports distributing hypertables across multiple nodes
 (i.e., a cluster) by leveraging the same hypertable and chunk
