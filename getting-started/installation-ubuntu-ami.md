@@ -1,7 +1,3 @@
->:WARNING: Our clustering capabilities are currently in private beta and
-are not available through this installation method. For more information,
-please [contact us][contact].
-
 ## Installing from an Amazon AMI (Ubuntu) [](installation-ubuntu-ami)
 
 TimescaleDB is currently available as an Ubuntu 18.04 Amazon EBS-backed AMI. AMIs are
@@ -54,4 +50,3 @@ EBS optimized EC2 instance type, see the AWS [instance configuration page][].
 [pg_hba]: https://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html
 [configuration]: /getting-started/configuring
 [instance configuration page]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-ec2-config.html
-[contact]: https://www.timescale.com/contact
