@@ -978,11 +978,18 @@ manually](#compress_chunk), instead of automatically as they age.
 
 >:WARNING: Compression is only available for Postgres 10.2+ or 11.
 
+<<<<<<< HEAD
  #### Restrictions
  Version 1.5 does not support altering or inserting data into compressed
  chunks. The data can be queried without any modifications, however if you
  need to backfill or update data in a compressed chunk you will need to
  decompress the chunk(s) first.
+=======
+The current version does not support altering or inserting data into compressed
+chunks. The data can be queried without any modifications, however if you
+need to backfill or update data in a compressed chunk you will need to
+decompress the chunk(s) first.
+>>>>>>> d6e5643... Remove version of current compression restriction
 
 
 #### Associated commands
