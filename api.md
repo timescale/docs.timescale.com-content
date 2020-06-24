@@ -266,6 +266,8 @@ data node by:
 4. Setting metadata to make the data node part of the distributed
    database.
 
+See [boostrapping description][multinode-bootstrap] for details.
+
 #### Errors
 
 An error will be given if:
@@ -3363,3 +3365,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [telemetry]: /using-timescaledb/telemetry
 [caveats]: /using-timescaledb/continuous-aggregates
 [backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore
+[multinode-bootstrap]: /multinode/bootstrapping
