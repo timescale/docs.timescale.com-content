@@ -448,18 +448,6 @@ const pageIndex = [
             }
         ]
     }, {
-	Title: "Distributed Hypertable",
-        type: REDIRECT,
-        href: "multinode",
-        to: "/multinode/bootstrapping",
-        children: [
-            {
-                Title: "Data Node Bootstrapping",
-                type: PAGE,
-                href: "bootstrapping",
-            }
-        ]
-    }, {
         Title: "Tutorials",
         type: PAGE,
         href: "tutorials",
