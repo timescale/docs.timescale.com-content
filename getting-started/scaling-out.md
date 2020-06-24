@@ -40,7 +40,8 @@ Note that:
   that will host a data node. The data node's database will be created
   when executing the [`add_data_node`][add_data_node] command on the
   access node and should _not_ exist prior to adding the data
-  node.
+  node. The process of bootstrapping data node is described in details 
+  [here][multinode-bootstrap].
 
 * The instance need to have a compatible version of the TimescaleDB
   extension available on the data node: typically the same version of
@@ -198,3 +199,4 @@ node.
 [data-node-authentication]: /getting-started/setup/data-node-authentication
 [max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
 [distributed-hypertable-limitations]: /using-timescaledb/limitations#distributed-hypertable-limitations
+[multinode-bootstrap]: /multinode/bootstrapping
