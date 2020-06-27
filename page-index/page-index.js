@@ -47,7 +47,11 @@ const pageIndex = [
                 Title: "Installing",
                 type: REACT_PAGE,
                 href: "installation",
+<<<<<<< HEAD
                 options: {pg_version: ["11", "10", "9.6"]},
+=======
+                options: {pg_version: ["12", "11"]},
+>>>>>>> 487e100... Remove references to unsupported postgres versions (#413)
                 component: "InstallationPage",
                 children: [
                     {

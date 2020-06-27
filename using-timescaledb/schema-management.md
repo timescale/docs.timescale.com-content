@@ -364,7 +364,7 @@ tablespaces in a way similar to round-robin.
 [postgres-createindex]: https://www.postgresql.org/docs/current/static/sql-createindex.html
 [create_hypertable]: /api#create_hypertable
 [postgres-createtrigger]: https://www.postgresql.org/docs/current/static/sql-createtrigger.html
-[postgres-createconstraint]: https://www.postgresql.org/docs/9.6/static/ddl-constraints.html
+[postgres-createconstraint]: https://www.postgresql.org/docs/current/static/ddl-constraints.html
 [json-indexing]: https://www.postgresql.org/docs/current/static/datatype-json.html#JSON-INDEXING
 [json-operators]: https://www.postgresql.org/docs/current/static/functions-json.html#FUNCTIONS-JSONB-OP-TABLE
 [multicolumn-index]: https://www.postgresql.org/docs/current/static/indexes-multicolumn.html
