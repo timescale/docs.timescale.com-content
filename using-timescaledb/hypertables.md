@@ -121,12 +121,6 @@ queries should be able to read from different disks in parallel, or
 (b) a single query should be able to use query parallelization to read
 from multiple disks in parallel.
 
-Note that query parallelization in PostgreSQL 9.6 (and 10) does not
-support querying *different* hypertable chunks in parallel;
-query parallelization only works on a single physical table (and thus
-a single chunk). We might add our own support for this, but it is not
-currently supported.
-
 Thus, users looking for parallel I/O have two options:
 
 1. Use a RAID setup across multiple physical disks, and expose a

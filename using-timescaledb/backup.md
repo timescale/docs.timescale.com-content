@@ -29,7 +29,6 @@ database or individual hypertables using the native PostgreSQL
  Follow these [updating instructions][].
 
 <!-- -->
->:WARNING: You must use `pg_dump` and `pg_restore` versions 9.6.2 and above.
 
 ### Entire database
 
