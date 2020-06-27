@@ -100,5 +100,5 @@ Timescale Cloud instance.
 [get-prometheus]: https://prometheus.io
 [timescale-cloud-get-started]: /getting-started/exploring-cloud
 [monitoring-setup-tutorial]: /tutorials/tutorial-setup-timescale-prometheus
-[pg-stats-metrics]: https://www.postgresql.org/docs/9.6/monitoring-stats.html
+[pg-stats-metrics]: https://www.postgresql.org/docs/current/monitoring-stats.html
 [node-exporter-metrics]: https://github.com/prometheus/node_exporter
