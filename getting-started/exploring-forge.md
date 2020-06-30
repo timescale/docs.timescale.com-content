@@ -32,7 +32,11 @@ and, failing that, please [contact us][contact-timescale].
 1. Note the estimated cost of running your chosen configuration. Feel free to [contact us][contact-timescale] if you would like to discuss pricing and configuration options best suited for your use case.
 1. Click 'Create service' once your configuration is complete.
 
->:NOTE: We'll be adding additional CPU and storage configurations in the future.  We'll also be adding the ability to quickly switch CPU configurations and storage options for your existing database with just a click, so you can scale with your usage needs.  For now, please [reach out][contact-timescale] if you need to reconfigure a existing service.
+We'll be adding additional CPU and storage configurations in the future.  We'll
+also be adding the ability to quickly switch CPU configurations and storage
+options for your existing database with just a click, so you can scale with
+your usage needs.  For now, please [reach out][contact-timescale] if you need
+to reconfigure an existing service.
 
 After you select 'Create service', you will see confirmation of your service account and
 password information. You should save the information in this confirmation screen in 
@@ -105,5 +109,5 @@ Now, it's time to forge!
 [contact-timescale]: https://www.timescale.com/contact
 [hypertable-info]: https://docs.timescale.com/latest/using-timescaledb/hypertables
 [time-bucket-info]: https://docs.timescale.com/latest/using-timescaledb/reading-data#time-bucket
-[gap-filling-info]: https://docs.timescale.com/latest/getting-started/migrating-data
+[gap-filling-info]: https://docs.timescale.com/latest/using-timescaledb/reading-data#gap-filling
 [aggregates-info]: https://docs.timescale.com/latest/tutorials/continuous-aggs-tutorial
