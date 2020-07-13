@@ -79,7 +79,7 @@ version warnings. While you do not have to update immediately to the newest
 release, many users have reported that performance issues or bugs
 automatically resolve after updating their version of TimescaleDB.
 
-## Disabling Telemetry
+## Disabling Telemetry [](telemetry-disable)
 
 Although we invite our community to help us keep improving our
 product, we do understand when users would like to disable
@@ -116,21 +116,29 @@ in the instance. If `ALTER SYSTEM` is run, this will turn down the
 telemetry report level for the entire instance.  Note that superuser
 privileges are necessary to run `ALTER SYSTEM`.
 
-To remove the telemetry job for a database, connect to the database
-using `psql` and execute:
+## Removing the Telemetry Job [](telemetry-remove-job)
+
+Once [telemetry is disabled](#telemetry-disable) as described above,
+no telemetry will be sent from your database.  However, the background
+scheduler will still schedule a daily job, which will then immediately
+check the configuration's setting and, if disabled, do nothing.
+
+This can lead to occasional information messages in your logs that the
+telemetry job is still scheduled (and warnings if you don't have
+enough background workers).  To completely remove this daily job, you
+can also directly remove the job from your database by connecting to
+the database using `psql` and execute:
 
 ```sql
 DELETE FROM _timescaledb_config.bgw_job
 WHERE job_type = 'telemetry_and_version_check_if_enabled'
 ```
 
->:TIP: To ensure that newly created databases do not use telemetry,
->remove the telemetry job from the `template1` database.
+>:TIP: Removing the telemetry job is only to prevent the continued
+>local telemetry check, and are not needed if you simply want to
+>prevent telemetry from being sent.
 
-After running the desired command, reload the new server configuration in order
-for the configuration changes to take effect.
-
-## Enabling Telemetry
+## Enabling Telemetry [](telemetry-enable)
 
 If at a later time you wish to re-enable version checking and
 telemetry, you need to both turn up the telemetry reporting level and
@@ -152,14 +160,13 @@ ALTER [SYSTEM | DATABASE | USER] { *db_name* | *role_specification* } SET timesc
 To add a telemetry job, you need to insert it into the `bgw_job` table:
 
 ```sql
-INSERT INTO _timescaledb_config.bgw_job(application_name, job_type, schedule_interval, max_runtime_retries, retry_period) VALUES
-('Telemetry Reporter', 'telemetry_and_version_check_if_enabled', INTERVAL '24h', INTERVAL '100s', -1, INTERVAL '1h')
+INSERT INTO _timescaledb_config.bgw_job(id, application_name, job_type, schedule_interval, max_runtime_retries, retry_period) VALUES
+(1, 'Telemetry Reporter', 'telemetry_and_version_check_if_enabled', INTERVAL '24h', INTERVAL '100s', -1, INTERVAL '1h')
 ```
-
->:TIP: To ensure that newly created databases use telemetry, add the a
->telemetry job to the `template1` database.
 
 You can of course pick any interval you like, but these are the
 defaults for the telemetry job.
+
+>:WARNING: It is important that `job_type` and the `id` is set to these values.
 
 [get_telemetry_report]: /api#get_telemetry_report
