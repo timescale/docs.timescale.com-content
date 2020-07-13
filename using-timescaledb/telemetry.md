@@ -80,14 +80,25 @@ release, many users have reported that performance issues or bugs
 automatically resolve after updating their version of TimescaleDB.
 
 ## Disabling Telemetry
+
 Although we invite our community to help us keep improving our
-product, we do understand when users would like to disable telemetry. Note that
-disabling telemetry also disables the version checking functionality.
+product, we do understand when users would like to disable
+telemetry. Note that disabling telemetry also disables the version
+checking functionality.
 
-Telemetry is sent on a per-database basis, so users can disable telemetry for specific databases or for an entire instance.
+Telemetry is sent on a per-database basis, so users can disable
+telemetry for specific databases or for an entire instance.
 
-To turn off telemetry for an instance, simply include the following line
-in your `postgresql.conf` file:
+To disable telemetry, it is necessary to both remove the telemetry job
+from the job list and it is turn down the telemetry reporting
+level. Turning down the telemetry reporting level ensures that nothing
+is sent out even if the telemetry job is scheduled.  Removing the
+telemetry job from the jobs list will avoid it being scheduled for
+execution and hence prevent warnings and and errors resulting from
+scheduling an empty job. These two settings can be done independently.
+
+To turn down the telemetry level for an instance, include the
+following line in your `postgresql.conf` file:
 
 ```
 timescaledb.telemetry_level=off
@@ -99,25 +110,56 @@ Alternatively, in a `psql` console, run:
 ALTER [SYSTEM | DATABASE | USER] { *db_name* | *role_specification* } SET timescaledb.telemetry_level=off
 ```
 
-If `ALTER DATABASE` is run, then this will disable telemetry for the specified
-database, but not for other databases in the instance. If `ALTER SYSTEM` is
-run, this will disable telemetry for the entire instance.
-Note that superuser privileges are necessary to run `ALTER SYSTEM`.
+If `ALTER DATABASE` is run, then this will turn down the telemetry
+report level for the specified database, but not for other databases
+in the instance. If `ALTER SYSTEM` is run, this will turn down the
+telemetry report level for the entire instance.  Note that superuser
+privileges are necessary to run `ALTER SYSTEM`.
+
+To remove the telemetry job for a database, connect to the database
+using `psql` and execute:
+
+```sql
+DELETE FROM _timescaledb_config.bgw_job
+WHERE job_type = 'telemetry_and_version_check_if_enabled'
+```
+
+>:TIP: To ensure that newly created databases do not use telemetry,
+>remove the telemetry job from the `template1` database.
 
 After running the desired command, reload the new server configuration in order
 for the configuration changes to take effect.
 
-If at a later time you wish to re-enable version checking and telemetry, either
-include the following line in `postgresql.conf`:
+## Enabling Telemetry
+
+If at a later time you wish to re-enable version checking and
+telemetry, you need to both turn up the telemetry reporting level and
+add a telemetry job.
+
+To turn up the telemetry reporting level, either include the following
+line in `postgresql.conf`:
 
 ```
 timescaledb.telemetry_level=basic
 ```
 
-or run the following command in psql:
+or run the following command in `psql`:
 
 ```
 ALTER [SYSTEM | DATABASE | USER] { *db_name* | *role_specification* } SET timescaledb.telemetry_level=basic
 ```
+
+To add a telemetry job, you need to insert it into the `bgw_job` table:
+
+```sql
+INSERT INTO _timescaledb_config.bgw_job(application_name, job_type, schedule_interval, max_runtime_retries, retry_period) VALUES
+('Telemetry Reporter', 'telemetry_and_version_check_if_enabled', INTERVAL '24h', INTERVAL '100s', -1, INTERVAL '1h')
+```
+
+>:TIP: To ensure that newly created databases use telemetry, add the a
+>telemetry job to the `template1` database.
+
+You can of course pick any interval you like, but these are the
+defaults for the telemetry job.
 
 [get_telemetry_report]: /api#get_telemetry_report
