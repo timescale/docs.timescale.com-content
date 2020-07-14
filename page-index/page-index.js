@@ -205,7 +205,7 @@ const pageIndex = [
                 type: PAGE,
                 href: "configuring"
             }, {
-                Title: "Set up Grafana",
+                Title: "Setting up Grafana",
                 type: PAGE,
                 href: "installation-grafana"
             }, {
