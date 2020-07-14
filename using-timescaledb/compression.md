@@ -352,32 +352,13 @@ during your backfill operation.
 Another factor to be mindful of when planning your compression strategy is the
 additional storage overhead needed to decompress chunks. This is key when you are
 provisioning storage for use with TimescaleDB. You want to ensure that you plan for
-enough storage headroom to decompress some chunks if needed. Our
-[`move_chunk`][move-chunk] feature can help manage storage requirements by
-allowing you to move chunks between different storage volumes.
-
-If you find yourself needing to decompress historical chunks, but in a scenario
-where you do not have enough available storage capacity to decompress, you can
-follow this process:
-
-1. Add a new tablespace to your PostgreSQL instance (backed by additional storage)
-1. Use the TimescaleDB [`move_chunk`][move-chunk] feature to move the chunks you need to backfill
-over to the new tablespace
-1. Remove your compression policy
-1. Decompress these chunks
-1. Perform your data backfill into the decompressed chunks
-1. Re-enable your compression policy
-1. Move your updated chunks back to the default tablespace (optional)
-
-Alternatively, you can serialize the process by decompressing smaller
-numbers of chunks and processing your data backfill in smaller increments.
+enough storage headroom to decompress some chunks if needed.
 
 ## Future Work [](future-work)
 
 One of the current limitations of TimescaleDB is that once chunks are converted
 into compressed column form, we do not currently allow any further modifications
-of the data (e.g., inserts, updates, deletes) or the schema without manual decompression. In other words, chunks are immutable in compressed form. Attempts to modify the
-chunks’ data will either error or fail silently (as preferred by users). We
+of the data (e.g., inserts, updates, deletes) or the schema without manual decompression.
+In other words, chunks are immutable in compressed form. Attempts to modify the
+chunks' data will either error or fail silently (as preferred by users). We
 plan to remove this limitation in future releases.
-
-[move-chunk]: /using-timescaledb/move_chunk
