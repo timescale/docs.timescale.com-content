@@ -479,7 +479,7 @@ Timescale to analyze Prometheus metrics by using our
 
 
 [get-prometheus]: https://prometheus.io
-[get-grafana]: http://grafana.org
+[get-grafana]: http://grafana.com
 [sample-database]: https://s3.amazonaws.com/docs.iobeam.com/examples/prometheus-grafana/prom_data_csvs.zip
 [timescale-cloud]: https://www.timescale.com/products
 [timescale-cloud-install]: /getting-started/exploring-cloud

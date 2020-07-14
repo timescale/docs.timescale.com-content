@@ -334,7 +334,7 @@ how to create sample dashboards using TimescaleDB and Grafana.
 [design-doc]: https://tsdb.co/prom-design-doc
 [github-project]: https://github.com/timescale/timescale-prometheus 
 [get-prometheus]: https://prometheus.io
-[get-grafana]: http://grafana.org
+[get-grafana]: http://grafana.com
 [sample-database]: https://s3.amazonaws.com/docs.iobeam.com/examples/prometheus-grafana/prom_data_csvs.zip
 [timescale-cloud]: https://www.timescale.com/products
 [timescale-cloud-install]: /getting-started/exploring-cloud
