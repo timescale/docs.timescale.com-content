@@ -32,4 +32,4 @@ helpful if you've seen SQL before.
 [tutorial-grafana-variables]: /tutorials/tutorial-grafana-variables
 [tutorial-grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
 [tutorial-grafana-alerts]: /tutorials/tutorial-grafana-alerts
-[grafana-website]: https://www.grafana.org
+[grafana-website]: https://www.grafana.com
