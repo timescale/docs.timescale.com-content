@@ -198,7 +198,7 @@ const pageIndex = [
                 href: "exploring-forge"
             }, {
                 Title: "Setting up Enterprise",
-                type: PAGE,
+                type: NON_MENU_PAGE,
                 href: "exploring-enterprise"
             }, {
                 Title: "Configuration",
@@ -353,7 +353,7 @@ const pageIndex = [
                 ]
             }, {
                 Title: "Data Tiering",
-                type: PAGE,
+		type: NON_MENU_PAGE,
                 href: "move_chunk"
             }, {
                 Title: "Continuous Aggregates",
