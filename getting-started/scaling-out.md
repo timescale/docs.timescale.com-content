@@ -1,8 +1,8 @@
 # Scaling out using Distributed Hypertables
 
->:WARNING: Distributed hypertables are currently in PRIVATE BETA and
+>:WARNING: Distributed hypertables are currently in BETA and
 are not yet meant for production use. For more information, please
-[contact us][contact].
+[contact us][contact] or join the #multinode-beta channel in our [community Slack][slack].
 
 Hypertables handle large amounts of data by breaking it up into
 smaller pieces (chunks), allowing operations to execute
@@ -200,3 +200,4 @@ node.
 [max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
 [distributed-hypertable-limitations]: /using-timescaledb/limitations#distributed-hypertable-limitations
 [multinode-bootstrap]: /multinode/bootstrapping
+[slack]: https://slack.timescale.com/
