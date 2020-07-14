@@ -96,6 +96,7 @@ SELECT
   --2--
   COUNT(*)
 FROM rides
+GROUP BY time
 ```
 
 #### The Grafana \_\_timeFilter function
