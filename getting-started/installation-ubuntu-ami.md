@@ -1,6 +1,7 @@
->:WARNING: Our clustering capabilities are currently in private beta and
+>:WARNING: Our scaling out capabilities are currently in BETA and
 are not available through this installation method. For more information,
-please [contact us][contact].
+please [contact us][contact] or join the #multinode-beta channel in our 
+[community Slack][slack].
 
 ## Installing from an Amazon AMI (Ubuntu) [](installation-ubuntu-ami)
 
@@ -55,3 +56,4 @@ EBS optimized EC2 instance type, see the AWS [instance configuration page][].
 [configuration]: /getting-started/configuring
 [instance configuration page]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-ec2-config.html
 [contact]: https://www.timescale.com/contact
+[slack]: https://slack.timescale.com/
