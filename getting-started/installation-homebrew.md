@@ -1,6 +1,7 @@
->:WARNING: Our clustering capabilities are currently in private beta and
+>:WARNING: Our scaling out capabilities are currently in BETA and
 are not available through this installation method. For more information,
-please [contact us][contact].
+please [contact us][contact] or join the #multinode-beta channel in our 
+[community Slack][slack].
 
 ## Homebrew [](homebrew)
 
@@ -68,3 +69,5 @@ about the subject.
 [config]: /getting-started/configuring
 [Homebrew]: https://brew.sh/
 [blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480
+[contact]: https://www.timescale.com/contact
+[slack]: https://slack.timescale.com/

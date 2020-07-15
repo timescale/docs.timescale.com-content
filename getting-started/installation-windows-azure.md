@@ -1,6 +1,7 @@
->:WARNING: Our clustering capabilities are currently in private beta and
+>:WARNING: Our scaling out capabilities are currently in BETA and
 are not available through this installation method. For more information,
-please [contact us][contact].
+please [contact us][contact] or join the #multinode-beta channel in our 
+[community Slack][slack].
 
 ## Installing from Azure Database for PostgreSQL
 
@@ -28,3 +29,5 @@ CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 [azure-postgresql]: https://azure.microsoft.com/en-us/services/postgresql/
 [matrix]: https://www.timescale.com/products
 [azure-restart]: https://docs.microsoft.com/en-us/azure/postgresql/howto-restart-server-portal
+[contact]: https://www.timescale.com/contact
+[slack]: https://slack.timescale.com/
