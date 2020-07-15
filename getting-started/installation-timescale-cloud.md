@@ -1,6 +1,7 @@
->:WARNING: Our clustering capabilities are currently in private beta and
+>:WARNING: Our scaling out capabilities are currently in BETA and
 are not available through this installation method. For more information,
-please [contact us][contact].
+please [contact us][contact] or join the #multinode-beta channel in our 
+[community Slack][slack].
 
 ## Installation (Timescale Cloud) [](installation-timescale-cloud)
 
@@ -29,3 +30,4 @@ Now that your database account is setup, it's time to
 [timescale-cloud-setup]: /getting-started/exploring-cloud
 [intercom]: https://kb.timescale.cloud/
 [contact]: https://www.timescale.com/contact
+[slack]: https://slack.timescale.com/
