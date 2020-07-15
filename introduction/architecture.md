@@ -140,9 +140,10 @@ For more on the motivation and design of TimescaleDB, please see our
 
 ## Distributed Hypertables (PRIVATE BETA) [](distributed-hypertables)
 
->:WARNING: Distributed hypertables are currently in PRIVATE BETA.
+>:WARNING: Distributed hypertables are currently in BETA.
 This feature is not meant for production use. For more information,
-please [contact us][contact].
+please [contact us][contact] or join the #multinode-beta channel in our 
+[community Slack][slack].
 
 TimescaleDB supports distributing hypertables across multiple nodes
 (i.e., a cluster) by leveraging the same hypertable and chunk
@@ -226,3 +227,5 @@ can be changed, the column on which the data is partitioned can not be changed.
 [TvsP]: /introduction/timescaledb-vs-postgres
 [Compression Operational Overview]: /using-timescaledb/compression
 [compression blog post]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database
+[contact]: https://www.timescale.com/contact
+[slack]: https://slack.timescale.com/
