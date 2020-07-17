@@ -48,7 +48,7 @@ data nodes. This setting can be enabled in a session or, ideally, in
 `postgresql.conf`:
 
 ```
-enable_partitionwise_aggregate = true
+enable_partitionwise_aggregate = on
 ```
 
 
