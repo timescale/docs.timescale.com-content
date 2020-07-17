@@ -17,7 +17,7 @@ password authentication and add new roles to your distributed database.
 
 It is assumed before starting this tutorial you will have three networked machines set up with:
 - TimescaleDB version 2.0 (beta) or greater
-- PostgresSQL 11
+- PostgresSQL 12 or 11
 
 For the sake of this tutorial we will refer to these machines as
 `access.example.com`, `data1.example.com`, `data2.example.com`. You will also
