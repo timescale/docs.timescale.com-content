@@ -88,6 +88,20 @@ partitions) fit into memory.  As such, we typically recommend setting
 the interval so that these chunk(s) comprise no more than 25% of main
 memory.
 
+If you want to see the current interval length for your hypertables, you can
+check the `_timescaledb_catalog` as follows. Note that for time-based interval
+lenghts, these are reported in microseconds.
+
+```sql
+SELECT h.table_name, c.interval_length   FROM _timescaledb_catalog.dimension c
+JOIN _timescaledb_catalog.hypertable h ON h.id = c.hypertable_id;
+
+table_name | interval_length
+------------+-----------------
+metrics       |    604800000000
+(1 row)
+```
+
 >:TIP: Make sure that you are planning for single chunks from _all_ active hypertables fit into 25% of main memory, rather than 25% per hypertable.
 
 To determine this, you need to have a general idea of your data rate.  If

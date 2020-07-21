@@ -2172,6 +2172,20 @@ WHERE table_schema='public' AND table_name='metrics';
 (1 row)
 ```
 
+If you want to see the current interval length for your hypertables, you can
+check the `_timescaledb_catalog` as follows. Note that for time-based interval
+lenghts, these are reported in microseconds.
+
+```sql
+SELECT h.table_name, c.interval_length   FROM _timescaledb_catalog.dimension c
+JOIN _timescaledb_catalog.hypertable h ON h.id = c.hypertable_id;
+
+table_name | interval_length
+------------+-----------------
+metrics       |    604800000000
+(1 row)
+```
+
 ## timescaledb_information.license [](timescaledb_information-license)
 
 Get information about current license.
