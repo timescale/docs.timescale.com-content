@@ -1,6 +1,113 @@
-# Data Node Authentication [](distdb-auth)
+# Setting up Multi-Node TimescaleDB
 
-In a [multi-node environment][scaling-out], it is necessary to ensure
+>:WARNING: Distributed hypertables are currently in BETA and
+are not yet meant for production use. For more information, please
+[contact us][contact] or join the #multinode-beta channel in our 
+[community Slack][slack].
+
+Data nodes together with an *access node* constitute the
+multi-node TimescaleDB architecture
+([architecture][]). All the nodes are TimescaleDB instances,
+i.e., hosts with a running PostgreSQL server and loaded TimescaleDB extension.
+While the data nodes store distributed chunks, the access node is
+the entry point for clients to access distributed hypertables.
+
+So before you take these steps, make sure you install TimescaleDB on all the
+servers you want to use as your access node and data nodes for your multi-node
+configuration. Please see these instruction for [installing][install] and
+[setting up][setup] TimescaleDB.
+
+Once you create a multi-node configuration of TimescaleDB, you can create
+[distributed hypertables][distributed-hypertables] across multiple data nodes
+in order to scale out in terms of storage capacity and parallel query
+executation.
+
+>:WARNING: There are some [limitations][distributed-hypertable-limitations] to
+using distributed hypertables that might be good to review before getting
+started.
+
+## Configuring Data Nodes [](config-data-nodes)
+
+Data nodes act as containers for hypertable chunks and are
+necessary to create distributed hypertables. Data nodes are
+added to a distributed database on an access node
+using [`add_data_node`][add_data_node]
+and removed using [`delete_data_node`][delete_data_node].
+
+Note that:
+
+* A data node is represented on the access node by a local object that
+  contains the configuration needed to connect to a database on a
+  PostgreSQL instance. The [`add_data_node`][add_data_node] command is
+  used to create this object.
+
+* You should already have a running PostgreSQL server on an instance
+  that will host a data node. The data node's database will be created
+  when executing the [`add_data_node`][add_data_node] command on the
+  access node and should _not_ exist prior to adding the data
+  node.
+
+* The instance need to have a compatible version of the TimescaleDB
+  extension available on the data node: typically the same version of
+  the extension should be used on both the access node and the data
+  node.
+
+* PostgreSQL instances that will act as data nodes are assumed to
+  contain the same roles and permissions as the access node
+  instance. Currently, such roles and permissions need to be created
+  manually, although there is a [utility command][distributed_exec]
+  that can be used to create roles and permissions across data nodes.
+
+* A data node needs
+  [`max_prepared_transactions`][max_prepared_transactions]
+  set to a value greater than zero. Validate this configuration setting.
+
+When creating the data node, you should:
+
+* Run `add_data_node` as a superuser that can authenticate with the
+  data node instance. This can be done by setting up either password
+  or certificate [authentication][data-node-auth].
+
+* Provide a name to use when referring to the data node from
+  the access node database.
+
+* Provide the host name, and optionally port, of the PostgreSQL
+  instance that will hold the data node.
+
+After creating the data node:
+
+* Ensure that non-superusers have `USAGE` privileges on the
+  `timescaledb_fdw` foreign data wrapper and any
+  data node objects they will use on the access node.
+
+* Ensure that each user of a distributed hypertable has a way to
+  [authenticate][data-node-auth] with the data nodes they
+  are using.
+
+```sql
+SELECT add_data_node('node1', host => 'dn1.example.com');
+
+SELECT add_data_node('node2', host => 'dn2.example.com');
+```
+
+Deleting a data node is done by calling [`delete_data_node`][delete_data_node]:
+
+```sql
+SELECT delete_data_node('node1');
+```
+>:TIP: A data node cannot be deleted if it contains data for a
+hypertable, since otherwise data would be lost and leave the
+distributed hypertable in an inconsistent state.
+
+### Information Schema for Data Nodes
+
+The data nodes that have been added to the distributed database
+can be found by querying the
+[`timescaledb_information.data_node`][timescaledb_information-data_node] view.
+
+## Data Node Authentication [](data-node-auth)
+
+In a multi-node envfironment, it is necessary to ensure
 that the access node has the necessary roles and permissions on all
 data nodes where distributed hypertables are placed.
 
@@ -17,10 +124,10 @@ the same databases on the data nodes.
 
 >:WARNING: Setting up a secure system is a complex task and this
 section should not be read as recommending any particular security
-measures for securing your system. The chapter contains technical
+measures for securing your system. The section contains technical
 instructions for how to set up the different authentication methods.
 
-## Setting up Password Authentication [](distdb-auth-pass)
+### Setting up Password Authentication [](distdb-auth-pass)
 
 The easiest authentication method to set up is password
 authentication. Configuring password authentication between the access
@@ -44,7 +151,7 @@ node and data node and that the user should have the password `xyzzy`.
 > the `md5` method is using a cryptographic hash function that is no
 > longer considered secure.
 
-### Setting up Password Authentication on the Data Node [](distdb-auth-pass-data-node)
+#### Setting up Password Authentication on the Data Node [](distdb-auth-pass-data-node)
 
 In order to set up password authentication for `new_user` using
 password `xyzzy`, you need to:
@@ -54,7 +161,7 @@ password `xyzzy`, you need to:
 3. Reload the server to read the new configuration.
 4. Add the user on the data node with the right password.
 
-#### Set up password encryption method
+##### Set up password encryption method
 
 First, you need to edit the PostgreSQL configuration file
 `postgresql.conf` in the data directory and set `password_encryption`
@@ -81,7 +188,7 @@ password_encryption = 'scram-sha-256'		# md5 or scram-sha-256
 > before you made this change for the old passwords to be encrypted
 > the correct way.
 
-#### Enable password authentication
+##### Enable password authentication
 
 The default name of the HBA file is `pg_hba.conf`, so check the
 configuration file (normally `postgresql.conf` in the data directory
@@ -105,7 +212,7 @@ host    all             new_user        .example.com            scram-sha-256
 Details of [the `pg_hba.conf` format can be found in the PostgreSQL
 manual.][postgresql-hba].
 
-#### Reload server configuration
+##### Reload server configuration
 
 To reload the server configuration, you can use the following command
 on the data node:
@@ -114,7 +221,7 @@ on the data node:
 pg_ctl reload
 ```
 
-#### Add new user on data node
+##### Add new user on data node
 
 You can add the new user on the data node by connecting to it using
 `psql` and using [`CREATE ROLE`][postgresql-create-role]:
@@ -123,7 +230,7 @@ You can add the new user on the data node by connecting to it using
 CREATE ROLE new_user WITH LOGIN PASSWORD 'xyzzy';
 ```
 
-### Setting up Password Authentication on the Access Node [](distdb-auth-pass-access-node)
+#### Setting up Password Authentication on the Access Node [](distdb-auth-pass-access-node)
 
 To execute queries across data nodes, the access node needs to connect
 to data nodes as the user executing the query. This means that the
@@ -136,7 +243,7 @@ To set up password authentication on the access node, you need to:
 2. Create a password file.
 4. Reload the server configuration.
 
-#### Set up password encryption method
+##### Set up password encryption method
 
 First, you need to edit the PostgreSQL configuration file
 `postgresql.conf` in the data directory and set `password_encryption`
@@ -147,7 +254,7 @@ to the right password encryption method, in our case
 password_encryption = 'scram-sha-256'		# md5 or scram-sha-256
 ```
 
-#### Create a password file
+##### Create a password file
 
 The default name of the password file is `passfile` and it is located
 in the data directory for the PostgreSQL server, so create a file
@@ -180,12 +287,12 @@ the option `timescaledb.passfile`:
 timescaledb.passfile = 'pgpass.txt'
 ```
 
-#### Reload server configuration
+##### Reload server configuration
 
 Reload the server configuration using `pg_ctl reload` and you are
 ready to go
 
-## Setting up Certificate Authentication [](distdb-auth-cert)
+### Setting up Certificate Authentication [](distdb-auth-cert)
 
 Using certificates for authentication is more complicated to set up,
 but both more secure and easier to automate.
@@ -221,7 +328,7 @@ For the data node, we need a certificate and key specially generated
 for the data node. The root certificate can be copied from the access
 node.
 
-### Setting up a Certification Authority
+#### Setting up a Certification Authority
 
 A Certificate Authority is needed as a trusted third party, so you
 need to be able to sign other certificates. If you are in a production
@@ -283,7 +390,7 @@ to distribute it widely since anybody interested in using the root
 certificate can be more certain that she got the right certificate if it
 is available at many locations.
 
-### Generating keys and certificates for the instances
+#### Generating keys and certificates for the instances
 
 Once you have a root certificate authority you can create certificates
 for the both the data node and the access node. On the data node you
@@ -325,7 +432,7 @@ certificate, you need to:
    authority into the data directory of the instance.
 
 
-### Configure the instance to use SSL authentication
+#### Configure the instance to use SSL authentication
 
 You now need to configure the instance to use SSL authentication by
 setting the `ssl` option to `on` in the `postgresql.conf`
@@ -363,7 +470,7 @@ Also create the role `ssl_cert` on the data node.
 CREATE ROLE ssl_cert;
 ```
 
-### Generate user keys and certificates
+#### Generate user keys and certificates
 
 The access node does not have any user keys nor certificates, so it
 cannot yet log into the data node. The user keys and certificates are
@@ -446,4 +553,19 @@ data nodes to the access node in the normal manner.
 [postgresql-create-role]: https://www.postgresql.org/docs/current/sql-createrole.html
 [auth-password]: https://www.postgresql.org/docs/current/auth-password.html
 [passfile-format]: https://www.postgresql.org/docs/current/libpq-pgpass.html
-[scaling-out]: /getting-started/scaling-out
+
+[install]: /getting-started/installation
+[setup]: /getting-started/setup
+[distributed-hypertable]: /using-timescaledb/distributed-hypertables
+[add_data_node]: /api#add_data_node
+[drop_chunks]: /api#drop_chunks
+[distributed_exec]: /api#distributed_exec
+[architecture]: /introduction/architecture#single-node-vs-clustering
+[attach_data_node]: /api#attach_data_node
+[delete_data_node]: /api#delete_data_node
+[timescaledb_information-data_node]: /api#timescaledb_information-data_node
+[data-node-authentication]: /getting-started/setup-multi-node#data-node-auth
+[max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
+[distributed-hypertable-limitations]: /using-timescaledb/limitations#distributed-hypertable-limitations
+[contact]: https://www.timescale.com/contact
+[slack]: https://slack.timescale.com/
