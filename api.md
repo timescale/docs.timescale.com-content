@@ -1243,11 +1243,11 @@ SELECT set_integer_now_func('test_table_bigint', 'unix_now');
 ---
 
 ## set_replication_factor() [](set_replication_factor)
-Sets the replication factor of a distributed hypertable to the given value. 
+Sets the replication factor of a distributed hypertable to the given value.
 Changing the replication factor does not affect the number of replicas for existing chunks.
-Chunks created after changing the replication factor will be replicated 
+Chunks created after changing the replication factor will be replicated
 in accordance with new value of the replication factor. If the replication factor cannot be
-satisfied, since the amount of attached data nodes is less than new replication factor, 
+satisfied, since the amount of attached data nodes is less than new replication factor,
 the command aborts with an error.
 
 If existing chunks have less replicas than new value of the replication factor,
@@ -1267,7 +1267,7 @@ An error will be given if:
 - `replication_factor` is less than `1`, which cannot be set on a distributed hypertable.
 - `replication_factor` is bigger than the number of attached data ndoes.
 
-If a bigger replication factor is desired, it is necessary to attach more data nodes 
+If a bigger replication factor is desired, it is necessary to attach more data nodes
 by using [attach_data_node](#attach_data_node).
 
 #### Sample Usage [](set_replication_factor-examples)
@@ -2685,6 +2685,20 @@ WHERE table_schema='public' AND table_name='metrics';
  table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size | distributed
 --------------+------------+-------------+----------------+------------+------------+------------+------------+------------+--------------
  public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB     | t
+(1 row)
+```
+
+If you want to see the current interval length for your hypertables, you can
+check the `_timescaledb_catalog` as follows. Note that for time-based interval
+lenghts, these are reported in microseconds.
+
+```sql
+SELECT h.table_name, c.interval_length   FROM _timescaledb_catalog.dimension c
+JOIN _timescaledb_catalog.hypertable h ON h.id = c.hypertable_id;
+
+table_name | interval_length
+------------+-----------------
+metrics       |    604800000000
 (1 row)
 ```
 
