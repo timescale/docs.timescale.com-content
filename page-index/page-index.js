@@ -189,6 +189,21 @@ const pageIndex = [
                     }
                 ]
             }, {
+                Title: "Setting up Multi-Node TimescaleDB",
+                type: PAGE,
+                href: "setup-multi-node",
+                children: [
+                    {
+                        Title: "Configuring Data Nodes",
+                        type: ANCHOR,
+                        href: "#config-data-nodes"
+                    }, {
+                        Title: "Data Node Authentication",
+                        type: ANCHOR,
+                        href: "#data-node-auth"
+                    }
+                ]
+            }, {
                 Title: "Setting up Timescale Cloud",
                 type: PAGE,
                 href: "exploring-cloud"
@@ -220,10 +235,6 @@ const pageIndex = [
                 Title: "Migrating Data",
                 type: PAGE,
                 href: "migrating-data"
-            }, {
-                    Title: "Scaling Out",
-                    type: PAGE,
-                    href: "scaling-out"
             }, {
                 type: HIDDEN_REDIRECT,
                 href: "basic-operations",
@@ -258,6 +269,21 @@ const pageIndex = [
                         href: "#best-practices"
                     }
                 ]
+            }, {
+		Title: "Distributed Hypertables",
+                type: PAGE,
+                href: "distributed-hypertables",
+		children: [
+                    {
+                        Title: "CREATE",
+                        type: ANCHOR,
+                        href: "#create"
+                    }, {
+                        Title: "Changing Data nodes",
+                        type: ANCHOR,
+                        href: "#changing-data-nodes"
+                    }
+		]
             }, {
                 Title: "Schema management",
                 type: PAGE,
