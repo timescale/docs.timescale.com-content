@@ -71,7 +71,7 @@ and pick up some valuable `psql` tips and tricks along the way.
 [prometheus-tsc-endpoint]: /tutorials/tutorial-setting-up-timescale-cloud-endpoint-for-prometheus
 [prometheus-grafana]: /tutorials/tutorial-use-timescale-prometheus-grafana
 [monitor-django-prometheus]: /tutorials/tutorial-howto-monitor-django-prometheus
-[tutorial-grafana-dashboards]: /tutorials/tutorial-grafana-dashboard
+[tutorial-grafana-dashboards]: /tutorials/tutorial-grafana-dashboards
 [tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial
 [tutorial-grafana-variables]: /tutorials/tutorial-grafana-variables
 [tutorial-grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
