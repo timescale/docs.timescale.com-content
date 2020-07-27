@@ -1,5 +1,7 @@
 # Getting Started
 
+CI TEST
+
 A TimescaleDB database behaves in many respects like a standard PostgreSQL
 database. It:
 
