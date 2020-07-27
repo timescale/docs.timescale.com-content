@@ -107,7 +107,7 @@ can be found by querying the
 
 ## Data Node Authentication [](data-node-auth)
 
-In a multi-node envfironment, it is necessary to ensure
+In a multi-node environment, it is necessary to ensure
 that the access node has the necessary roles and permissions on all
 data nodes where distributed hypertables are placed.
 
@@ -556,7 +556,7 @@ data nodes to the access node in the normal manner.
 
 [install]: /getting-started/installation
 [setup]: /getting-started/setup
-[distributed-hypertable]: /using-timescaledb/distributed-hypertables
+[distributed-hypertables]: /using-timescaledb/distributed-hypertables
 [add_data_node]: /api#add_data_node
 [drop_chunks]: /api#drop_chunks
 [distributed_exec]: /api#distributed_exec
@@ -564,7 +564,7 @@ data nodes to the access node in the normal manner.
 [attach_data_node]: /api#attach_data_node
 [delete_data_node]: /api#delete_data_node
 [timescaledb_information-data_node]: /api#timescaledb_information-data_node
-[data-node-authentication]: /getting-started/setup-multi-node#data-node-auth
+[data-node-auth]: /getting-started/setup-multi-node#data-node-auth
 [max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
 [distributed-hypertable-limitations]: /using-timescaledb/limitations#distributed-hypertable-limitations
 [contact]: https://www.timescale.com/contact
