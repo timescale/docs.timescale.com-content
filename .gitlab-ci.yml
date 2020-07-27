@@ -3,6 +3,8 @@ stages:
 
 build.dev:
   stage: npm
+  only:
+    - external_pull_requests
   variables:
     UPSTREAM_BRANCH: $CI_COMMIT_REF_NAME
   trigger:

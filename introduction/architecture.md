@@ -105,8 +105,8 @@ compression, read our [compression blog post].
 ## Single Node vs. Multi-Node [](single-node-vs-clustering)
 
 TimescaleDB performs extensive partitioning both
-on **single-node** deployments as well as **clustered** deployments
-(in private beta).  While
+on **single-node** deployments as well as **clustered** deployments.
+While
 partitioning is traditionally only used for scaling out across multiple
 machines, it also allows us to scale up to high write rates (and improved
 parallelized queries) even on single machines.
@@ -140,7 +140,7 @@ while maintaining support for multiple indexes.
 For more on the motivation and design of TimescaleDB, please see our
 [technical blog post][chunking].
 
-## Distributed Hypertables (PRIVATE BETA) [](distributed-hypertables)
+## Distributed Hypertables [](distributed-hypertables)
 
 >:WARNING: Distributed hypertables are currently in BETA.
 This feature is not meant for production use. For more information,
@@ -156,17 +156,14 @@ instance.
 Distributed hypertables and regular hypertables look very similar, with
 the main difference being that distributed chunks are not stored locally. There
 are also some features of regular hypertables that distributed
-hypertables do not support (see section on current limitations).
+hypertables do not support (see section on [current limitations][distributed-hypertable-limitations]).
 
 ### Distributed Databases and Nodes
 
 A distributed hypertable exists in a *distributed database* that
 consists of multiple databases stored across one or more TimescaleDB
 instances. A database that is part of a distributed database can
-assume one of two *node* roles (but not both):
-
-1) Access node
-2) Data node
+assume the role of either an **access node** or a **data node** (but not both).
 
 A client connects to an access node database. The access node then
 distributes the requests and queries appropriately to data nodes, and
@@ -231,3 +228,4 @@ can be changed, the column on which the data is partitioned can not be changed.
 [compression blog post]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
+[distributed-hypertable-limitations]: /using-timescaledb/limitations#distributed-hypertable-limitations
