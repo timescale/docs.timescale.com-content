@@ -64,7 +64,7 @@ Note that:
 
 When creating the data node, you should:
 
-* Run `add_data_node` as a superuser that can authenticate with the
+* Run [`add_data_node`][add_data_node] as a superuser that can authenticate with the
   data node instance. This can be done by setting up either password
   or certificate [authentication][data-node-auth].
 

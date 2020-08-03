@@ -182,10 +182,6 @@ const pageIndex = [
                         type: HIDDEN_REDIRECT,
                         href: "migrate-from-postgresql",
                         to: "/getting-started/migrating-data"
-                    }, {
-                  	Title: "Data Node Authentication",
-                  	type: PAGE,
-                        href: "data-node-authentication",
                     }
                 ]
             }, {
