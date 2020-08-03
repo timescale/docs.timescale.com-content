@@ -33,7 +33,7 @@ ALTER TABLE measurements SET (
   timescaledb.compress_segmentby = 'device_id'
 );
 
-SELECT add_compress_chunks_policy('measurements', INTERVAL '7 days');
+SELECT add_compression_policy('measurements', INTERVAL '7 days');
 ```
 
 Thats it! These two commands configure compression and

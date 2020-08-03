@@ -338,8 +338,8 @@ process invalidations on data regions where the raw data has been
 dropped.
 
 
-The same argument must also be supplied to the [`add_drop_chunks_policy`
-function][api-add-drop-chunks] when creating a data retention policy for a
+The same argument must also be supplied to the [`add_retention_policy`
+function][api-add-retention] when creating a data retention policy for a
 hypertable with a continuous aggregate.  
 
 ---
@@ -570,7 +570,7 @@ implement a number of these aggregates.
 [api-drop-chunks]: /api#drop_chunks
 [api-set-chunk-interval]: /api#set_chunk_time_interval
 [api-set-integer-now-func]: /api#set_integer_now_func
-[api-add-drop-chunks]: /api#add_drop_chunks_policy
+[api-add-retention]: /api#add_retention_policy
 [timescale-github]: https://github.com/timescale/timescaledb
 [support-slack]: https://slack-login.timescale.com
 [postgres-ordered-set]: https://www.postgresql.org/docs/current/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE

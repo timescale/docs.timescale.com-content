@@ -182,7 +182,7 @@ verbose=>TRUE);
 [api-continuous-aggregate-stats]: /api#timescaledb_information-continuous_aggregate_stats
 [api-drop-chunks]: /api#drop_chunks
 [api-set-chunk-interval]: /api#set_chunk_time_interval
-[api-add-drop-chunks]: /api#add_drop_chunks_policy
+[api-add-retention]: /api#add_retention_policy
 [timescale-github]: https://github.com/timescale/timescaledb
 [support-slack]: https://slack-login.timescale.com
 [postgres-ordered-set]: https://www.postgresql.org/docs/current/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE
