@@ -103,7 +103,7 @@ compression, read our [compression blog post].
 ## Single Node vs. Multi-Node [](single-node-vs-clustering)
 
 TimescaleDB performs extensive partitioning both
-on **single-node** deployments as well as **clustered** deployments.
+on **single-node** deployments as well as **multi-node** deployments.
 While
 partitioning is traditionally only used for scaling out across multiple
 machines, it also allows us to scale up to high write rates (and improved
