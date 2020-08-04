@@ -1153,8 +1153,8 @@ removes the existing data retention policy for the `conditions` table.
 
 
 ---
-## add_reorder_policy() :enterprise_function: [](add_reorder_policy)
-Create a policy to reorder chunks older on a given hypertable index in the
+## add_reorder_policy() [](add_reorder_policy)
+Create a policy to reorder chunks on a given hypertable index in the
 background. (See [reorder_chunk](#reorder_chunk)). Only one reorder policy may
 exist per hypertable. Only chunks that are the 3rd from the most recent will be
 reordered to avoid reordering chunks that are still being inserted into.
