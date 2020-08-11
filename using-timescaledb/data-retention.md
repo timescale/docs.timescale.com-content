@@ -137,12 +137,12 @@ according to some defined schedule.
 To add such a policy on a hypertable, continually causing chunks older than 24
 hours to be deleted, simply execute the command:
 ```sql
-SELECT add_drop_chunks_policy('conditions', INTERVAL '24 hours');
+SELECT add_retention_policy('conditions', INTERVAL '24 hours');
 ```
 
 To subsequently remove the policy:
 ```sql
-SELECT remove_drop_chunks_policy('conditions');
+SELECT remove_retention_policy('conditions');
 ```
 
 The scheduler framework also allows one to view scheduled jobs:
@@ -150,7 +150,7 @@ The scheduler framework also allows one to view scheduled jobs:
 SELECT * FROM timescaledb_information.drop_chunks_policies;
 ```
 
-For more information, please see the [API documentation][add_drop_chunks_policy].
+For more information, please see the [API documentation][add_retention_policy].
 
 
 ### Using External Job Schedulers
@@ -213,6 +213,6 @@ and immediately start it.
 
 
 [drop_chunks]: /api#drop_chunks
-[add_drop_chunks_policy]: /api#add_drop_chunks_policy
+[add_retention_policy]: /api#add_retention_policy
 [unit]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 [timer]: https://www.freedesktop.org/software/systemd/man/systemd.timer.html
