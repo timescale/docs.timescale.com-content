@@ -58,7 +58,7 @@ ALTER TABLE metrics_values SET (
  timescaledb.compress_segmentby = 'labels_id'
 );
 
-SELECT add_compress_chunks_policy('metrics_values', INTERVAL '6 hours');
+SELECT add_compression_policy('metrics_values', INTERVAL '6 hours');
 ```
 
 You can change the interval from `6 hours`, to `1 day` or `2 days` and so on, depending 
@@ -99,7 +99,7 @@ can enable that, using the scenario of keeping data around for 2 days:
 ```sql
 --Adding a data retention policy to drop chunks that only consist of data older than 2 days old
 -- available on Timescale Cloud and in Timescale Community v 1.7+
-SELECT add_drop_chunks_policy('metrics_values', INTERVAL '2 days', cascade_to_materializations=>FALSE);
+SELECT add_retention_policy('metrics_values', INTERVAL '2 days', cascade_to_materializations=>FALSE);
 ```
 
 To check if the policy was created successfully and for information about the policy, run:

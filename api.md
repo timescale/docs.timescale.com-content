@@ -2,11 +2,11 @@
 
 >:TOPLIST:
 > ### Command List (A-Z)
+> - [add_compression_policy](#add_compression_policy)
 > - [add_dimension](#add_dimension)
 > - [add_data_node](#add_data_node)
-> - [add_drop_chunks_policy](#add_drop_chunks_policy)
 > - [add_reorder_policy](#add_reorder_policy)
-> -	[add_compress_chunks_policy](#add_compress_chunks_policy)
+> - [add_retention_policy](#add_retention_policy)
 > - [allow_new_chunks](#allow_new_chunks)
 > - [alter_job_schedule](#alter_job_schedule)
 > - [alter table (compression)](#compression_alter-table)
@@ -42,9 +42,9 @@
 > - [locf](#locf)
 > - [move_chunk](#move_chunk)
 > - [refresh materialized view (continuous aggregate)](#continuous_aggregate-refresh_view)
-> -	[remove_compress_chunks_policy](#remove_compress_chunks_policy)
-> - [remove_drop_chunks_policy](#remove_drop_chunks_policy)
+> - [remove_compression_policy](#remove_compression_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
+> - [remove_retention_policy](#remove_retention_policy)
 > - [reorder_chunk](#reorder_chunk)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_integer_now_func](#set_integer_now_func)
@@ -1477,7 +1477,7 @@ for the first time.
 
 Setting up compression on TimescaleDB requires users to first [configure the
 hypertable for compression](#compression_alter-table) and then [set up a
-policy](#add_compress_chunks_policy) for when to compress chunks.
+policy](#add_compression_policy) for when to compress chunks.
 
 Advanced usage of compression alows users to [compress chunks
 manually](#compress_chunk), instead of automatically as they age.
@@ -1492,8 +1492,8 @@ decompress the chunk(s) first.
 
 #### Associated commands
 *	[ALTER TABLE](#compression_alter-table)
-*	[add_compress_chunks_policy](#add_compress_chunks_policy)
-*	[remove_compress_chunks_policy](#remove_compress_chunks_policy)
+*	[add_compression_policy](#add_compression_policy)
+*	[remove_compression_policy](#remove_compression_policy)
 *	[compress_chunk](#compress_chunk)
 *	[decompress_chunk](#decompress_chunk)
 
@@ -1533,11 +1533,11 @@ Configure a hypertable that ingests device data to use compression.
 ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 'time DESC', timescaledb.compress_segmentby = 'device_id');
 ```
 
-## add_compress_chunks_policy() :community_function: [](add_compress_chunks_policy)
+## add_compression_policy() :community_function: [](add_compression_policy)
 Allows you to set a policy by which the system will compress a chunk
 automatically in the background after it reaches a given age.
 
-#### Required Arguments [](add_compress_chunks_policy-required-arguments)
+#### Required Arguments [](add_compression_policy-required-arguments)
 
 |Name|Description|
 |---|---|
@@ -1549,39 +1549,39 @@ The `time_interval` parameter should be specifified differently depending on the
 - For hypertables with integer-based timestamps: the time interval should be an integer type (this requires
 the [integer_now_func](#set_integer_now_func) to be set).
 
-#### Sample Usage [](add_compress_chunks_policy-sample-usage)
+#### Sample Usage [](add_compression_policy-sample-usage)
 Add a policy to compress chunks older than 60 days on the 'cpu' hypertable.
 
 ``` sql
-SELECT add_compress_chunks_policy('cpu', INTERVAL '60d');
+SELECT add_compression_policy('cpu', INTERVAL '60d');
 ```
 
 Add a compress chunks policy to a hypertable with an integer-based time column:
 
 ``` sql
-SELECT add_compress_chunks_policy('table_with_bigint_time', BIGINT '600000');
+SELECT add_compression_policy('table_with_bigint_time', BIGINT '600000');
 ```
 
-## remove_compress_chunks_policy() :community_function: [](remove_compress_chunks_policy)
+## remove_compression_policy() :community_function: [](remove_compression_policy)
 If you need to remove the compression policy. To re-start policy basd compression again you will need to re-add the policy.
 
-#### Required Arguments [](remove_compress_chunks_policy-required-arguments)
+#### Required Arguments [](remove_compression_policy-required-arguments)
 
 |Name|Description|
 |---|---|
 | `table_name` | (REGCLASS) Name of the hypertable the policy should be removed from.|
 
-#### Sample Usage [](remove_compress_chunks_policy-sample-usage)
+#### Sample Usage [](remove_compression_policy-sample-usage)
 Remove the compression policy from the 'cpu' table:
 ``` sql
-SELECT remove_compress_chunks_policy('cpu');
+SELECT remove_compression_policy('cpu');
 ```
 
 ## compress_chunk() :community_function: [](compress_chunk)
 
 The compress_chunk function is used to compress a specific chunk. This is
 most often used instead of the
-[add_compress_chunks_policy](#add_compress_chunks_policy) function, when a user
+[add_compression_policy](#add_compression_policy) function, when a user
 wants more control over the scheduling of compression. For most users, we
 suggest using the policy framework instead.
 
@@ -1862,21 +1862,21 @@ are meant to implement data retention or perform tasks that will improve query
 performance on older chunks. Each policy is assigned a scheduled job
 which will be run in the background to enforce it.
 
-## add_drop_chunks_policy() [](add_drop_chunks_policy)
+## add_retention_policy() :community_function: [](add_retention_policy)
 
 Create a policy to drop chunks older than a given interval of a particular
 hypertable or continuous aggregate on a schedule in the background. (See [drop_chunks](#drop_chunks)).
 This implements a data retention policy and will remove data on a schedule. Only
 one drop-chunks policy may exist per hypertable.
 
-#### Required Arguments [](add_drop_chunks_policy-required-arguments)
+#### Required Arguments [](add_retention_policy-required-arguments)
 
 |Name|Description|
 |---|---|
 | `table_name` | (REGCLASS) Name of the hypertable or continuous aggregate to create the policy for. |
-| `older_than` | (INTERVAL) Chunks fully older than this interval when the policy is run will be dropped|
+| `retention_window` | (INTERVAL) Chunks fully older than this interval when the policy is run will be dropped|
 
-#### Optional Arguments [](add_drop_chunks_policy-optional-arguments)
+#### Optional Arguments [](add_retention_policy-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -1885,45 +1885,45 @@ one drop-chunks policy may exist per hypertable.
 
 >:WARNING: If a drop chunks policy is setup which does not set `cascade_to_materializations` to either `TRUE` or `FALSE` on a hypertable that has a continuous aggregate, the policy will not drop any chunks.
 
-#### Returns [](add_drop_chunks_policy-returns)
+#### Returns [](add_retention_policy-returns)
 
 |Column|Description|
 |---|---|
 |`job_id`| (INTEGER)  TimescaleDB background job id created to implement this policy|
 
 
-#### Sample Usage [](add_drop_chunks_policy-examples)
+#### Sample Usage [](add_retention_policy-examples)
 
 
 ```sql
-SELECT add_drop_chunks_policy('conditions', INTERVAL '6 months');
+SELECT add_retention_policy('conditions', INTERVAL '6 months');
 ```
 
 creates a data retention policy to discard chunks greater than 6 months old.
 
 ---
-## remove_drop_chunks_policy() [](remove_drop_chunks_policy)
+## remove_retention_policy() :community_function: [](remove_retention_policy)
 Remove a policy to drop chunks of a particular hypertable.
 
-#### Required Arguments [](remove_drop_chunks_policy-required-arguments)
+#### Required Arguments [](remove_retention_policy-required-arguments)
 
 |Name|Description|
 |---|---|
 | `table_name` | (REGCLASS) Name of the hypertable or continuous aggregate to create the policy for. |
 
 
-#### Optional Arguments [](remove_drop_chunks_policy-optional-arguments)
+#### Optional Arguments [](remove_retention_policy-optional-arguments)
 
 |Name|Description|
 |---|---|
 | `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the policy does not exist. Defaults to false.|
 
 
-#### Sample Usage [](remove_drop_chunks_policy-examples)
+#### Sample Usage [](remove_retention_policy-examples)
 
 
 ```sql
-SELECT remove_drop_chunks_policy('conditions');
+SELECT remove_retention_policy('conditions');
 ```
 
 removes the existing data retention policy for the `conditions` table.
@@ -2891,7 +2891,7 @@ total_crashes          | 0
 ---
 ## timescaledb_information.drop_chunks_policies [](timescaledb_information-drop_chunks_policies)
 Shows information about drop_chunks policies that have been created by the user.
-(See [add_drop_chunks_policy](#add_drop_chunks_policy) for more information
+(See [add_retention_policy](#add_retention_policy) for more information
 about drop_chunks policies).
 
 
