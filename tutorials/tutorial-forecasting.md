@@ -311,7 +311,7 @@ count_rides_test <- subset(count_rides_test, count_rides_test$one_hour < as.POSI
 lines(count_rides_test$x, count_rides_test$count, col="red")
 ```
 
-<img class="main-content__illustration" src="http://assets.iobeam.com/images/docs/rides_count.png" alt="Rides Count Graph">
+<img class="main-content__illustration" src="http://assets.iobeam.com/images/docs/rides_count.png" alt="Rides Count Graph" />
 
 In our graphing of this data, the grey area around the prediction
 line in blue is the prediction interval, i.e. the uncertainty of
@@ -725,7 +725,7 @@ plt.legend(['Observed', 'Predicted'])
 plt.show()
 ```
 
-<img class="main-content__illustration" src="http://assets.iobeam.com/images/docs/rides_length.png" alt="Rides Length Graph">
+<img class="main-content__illustration" src="http://assets.iobeam.com/images/docs/rides_length.png" alt="Rides Length Graph" />
 
 The model predicts that the length of a trip from the Financial
 District to Times Square fluctuates roughly between 16 minutes
