@@ -15,11 +15,11 @@ can view active developments on GitHub at any time.
 The team is actively working on the multi-node version
 of TimescaleDB which is currently in beta. You can read more about our
 architecture and design for distributed hypertables
-[here](https://docs.timescale.com/clustering/introduction/architecture#distributed-hypertables).
+[here](https://docs.timescale.com/beta-v2.0.0/introduction/architecture#distributed-hypertables).
 To test out the beta version for yourself, join our #multinode-beta channel on
 [community slack](https://slack.timescale.com/) for installation details and
 follow these [setup
-instructions](https://docs.timescale.com/clustering/getting-started/scaling-out).
+instructions](https://docs.timescale.com/beta-v2.0.0/getting-started/setup-multi-node).
 
 Currently, we expect this major feature to be released
 in the second half 2020, and we will share more information once
