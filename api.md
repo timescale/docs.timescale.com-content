@@ -2177,8 +2177,8 @@ check the `_timescaledb_catalog` as follows. Note that for time-based interval
 lenghts, these are reported in microseconds.
 
 ```sql
-SELECT h.table_name, c.interval_length   FROM _timescaledb_catalog.dimension c
-JOIN _timescaledb_catalog.hypertable h ON h.id = c.hypertable_id;
+SELECT h.table_name, c.interval_length FROM _timescaledb_catalog.dimension c
+  JOIN _timescaledb_catalog.hypertable h ON h.id = c.hypertable_id;
 
 table_name | interval_length
 ------------+-----------------
