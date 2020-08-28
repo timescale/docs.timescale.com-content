@@ -1091,6 +1091,12 @@ suggest using the policy framework instead.
 | `chunk_name` | (REGCLASS) Name of the chunck to be compressed|
 
 
+#### Optional Arguments [](compress_chunk-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `if_not_compressed` | (BOOLEAN) Setting to true will skip chunks that are already compressed. Defaults to false.|
+
 #### Sample Usage [](compress_chunk-sample-usage)
 Compress a single chunk.
 
@@ -1112,6 +1118,12 @@ and the system will recompress your chucks.
 |Name|Description|
 |---|---|
 | `chunk_name` | (REGCLASS) Name of the chunk to be decompressed. |
+
+#### Optional Arguments [](decompress_chunk-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `if_compressed` | (BOOLEAN) Setting to true will skip chunks that are not compressed. Defaults to false.|
 
 #### Sample Usage [](decompress_chunk-sample-usage)
 Decompress a single chunk
