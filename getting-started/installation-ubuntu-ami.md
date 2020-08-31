@@ -1,3 +1,8 @@
+>:WARNING: Our scaling out capabilities are currently in BETA and
+are not available through this installation method. For more information,
+please [contact us][contact] or join the #multinode-beta channel in our
+[community Slack][slack].
+
 ## Installing from an Amazon AMI (Ubuntu) [](installation-ubuntu-ami)
 
 TimescaleDB is currently available as an Ubuntu 18.04 Amazon EBS-backed AMI. AMIs are
@@ -9,15 +14,15 @@ See below for the image id corresponding to each region for the most recent Time
 
 Region | Image ID
 --- | ---
-us-east-1 (North Virginia) | ami-068059b09399b88ab
-us-east-2 (Ohio) | ami-0fbe92f8586e712cf
-us-west-1 (North California) | ami-043c66e1434f56f04
-us-west-2 (Oregon) | ami-035d8ed22a1d1b909
-eu-central-1 (Germany) | ami-0555c2f216861725f
-eu-north-1 (Sweden) | ami-043770763746b0b3b
-eu-west-1 (Ireland) | ami-0c8bef060962e6761
-eu-west-2 (England) | ami-03438531765918846
-eu-west-3 (France) | ami-082d499661d7f1c6e
+us-east-1 (North Virginia) | ami-0dd510acfe59a627a
+us-east-2 (Ohio) | ami-0dcbee359e5c76850
+us-west-1 (North California) | ami-07661211f47365aac
+us-west-2 (Oregon) | ami-05218d8565b293d87
+eu-central-1 (Germany) | ami-024de1343fc5036a5
+eu-north-1 (Sweden) | ami-0059665f1bf2dc551
+eu-west-1 (Ireland) | ami-0cd2cd0320fd573e1
+eu-west-2 (England) | ami-09ab841675e1499c5
+eu-west-3 (France) | ami-08be77a21b9b176a4
 
 To launch the AMI, go to the `AMIs` section of your AWS EC2 Dashboard run the following steps:
 
