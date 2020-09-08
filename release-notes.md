@@ -33,6 +33,53 @@ features, and other capabilities to make TimescaleDB easier to use and manage.
 In this section, we will cover historical information on
 past releases and how you can learn more.
 
+### 1.7.4 (2020-09-08)
+
+This maintenance release contains bugfixes since the 1.7.3 release. We deem it
+high priority for upgrading if TimescaleDB is deployed with replicas (synchronous
+or asynchronous).
+
+In particular the fixes contained in this maintenance release address an issue with
+running queries on compressed hypertables on standby nodes.
+
+**Bugfixes**
+* #2336 Remove tuple lock on select path
+
+The music for this release was Rufus and Chaka Khan's 1974 classic _Rags to Rufus_.
+
+### 1.7.3 (2020-08-27)
+
+This maintenance release contains bugfixes since the 1.7.2 release. We deem it high
+priority for upgrading.
+
+In particular the fixes contained in this maintenance release address issues in compression,
+drop_chunks and the background worker scheduler.
+
+**Bugfixes**
+* #2059 Improve inferring start and stop arguments from gapfill query
+* #2067 Support moving compressed chunks
+* #2068 Apply SET TABLESPACE for compressed chunks
+* #2090 Fix index creation with IF NOT EXISTS for existing indexes
+* #2092 Fix delete on tables involving hypertables with compression
+* #2164 Fix telemetry installed_time format
+* #2184 Fix background worker scheduler memory consumption
+* #2222 Fix `negative bitmapset member not allowed` in decompression
+* #2255 Propagate privileges from hypertables to chunks
+* #2256 Fix segfault in chunk_append with space partitioning
+* #2259 Fix recursion in cache processing
+* #2261 Lock dimension slice tuple when scanning
+
+**Thanks**
+* @akamensky for reporting an issue with drop_chunks and ChunkAppend with space partitioning
+* @dewetburger430 for reporting an issue with setting tablespace for compressed chunks
+* @fvannee for reporting an issue with cache invalidation
+* @nexces for reporting an issue with ChunkAppend on space-partitioned hypertables
+* @PichetGoulu for reporting an issue with index creation and IF NOT EXISTS
+* @prathamesh-sonpatki for contributing a typo fix
+* @sezaru for reporting an issue with background worker scheduler memory consumption
+
+The music for this release was Bob Dylan's _Blonde on Blonde_.
+
 ### 1.7.2 (2020-07-07)
 
 This maintenance release contains bugfixes since the 1.7.1 release. We deem it medium
