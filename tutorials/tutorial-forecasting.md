@@ -1,21 +1,40 @@
 # Tutorial: Time-Series Forecasting
 
-When working with time-series data, it is often the case that
-we want to predict what will happen in the future. TimescaleDB
-works with everything that works with PostgreSQL, so we can
-easily make use of tools that are already widely available.
+Time-series forecasting enables us to predict likely 
+future values for a dataset based on historical time-series 
+data. Time-series data collectively represents how a system, 
+process, or behavior changes over time. When we accumulate 
+millions of data points over a time period, we can build models 
+to predict the next set of values likely to occur.
 
-In this tutorial, we will demonstrate how to integrate
+Time-series predictions can be used to:
+
+* Forecast cloud infrastructure expenses next quarter
+* Forecast the value of a given stock in the future
+* Forecast the number of units of a product likely to be sold next quarter
+* Forecast the remaining lifespan of an IoT device
+* Forecast the number of taxi or ride share drivers necessary for a big holiday evening
+
+Time-series forecasting alone is a powerful tool. But time-series 
+data joined with business data can be a competitive advantage for
+any developer. TimescaleDB is PostgreSQL for time-series data and 
+as such, time-series data stored in TimescaleDB can be easily 
+joined with business data in another relational database in order 
+to develop an even more insightful forecast into how your data 
+(and business) will change over time.
+
+In this time-series forecasting example, we will demonstrate how to integrate
 TimescaleDB with [R](#tutorial-r), [Apache MADlib](#tutorial-madlib),
 and [Python](#tutorial-python) to perform
-various methods of time-series forecasting. We will be using
+various time-series forecasting methods. We will be using
 New York City taxicab data that is also used in our
 [Hello Timescale Tutorial][hello_timescale]. The dataset contains information
 about all yellow cab trips in New York City in January 2016,
 including pickup and dropoff times, GPS coordinates, and total
 price of a trip. We seek to extract some interesting insights
-from this rich dataset, as well as explore the use of various
-forecasting and machine learning tools.
+from this rich dataset, build a time-series forecasting model,
+as well as explore the use of various forecasting and machine 
+learning tools.
 
 ### Setting Up
 Prerequisites:
@@ -421,7 +440,7 @@ SELECT * FROM rides_price;
 
 We will also create two tables for the training and testing datasets.
 We create tables instead of views here because we need to add columns
-to these datasets later in our analysis.
+to these datasets later in our time-series forecast analysis.
 
 ```sql
 -- Make the training dataset
@@ -577,15 +596,16 @@ the vast PostgreSQL ecosystem.
 
 ### Holt-Winters with Python [](tutorial-python)
 The [Holt-Winters][holt-winters] model is another widely used tool in time-series
-data analysis. It can only be used for seasonal time-series data.
+analysis and forecasting. It can only be used for seasonal time-series data.
 The Holt-Winters model uses simple exponential smoothing to make
 future predictions. So with time-series data, the forecast is
 calculated from taking a weighted average of past values, with more
 recent data points having greater weight than previous points.
 Holt-Winters is considered to be simpler than ARIMA, but there is
-no clear answer as to which model is superior in forecasting. It
-is advised to create both models for a particular dataset and
-compare the performance to find out which is more suitable.
+no clear answer as to which time-series prediction model is superior 
+in time-series forecasting. It is advised to create both models for 
+a particular dataset and compare the performance to find out which is 
+more suitable.
 
 We will use Python to analyze how long it takes from the Financial
 District to Times Square at different time periods during the day.
