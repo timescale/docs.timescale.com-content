@@ -6,7 +6,7 @@ This will install TimescaleDB via `apt` on Ubuntu distros.
 
 #### Prerequisites
 
-- Ubuntu 16.04 or later, except obsoleted versions.
+- Ubuntu 18.04 or later, except obsoleted versions.
 Check [releases.ubuntu.com][ubuntu-releases] for list of
 non-obsolete releases.
 
@@ -53,8 +53,7 @@ This will ensure that our extension is properly added to the parameter
 `shared_preload_libraries` as well as offer suggestions for tuning memory,
 parallelism, and other settings.
 
-To get started you'll now need to restart PostgreSQL and add
-a `postgres` [superuser][createuser] (used in the rest of the docs):
+To get started you'll now need to restart PostgreSQL:
 ```bash
 # Restart PostgreSQL instance
 sudo service postgresql restart
@@ -70,5 +69,4 @@ about the subject.
 
 [ubuntu-releases]: http://releases.ubuntu.com/
 [config]: /getting-started/configuring
-[createuser]: https://www.postgresql.org/docs/current/sql-createrole.html
 [blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480

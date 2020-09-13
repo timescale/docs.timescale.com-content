@@ -6,7 +6,7 @@ This will install TimescaleDB via `apt` on Debian distros.
 
 #### Prerequisites
 
-- Debian 8 (jessie), 9 (stretch), or 10 (buster)
+- Debian 9 (stretch) or 10 (buster)
 
 #### Build & Install
 
@@ -52,8 +52,7 @@ This will ensure that our extension is properly added to the parameter
 `shared_preload_libraries` as well as offer suggestions for tuning memory,
 parallelism, and other settings.
 
-To get started you'll now need to restart PostgreSQL and add
-a `postgres` [superuser][createuser] (used in the rest of the docs):
+To get started you'll now need to restart PostgreSQL:
 ```bash
 # Restart PostgreSQL instance
 sudo service postgresql restart
@@ -68,5 +67,4 @@ For more information about licensing, please read our [blog post][blog-post]
 about the subject.
 
 [config]: /getting-started/configuring
-[createuser]: https://www.postgresql.org/docs/current/sql-createrole.html
 [blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480
