@@ -11,9 +11,11 @@
 > - [alter_job_schedule](#alter_job_schedule)
 > - [alter table (compression)](#compression_alter-table)
 > - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
+> - [approximate_row_count](#approximate_row_count)
 > - [attach_data_node](#attach_data_node)
 > - [attach_tablespace](#attach_tablespace)
 > - [block_new_chunks](#block_new_chunks)
+> - [chunk_compression_stats](#chunk_compression_stats)
 > - [chunk_relation_size](#chunk_relation_size)
 > - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
 > -	[compress_chunk](#compress_chunk)
@@ -32,7 +34,7 @@
 > - [first](#first)
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
-> - [approximate_row_count](#approximate_row_count)
+> - [hypertable_compression_stats](#hypertable_compression_stats)
 > - [hypertable_relation_size](#hypertable_relation_size)
 > - [hypertable_relation_size_pretty](#hypertable_relation_size_pretty)
 > - [indexes_relation_size](#indexes_relation_size)
@@ -55,12 +57,12 @@
 > - [time_bucket](#time_bucket)
 > - [time_bucket_gapfill](#time_bucket_gapfill)
 > - [timescaledb_information.data_node](#timescaledb_information-data_node)
-> - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
+> - [timescaledb_information.hypertables](#timescaledb_information-hypertables)
+> - [timescaledb_information.chunks](#timescaledb_information-chunks)
+> - [timescaledb_information.dimensions](#timescaledb_information-dimensions)
 > - [timescaledb_information.license](#timescaledb_information-license)
-> - [timescaledb_information.compressed_chunk_stats](#timescaledb_information-compressed_chunk_stats)
-> - [timescaledb_information.compressed_hypertable_stats](#timescaledb_information-compressed_hypertable_stats)
 > - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
-> - [timescaledb_information.continuous_aggregate_stats](#timescaledb_information-continuous_aggregate_stats)
+> - [timescaledb_information.compression_settings](#timescaledb_information-compression_settings)
 > - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
 > - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
 > - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
@@ -1741,7 +1743,7 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 [postgres-security-barrier]:https://www.postgresql.org/docs/current/rules-privileges.html
 
 >:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-continuous_aggregate) and
-[statistics](#timescaledb_information-continuous_aggregate_stats) in `timescaledb_information` views.
+[statistics](#timescaledb_information-policy_stats) in `timescaledb_information` views.
 
 #### Sample Usage [](continuous_aggregate-create-examples)
 Create a continuous aggregate view.
@@ -2654,65 +2656,232 @@ SELECT * FROM timescaledb_information.data_node;
 (2 rows)
 ```
 
-## timescaledb_information.hypertable [](timescaledb_information-hypertable)
+## timescaledb_information.hypertables [](timescaledb_information-hypertables)
 
-Get information about hypertables. If the hypertable is distributed, the
-hypertable statistics reflect the sum of statistics across all distributed chunks.
+Get metadata information about hypertables.
 
-#### Available Columns [](timescaledb_information-hypertable-available-columns)
+#### Available Columns [](timescaledb_information-hypertables-available-columns)
 
 |Name|Description|
 |---|---|
-| `table_schema` | Schema name of the hypertable. |
-| `table_name` | Table name of the hypertable. |
-| `table_owner` | Owner of the hypertable. |
-| `num_dimensions` | Number of dimensions. |
-| `num_chunks` | Number of chunks. |
-| `table_size` |Disk space used by hypertable |
-| `index_size` |Disk space used by indexes|
-| `toast_size` |Disk space of toast tables|
-| `total_size` |Total disk space used by the specified table, including all indexes and TOAST data|
-| `distributed` | (BOOLEAN) Distributed status of the hypertable |
+| `table_schema` | Schema name of the hypertable |
+| `table_name` | Table name of the hypertable |
+| `table_owner` | Owner of the hypertable |
+| `num_dimensions` | Number of dimensions |
+| `num_chunks` | Number of chunks |
+| `compression_enabled` |Is compression enabled on the hypertable?|
+| `is_distributed` | Is the hypertable distributed?|
+| `replication_factor` | Replication factor for a distributed hypertable|
+| `data_nodes` | Nodes on which hypertable is distributed|
+| `tablespaces` |Tablespaces attached to the hypertable |
 
-#### Sample Usage [](timescaledb_information-hypertable-examples)
+#### Sample Usage [](timescaledb_information-hypertables-examples)
 
-Get information about all hypertables.
-
-```sql
-SELECT * FROM timescaledb_information.hypertable;
-
- table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size | distributed
---------------+------------+-------------+----------------+------------+------------+------------+------------+------------+--------------
- public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB     | t
- public       | devices    | postgres    |              1 |          1 | 8192 bytes | 16 kB      |            | 24 kB      | f
-(2 rows)
-```
-
-Check whether a table is a hypertable.
+Get information about a hypertable.
 
 ```sql
-SELECT * FROM timescaledb_information.hypertable
-WHERE table_schema='public' AND table_name='metrics';
+CREATE TABLE dist_table(time timestamptz, device int, temp float);
+SELECT create_distributed_hypertable('dist_table', 'time', 'device', replication_factor => 2);
 
- table_schema | table_name | table_owner | num_dimensions | num_chunks | table_size | index_size | toast_size | total_size | distributed
---------------+------------+-------------+----------------+------------+------------+------------+------------+------------+--------------
- public       | metrics    | postgres    |              1 |          5 | 99 MB      | 96 MB      |            | 195 MB     | t
-(1 row)
+SELECT * FROM timescaledb_information.hypertables
+  WHERE table_name = 'dist_table';
+
+-[ RECORD 1 ]-------+-----------
+table_schema        | public
+table_name          | dist_table
+owner               | postgres 
+num_dimensions      | 2
+num_chunks          | 3
+compression_enabled | f
+is_distributed      | t
+replication_factor  | 2
+data_nodes          | {node_1, node_2}
+tablespaces         | 
+
 ```
 
-If you want to see the current interval length for your hypertables, you can
-check the `_timescaledb_catalog` as follows. Note that for time-based interval
-lengths, these are reported in microseconds.
+## timescaledb_information.dimensions [](timescaledb_information-dimensions)
+
+Get metadata about the dimensions of hypertables, returning one row of metadata 
+for each dimension of a hypertable.  For a time-and-space-partitioned 
+hypertable, for example, two rows of metadata will be returned for the 
+hypertable.
+
+A time-based dimension column has either an integer datatype 
+(bigint, integer, smallint) or a time related datatype 
+(timestamptz, timestamp, date).
+The `time_interval` column is defined for hypertables that use time datatypes.
+Alternatively, for hypertables that use integer datatypes,
+ the `integer_interval` and `integer_now_func` columns are defined.
+
+For space based dimensions, metadata is returned that specifies their number 
+of `num_partitions`. The `time_interval` and `integer_interval` columns are 
+not applicable for space based dimensions.
+ 
+#### Available Columns [](timescaledb_information-dimensions-available-columns)
+
+|Name|Description|
+|---|---|
+| `hypertable_schema` | Schema name of the hypertable |
+| `hypertable_name` | Table name of the hypertable |
+| `dimension_number` | Dimension number of the hypertable, starting from 1 |
+| `column_name` | Name of the column used to create this dimension |
+| `column_type` | Type of the column used to create this dimension|
+| `dimension_type` |Is this time based or space based dimension?|
+| `time_interval` | Time interval for primary dimension if the column type is based on Postgres time datatypes |
+| `integer_interval` | Integer interval for primary dimension if the column type is an integer datatype |
+| `integer_now_func` | integer_now function for primary dimension if the column type is integer based datatype|
+| `num_partitions` | Number of partitions for the dimension |
+
+#### Sample Usage [](timescaledb_information-dimensions-examples)
+
+Get information about the dimensions of hypertables.
 
 ```sql
-SELECT h.table_name, c.interval_length FROM _timescaledb_catalog.dimension c
-  JOIN _timescaledb_catalog.hypertable h ON h.id = c.hypertable_id;
+--Create a time and space partitioned hypertable
+CREATE TABLE dist_table(time timestamptz, device int, temp float);
+SELECT create_hypertable('dist_table', 'time',  'device', chunk_time_interval=> INTERVAL '7 days', number_partitions=>3);
 
-table_name | interval_length
-------------+-----------------
-metrics       |    604800000000
-(1 row)
+SELECT * from timescaledb_information.dimensions
+  ORDER BY hypertable_name, dimension_number;
+
+-[ RECORD 1 ]-----+-------------------------
+hypertable_schema | public
+hypertable_name   | dist_table
+dimension_number  | 1
+column_name       | time
+column_type       | timestamp with time zone
+dimension_type    | Time
+time_interval     | 7 days
+integer_interval  | 
+integer_now_func  | 
+num_partitions    | 
+-[ RECORD 2 ]-----+-------------------------
+hypertable_schema | public
+hypertable_name   | dist_table
+dimension_number  | 2
+column_name       | device
+column_type       | integer
+dimension_type    | Space
+time_interval     | 
+integer_interval  | 
+integer_now_func  | 
+num_partitions    | 2
 ```
+
+Get information about dimensions of a hypertable that has 2 time based dimensions
+``` sql
+CREATE TABLE hyper_2dim (a_col date, b_col timestamp, c_col integer);
+SELECT table_name from create_hypertable('hyper_2dim', 'a_col');
+SELECT add_dimension('hyper_2dim', 'b_col', chunk_time_interval=> '7 days');
+
+SELECT * FROM timescaledb_information.dimensions WHERE hypertable_name = 'hyper_2dim';
+
+-[ RECORD 1 ]-----+----------------------------
+hypertable_schema | public
+hypertable_name   | hyper_2dim
+dimension_number  | 1
+column_name       | a_col
+column_type       | date
+dimension_type    | Time
+time_interval     | 7 days
+integer_interval  | 
+integer_now_func  | 
+num_partitions    | 
+-[ RECORD 2 ]-----+----------------------------
+hypertable_schema | public
+hypertable_name   | hyper_2dim
+dimension_number  | 2
+column_name       | b_col
+column_type       | timestamp without time zone
+dimension_type    | Time
+time_interval     | 7 days
+integer_interval  | 
+integer_now_func  | 
+num_partitions    | 
+
+```
+---
+
+## timescaledb_information.chunks [](timescaledb_information-chunks)
+
+Get metadata about the chunks of hypertables.
+
+This view shows metadata for the chunk's primary time-based dimension.
+For information about a hypertable's secondary dimensions, 
+the [dimensions view](#timescaledb_information-dimensions) should be used instead.
+
+If the chunk's primary dimension is of a time datatype, `range_start` and
+`range_end` are set.  Otherwise, if the primary dimension type is integer based,
+`range_start_integer` and `range_end_integer`.
+
+#### Available Columns [](timescaledb_information-chunks-available-columns)
+
+|Name|Description|
+|---|---|
+| `hypertable_schema` | Schema name of the hypertable |
+| `hypertable_name` | Table name of the hypertable |
+| `chunk_schema` | Schema name of the chunk |
+| `chunk_name` | Name of the chunk |
+| `primary_dimension` | Name of the column that is the primary dimension|
+| `primary_dimension_type` | Type of the column that is the primary dimension|
+| `range_start` | Start of the range for the chunk's dimension |
+| `range_end` | End of the range for the chunk's dimension |
+| `range_start_integer` | Start of the range for the chunk's dimension, if the dimension type is integer based |
+| `range_end_integer` | End of the range for the chunk's dimension, if the dimension type is integer based |
+| `is_compressed` | Is the data in the chunk compressed?|
+| `chunk_tablespace` | Tablespace used by the chunk|
+| `data_nodes` | Nodes on which the chunk is replicated. This is applicable only to chunks for distributed hypertables |
+
+#### Sample Usage [](timescaledb_information-chunks-examples)
+
+Get information about the chunks of a hypertable.
+
+```sql
+CREATE TABLESPACE tablespace1 location '/usr/local/pgsql/data1';
+  
+CREATE TABLE hyper_int (a_col integer, b_col integer, c integer);
+SELECT table_name from create_hypertable('hyper_int', 'a_col', chunk_time_interval=> 10);
+CREATE OR REPLACE FUNCTION integer_now_hyper_int() returns int LANGUAGE SQL STABLE as $$ SELECT coalesce(max(a_col), 0) FROM hyper_int $$;
+SELECT set_integer_now_func('hyper_int', 'integer_now_hyper_int');
+
+INSERT INTO hyper_int SELECT generate_series(1,5,1), 10, 50;
+
+SELECT attach_tablespace('tablespace1', 'hyper_int');
+INSERT INTO hyper_int VALUES( 25 , 14 , 20), ( 25, 15, 20), (25, 16, 20);
+
+SELECT * FROM timescaledb_information.chunks WHERE hypertable_name = 'hyper_int';
+
+-[ RECORD 1 ]----------+----------------------
+hypertable_schema      | public
+hypertable_name        | hyper_int
+chunk_schema           | _timescaledb_internal
+chunk_name             | _hyper_7_10_chunk
+primary_dimension      | a_col
+primary_dimension_type | integer
+range_start            | 
+range_end              | 
+range_start_integer    | 0
+range_end_integer      | 10
+is_compressed          | f
+chunk_tablespace       | 
+data_nodes             | 
+-[ RECORD 2 ]----------+----------------------
+hypertable_schema      | public
+hypertable_name        | hyper_int
+chunk_schema           | _timescaledb_internal
+chunk_name             | _hyper_7_11_chunk
+primary_dimension      | a_col
+primary_dimension_type | integer
+range_start            | 
+range_end              | 
+range_start_integer    | 20
+range_end_integer      | 30
+is_compressed          | f
+chunk_tablespace       | tablespace1
+data_nodes             | 
+```
+---
 
 ## timescaledb_information.license [](timescaledb_information-license)
 
@@ -2740,94 +2909,7 @@ enterprise | f       | 2019-02-15 13:44:53-05
 ```
 
 ---
-## timescaledb_information.compressed_chunk_stats [](timescaledb_information-compressed_chunk_stats)
 
-Get statistics about chunk compression.
-
-#### Available Columns  [](timescaledb_information-compressed_chunk_stats-available-columns)
-
-|Name|Description|
-|---|---|
-|`hypertable_name` | (REGCLASS) the name of the hypertable |
-|`chunk_name` | (REGCLASS) the name of the chunk |
-|`compression_status` | (TEXT) 'Compressed' or 'Uncompressed' depending on the status of the chunk |
-|`uncompressed_heap_bytes` | (TEXT) human-readable size of the heap before compression (NULL if currently uncompressed) |
-|`uncompressed_index_bytes` | (TEXT) human-readable size of all the indexes before compression (NULL if currently uncompressed) |
-|`uncompressed_toast_bytes` | (TEXT) human-readable size of the TOAST table before compression (NULL if currently uncompressed) |
-|`uncompressed_total_bytes` | (TEXT) human-readable size of the entire table (heap+indexes+toast) before compression (NULL if currently uncompressed) |
-|`compressed_heap_bytes` | (TEXT) human-readable size of the heap after compression (NULL if currently uncompressed) |
-|`compressed_index_bytes` | (TEXT) human-readable size of all the indexes after compression (NULL if currently uncompressed) |
-|`compressed_toast_bytes` | (TEXT) human-readable size of the TOAST table after compression (NULL if currently uncompressed) |
-|`compressed_total_bytes` | (TEXT) human-readable size of the entire table (heap+indexes+toast) after compression (NULL if currently uncompressed) |
-
-#### Sample Usage [](timescaledb_information-compressed_chunk_stats-examples)
-```sql
-SELECT * FROM timescaledb_information.compressed_chunk_stats;
--[ RECORD 1 ]------------+---------------------------------------
-hypertable_name          | foo
-chunk_name               | _timescaledb_internal._hyper_1_1_chunk
-compression_status       | Uncompressed
-uncompressed_heap_bytes  |
-uncompressed_index_bytes |
-uncompressed_toast_bytes |
-uncompressed_total_bytes |
-compressed_heap_bytes    |
-compressed_index_bytes   |
-compressed_toast_bytes   |
-compressed_total_bytes   |
--[ RECORD 2 ]------------+---------------------------------------
-hypertable_name          | foo
-chunk_name               | _timescaledb_internal._hyper_1_2_chunk
-compression_status       | Compressed
-uncompressed_heap_bytes  | 8192 bytes
-uncompressed_index_bytes | 32 kB
-uncompressed_toast_bytes | 0 bytes
-uncompressed_total_bytes | 40 kB
-compressed_heap_bytes    | 8192 bytes
-compressed_index_bytes   | 32 kB
-compressed_toast_bytes   | 8192 bytes
-compressed_total_bytes   | 48 kB
-```
----
-
-## timescaledb_information.compressed_hypertable_stats [](timescaledb_information-compressed_hypertable_stats)
-
-Get statistics about hypertable compression.
-
-#### Available Columns  [](timescaledb_information-compressed_hypertable_stats-available-columns)
-
-|Name|Description|
-|---|---|
-|`hypertable_name` | (REGCLASS) the name of the hypertable |
-|`total_chunks` | (INTEGER) the number of chunks used by the hypertable |
-|`number_compressed_chunks` | (INTEGER) the number of chunks used by the hypertable that are currently compressed |
-|`uncompressed_heap_bytes` | (TEXT) human-readable size of the heap before compression (NULL if currently uncompressed) |
-|`uncompressed_index_bytes` | (TEXT) human-readable size of all the indexes before compression (NULL if currently uncompressed) |
-|`uncompressed_toast_bytes` | (TEXT) human-readable size of the TOAST table before compression (NULL if currently uncompressed) |
-|`uncompressed_total_bytes` | (TEXT) human-readable size of the entire table (heap+indexes+toast) before compression (NULL if currently uncompressed) |
-|`compressed_heap_bytes` | (TEXT) human-readable size of the heap after compression (NULL if currently uncompressed) |
-|`compressed_index_bytes` | (TEXT) human-readable size of all the indexes after compression (NULL if currently uncompressed) |
-|`compressed_toast_bytes` | (TEXT) human-readable size of the TOAST table after compression (NULL if currently uncompressed) |
-|`compressed_total_bytes` | (TEXT) human-readable size of the entire table (heap+indexes+toast) after compression (NULL if currently uncompressed) |
-
-#### Sample Usage [](timescaledb_information-compressed_hypertable_stats-examples)
-```sql
-SELECT * FROM timescaledb_information.compressed_hypertable_stats;
--[ RECORD 1 ]------------+-----------
-hypertable_name          | foo
-total_chunks             | 4
-number_compressed_chunks | 1
-uncompressed_heap_bytes  | 8192 bytes
-uncompressed_index_bytes | 32 kB
-uncompressed_toast_bytes | 0 bytes
-uncompressed_total_bytes | 40 kB
-compressed_heap_bytes    | 8192 bytes
-compressed_index_bytes   | 32 kB
-compressed_toast_bytes   | 8192 bytes
-compressed_total_bytes   | 48 kB
-```
-
----
 ## timescaledb_information.continuous_aggregates [](timescaledb_information-continuous_aggregate)
 
 Get metadata and settings information for continuous aggregates.
@@ -2874,45 +2956,49 @@ view_definition                |  SELECT foo.a,                                 
 
 ```
 ---
-## timescaledb_information.continuous_aggregate_stats [](timescaledb_information-continuous_aggregate_stats)
+## timescaledb_information.compression_settings [](timescaledb_information-compression_settings)
 
-Get information about background jobs and statistics related to continuous aggregates.
+Get information about compression-related settings for hypertables.
+Each row of the view provides information about individual orderby
+and segmentby columns used by compression.
 
-#### Available Columns [](timescaledb_information-continuous_aggregate_stats-available-columns)
+#### Available Columns [](timescaledb_information-compression_settings-available-columns)
 
 |Name|Description|
 |---|---|
-|`view_name`| User supplied name for continuous aggregate. |
-|`completed_threshold`| Completed threshold for the last materialization job.|
-|`invalidation_threshold`| Invalidation threshold set by the latest materialization job|
-|`last_run_started_at`| Start time of the last job|
-|`last_run_status` | Whether the last run succeeded or failed |
-|`job_status`| Status of the materialization job . Valid values are ‘Running’ and ‘Scheduled’|
-|`last_run_duration`| Time taken by the last materialization job|
-|`next_scheduled_run` | Start time of the next materialization job |
-| `total_runs` | The total number of runs of this job |
-| `total_successes` | The total number of times this job succeeded |
-| `total_failures` | The total number of times this job failed |
-| `total_crashes` | The total number of times this job crashed |
+| `table_schema` | Schema name of the hypertable |
+| `table_name` | Table name of the hypertable |
+| `attname` | Name of the column used in the compression settings |
+| `segmentby_column_index` | Position of attname in the compress_segmentby list |
+| `orderby_column_index` | Position of attname in the compress_orderby list |
+| `orderby_asc` | (BOOLEAN) True if this is used for order by ASC, False for order by DESC |
+| `orderby_nullsfirst` | (BOOLEAN) True if nulls are ordered first for this column, False if nulls are ordered last|
 
-#### Sample Usage [](timescaledb_information-continuous_aggregate_stats-examples)
+
+#### Sample Usage [](timescaledb_information-compression_settings-examples)
 
 ```sql
-SELECT * FROM timescaledb_information.continuous_aggregate_stats;
--[ RECORD 1 ]----------+------------------------------
-view_name              | contagg_view
-completed_threshold    | 1
-invalidation_threshold | 1
-job_id                 | 1003
-last_run_started_at    | 2019-07-03 15:00:26.016018-04
-last_run_status        | Success
-job_status             | scheduled
-last_run_duration      | 00:00:00.039163
-next_scheduled_run     | 2019-07-03 15:00:56.055181-04
-total_runs             | 3
-total_successes        | 3
-total_failures         | 0
-total_crashes          | 0
+CREATE TABLE hypertab (a_col integer, b_col integer, c_col integer, d_col integer, e_col integer);
+SELECT table_name FROM create_hypertable('hypertab', 'a_col');
+
+ALTER TABLE hypertab SET (timescaledb.compress, timescaledb.compress_segmentby = 'a_col,b_col', 
+  timescaledb.compress_orderby = 'c_col desc, d_col asc nulls last');
+
+SELECT * FROM timescaledb_information.compression_settings WHERE table_name = 'hypertab';
+
+ schema_name | table_name | attname | segmentby_column_index | orderby_column_in
+dex | orderby_asc | orderby_nullsfirst 
+-------------+------------+---------+------------------------+------------------
+----+-------------+--------------------
+ public      | hypertab   | a_col   |                      1 |
+    |             | 
+ public      | hypertab   | b_col   |                      2 |
+    |             | 
+ public      | hypertab   | c_col   |                        |
+  1 | f           | t
+ public      | hypertab   | d_col   |                        |
+  2 | t           | f
+(4 rows)
 ```
 ---
 ## timescaledb_information.drop_chunks_policies [](timescaledb_information-drop_chunks_policies)
@@ -2979,9 +3065,10 @@ SELECT * FROM timescaledb_information.reorder_policies;
 ---
 ## timescaledb_information.policy_stats [](timescaledb_information-policy_stats)
 
-Shows information and statistics about policies created to manage data retention
-and other administrative tasks on hypertables. (See [policies](#automation-policies)). The
-statistics include information useful for administering jobs and determining
+Shows information and statistics about policies created to manage data retention,
+continuous aggregates, compression, custom jobs and other automation policies. 
+(See [policies](#automation-policies)). 
+The statistics include information useful for administering jobs and determining
 whether they ought be rescheduled, such as: when and whether the background job
 used to implement the policy succeeded and when it is scheduled to run next.
 
@@ -2989,28 +3076,54 @@ used to implement the policy succeeded and when it is scheduled to run next.
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
-| `job_id` | (INTEGER) The id of the background job created to implement the policy |
-| `job_type` | (TEXT) The type of policy the job was created to implement |
-| `last_run_success` | (BOOLEAN) Whether the last run succeeded or failed |
-| `last_finish` | (TIMESTAMPTZ) The time the last run finished |
-| `last_start` | (TIMESTAMPTZ) The time the last run started |
-| `next_start` | (TIMESTAMPTZ) The time the next run will start |
-| `total_runs` | (INTEGER) The total number of runs of this job |
-| `total_failures` | (INTEGER) The total number of times this job failed |
+|`hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
+|`job_id` | (INTEGER) The id of the background job created to implement the policy |
+|`last_run_started_at`| Start time of the last job|
+|`last_successful_finish`| Time when the job completed successfully|
+|`last_run_status` | Whether the last run succeeded or failed |
+|`job_status`| Status of the job. Valid values are ‘Running’ and ‘Scheduled’|
+|`last_run_duration`| Duration of last run of the job|
+|`next_scheduled_run` | Start time of the next run |
+|`total_runs` | The total number of runs of this job|
+|`total_successes` | The total number of times this job succeeded |
+|`total_failures` | The total number of times this job failed |
 
 #### Sample Usage [](timescaledb_information-policy_stats-examples)
 
-Get information about statistics on created policies.
-```sql
-SELECT * FROM timescaledb_information.policy_stats;
+Get job success/failure information for a specific hypertable.
 
-       hypertable       | job_id |  job_type   | last_run_success |         last_finish          |          last_start          |          next_start          | total_runs | total_failures
-------------------------+--------+-------------+------------------+------------------------------+------------------------------+------------------------------+------------+----------------
- conditions             |   1001 | drop_chunks | t                | Fri Dec 31 16:00:01 1999 PST | Fri Dec 31 16:00:01 1999 PST | Fri Dec 31 16:00:02 1999 PST |          2 |              0
-(1 row)
+```sql
+SELECT job_id, total_runs, total_failures, total_successes 
+  FROM timescaledb_information.policy_stats
+  WHERE hypertable::text = 'test_table';
+
+ job_id | total_runs | total_failures | total_successes 
+--------+------------+----------------+-----------------
+   1001 |          1 |              0 |               1
+   1004 |          1 |              0 |               1
+(2 rows)
+
 ```
 
+Get information about continuous aggregate policy related statistics
+``` sql
+SELECT  ps.* FROM
+  timescaledb_information.policy_stats ps, timescaledb_information.continuous_aggregates cagg 
+  WHERE cagg.view_name = 'mat_m1'::regclass and cagg.materialization_hypertable = ps.hypertable;
+
+-[ RECORD 1 ]----------+-------------------------------------------------
+hypertable             | _timescaledb_internal._materialized_hypertable_5
+job_id                 | 1000
+last_run_started_at    | 2020-09-17 17:44:17.752043-04
+last_successful_finish | 2020-09-17 17:44:17.860759-04
+last_run_status        | Success
+job_status             | Scheduled
+last_run_duration      | 00:00:00.108716
+next_scheduled_run     | 2020-09-18 05:44:17.860759-04
+total_runs             | 1
+total_successes        | 1
+total_failures         | 0
+```
 ---
 ## timescaledb.license_key [](timescaledb_license-key)
 
@@ -3136,7 +3249,6 @@ If telemetry is disabled, view the telemetry report locally.
 ```sql
 SELECT get_telemetry_report(always_display_report := true);
 ```
-
 ---
 
 ## approximate_row_count() [](approximate_row_count)
@@ -3170,6 +3282,130 @@ approximate_row_count
 
 ---
 
+## hypertable_compression_stats() :community_function: [](hypertable_compression_stats)
+
+Get statistics related to hypertable compression.
+All sizes are in bytes.
+
+#### Required Arguments [](hypertable_compression_stats-required-arguments)
+
+|Name|Description|
+|---|---|
+| `main_table` | (REGCLASS) Name of the hypertable |
+
+#### Returns [](hypertable_compression_stats-returns)
+|Column|Description|
+|---|---|
+|`total_chunks` | (BIGINT) the number of chunks used by the hypertable |
+|`number_compressed_chunks` | (INTEGER) the number of chunks used by the hypertable that are currently compressed |
+|`before_compression_table_bytes` | (BIGINT) Size of the heap before compression (NULL if currently uncompressed) |
+|`before_compression_index_bytes` | (BIGINT) Size of all the indexes before compression (NULL if currently uncompressed) |
+|`before_compression_toast_bytes` | (BIGINT) Size the TOAST table before compression (NULL if currently uncompressed) |
+|`before_compression_total_bytes` | (BIGINT) Size of the entire table (table+indexes+toast) before compression (NULL if currently uncompressed) |
+|`after_compression_table_bytes` | (BIGINT) Size of the heap after compression (NULL if currently uncompressed) |
+|`after_compression_index_bytes` | (BIGINT) Size of all the indexes after compression (NULL if currently uncompressed) |
+|`after_compression_toast_bytes` | (BIGINT) Size the TOAST table after compression (NULL if currently uncompressed) |
+|`after_compression_total_bytes` | (BIGINT) Size of the entire table (table+indexes+toast) after compression (NULL if currently uncompressed) |
+|`node_name` | (NAME) nodes on which the hypertable is located, applicable only to distributed hypertables |
+
+#### Sample Usage [](hypertable_compression_stats-examples)
+```sql
+SELECT * FROM hypertable_compression_stats('conditions');
+
+-[ RECORD 1 ]------------------+------
+total_chunks                   | 4
+number_compressed_chunks       | 1
+before_compression_table_bytes | 8192
+before_compression_index_bytes | 32768
+before_compression_toast_bytes | 0
+before_compression_total_bytes | 40960
+after_compression_table_bytes  | 8192
+after_compression_index_bytes  | 32768
+after_compression_toast_bytes  | 8192
+after_compression_total_bytes  | 49152
+node_name                      |
+```
+
+Use `pg_size_pretty` get the output in a more human friendly format.
+```sql
+SELECT pg_size_pretty(after_compression_total_bytes) as total
+  FROM hypertable_compression_stats('conditions');
+
+-[ RECORD 1 ]--+------
+total | 48 kB
+
+```
+---
+## chunk_compression_stats() :community_function: [](chunk_compression_stats)
+
+Get chunk specific statistics related to hypertable compression.
+All sizes are in bytes.
+
+#### Required Arguments [](chunk_compression_stats-required-arguments)
+
+|Name|Description|
+|---|---|
+| `main_table` | (REGCLASS) Name of the hypertable |
+
+#### Returns [](chunk_compression_stats-returns)
+|Column|Description|
+|---|---|
+|`chunk_schema` | (NAME) Schema name of the chunk |
+|`chunk_name` | (NAME) Name of the chunk |
+|`number_compressed_chunks` | (INTEGER) the number of chunks used by the hypertable that are currently compressed |
+|`before_compression_table_bytes` | (BIGINT) Size of the heap before compression (NULL if currently uncompressed) |
+|`before_compression_index_bytes` | (BIGINT) Size of all the indexes before compression (NULL if currently uncompressed) |
+|`before_compression_toast_bytes` | (BIGINT) Size the TOAST table before compression (NULL if currently uncompressed) |
+|`before_compression_total_bytes` | (BIGINT) Size of the entire chunk table (table+indexes+toast) before compression (NULL if currently uncompressed) |
+|`after_compression_table_bytes` | (BIGINT) Size of the heap after compression (NULL if currently uncompressed) |
+|`after_compression_index_bytes` | (BIGINT) Size of all the indexes after compression (NULL if currently uncompressed) |
+|`after_compression_toast_bytes` | (BIGINT) Size the TOAST table after compression (NULL if currently uncompressed) |
+|`after_compression_total_bytes` | (BIGINT) Size of the entire chunk table (table+indexes+toast) after compression (NULL if currently uncompressed) |
+|`node_name` | (NAME) nodes on which the chunk is located, applicable only to distributed hypertables |
+
+#### Sample Usage [](chunk_compression_stats-examples)
+```sql
+SELECT * FROM chunk_compression_stats('conditions')
+  ORDER BY chunk_name limit 2;
+
+-[ RECORD 1 ]------------------+----------------------
+chunk_schema                   | _timescaledb_internal
+chunk_name                     | _hyper_1_1_chunk
+compression_status             | Uncompressed
+before_compression_table_bytes |
+before_compression_index_bytes |
+before_compression_toast_bytes |
+before_compression_total_bytes |
+after_compression_table_bytes  |
+after_compression_index_bytes  |
+after_compression_toast_bytes  |
+after_compression_total_bytes  |
+node_name                      |
+-[ RECORD 2 ]------------------+----------------------
+chunk_schema                   | _timescaledb_internal
+chunk_name                     | _hyper_1_2_chunk
+compression_status             | Compressed
+before_compression_table_bytes | 8192
+before_compression_index_bytes | 32768
+before_compression_toast_bytes | 0
+before_compression_total_bytes | 40960
+after_compression_table_bytes  | 8192
+after_compression_index_bytes  | 32768
+after_compression_toast_bytes  | 8192
+after_compression_total_bytes  | 49152
+node_name                      |
+```
+
+Use `pg_size_pretty` get the output in a more human friendly format.
+```sql
+SELECT pg_size_pretty(after_compression_total_bytes) as total
+  FROM chunk_compression_stats('conditions')
+  WHERE compression_status = 'Compressed';
+
+-[ RECORD 1 ]--+------
+total | 48 kB
+
+```
 ## hypertable_relation_size() [](hypertable_relation_size)
 
 Get relation size of hypertable like `pg_relation_size(hypertable)`.
