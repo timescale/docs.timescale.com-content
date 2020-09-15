@@ -32,7 +32,6 @@ still work on the resulting hypertable.
  TIMESTAMPTZ).  Additionally, if the time column is of type SMALLINT or INT,
  the `chunk_time_interval` **must** be set explicitly.
 
-<!-- -->
 >ttt The `add_dimension` function can be used following hypertable
  creation to add one or more additional partitioning dimensions (and
  as an alternative to specifying the optional argument
