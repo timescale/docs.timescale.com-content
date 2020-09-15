@@ -37,7 +37,6 @@ the `chunk_time_interval` **must** be set explicitly, as the database does
 not otherwise understand the semantics of what each integer value
 represents (a second, millisecond, nanosecond, etc.).
 
-<!-- -->
 >ttt The `add_dimension` function can be used following hypertable
  creation to add one or more additional partitioning dimensions (and
  as an alternative to specifying the optional argument
