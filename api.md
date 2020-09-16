@@ -1644,20 +1644,21 @@ at predefined intervals and materialize the results. This is suitable for
 frequently used queries. For a more detailed discussion of this capability,
 please see [using TimescaleDB Continuous Aggregates][using-continuous-aggs].
 
-*  [CREATE VIEW](#continuous_aggregate-create_view)
-*  [ALTER VIEW](#continuous_aggregate-alter_view)
+*  [CREATE MATERIALIZED VIEW](#continuous_aggregate-create_view)
+*  [ALTER MATERIALIZED VIEW](#continuous_aggregate-alter_view)
 *  [REFRESH MATERIALIZED VIEW](#continuous_aggregate-refresh_view)
-*  [DROP VIEW](#continuous_aggregate-drop_view)
+*  [DROP MATERIALIZED VIEW](#continuous_aggregate-drop_view)
 
-## CREATE VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-create_view)
-`CREATE VIEW` statement is used to create continuous aggregates.
+## CREATE MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-create_view)
+`CREATE MATERIALIZED VIEW` statement is used to create continuous aggregates.
 
 The syntax is:
 ``` sql
-CREATE VIEW <view_name> [ ( column_name [, ...] ) ]
-WITH ( timescaledb.continuous [, timescaledb.<option> = <value> ] )
-AS
-<select_query>
+CREATE MATERIALIZED VIEW <view_name> [ ( column_name [, ...] ) ]
+  WITH ( timescaledb.continuous [, timescaledb.<option> = <value> ] )
+  AS
+    <select_query>
+  [WITH [NO] DATA]
 ```
 
 `<select_query>` is of the form :
@@ -1685,54 +1686,40 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 |---|---|---|
 |`timescaledb.continuous`|||
 |**Description**|**Type**|**Default**|
-|If timescaledb.continuous is not specified, then this is a regular PostgresSQL view. | `BOOLEAN` ||
+|If timescaledb.continuous is not specified, then this is a regular PostgresSQL materialized view. | `BOOLEAN` ||
 
 #### Optional `WITH` clause options [](continuous_aggregate-create_view-with-optional)
 
 |**Name**|||
 |---|---|---|
-|`timescaledb.refresh_lag`|||
-|**Description**|**Type**|**Default**|
-| Refresh lag controls the amount by which the materialization will lag behind the current time. The continuous aggregate view lags behind by `bucket_width` + `refresh_lag` value. `refresh_lag` can be set to positive and negative values. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is twice the bucket width (as specified by the `time_bucket` expression).|
-|   |   |   |
-|**Name**|||
-|`timescaledb.refresh_interval`|||
-|**Description**|**Type**|**Default**|
-| Refresh interval controls how often the background materializer is run. Note that if `refresh_lag` is set to `-<bucket_width>`, the continuous aggregate will run whenever new data is received, regardless of what the `refresh_interval` value is. | `INTERVAL`|By default, this is set to twice the bucket width (if the datatype of the bucket_width argument from the `time_bucket` expression is an `INTERVAL`), otherwise it is set to 12 hours.|
-|   |   |   |
-|**Name**|||
 |`timescaledb.materialized_only`|||
 |**Description**|**Type**|**Default**|
-| Return only materialized data when querying the continuous aggregate view. | `BOOLEAN` | false |
+| Return only materialized data when querying the continuous aggregate view. See more in section on [real-time aggregates][real-time-aggregates]. | `BOOLEAN` | false |
 |   |   |   |
-|**Name**|||
-|`timescaledb.max_interval_per_job`|||
-|**Description**|**Type**|**Default**|
-| Max interval per job specifies the amount of data processed by the background materializer job when the continuous aggregate is updated. | Same datatype as the `bucket_width` argument from the `time_bucket` expression.| The default value is `20 * bucket width`.|
-|   |   |   |
-|**Name**|||
 |`timescaledb.create_group_indexes`|||
 |**Description**|**Type**|**Default**|
 | Create indexes on the materialization table for the group by columns (specified by the `GROUP BY` clause of the `SELECT` query). | `BOOLEAN` | Indexes are created by default for every group by expression + time_bucket expression pair.|
-|   |   |   |
-|**Name**|||
-|`timescaledb.ignore_invalidation_older_than`|||
-|**Description**|**Type**|**Default**|
-| Time interval after which invalidations are ignored.| Same datatype as the `bucket_width` argument from the `time_bucket` expression. | By default all invalidations are processed.|
 
->:TIP: Say, the continuous aggregate uses time_bucket(INTERVAL '2h', time_column) and we want to keep the view up to date with the data. We can do this by modifying the `refresh_lag` setting. Set refresh_lag to `-2h`. E.g. `ALTER VIEW contview set (timescaledb.refresh_lag = '-2h');` Please refer to the [caveats][].
+#### Notes
 
-#### Restrictions
+- The view will be automatically refreshed (as outlined under
+  [`refresh_continuous_aggregate`](#refresh_continuous_aggregate))
+  unless `WITH NO DATA` is given (`WITH DATA` is the default).
 - `SELECT` query should be of the form specified in the syntax above.
-- The hypertable used in the `SELECT` may not have [row-level-security policies][postgres-rls] enabled.
--  `GROUP BY` clause must include a time_bucket expression. The [`time_bucket`](#time_bucket) expression must use the time dimension column of the hypertable.
+- The hypertable used in the `SELECT` may not have [row-level-security
+  policies][postgres-rls] enabled.
+-  `GROUP BY` clause must include a time_bucket expression. The
+   [`time_bucket`](#time_bucket) expression must use the time
+   dimension column of the hypertable.
 - [`time_bucket_gapfill`](#time_bucket_gapfill) is not allowed in continuous
   aggs, but may be run in a `SELECT` from the continuous aggregate view.
-- In general, aggregates which can be [parallelized by PostgreSQL][postgres-parallel-agg] are allowed in the view definition, this
-  includes most aggregates distributed with PostgreSQL. Aggregates with `ORDER BY`,
-  `DISTINCT` and `FILTER` clauses are not permitted.
-* All functions and their arguments included in `SELECT`, `GROUP BY` and `HAVING` clauses must be [immutable][postgres-immutable].
-- Queries with `ORDER BY` are disallowed.
+- In general, aggregates which can be [parallelized by
+  PostgreSQL][postgres-parallel-agg] are allowed in the view
+  definition, this includes most aggregates distributed with
+  PostgreSQL. Aggregates with `ORDER BY`, `DISTINCT` and `FILTER`
+  clauses are not permitted.
+- All functions and their arguments included in `SELECT`, `GROUP BY`
+  and `HAVING` clauses must be [immutable][postgres-immutable].
 - The view is not allowed to be a [security barrier view][postgres-security-barrier].
 
 [postgres-immutable]:https://www.postgresql.org/docs/current/xfunc-volatility.html
@@ -1746,26 +1733,20 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 #### Sample Usage [](continuous_aggregate-create-examples)
 Create a continuous aggregate view.
 ```sql
-CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
-WITH ( timescaledb.continuous,
-    timescaledb.refresh_lag = '5 hours',
-    timescaledb.refresh_interval = '1h' )
-AS
-    SELECT time_bucket('1day', timec), min(location), sum(temperature), sum(humidity)
-        FROM conditions
-        GROUP BY time_bucket('1day', timec)
+CREATE MATERIALIZED VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
+WITH (timescaledb.continuous) AS
+  SELECT time_bucket('1day', timec), min(location), sum(temperature), sum(humidity)
+    FROM conditions
+    GROUP BY time_bucket('1day', timec)
 ```
 
 Add additional continuous aggregates on top of the same raw hypertable.
 ```sql
-CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
-WITH ( timescaledb.continuous,
-    timescaledb.refresh_lag = '5 hours',
-    timescaledb.refresh_interval = '1h' )
-AS
-    SELECT time_bucket('30day', timec), min(location), sum(temperature), sum(humidity)
-        FROM conditions
-        GROUP BY time_bucket('30day', timec);
+CREATE MATERIALIZED VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
+WITH (timescaledb.continuous) AS
+  SELECT time_bucket('30day', timec), min(location), sum(temperature), sum(humidity)
+    FROM conditions
+    GROUP BY time_bucket('30day', timec);
 ```
 
 >:TIP: In order to keep the continuous aggregate up to date with incoming data,
@@ -1773,11 +1754,8 @@ the refresh lag can be set to `-<bucket_width>`. Please note that by doing so,
 you will incur higher write amplification and incur performance penalties.
 
 ```sql
-CREATE VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
-WITH (timescaledb.continuous,
-    timescaledb.refresh_lag = '-1h',
-    timescaledb.refresh_interval = '30m')
-AS
+CREATE MATERIALIZED VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
+WITH (timescaledb.continuous) AS
   SELECT time_bucket('1h', timec), min(location), sum(temperature), sum(humidity)
     FROM conditions
     GROUP BY time_bucket('1h', timec);
@@ -1785,11 +1763,11 @@ AS
 
 ---
 
-## ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
-`ALTER VIEW` statement can be used to modify the `WITH` clause [options](#continuous_aggregate-create_view-with) for the continuous aggregate view.
+## ALTER MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
+`ALTER MATERIALIZED VIEW` statement can be used to modify some of the `WITH` clause [options](#continuous_aggregate-create_view-with) for the continuous aggregate view.
 
 ``` sql
-ALTER VIEW <view_name> SET ( timescaledb.option =  <value> )
+ALTER MATERIALIZED VIEW <view_name> SET ( timescaledb.<option> =  <value> )
 ```
 #### Parameters
 |Name|Description|
@@ -1797,18 +1775,18 @@ ALTER VIEW <view_name> SET ( timescaledb.option =  <value> )
 | `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
 
 #### Sample Usage [](continuous_aggregate-alter_view-examples)
-Set the max interval processed by a materializer job (that updates the continuous aggregate) to 1 week.
-```sql
-ALTER VIEW contagg_view SET (timescaledb.max_interval_per_job = '1 week');
-```
-Set the refresh lag to 1 hour, the refresh interval to 30 minutes and the max
-interval processed by a job to 1 week for the continuous aggregate.
-```sql
-ALTER VIEW contagg_view SET (timescaledb.refresh_lag = '1h', timescaledb.max_interval_per_job = '1 week', timescaledb.refresh_interval = '30m');
 
+To disable [real-time aggregates][real-time-aggregates] for a
+continuous aggregate:
+
+```sql
+ALTER MATERIALIZED VIEW contagg_view SET (timescaledb.materialized_only = true);
 ```
->:TIP: Only WITH options can be modified using the ALTER statment. If
-you need to change any other parameters, drop the view and create a new one.
+
+The only option that currently can be modified with `ALTER
+MATERIALIZED VIEW` is `materialized_only`. The other options
+`continuous` and `create_group_indexes` can only be set when creating
+the continuous aggregate.
 
 ---
 
@@ -1829,22 +1807,20 @@ Update the continuous aggregate view immediately.
 REFRESH MATERIALIZED VIEW contagg_view;
 ```
 
->:TIP: Note that max_interval_per_job and refresh_lag parameter settings are used by the materialization job
-when the REFRESH is run. So the materialization (of the continuous aggregate) does not necessarily include
-all the updates to the hypertable.
-
 ---
 
-## DROP VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
-Continuous aggregate views can be dropped using `DROP VIEW` statement.
+## DROP MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-drop_view)
+Continuous aggregate views can be dropped using the `DROP MATERIALIZED VIEW` statement.
 
-This deletes the hypertable that stores the materialized data for the
-continuous aggregate; it does not affect the data in the underlying hypertable
-from which the continuous aggregate is derived (i.e., the raw data).  The
-`CASCADE` parameter is required for this command.
+This statement deletes the continuous aggregate and all its internal
+objects. To also delete other dependent objects&mdash;such as a view
+defined on the continuous aggregate&mdash;add the `CASCADE`
+option. Dropping a continuous aggregate does not affect the data in
+the underlying hypertable from which the continuous aggregate is
+derived.
 
 ``` sql
-DROP VIEW <view_name> CASCADE;
+DROP MATERIALIZED VIEW <view_name>;
 ```
 #### Parameters
 |Name|Description|
@@ -1854,13 +1830,38 @@ DROP VIEW <view_name> CASCADE;
 #### Sample Usage [](continuous_aggregate-drop_view-examples)
 Drop existing continuous aggregate.
 ```sql
-DROP VIEW contagg_view CASCADE;
+DROP MATERIALIZED VIEW contagg_view;
 ```
->:WARNING: `CASCADE` will drop those objects that depend on the continuous
-aggregate, such as views that are built on top of the continuous aggregate view.
 
+## refresh_continuous_aggregate() :community_function: [](refresh_continuous_aggregate)
+
+Refresh all buckets of a continuous aggregate between two points of
+time. 
+
+The function expects the parameter values to have the same time type
+as used in the continuous aggregate's time bucket expression (e.g., if
+the time bucket specifies in `timestamptz`, then the start and end time
+supplied should also be `timestamptz`).
+
+#### Required Arguments [](refresh_continuous_aggregate-required-arguments)
+
+|Name|Description|
+|---|---|
+| `continuous_aggregate` | (REGCLASS) The continuous aggregate to refresh. |
+| `window_start` | Start of the window to refresh, has to be before `window_end`. |
+| `window_end` | End of the window to refresh, has to be after `window_start`. |
+
+#### Sample Usage [](refresh_continuous_aggregate-examples)
+
+Refresh the continuous aggregate `conditions` between `2020-01-01` and
+`2020-02-01` exclusive.
+
+```sql
+CALL refresh_continuous_aggregate('conditions', '2020-01-01', '2020-02-01');
+```
 
 ---
+
 ## Automation policies :community_function: [](automation-policies)
 
 TimescaleDB includes an automation framework for allowing background tasks to
@@ -1873,6 +1874,50 @@ that schedule administrative actions to take place on a hypertable. The actions
 are meant to implement data retention or perform tasks that will improve query
 performance on older chunks. Each policy is assigned a scheduled job
 which will be run in the background to enforce it.
+
+## add_continuous_aggregate_policy() :community_function> [](add_continuous_aggregate_policy)
+
+Create a policy that automatically refreshes a continuous aggregate.
+
+#### Required Arguments [](add_continuous_aggregate_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `continuous_aggregate` | (REGCLASS) The continuous aggregate to add the policy for. |
+| `start_interval` | Start of the refresh window as an interval relative to the time when the policy is executed. |
+| `end_interval` | End of the refresh window as an interval relative to the time when the policy is executed. |
+| `schedule_interval` | Interval between refresh executions in wall-clock time. |
+
+Note that it is not very useful to have a value of `start_interval`
+that is smaller than `schedule_interval` since that can lead to
+strange gaps in the continuous aggregate. For example, if you refresh
+every day but only refresh the last hour you will be missing updates
+of the first 23 hours of the day.
+
+#### Optional Arguments [](add_continuous_aggregate_policy-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the continuous aggregate policy already exists. A notice is issued instead. Defaults to false. |
+
+#### Returns [](add_continuous_aggregate_policy-returns)
+
+|Column|Description|
+|---|---|
+|`job_id`| (INTEGER)  TimescaleDB background job id created to implement this policy|
+
+
+#### Sample Usage [](add_continuous_aggregate_policy-examples)
+
+Add a policy that refreshes the last month once an hour, excluding the latest hour from the aggregate (for performance reasons, it is recommended to exclude buckets that still see lots of writes):
+```sql
+SELECT add_continuous_aggregate_policy('conditions_summary',
+	start_interval => INTERVAL '1 month',
+	end_interval => INTERVAL '1 hour',
+	schedule_interval => INTERVAL '1 hour');
+```
+
+---
 
 ## add_retention_policy() :community_function: [](add_retention_policy)
 
@@ -2893,10 +2938,7 @@ Get metadata and settings information for continuous aggregates.
 |---|---|
 |`view_name` | User supplied name for continuous aggregate view |
 |`view_owner` | Owner of the continuous aggregate view|
-|`refresh_lag` | Amount by which the materialization for the continuous aggregate lags behind the current time |
 |`refresh_interval` | Interval between updates of the continuous aggregate materialization|
-|`max_interval_per_job` | Maximum amount of data processed by a materialization job in a single run|
-|`ignore_invalidation_older_than` | Age for which modified rows will not trigger update of the continuous aggregate|
 |`materialized_only` | Return only materialized data when querying the continuous aggregate view. |
 |`materialization_hypertable` | Name of the underlying materialization table|
 |`view_definition` | `SELECT` query for continuous aggregate view|
@@ -2907,10 +2949,7 @@ SELECT * FROM timescaledb_information.continuous_aggregates;
 -[ RECORD 1 ]------------------+-------------------------------------------------
 view_name                      | contagg_view
 view_owner                     | postgres
-refresh_lag                    | 02:00:00
 refresh_interval               | 00:30:00
-max_interval_per_job           | 20
-ignore_invalidation_older_than | 7 days
 materialized_only              | f
 materialization_hypertable     | _timescaledb_internal._materialized_hypertable_2
 view_definition                |  SELECT foo.a,                                  +
@@ -3594,3 +3633,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [caveats]: /using-timescaledb/continuous-aggregates
 [backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore
 [multinode-bootstrap]: /multinode/bootstrapping
+[real-time-aggregates]: /using-timescaledb/continuous-aggregates#real-time-aggregates
