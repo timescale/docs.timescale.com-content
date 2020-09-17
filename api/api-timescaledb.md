@@ -155,7 +155,6 @@ partitioning (e.g., for a second time partition) or hash partitioning.
 and talk with us on [Slack](https://slack-login.timescale.com) about
 your use case. Users will *rarely* want or need to use this command.
 
-<!-- --> 
 >vvv The `add_dimension` command can only be executed after a table has been
 converted to a hypertable (via `create_hypertable`), but must similarly
 be run only on an empty hypertable.
