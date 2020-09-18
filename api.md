@@ -32,7 +32,7 @@
 > - [first](#first)
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
-> - [hypertable_approximate_row_count](#hypertable_approximate_row_count)
+> - [approximate_row_count](#approximate_row_count)
 > - [hypertable_relation_size](#hypertable_relation_size)
 > - [hypertable_relation_size_pretty](#hypertable_relation_size_pretty)
 > - [indexes_relation_size](#indexes_relation_size)
@@ -3139,33 +3139,33 @@ SELECT get_telemetry_report(always_display_report := true);
 
 ---
 
-## hypertable_approximate_row_count() [](hypertable_approximate_row_count)
+## approximate_row_count() [](approximate_row_count)
 
-Get approximate row count for hypertable(s) based on catalog estimates.
+Get approximate row count for hypertable, distributed hypertable, or regular PostgreSQL table based on catalog estimates.
+This function support tables with nested inheritance and declarative partitioning.
 
-#### Optional Arguments [](hypertable_approximate_row_count-optional-arguments)
+The accuracy of approximate_row_count depends on the database having up-to-date statistics about the table or hypertable, which are updated by VACUUM, ANALYZE, and a few DDL commands. If you have auto-vacuum configured on your table or hypertable, or changes to the table are relatively infrequent, you might not need to explicitly ANALYZE your table as shown below. Otherwise, if your table statistics are too out-of-date, running this command will update your statistics and yield more accurate approximation results.
+
+#### Required Arguments [](approximate_row_count-required-arguments)
 
 |Name|Description|
 |---|---|
-| `main_table` | Hypertable to get row count for. If omitted, all hypertabls are returned. |
+| `relation` | Hypertable or regular PostgreSQL table to get row count for. |
 
-#### Sample Usage [](hypertable_approximate_row_count-examples)
+#### Sample Usage [](approximate_row_count-examples)
 
 Get the approximate row count for a single hypertable.
 ```sql
-SELECT * FROM hypertable_approximate_row_count('conditions');
-```
+ANALYZE conditions;
 
-Get the approximate row count for all hypertables.
-```sql
-SELECT * FROM hypertable_approximate_row_count();
+SELECT * FROM approximate_row_count('conditions');
 ```
 
 The expected output:
 ```
- schema_name | table_name | row_estimate
--------------+------------+--------------
-  public     | conditions |      240000
+approximate_row_count
+----------------------
+               240000
 ```
 
 ---
