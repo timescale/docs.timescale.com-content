@@ -16,8 +16,7 @@
 > - [attach_tablespace](#attach_tablespace)
 > - [block_new_chunks](#block_new_chunks)
 > - [chunk_compression_stats](#chunk_compression_stats)
-> - [chunk_relation_size](#chunk_relation_size)
-> - [chunk_relation_size_pretty](#chunk_relation_size_pretty)
+> - [chunks_detailed_size](#chunks_detailed_size)
 > -	[compress_chunk](#compress_chunk)
 > - [create_distributed_hypertable](#create_distributed_hypertable)
 > - [create_hypertable](#create_hypertable)
@@ -35,10 +34,9 @@
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
 > - [hypertable_compression_stats](#hypertable_compression_stats)
-> - [hypertable_relation_size](#hypertable_relation_size)
-> - [hypertable_relation_size_pretty](#hypertable_relation_size_pretty)
-> - [indexes_relation_size](#indexes_relation_size)
-> - [indexes_relation_size_pretty](#indexes_relation_size_pretty)
+> - [hypertable_detailed_size](#hypertable_size)
+> - [hypertable_index_size](#hypertable_index_size)
+> - [hypertable_size](#hypertable_size)
 > - [interpolate](#interpolate)
 > - [last](#last)
 > - [locf](#locf)
@@ -673,7 +671,7 @@ corresponds to increased planning latency for some types of queries.
 both the underlying data size *and* any indexes, so some care might be
 taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
-total chunk sizes via the [`chunk_relation_size`](#chunk_relation_size)
+total chunk sizes via the [`chunks_detailed_size`](#chunks_detailed_size)
 function.
 
 **Space partitions:** In most cases, it is advised for users not to use
@@ -3138,98 +3136,6 @@ total_failures         | 0
 ```
 ---
 
-## chunk_relation_size() [](chunk_relation_size)
-
-Get relation size of the chunks of an hypertable.
-
-#### Required Arguments [](chunk_relation_size-required-arguments)
-
-|Name|Description|
-|---|---|
-| `main_table` | Identifier of hypertable to get chunk relation sizes for.|
-
-#### Returns [](chunk_relation_size-returns)
-|Column|Description|
-|---|---|
-|chunk_id|TimescaleDB id of a chunk|
-|chunk_table|Table used for the chunk|
-|partitioning_columns|Partitioning column names|
-|partitioning_column_types|Types of partitioning columns|
-|partitioning_hash_functions|Hash functions of partitioning columns|
-|dimensions|Partitioning dimension names|
-|ranges|Partitioning ranges for each dimension|
-|table_bytes|Disk space used by main_table|
-|index_bytes|Disk space used by indexes|
-|toast_bytes|Disk space of toast tables|
-|total_bytes|Disk space used in total|
-
-#### Sample Usage [](chunk_relation_size-examples)
-```sql
-SELECT * FROM chunk_relation_size('conditions');
-```
-or, to reduce the output, a common use is:
-```sql
-SELECT chunk_table, table_bytes, index_bytes, total_bytes
-FROM chunk_relation_size('conditions');
-```
-The expected output:
-```
-                 chunk_table                 | table_bytes | index_bytes | total_bytes
----------------------------------------------+-------------+-------------+-------------
- "_timescaledb_internal"."_hyper_1_1_chunk"  |    29220864 |    37773312 |    67002368
- "_timescaledb_internal"."_hyper_1_2_chunk"  |    59252736 |    81297408 |   140558336
- ...
-```
-
-Where `chunk_table` is the table that contains the data, `table_bytes` is the size of that table, `index_bytes` is the size of the indexes of the table, and `total_bytes` is the size of the table with indexes.
-
----
-
-## chunk_relation_size_pretty() [](chunk_relation_size_pretty)
-
-Get relation size of the chunks of an hypertable.
-
-#### Required Arguments [](chunk_relation_size_pretty-required-arguments)
-
-|Name|Description|
-|---|---|
-| `main_table` | Identifier of hypertable to get chunk relation sizes for.|
-
-#### Returns [](chunk_relation_size_pretty-returns)
-|Column|Description|
-|---|---|
-|chunk_id|TimescaleDB id of a chunk|
-|chunk_table|Table used for the chunk|
-|partitioning_columns|Partitioning column names|
-|partitioning_column_types|Types of partitioning columns|
-|partitioning_hash_functions|Hash functions of partitioning columns|
-|ranges|Partitioning ranges for each dimension|
-|table_size|Pretty output of table_bytes|
-|index_size|Pretty output of index_bytes|
-|toast_size|Pretty output of toast_bytes|
-|total_size|Pretty output of total_bytes|
-
-#### Sample Usage [](chunk_relation_size_pretty-examples)
-```sql
-SELECT * FROM chunk_relation_size_pretty('conditions');
-```
-or, to reduce the output, a common use is:
-```sql
-SELECT chunk_table, table_size, index_size, total_size
-FROM chunk_relation_size_pretty('conditions');
-```
-The expected output:
-```
-                chunk_table                  | table_size | index_size | total_size
----------------------------------------------+------------+------------+------------
- "_timescaledb_internal"."_hyper_1_1_chunk"  | 28 MB      | 36 MB      | 64 MB
- "_timescaledb_internal"."_hyper_1_2_chunk"  | 57 MB      | 78 MB      | 134 MB
- ...
-```
-Where `chunk_table` is the table that contains the data, `table_size` is the size of that table, `index_size` is the size of the indexes of the table, and `total_size` is the size of the table with indexes.
-
----
-
 ## get_telemetry_report() [](get_telemetry_report)
 
 If background [telemetry][] is enabled, returns the string sent to our servers.
@@ -3408,138 +3314,158 @@ SELECT pg_size_pretty(after_compression_total_bytes) as total
 total | 48 kB
 
 ```
-## hypertable_relation_size() [](hypertable_relation_size)
+---
 
-Get relation size of hypertable like `pg_relation_size(hypertable)`.
+## hypertable_detailed_size()  [](hypertable_detailed_size)
 
-#### Required Arguments [](hypertable_relation_size-required-arguments)
+Get size of hypertable like `pg_relation_size(hypertable)`, returning 
+size information for the table itself, any indexes on the table, any 
+toast tables, and the total size of all. All sizes are reported in bytes.
+If this is a distributed hypertable, the function returns size
+information as a separate row per node. 
+
+#### Required Arguments [](hypertable_detailed_size-required-arguments)
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of hypertable to get relation size for.|
+| `main_table` | (REGCLASS) Name of the hypertable |
 
-#### Returns [](hypertable_relation_size-returns)
+#### Returns [](hypertable_detailed_size-returns)
 |Column|Description|
 |---|---|
-|table_bytes|Disk space used by main_table (like pg_relation_size(main_table))|
-|index_bytes|Disk space used by indexes|
-|toast_bytes|Disk space of toast tables|
-|total_bytes|Total disk space used by the specified table, including all indexes and TOAST data|
+|table_bytes|(BIGINT) Disk space used by main_table (like pg_relation_size(main_table))|
+|index_bytes|(BIGINT) Disk space used by indexes|
+|toast_bytes|(BIGINT) Disk space of toast tables|
+|total_bytes|(BIGINT) Total disk space used by the specified table, including all indexes and TOAST data|
+|node_name| (NAME) Node for which size is reported, applicable only to distributed hypertables|
 
-#### Sample Usage [](hypertable_relation_size-examples)
+#### Sample Usage [](hypertable_detailed_size-examples)
+Get size information for a hypertable.
 ```sql
-SELECT * FROM hypertable_relation_size('conditions');
-```
-or, to reduce the output, a common use is:
-```sql
-SELECT table_bytes, index_bytes, toast_bytes, total_bytes
-FROM hypertable_relation_size('conditions');
-```
-The expected output:
-```
- table_bytes | index_bytes | toast_bytes | total_bytes
--------------+-------------+-------------+-------------
-  1227661312 |  1685979136 |      180224 |  2913820672
+-- disttable is a distributed hypertable --
+SELECT * FROM hypertable_detailed_size('disttable') ORDER BY node_name;
+
+ table_bytes | index_bytes | toast_bytes | total_bytes |  node_name
+-------------+-------------+-------------+-------------+-------------
+       16384 |       32768 |           0 |       49152 | data_node_1
+        8192 |       16384 |           0 |       24576 | data_node_2
+
 ```
 ---
 
-## hypertable_relation_size_pretty() [](hypertable_relation_size_pretty)
+## chunks_detailed_size()   [](chunks_detailed_size)
 
-Get relation size of hypertable like `pg_relation_size(hypertable)`.
+Get size information about the chunks belonging to a hypertable, returning 
+size information for each chunk table itself, any indexes on the chunk, any 
+toast tables, and the total size associated with the chunk. All sizes are 
+reported in bytes.
 
-#### Required Arguments [](hypertable_relation_size_pretty-required-arguments)
+If this is a distributed hypertable, the function returns size
+information as a separate row per node.
+
+Additional metadata associated with a chunk can be accessed 
+via the `timescaledb_information.chunks` view.
+
+#### Required Arguments [](chunks_detailed_size-required-arguments)
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of hypertable to get relation size for.|
+| `main_table` | (REGCLASS) Name of the hypertable |
 
-#### Returns [](hypertable_relation_size_pretty-returns)
+#### Returns [](chunks_detailed_size-returns)
 |Column|Description|
 |---|---|
-|table_size|Pretty output of table_bytes|
-|index_size|Pretty output of index_bytes|
-|toast_size|Pretty output of toast_bytes|
-|total_size|Pretty output of total_bytes|
+|chunk_schema| (NAME) Schema name of the chunk |
+|chunk_name| (NAME) Name of the chunk|
+|table_bytes|(BIGINT) Disk space used by the chunk table|
+|index_bytes|(BIGINT) Disk space used by indexes|
+|toast_bytes|(BIGINT) Disk space of toast tables|
+|total_bytes|(BIGINT) Total disk space used by the chunk, including all indexes and TOAST data|
+|node_name| (NAME) Node for which size is reported, applicable only to distributed hypertables|
 
-#### Sample Usage [](hypertable_relation_size_pretty-examples)
+#### Sample Usage [](chunks_detailed_size-examples)
 ```sql
-SELECT * FROM hypertable_relation_size_pretty('conditions');
-```
-or, to reduce the output, a common use is:
-```sql
-SELECT table_size, index_size, toast_size, total_size
-FROM hypertable_relation_size_pretty('conditions');
-```
-The expected output:
-```
- table_size | index_size | toast_size | total_size
-------------+------------+------------+------------
- 1171 MB    | 1608 MB    | 176 kB     | 2779 MB
-```
+SELECT * FROM chunks_detailed_size('dist_table')
+  ORDER BY chunk_name, node_name;
 
+     chunk_schema      |      chunk_name       | table_bytes | index_bytes | toast_bytes | total_bytes |       node_name
+-----------------------+-----------------------+-------------+-------------+-------------+-------------+-----------------------
+ _timescaledb_internal | _dist_hyper_1_1_chunk |        8192 |       32768 |           0 |       40960 | db_node1
+ _timescaledb_internal | _dist_hyper_1_2_chunk |        8192 |       32768 |           0 |       40960 | db_node2
+ _timescaledb_internal | _dist_hyper_1_3_chunk |        8192 |       32768 |           0 |       40960 | db_node3
+```
 ---
 
-## indexes_relation_size() [](indexes_relation_size)
+## hypertable_size()  [](hypertable_size)
 
-Get sizes of indexes on a hypertable.
+Get total size of hypertable i.e. the sum of the size for the table itself, 
+any indexes on the table, and any toast tables. The size is reported in bytes. 
+This is equivalent to computing the sum of `total_bytes` column from the 
+output of `hypertable_detailed_size` function.
 
-#### Required Arguments [](indexes_relation_size-required-arguments)
+#### Required Arguments [](hypertable_size-required-arguments)
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of hypertable to get indexes size for.|
+| `main_table` | (REGCLASS) Name of the hypertable |
 
-#### Returns [](indexes_relation_size-returns)
-|Column|Description|
-|---|---|
-|index_name|Index on hypertable|
-|total_bytes|Size of index on disk|
+#### Returns [](hypertable_size-returns)
+(BIGINT) Total disk space used by the specified table, including all indexes and TOAST data|
 
-#### Sample Usage [](indexes_relation_size-examples)
+#### Sample Usage [](hypertable_size-examples)
+Get size information for a hypertable.
 ```sql
-SELECT * FROM indexes_relation_size('conditions');
-```
-The expected output:
-```
-              index_name              | total_bytes
---------------------------------------+-------------
- public.conditions_device_id_time_idx |  1198620672
- public.conditions_time_idx           |   487358464
+SELECT hypertable_size('devices') ;
 
+ hypertable_size
+-----------------
+           73728
 ```
-
 ---
 
-## indexes_relation_size_pretty() [](indexes_relation_size_pretty)
+## hypertable_index_size()  [](hypertable_index_size)
 
-Get sizes of indexes on a hypertable.
+Get size of an index on a hypertable. The size is reported in bytes.
 
-#### Required Arguments [](indexes_relation_size_pretty-required-arguments)
+#### Required Arguments [](hypertable_index_size-required-arguments)
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of hypertable to get indexes size for.|
+| `main_table` | (REGCLASS) Name of the hypertable |
 
-#### Returns [](indexes_relation_size_pretty-returns)
-|Column|Description|
-|---|---|
-|index_name|Index on hypertable|
-|total_size|Pretty output of total_bytes|
+#### Returns [](hypertable_index_size-returns)
+(BIGINT) Returns disk space used by the index. 
 
-#### Sample Usage [](indexes_relation_size_pretty-examples)
+#### Sample Usage [](hypertable_index_size-examples)
+
+Get size of a specific index on a hypertable.
+
 ```sql
-SELECT * FROM indexes_relation_size_pretty('conditions');
-```
-The expected output:
-```
+\d conditions_table
+                     Table "public.test_table"
+ Column |           Type           | Collation | Nullable | Default 
+--------+--------------------------+-----------+----------+---------
+ time   | timestamp with time zone |           | not null | 
+ device | integer                  |           |          | 
+ volume | integer                  |           |          | 
+Indexes:
+    "second_index" btree ("time")
+    "test_table_time_idx" btree ("time" DESC)
+    "third_index" btree ("time")
 
-             index_name_              | total_size
---------------------------------------+------------
- public.conditions_device_id_time_idx | 1143 MB
- public.conditions_time_idx           | 465 MB
+SELECT hypertable_index_size('second_index');
+
+ hypertable_index_size 
+-----------------------
+                163840
+
+SELECT pg_size_pretty(hypertable_index_size('second_index'));
+
+ pg_size_pretty 
+----------------
+ 160 kB
 
 ```
-
 ---
 
 ## show_tablespaces() [](show_tablespaces)
@@ -3615,7 +3541,7 @@ psql [your connect flags] -d your_timescale_db < dump_meta_data.sql > dumpfile.t
 and then inspect `dump_file.txt` before sending it together with a bug report or support question.
 
 [Slack]: https://slack-login.timescale.com
-[chunk relation size]: #chunk_relation_size
+[chunk detailed size]: #chunk_detailed_size
 [best practices]: #create_hypertable-best-practices
 [using-continuous-aggs]: /using-timescaledb/continuous-aggregates
 [using-compression]: /using-timescaledb/compression
