@@ -2705,16 +2705,16 @@ Get metadata information about hypertables.
 
 |Name|Description|
 |---|---|
-| `table_schema` | Schema name of the hypertable |
-| `table_name` | Table name of the hypertable |
-| `table_owner` | Owner of the hypertable |
-| `num_dimensions` | Number of dimensions |
-| `num_chunks` | Number of chunks |
-| `compression_enabled` |Is compression enabled on the hypertable?|
-| `is_distributed` | Is the hypertable distributed?|
-| `replication_factor` | Replication factor for a distributed hypertable|
-| `data_nodes` | Nodes on which hypertable is distributed|
-| `tablespaces` |Tablespaces attached to the hypertable |
+| `table_schema` | (NAME) Schema name of the hypertable |
+| `table_name` | (NAME) Table name of the hypertable |
+| `table_owner` | (NAME) Owner of the hypertable |
+| `num_dimensions` | (SMALLINT) Number of dimensions |
+| `num_chunks` | (BIGINT) Number of chunks |
+| `compression_enabled` | (BOOLEAN) Is compression enabled on the hypertable?|
+| `is_distributed` | (BOOLEAN) Is the hypertable distributed?|
+| `replication_factor` | (SMALLINT) Replication factor for a distributed hypertable|
+| `data_nodes` | (NAME[]) Nodes on which hypertable is distributed|
+| `tablespaces` | (NAME[]) Tablespaces attached to the hypertable |
 
 #### Sample Usage [](timescaledb_information-hypertables-examples)
 
@@ -2763,16 +2763,16 @@ not applicable for space based dimensions.
 
 |Name|Description|
 |---|---|
-| `hypertable_schema` | Schema name of the hypertable |
-| `hypertable_name` | Table name of the hypertable |
-| `dimension_number` | Dimension number of the hypertable, starting from 1 |
-| `column_name` | Name of the column used to create this dimension |
-| `column_type` | Type of the column used to create this dimension|
-| `dimension_type` |Is this time based or space based dimension?|
-| `time_interval` | Time interval for primary dimension if the column type is based on Postgres time datatypes |
-| `integer_interval` | Integer interval for primary dimension if the column type is an integer datatype |
-| `integer_now_func` | integer_now function for primary dimension if the column type is integer based datatype|
-| `num_partitions` | Number of partitions for the dimension |
+| `hypertable_schema` | (NAME) Schema name of the hypertable |
+| `hypertable_name` | (NAME) Table name of the hypertable |
+| `dimension_number` | (BIGINT) Dimension number of the hypertable, starting from 1 |
+| `column_name` | (NAME) Name of the column used to create this dimension |
+| `column_type` | (REGTYPE) Type of the column used to create this dimension|
+| `dimension_type` | (TEXT) Is this time based or space based dimension?|
+| `time_interval` | (INTERVAL) Time interval for primary dimension if the column type is based on Postgres time datatypes |
+| `integer_interval` | (BIGINT) Integer interval for primary dimension if the column type is an integer datatype |
+| `integer_now_func` | (NAME) integer_now function for primary dimension if the column type is integer based datatype|
+| `num_partitions` | (SMALLINT) Number of partitions for the dimension |
 
 #### Sample Usage [](timescaledb_information-dimensions-examples)
 
@@ -2860,19 +2860,19 @@ If the chunk's primary dimension is of a time datatype, `range_start` and
 
 |Name|Description|
 |---|---|
-| `hypertable_schema` | Schema name of the hypertable |
-| `hypertable_name` | Table name of the hypertable |
-| `chunk_schema` | Schema name of the chunk |
-| `chunk_name` | Name of the chunk |
-| `primary_dimension` | Name of the column that is the primary dimension|
-| `primary_dimension_type` | Type of the column that is the primary dimension|
-| `range_start` | Start of the range for the chunk's dimension |
-| `range_end` | End of the range for the chunk's dimension |
-| `range_start_integer` | Start of the range for the chunk's dimension, if the dimension type is integer based |
-| `range_end_integer` | End of the range for the chunk's dimension, if the dimension type is integer based |
-| `is_compressed` | Is the data in the chunk compressed?|
-| `chunk_tablespace` | Tablespace used by the chunk|
-| `data_nodes` | Nodes on which the chunk is replicated. This is applicable only to chunks for distributed hypertables |
+| `hypertable_schema` | (NAME) Schema name of the hypertable |
+| `hypertable_name` | (NAME) Table name of the hypertable |
+| `chunk_schema` | (NAME) Schema name of the chunk |
+| `chunk_name` | (NAME) Name of the chunk |
+| `primary_dimension` | (NAME) Name of the column that is the primary dimension|
+| `primary_dimension_type` | (REGTYPE) Type of the column that is the primary dimension|
+| `range_start` | (TIMESTAMP WITH TIME ZONE) Start of the range for the chunk's dimension |
+| `range_end` | (TIMESTAMP WITH TIME ZONE) End of the range for the chunk's dimension |
+| `range_start_integer` | (BIGINT) Start of the range for the chunk's dimension, if the dimension type is integer based |
+| `range_end_integer` | (BIGINT) End of the range for the chunk's dimension, if the dimension type is integer based |
+| `is_compressed` | (BOOLEAN) Is the data in the chunk compressed?|
+| `chunk_tablespace` | (NAME) Tablespace used by the chunk|
+| `data_nodes` | (NAME[]) Nodes on which the chunk is replicated. This is applicable only to chunks for distributed hypertables |
 
 #### Sample Usage [](timescaledb_information-chunks-examples)
 
@@ -2934,35 +2934,27 @@ Get metadata and settings information for continuous aggregates.
 
 |Name|Description|
 |---|---|
-|`view_name` | User supplied name for continuous aggregate view |
-|`view_owner` | Owner of the continuous aggregate view|
-|`refresh_interval` | Interval between updates of the continuous aggregate materialization|
-|`materialized_only` | Return only materialized data when querying the continuous aggregate view. |
-|`materialization_hypertable` | Name of the underlying materialization table|
-|`view_definition` | `SELECT` query for continuous aggregate view|
+|`view_name` | (REGCLASS) User supplied name for continuous aggregate view |
+|`view_owner` | (NAME) Owner of the continuous aggregate view|
+|`schedule_interval` | (INTERVAL) Interval between updates of the continuous aggregate materialization|
+|`materialized_only` | (BOOLEAN) Return only materialized data when querying the continuous aggregate view. |
+|`materialization_hypertable` | (REGCLASS) Name of the underlying materialization table|
+|`view_definition` |(TEXT) `SELECT` query for continuous aggregate view|
 
 #### Sample Usage
 ```sql
 SELECT * FROM timescaledb_information.continuous_aggregates;
+
 -[ RECORD 1 ]------------------+-------------------------------------------------
 view_name                      | contagg_view
 view_owner                     | postgres
-refresh_interval               | 00:30:00
+schedule_interval              | 00:30:00
 materialized_only              | f
 materialization_hypertable     | _timescaledb_internal._materialized_hypertable_2
 view_definition                |  SELECT foo.a,                                  +
                                |     COUNT(foo.b) AS countb                      +
                                |    FROM foo                                     +
                                |   GROUP BY (time_bucket('1 day', foo.a)), foo.a;
-
--- description of foo
-\d foo
-                Table "public.foo"
- Column |  Type   | Collation | Nullable | Default
---------+---------+-----------+----------+---------
- a      | integer |           | not null |
- b      | integer |           |          |
- c      | integer |           |          |
 
 ```
 ---
@@ -2976,11 +2968,11 @@ and segmentby columns used by compression.
 
 |Name|Description|
 |---|---|
-| `table_schema` | Schema name of the hypertable |
-| `table_name` | Table name of the hypertable |
-| `attname` | Name of the column used in the compression settings |
-| `segmentby_column_index` | Position of attname in the compress_segmentby list |
-| `orderby_column_index` | Position of attname in the compress_orderby list |
+| `table_schema` | (NAME) Schema name of the hypertable |
+| `table_name` | (NAME) Table name of the hypertable |
+| `attname` | (NAME) Name of the column used in the compression settings |
+| `segmentby_column_index` | (SMALLINT) Position of attname in the compress_segmentby list |
+| `orderby_column_index` | (SMALLINT) Position of attname in the compress_orderby list |
 | `orderby_asc` | (BOOLEAN) True if this is used for order by ASC, False for order by DESC |
 | `orderby_nullsfirst` | (BOOLEAN) True if nulls are ordered first for this column, False if nulls are ordered last|
 
