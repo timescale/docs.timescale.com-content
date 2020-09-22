@@ -57,18 +57,6 @@ that your TimescaleDB instance is running under. If you are using OSS or Communi
 we only send an "edition" field, which could have a value of either "apache_only" or "community",
 as relevant.
 
-If you are using an Enterprise license, we report a few more relevant items, a sample
-of which is below.
-
-```javascript
-"license": {
-	"id": "490FB260-A292-4AD9-9AA2-0360835791B8",
-	"kind": "trial",
-	"edition": "enterprise",
-	"end_time": "2018-09-30 20:00:00-04",
-	"start_time": "2018-08-31 20:00:00-04"
-}
-```
 
 ## Version Checking
 The database sends telemetry reports periodically in the background.

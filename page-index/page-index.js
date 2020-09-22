@@ -208,10 +208,6 @@ const pageIndex = [
                 type: NON_MENU_PAGE,
                 href: "exploring-forge"
             }, {
-                Title: "Setting up Enterprise",
-                type: NON_MENU_PAGE,
-                href: "exploring-enterprise"
-            }, {
                 Title: "Configuration",
                 type: PAGE,
                 href: "configuring"

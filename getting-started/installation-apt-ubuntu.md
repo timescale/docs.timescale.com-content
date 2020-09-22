@@ -64,16 +64,12 @@ To get started you'll now need to restart PostgreSQL:
 sudo service postgresql restart
 ```
 
->:TIP: Our standard binary releases are licensed under the Timescale License.
-This means that you can use all of our free Community capabilities and
-seamlessly activate Enterprise capabilities.
+>:TIP: Our standard binary releases are licensed under the Timescale License,
+which allows to use all our capabilities.
 If you want to use a version that contains _only_ Apache 2.0 licensed
 code, you should install the package `timescaledb-oss-postgresql-:pg_version:`.
-For more information about licensing, please read our [blog post][blog-post]
-about the subject.
 
 [ubuntu-releases]: http://releases.ubuntu.com/
 [config]: /getting-started/configuring
-[blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
