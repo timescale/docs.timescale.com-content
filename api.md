@@ -55,16 +55,14 @@
 > - [time_bucket](#time_bucket)
 > - [time_bucket_gapfill](#time_bucket_gapfill)
 > - [timescaledb_information.data_node](#timescaledb_information-data_node)
-> - [timescaledb_information.hypertable](#timescaledb_information-hypertable)
-> - [timescaledb_information.license](#timescaledb_information-license)
-> - [timescaledb_information.compressed_chunk_stats](#timescaledb_information-compressed_chunk_stats)
-> - [timescaledb_information.compressed_hypertable_stats](#timescaledb_information-compressed_hypertable_stats)
+> - [timescaledb_information.hypertables](#timescaledb_information-hypertables)
+> - [timescaledb_information.chunks](#timescaledb_information-chunks)
+> - [timescaledb_information.dimensions](#timescaledb_information-dimensions)
 > - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
 > - [timescaledb_information.continuous_aggregate_stats](#timescaledb_information-continuous_aggregate_stats)
 > - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
 > - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
 > - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
-> - [timescaledb.license_key](#timescaledb_license-key)
 > - [timescaledb_pre_restore](#timescaledb_pre_restore)
 > - [timescaledb_post_restore](#timescaledb_post_restore)
 
@@ -1429,7 +1427,7 @@ runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the 
 
 ---
 
-## move_chunk() :enterprise_function: [](move_chunk)
+## move_chunk() :community_function: [](move_chunk)
 TimescaleDB allows users to move data (and indexes) to alternative
 tablespaces. This allows the user the ability to move data to more cost
 effective storage as it ages. This function acts like the combination of the
@@ -2714,31 +2712,6 @@ metrics       |    604800000000
 (1 row)
 ```
 
-## timescaledb_information.license [](timescaledb_information-license)
-
-Get information about current license.
-
-#### Available Columns [](timescaledb_information-license-available-columns)
-
-|Name|Description|
-|---|---|
-| `edition` | License key type (apache_only, community, enterprise) |
-| `expired` | Expiration status of license key (bool) |
-| `expiration_time` | Time of license key expiration |
-
-#### Sample Usage [](timescaledb_information-license-examples)
-
-Get information about current license.
-
-```sql
-SELECT * FROM timescaledb_information.license;
-
-edition   | expired |    expiration_time
-------------+---------+------------------------
-enterprise | f       | 2019-02-15 13:44:53-05
-(1 row)
-```
-
 ---
 ## timescaledb_information.compressed_chunk_stats [](timescaledb_information-compressed_chunk_stats)
 
@@ -3011,16 +2984,6 @@ SELECT * FROM timescaledb_information.policy_stats;
 (1 row)
 ```
 
----
-## timescaledb.license_key [](timescaledb_license-key)
-
-#### Sample Usage [](timescaledb_license-key-examples)
-
-View current license key.
-
-```sql
-SHOW timescaledb.license_key;
-```
 ---
 
 ## chunk_relation_size() [](chunk_relation_size)

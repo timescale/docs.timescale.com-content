@@ -68,13 +68,10 @@ until explicitly removed. Use `docker volume ls` to list the existing
 docker volumes.
 ([More information on data volumes][docker-data-volumes])
 
->:TIP: Our standard binary releases are licensed under the Timescale License.
-This means that you can use all of our free Community capabilities and
-seamlessly activate Enterprise capabilities.
+>:TIP: Our standard binary releases are licensed under the Timescale License,
+which allows to use all our capabilities.
 If you want to use a version that contains _only_ Apache 2.0 licensed
 code, you should pull the tag `latest-pg:pg_version:-oss`.
-For more information about licensing, please read our [blog post][blog-post]
-about the subject.
 
 ## Prebuilt with PostGIS [](postgis-docker)
 
@@ -109,7 +106,6 @@ For more instructions on using our Prometheus adapter, [see our tutorial][tutori
 [official-image]: https://github.com/docker-library/postgres/
 [alpine Linux]: https://alpinelinux.org/
 [docker-data-volumes]: https://docs.docker.com/storage/volumes/
-[blog-post]: https://www.timescale.com/blog/how-we-are-building-an-open-source-business-a7701516a480
 [tutorial-postgis]: http://docs.timescale.com/tutorials/tutorial-hello-nyc#tutorial-postgis
 [adapter-github]: https://github.com/timescale/prometheus-postgresql-adapter
 [prometheus-extension]: https://github.com/timescale/pg_prometheus
