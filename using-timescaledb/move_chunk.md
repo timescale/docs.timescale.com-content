@@ -28,7 +28,7 @@ disk arrays, and ensure that large hypertables (where you may be performing anal
 do not overrun the disk backing the default tablespace.
 
 
-### Move Chunks :enterprise_function: [](move)
+### Move Chunks :community_function: [](move)
 
 The move chunks function requires multiple tablespaces set up in Postgres, so let's
 start with a quick review of how this works.
