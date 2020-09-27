@@ -1967,7 +1967,6 @@ one retention policy may exist per hypertable.
 |---|---|
 | `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the drop_chunks_policy already exists. A notice is issued instead. Defaults to false. |
 
-
 #### Returns [](add_retention_policy-returns)
 
 |Column|Description|
