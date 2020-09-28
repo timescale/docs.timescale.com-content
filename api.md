@@ -54,14 +54,14 @@
 > - [show_tablespaces](#show_tablespaces)
 > - [time_bucket](#time_bucket)
 > - [time_bucket_gapfill](#time_bucket_gapfill)
-> - [timescaledb_information.data_node](#timescaledb_information-data_node)
-> - [timescaledb_information.hypertables](#timescaledb_information-hypertables)
 > - [timescaledb_information.chunks](#timescaledb_information-chunks)
-> - [timescaledb_information.dimensions](#timescaledb_information-dimensions)
 > - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
 > - [timescaledb_information.compression_settings](#timescaledb_information-compression_settings)
+> - [timescaledb_information.data_node](#timescaledb_information-data_node)
+> - [timescaledb_information.dimensions](#timescaledb_information-dimensions)
 > - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
-> - [timescaledb_information.policy_stats](#timescaledb_information-policy_stats)
+> - [timescaledb_information.hypertables](#timescaledb_information-hypertables)
+> - [timescaledb_information.job_stats](#timescaledb_information-job_stats)
 > - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
 > - [timescaledb_pre_restore](#timescaledb_pre_restore)
 > - [timescaledb_post_restore](#timescaledb_post_restore)
@@ -1726,7 +1726,7 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 [postgres-security-barrier]:https://www.postgresql.org/docs/current/rules-privileges.html
 
 >:TIP: You can find the [settings for continuous aggregates](#timescaledb_information-continuous_aggregate) and
-[statistics](#timescaledb_information-policy_stats) in `timescaledb_information` views.
+[statistics](#timescaledb_information-job_stats) in `timescaledb_information` views.
 
 #### Sample Usage [](continuous_aggregate-create-examples)
 Create a continuous aggregate view.
@@ -2063,7 +2063,7 @@ worker. You can change the schedule using `alter_job_schedule`. To alter an
 existing job, you must refer to it by `job_id`. The `job_id` which implements a
 given policy and its current schedule can be found in views in the
 `timescaledb_information` schema corresponding to different types of policies or
-in the general `timescaledb_information.policy_stats` view. This view
+in the general `timescaledb_information.job_stats` view. This view
 additionally contains information about when each job was last run and other
 useful statistics for deciding what the new schedule should be.
 
@@ -3065,38 +3065,39 @@ SELECT * FROM timescaledb_information.reorder_policies;
 ```
 
 ---
-## timescaledb_information.policy_stats [](timescaledb_information-policy_stats)
+## timescaledb_information.job_stats [](timescaledb_information-job_stats)
 
-Shows information and statistics about policies created to manage data retention,
-continuous aggregates, compression, custom jobs and other automation policies. 
-(See [policies](#automation-policies)). 
+Shows information and statistics about jobs run by the automation framework.
+This includes jobs set up for user defined actions and jobs run by policies 
+created to manage data retention, continuous aggregates, compression, and
+other automation policies.  (See [policies](#automation-policies)). 
 The statistics include information useful for administering jobs and determining
 whether they ought be rescheduled, such as: when and whether the background job
 used to implement the policy succeeded and when it is scheduled to run next.
 
-#### Available Columns [](timescaledb_information-policy_stats-available-columns)
+#### Available Columns [](timescaledb_information-job_stats-available-columns)
 
 |Name|Description|
 |---|---|
 |`hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
 |`job_id` | (INTEGER) The id of the background job created to implement the policy |
-|`last_run_started_at`| Start time of the last job|
-|`last_successful_finish`| Time when the job completed successfully|
-|`last_run_status` | Whether the last run succeeded or failed |
-|`job_status`| Status of the job. Valid values are ‘Running’ and ‘Scheduled’|
-|`last_run_duration`| Duration of last run of the job|
-|`next_scheduled_run` | Start time of the next run |
-|`total_runs` | The total number of runs of this job|
-|`total_successes` | The total number of times this job succeeded |
-|`total_failures` | The total number of times this job failed |
+|`last_run_started_at`| (TIMESTAMP WITH TIME ZONE) Start time of the last job|
+|`last_successful_finish`| (TIMESTAMP WITH TIME ZONE) Time when the job completed successfully|
+|`last_run_status` | (TEXT) Whether the last run succeeded or failed |
+|`job_status`| (TEXT) Status of the job. Valid values are ‘Running’ and ‘Scheduled’|
+|`last_run_duration`| (INTERVAL) Duration of last run of the job|
+|`next_scheduled_run` | (TIMESTAMP WITH TIME ZONE) Start time of the next run |
+|`total_runs` | (BIGINT) The total number of runs of this job|
+|`total_successes` | (BIGINT) The total number of times this job succeeded |
+|`total_failures` | (BIGINT) The total number of times this job failed |
 
-#### Sample Usage [](timescaledb_information-policy_stats-examples)
+#### Sample Usage [](timescaledb_information-job_stats-examples)
 
 Get job success/failure information for a specific hypertable.
 
 ```sql
 SELECT job_id, total_runs, total_failures, total_successes 
-  FROM timescaledb_information.policy_stats
+  FROM timescaledb_information.job_stats
   WHERE hypertable::text = 'test_table';
 
  job_id | total_runs | total_failures | total_successes 
@@ -3110,7 +3111,7 @@ SELECT job_id, total_runs, total_failures, total_successes
 Get information about continuous aggregate policy related statistics
 ``` sql
 SELECT  ps.* FROM
-  timescaledb_information.policy_stats ps, timescaledb_information.continuous_aggregates cagg 
+  timescaledb_information.job_stats ps, timescaledb_information.continuous_aggregates cagg 
   WHERE cagg.view_name = 'mat_m1'::regclass and cagg.materialization_hypertable = ps.hypertable;
 
 -[ RECORD 1 ]----------+-------------------------------------------------
