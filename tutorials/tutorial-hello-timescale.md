@@ -12,10 +12,27 @@ Estimated time for completion: 25 minutes.
 ### Pre-requisites
 To complete this tutorial, you will need a cursory knowedge of the
 Structured Query Language (SQL). The tutorial will walk you through each
-SQL command, but it will be helpful if you've seen SQL before.
+SQL command, but it will be helpful if you've seen SQL before.ß
 
-To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
-we can proceed to ingesting or creating sample data and finishing the tutorial.
+### Accessing Timescale
+There are multiple options for using Timescale to follow along with this tutorial. **All connection information
+and database naming** throughout this tutorial assumes you are connected to **Timescale Forge**, our hosted, 
+fully-managed database-as-a-service. [Sign up for a free, 30-day demo account][forge-signup], no credit-card 
+required. Once you confirm the account and get logged in, proceed to the **Background** section below.
+
+If you would like to follow along with a local or on-prem install, you can follow the [install TimescaleDB][install-timescale]
+instructions. Once your installation is complete, you will need to create a tutorial database and 
+install the **Timescale** extention.
+
+Using `psql` from the command line, create a database called `nyc_data` and install the extension:
+
+```sql
+CREATE DATABASE nyc_data;
+\c nyc_data
+CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
+```
+
+You're all set to follow along locally!
 
 ### Background
 
@@ -30,7 +47,7 @@ domains use to plan upgrades, set budgets, allocate resources, and more.
 
 In this tutorial, you will complete three missions:
 
-- **Mission 1: Gear up [5 minutes]** You will learn how to setup and connect to a *TimescaleDB* instance and load data from a CSV file in your local terminal using *psql*.
+- **Mission 1: Gear up [5-15 minutes]** You will learn how to setup and connect to a *TimescaleDB* instance and load data from a CSV file in your local terminal using *psql*.
 - **Mission 2: Analysis [10 minutes]** You will learn how to analyze a time-series dataset using TimescaleDB and *PostgreSQL*.
 - **Mission 3: Monitoring [10 minutes]** You will learn how to use TimescaleDB to monitor IoT devices. You’ll also learn about using TimescaleDB in conjunction with other PostgreSQL extensions like *PostGIS*, for querying geospatial data.
 
@@ -53,9 +70,10 @@ of TimescaleDB to complete our missions in this tutorial.
 #### Download and Load Data
 
 Let's start by downloading the dataset. In the interest of (downloading) time
-and space (on your machine), we'll only grab data for the month of January 2016.
+and space (on your machine), we'll only grab data for the month of January 2016, a dataset
+containing ~11 million records!
 
-This dataset contains two files:
+This download contains two files:
 1. `nyc_data.sql` - A SQL file that will set up the necessary tables
 1. `nyc_data_rides.csv` - A CSV file with the ride data
 
@@ -79,17 +97,21 @@ by typing the command below into your terminal,
 ensuring that you replace the {curly brackets} with your real
 password, hostname, and port number.
 
+>:TIP:Remember, this connection string assumes you are connecting to **Timescale Forge**. Change the user and database name as needed depending on how you're connecting.
+
 ```bash
-psql -x "postgres://tsdbadmin:{YOUR_PASSWORD_HERE}@{YOUR_HOSTNAME_HERE}:{YOUR_PORT_HERE}/defaultdb?sslmode=require"
+psql -x "postgres://tsdbadmin:{YOUR_PASSWORD_HERE}@{YOUR_HOSTNAME_HERE}:{YOUR_PORT_HERE}/tsdb?sslmode=require"
 ```
 
 You should see the following connection message:
 
 ```bash
-psql (12.2, server 11.6)
+=require
+psql (12.4)
 SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, bits: 256, compression: off)
 Type "help" for help.
-tsdbadmin@defaultdb=>
+
+tsdb=> 
 ```
 
 To verify that TimescaleDB is installed, run the `\dx` command
@@ -102,15 +124,6 @@ You should see something similar to the following output:
 |-------------|---------|------------|----------------------------------------------|
 | plpgsql     | 1.0     | pg_catalog | PL/pgSQL procedural language                 |
 | timescaledb | 1.6.0   | public     | Enables scalable inserts and complex queries |
-```
-
-#### Create your table
-From the `psql` command line, we need to first create a database. Let's call it `nyc_data`:
-
-```sql
-CREATE DATABASE nyc_data;
-\c nyc_data
-CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 ```
 
 #### Define your data schema
@@ -131,7 +144,7 @@ They collect the following data about each ride:
 * Payment type (Cash, credit card, etc.)
 
 To efficiently store that data, we’re going to need three tables:
-1. A hypertable called `rides`, which will store all of the above data for each ride taken.
+1. A [hypertable][hypertables] called `rides`, which will store all of the above data for each ride taken.
 2. A regular Postgres table called `payment_types`, which maps the payment types to their English description.
 3. A regular Postgres table called `rates`, which maps the numeric rate codes to their English description.
 
@@ -141,15 +154,17 @@ automatically configures your TimescaleDB instance with the appropriate
 
 In the command below, be sure to substitute the items in the curly braces with
 information from your TimescaleDB instance, as you did earlier. Also take
-note that this command includes the `nyc_data` database we created a moment ago.
+note that this command includes the Timescale Forge database that is automatically created
+for you. If you are running the database locally, replace the database name as needed.
 
 ```bash
-psql -x "postgres://tsdbadmin:{YOUR_PASSWORD_HERE}@{|YOUR_HOSTNAME_HERE}:{YOUR_PORT_HERE}/nyc_data?sslmode=require" < nyc_data.sql
+psql -x "postgres://tsdbadmin:{YOUR_PASSWORD_HERE}@{|YOUR_HOSTNAME_HERE}:{YOUR_PORT_HERE}/tsdb?sslmode=require" < nyc_data.sql
 ```
 
 Alternatively, you can run each script manually from the `psql` command
 line. This first script will create a table called `rides`, which will store
-trip data:
+trip data. Notice also that we are creating a few indexes to help with later
+queries in this tutorial:
 
 ```sql
 CREATE TABLE "rides"(
@@ -174,7 +189,6 @@ CREATE TABLE "rides"(
 );
 SELECT create_hypertable('rides', 'pickup_datetime', 'payment_type', 2, create_default_indexes=>FALSE);
 CREATE INDEX ON rides (vendor_id, pickup_datetime DESC);
-CREATE INDEX ON rides (pickup_datetime DESC, vendor_id);
 CREATE INDEX ON rides (rate_code, pickup_datetime DESC);
 CREATE INDEX ON rides (passenger_count, pickup_datetime DESC);
 ```
@@ -232,13 +246,27 @@ Next, let’s upload the taxi cab data into your TimescaleDB instance.
 The data is in the file called `nyc_data_rides.csv` and we will load it
 into the `rides` hypertable. To do this, we’ll use the `psql` `\copy` command below.
 
->:WARNING: This dataset is quite large and this command may take a while, depending on the speed of your Internet connection.
+>:WARNING: The PostgreSQL `\COPY` command is single-threaded and doesn't support batching
+inserts into multiple transactions. With nearly 11 million rows of data this import can take
+10 minutes or more depending on your Internet connection when copying into a cloud-hosted
+database like **Timescale Forge**.
 
 ```sql
 \COPY rides FROM nyc_data_rides.csv CSV;
 ```
 
-You can validate your setup by running the following command:
+A faster alternative is the [Parallel COPY command][parallel-copy], written in GoLang, that Timescale makes
+available to the community. Once installed, issuing the following command will import the CSV file
+in multiple threads, 5,000 rows at a time, significantly improving import speed. Set `--workers` <= CPUs (or CPUs x 2)
+if they support Hyperthreading. **Be sure to replace your connection string, database name, and file location appropriately.**
+
+```bash
+timescaledb-parallel-copy --connection {CONNECTION STRING} --db-name {DATABASE NAME} --table rides --file {PATH TO `nyc_data_rides.csv`} --workers 4 --truncate --reporting-period 30s
+```
+
+With this Parallel Copy command you will get updates every 30 seconds on the progress of your import.
+
+Once the import is complete, you can validate your setup by running the following command:
 
 ```sql
 SELECT * FROM rides LIMIT 5;
@@ -365,7 +393,7 @@ probably want to discourage idle taxis and short trips.
 
 One way we can glean insight into the duration of trips is by looking into
 the daily average fare amount for rides with only one passenger. Once
-again, this is a simple four line SQL query with some conditional statements,
+again, this is a simple SQL query with some conditional statements,
 shown in the query below:
 
 ```sql
@@ -435,11 +463,12 @@ these results with the contents of the `rates` table, like in the query below:
 ```sql
 -- How many rides of each rate type took place?
 -- Join rides with rates to get more information on rate_code
-SELECT rates.description, COUNT(vendor_id) AS num_trips FROM rides
+SELECT rates.description, COUNT(vendor_id) AS num_trips,
+  RANK () OVER (ORDER BY COUNT(vendor_id) DESC) AS trip_rank FROM rides
   JOIN rates ON rides.rate_code = rates.rate_code
   WHERE pickup_datetime < '2016-02-01'
   GROUP BY rates.description
-  ORDER BY rates.description;
+  ORDER BY LOWER(rates.description);
 ```
 
 >:TIP: This is a simple illustration of a powerful point: By allowing JOINs over hypertables and regular PostgreSQL tables, TimescaleDB allows you to combine your time-series data with your relational or business data to unearth powerful insights.
@@ -448,14 +477,14 @@ Your result should look like this, joining the information in the `rates` table
 with the query you ran earlier:
 
 ```sql
-      description      | num_trips
------------------------+-----------
- group ride            |       102
- JFK                   |    225019
- Nassau or Westchester |      4696
- negotiated fare       |     33688
- Newark                |     16822
- standard rate         |  10626315
+      description      | num_trips | trip_rank
+-----------------------+-----------------------
+ group ride            |       102 |          6
+ JFK                   |    225019 |          2
+ Nassau or Westchester |      4696 |          5
+ negotiated fare       |     33688 |          3
+ Newark                |     16822 |          4
+ standard rate         |  10626315 |          1
 (6 rows)
 ```
 
@@ -686,12 +715,13 @@ ALTER TABLE rides ADD COLUMN dropoff_geom geometry(POINT,2163);
 Next we’ll need to convert the latitude and longitude points into geometry coordinates
 so that it plays well with PostGIS:
 
->:WARNING: This next query may take several minutes.
+>:WARNING: This next query may take several minutes. Updating both columns in one UPDATE statement
+as shown will reduce the amount of time it takes to update all rows in the `rides` table.
 
 ```sql
 -- Generate the geometry points and write to table
-UPDATE rides SET pickup_geom = ST_Transform(ST_SetSRID(ST_MakePoint(pickup_longitude,pickup_latitude),4326),2163);
-UPDATE rides SET dropoff_geom = ST_Transform(ST_SetSRID(ST_MakePoint(dropoff_longitude,dropoff_latitude),4326),2163);
+UPDATE rides SET pickup_geom = ST_Transform(ST_SetSRID(ST_MakePoint(pickup_longitude,pickup_latitude),4326),2163),
+   dropoff_geom = ST_Transform(ST_SetSRID(ST_MakePoint(dropoff_longitude,dropoff_latitude),4326),2163);
 ```
 
 Lastly, we need one more piece of info: Times Square is located at (`lat`, `long`) (`40.7589`,`-73.9851`).
@@ -788,3 +818,6 @@ Ready for more learning? Here’s a few suggestions:
 [continuous-aggregates]: /tutorials/continuous-aggs-tutorial
 [other-samples]: /tutorials/other-sample-datasets
 [migrate]: /getting-started/migrating-data
+[forge-signup]: https://console.forge.timescale.com/signup
+[hypertables]: /using-timescaledb/hypertables
+[parallel-copy]: https://github.com/timescale/timescaledb-parallel-copy
