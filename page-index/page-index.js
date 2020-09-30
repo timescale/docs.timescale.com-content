@@ -552,6 +552,11 @@ const pageIndex = [
                 href: "quickstart-ruby",
                 children: []
             }, {
+                Title: "Golang Quick Start",
+                type: PAGE,
+                href: "quickstart-go",
+                children: []
+            }, {
                 Title: "Simulate IoT Sensor Data",
                 type: PAGE,
                 href: "tutorial-howto-simulate-iot-sensor-data",
