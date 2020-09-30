@@ -29,11 +29,11 @@ Locate your TimescaleDB credentials in order to compose a connection string for
 PGX to use in order to connect to your TimescaleDB instance.
 
 You’ll need the following credentials:
-password
-username
-host URL
-port number
-database name
+* password
+* username
+* host URL
+* port number
+* database name
 
 Next, compose your connection string variable, as a [libpq connection string][libpq-docs], 
 using the following format:
