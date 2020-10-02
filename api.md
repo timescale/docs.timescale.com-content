@@ -61,7 +61,9 @@
 > - [timescaledb_information.data_node](#timescaledb_information-data_node)
 > - [timescaledb_information.dimensions](#timescaledb_information-dimensions)
 > - [timescaledb_information.hypertables](#timescaledb_information-hypertables)
+> - [timescaledb_information.jobs](#timescaledb_information-jobs)
 > - [timescaledb_information.job_stats](#timescaledb_information-job_stats)
+> - [timescaledb.license](#timescaledb_license)
 > - [timescaledb_pre_restore](#timescaledb_pre_restore)
 > - [timescaledb_post_restore](#timescaledb_post_restore)
 
@@ -1793,6 +1795,9 @@ are meant to implement data retention or perform tasks that will improve query
 performance on older chunks. Each policy is assigned a scheduled job
 which will be run in the background to enforce it.
 
+Information about jobs created by policies can be viewed by querying 
+`timescaledb_information.jobs` and `timescaledb_information.job_stats`.
+
 ## add_continuous_aggregate_policy() :community_function> [](add_continuous_aggregate_policy)
 
 Create a policy that automatically refreshes a continuous aggregate.
@@ -2941,23 +2946,25 @@ Get metadata and settings information for continuous aggregates.
 |`view_owner` | (NAME) Owner of the continuous aggregate view|
 |`schedule_interval` | (INTERVAL) Interval between updates of the continuous aggregate materialization|
 |`materialized_only` | (BOOLEAN) Return only materialized data when querying the continuous aggregate view. |
-|`materialization_hypertable` | (REGCLASS) Name of the underlying materialization table|
+|`materialization_hypertable_schema` | (NAME) Schema of the underlying materialization table|
+|`materialization_hypertable_name` | (NAME) Name of the underlying materialization table|
 |`view_definition` |(TEXT) `SELECT` query for continuous aggregate view|
 
 #### Sample Usage
 ```sql
 SELECT * FROM timescaledb_information.continuous_aggregates;
 
--[ RECORD 1 ]------------------+-------------------------------------------------
-view_name                      | contagg_view
-view_owner                     | postgres
-schedule_interval              | 00:30:00
-materialized_only              | f
-materialization_hypertable     | _timescaledb_internal._materialized_hypertable_2
-view_definition                |  SELECT foo.a,                                  +
-                               |     COUNT(foo.b) AS countb                      +
-                               |    FROM foo                                     +
-                               |   GROUP BY (time_bucket('1 day', foo.a)), foo.a;
+-[ RECORD 1 ]---------------------+-------------------------------------------------
+view_name                         | contagg_view
+view_owner                        | postgres
+schedule_interval                 | 00:30:00
+materialized_only                 | f
+materialization_hypertable_schema | _timescaledb_internal
+materialization_hypertable_name   | _materialized_hypertable_2
+view_definition                   |  SELECT foo.a,                                  +
+                                  |     COUNT(foo.b) AS countb                      +
+                                  |    FROM foo                                     +
+                                  |   GROUP BY (time_bucket('1 day', foo.a)), foo.a;
 
 ```
 ---
@@ -3006,67 +3013,111 @@ dex | orderby_asc | orderby_nullsfirst
 (4 rows)
 ```
 ---
-## timescaledb_information.drop_chunks_policies [](timescaledb_information-drop_chunks_policies)
-Shows information about drop_chunks policies that have been created by the user.
-(See [add_retention_policy](#add_retention_policy) for more information
-about drop_chunks policies).
 
+## timescaledb_information.jobs [](timescaledb_information-jobs)
+Shows information about all jobs registered with the automation framework. 
 
-#### Available Columns [](timescaledb_information-drop_chunks_policies-available-columns)
+#### Available Columns [](timescaledb_information-jobs-available-columns)
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
-| `older_than` | (INTERVAL) Chunks fully older than this amount of time will be dropped when the policy is run |
-| `job_id` | (INTEGER) The id of the background job set up to implement the drop_chunks policy|
-| `schedule_interval` | (INTERVAL)  The interval at which the job runs |
-| `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
-| `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
-| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
+|`job_id` | (INTEGER) The id of the background job |
+|`application_name` | (NAME) Name of the policy or user defined action |
+|`schedule_interval` | (INTERVAL)  The interval at which the job runs |
+|`max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
+|`max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
+|`retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
+|`proc_schema` | (NAME) Schema name of the function or procedure executed by the job |
+|`proc_name` | (NAME) Name of the function or procedure executed by the job |
+|`owner` | (NAME) Owner of the job |
+|`scheduled` | (BOOLEAN) | Is the job scheduled to run automatically? |
+|`config` | (JSONB) | Configuration passed to the function specified by `proc_name` at execution time |
+|`next_start` | (TIMESTAMP WITH TIME ZONE) | Next start time for the job, if it is scheduled to run automatically |
+|`hypertable_schema` | (NAME) Schema name of the hypertable. NULL, if this is a user defined action.|
+|`hypertable_name` | (NAME) Table name of the hypertable. NULL, if this is a user defined action. |
 
-#### Sample Usage [](timescaledb_information-drop_chunks_policies-examples)
+#### Sample Usage [](timescaledb_information-jobs-examples)
 
-Get information about drop_chunks policies.
+Get information about jobs.
 ```sql
-SELECT * FROM timescaledb_information.drop_chunks_policies;
 
-       hypertable       | older_than | job_id | schedule_interval | max_runtime | max_retries | retry_period
-------------------------+------------+--------+-------------------+-------------+-------------+--------------
-       conditions       | @ 4 mons   |   1001 | @ 1 sec           | @ 5 mins    |          -1 | @ 12 hours
-(1 row)
+SELECT * FROM timescaledb_information.jobs;
+--This shows a job associated with the refresh policy for continuous aggregates
+job_id            | 1001
+application_name  | Refresh Continuous Aggregate Policy [1001]
+schedule_interval | 01:00:00
+max_runtime       | 00:00:00
+max_retries       | -1
+retry_period      | 01:00:00
+proc_schema       | _timescaledb_internal
+proc_name         | policy_refresh_continuous_aggregate
+owner             | postgres
+scheduled         | t
+config            | {"end_interval": "20 days", "start_interval": "10 
+days", "mat_hypertable_id": 2}
+next_start        | 2020-10-02 12:38:07.014042-04
+hypertable_schema | _timescaledb_internal
+hypertable_name   | _materialized_hypertable_2
+
 ```
+Find all jobs related to compression policies.
 
----
-## timescaledb_information.reorder_policies [](timescaledb_information-reorder_policies)
-Shows information about reorder policies that have been created by the user.
-(See [add_reorder_policy](#add_reorder_policy) for more information about
-reorder policies).
-
-
-#### Available Columns [](timescaledb_information-reorder_policies-available-columns)
-
-|Name|Description|
-|---|---|
-| `hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
-| `index` | (NAME) Chunks fully older than this amount of time will be dropped when the policy is run |
-| `job_id` | (INTEGER) The id of the background job set up to implement the reorder policy|
-| `schedule_interval` | (INTERVAL)  The interval at which the job runs |
-| `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
-| `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
-| `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
-
-#### Sample Usage [](timescaledb_information-reorder_policies-examples)
-
-Get information about reorder policies.
 ```sql
-SELECT * FROM timescaledb_information.reorder_policies;
+SELECT * FROM timescaledb_information.jobs where application_name like 'Compression%';
 
-     hypertable   |     hypertable_index_name     | job_id | schedule_interval | max_runtime | max_retries | retry_period
---------------------+-----------------------------+--------+-------------------+-------------+-------------+--------------
-     conditions   | conditions_device_id_time_idx |   1000 | @ 4 days          | @ 0         |          -1 | @ 1 day
-(1 row)
+-[ RECORD 1 ]-----+--------------------------------------------------
+job_id            | 1002
+application_name  | Compression Policy [1002]
+schedule_interval | 15 days 12:00:00
+max_runtime       | 00:00:00
+max_retries       | -1
+retry_period      | 01:00:00
+proc_schema       | _timescaledb_internal
+proc_name         | policy_compression
+owner             | postgres
+scheduled         | t
+config            | {"hypertable_id": 3, "compress_after": "60 days"}
+next_start        | 2020-10-18 01:31:40.493764-04
+hypertable_schema | public
+hypertable_name   | conditions
+
 ```
+Find jobs that are executed by user defined actions.
 
+```sql
+SELECT * FROM timescaledb_information.jobs where application_name like 'User-Define%';
+
+-[ RECORD 1 ]-----+------------------------------
+job_id            | 1003
+application_name  | User-Defined Action [1003]
+schedule_interval | 01:00:00
+max_runtime       | 00:00:00
+max_retries       | -1
+retry_period      | 00:05:00
+proc_schema       | public
+proc_name         | custom_aggregation_func
+owner             | postgres
+scheduled         | t
+config            | {"type": "function"}
+next_start        | 2020-10-02 14:45:33.339885-04
+hypertable_schema | 
+hypertable_name   | 
+-[ RECORD 2 ]-----+------------------------------
+job_id            | 1004
+application_name  | User-Defined Action [1004]
+schedule_interval | 01:00:00
+max_runtime       | 00:00:00
+max_retries       | -1
+retry_period      | 00:05:00
+proc_schema       | public
+proc_name         | custom_retention_func
+owner             | postgres
+scheduled         | t
+config            | {"type": "function"}
+next_start        | 2020-10-02 14:45:33.353733-04
+hypertable_schema | 
+hypertable_name   | 
+```
 ---
 ## timescaledb_information.job_stats [](timescaledb_information-job_stats)
 
@@ -3082,7 +3133,8 @@ used to implement the policy succeeded and when it is scheduled to run next.
 
 |Name|Description|
 |---|---|
-|`hypertable` | (REGCLASS) The name of the hypertable on which the policy is applied |
+|`hypertable_schema` | (NAME) Schema name of the hypertable |
+|`hypertable_name` | (NAME) Table name of the hypertable |
 |`job_id` | (INTEGER) The id of the background job created to implement the policy |
 |`last_run_started_at`| (TIMESTAMP WITH TIME ZONE) Start time of the last job|
 |`last_successful_finish`| (TIMESTAMP WITH TIME ZONE) Time when the job completed successfully|
@@ -3101,7 +3153,7 @@ Get job success/failure information for a specific hypertable.
 ```sql
 SELECT job_id, total_runs, total_failures, total_successes 
   FROM timescaledb_information.job_stats
-  WHERE hypertable::text = 'test_table';
+  WHERE hypertable_name = 'test_table';
 
  job_id | total_runs | total_failures | total_successes 
 --------+------------+----------------+-----------------
@@ -3113,22 +3165,25 @@ SELECT job_id, total_runs, total_failures, total_successes
 
 Get information about continuous aggregate policy related statistics
 ``` sql
-SELECT  ps.* FROM
-  timescaledb_information.job_stats ps, timescaledb_information.continuous_aggregates cagg 
-  WHERE cagg.view_name = 'mat_m1'::regclass and cagg.materialization_hypertable = ps.hypertable;
+SELECT  js.* FROM
+  timescaledb_information.job_stats js, timescaledb_information.continuous_aggregates cagg
+  WHERE cagg.view_name = 'max_mat_view_timestamp'::regclass 
+  and cagg.materialization_hypertable_name = js.hypertable_name;
 
--[ RECORD 1 ]----------+-------------------------------------------------
-hypertable             | _timescaledb_internal._materialized_hypertable_5
-job_id                 | 1000
-last_run_started_at    | 2020-09-17 17:44:17.752043-04
-last_successful_finish | 2020-09-17 17:44:17.860759-04
+-[ RECORD 1 ]----------+------------------------------
+hypertable_schema      | _timescaledb_internal
+hypertable_name        | _materialized_hypertable_2
+job_id                 | 1001
+last_run_started_at    | 2020-10-02 09:38:06.871953-04
+last_successful_finish | 2020-10-02 09:38:06.932675-04
 last_run_status        | Success
 job_status             | Scheduled
-last_run_duration      | 00:00:00.108716
-next_scheduled_run     | 2020-09-18 05:44:17.860759-04
+last_run_duration      | 00:00:00.060722
+next_scheduled_run     | 2020-10-02 10:38:06.932675-04
 total_runs             | 1
 total_successes        | 1
 total_failures         | 0
+
 ```
 ---
 
@@ -3561,7 +3616,6 @@ psql [your connect flags] -d your_timescale_db < dump_meta_data.sql > dumpfile.t
 and then inspect `dump_file.txt` before sending it together with a bug report or support question.
 
 [Slack]: https://slack-login.timescale.com
-[chunk detailed size]: #chunk_detailed_size
 [best practices]: #create_hypertable-best-practices
 [using-actions]: /using-timescaledb/actions
 [using-continuous-aggs]: /using-timescaledb/continuous-aggregates
