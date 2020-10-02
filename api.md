@@ -1167,6 +1167,11 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
          [ optional grouping exprs>]
 [HAVING ...]
 ```
+Note that continuous aggregates have some limitations of what types of
+queries they can support, described in more length below.  For example,
+the `FROM` clause must provide only one hypertable, i.e., no joins, views or 
+subqueries ares upported, the `GROUP BY` clause must include a time bucket on 
+the hypertable's time column, and all aggregates must be parallelizable.
 
 #### Parameters
 |Name|Description|
@@ -1223,6 +1228,16 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 - `SELECT` query should be of the form specified in the syntax above.
 - The hypertable used in the `SELECT` may not have [row-level-security policies][postgres-rls] enabled.
 -  `GROUP BY` clause must include a time_bucket expression. The [`time_bucket`](#time_bucket) expression must use the time dimension column of the hypertable.
+- The `SELECT` query should be of the form specified in the syntax above, which is discussed in
+  the following items.
+- Only a single hypertable can be specified in the `FROM` clause of the 
+  `SELECT` query. This means that including more hypertables, joins, tables, views, subqueries
+  is not supported.
+- The hypertable used in the `SELECT` may not have [row-level-security
+  policies][postgres-rls] enabled.
+-  The `GROUP BY` clause must include a time_bucket expression. The
+   [`time_bucket`](#time_bucket) expression must use the time
+   dimension column of the hypertable.
 - [`time_bucket_gapfill`](#time_bucket_gapfill) is not allowed in continuous
   aggs, but may be run in a `SELECT` from the continuous aggregate view.
 - In general, aggregates which can be [parallelized by PostgreSQL][postgres-parallel-agg] are allowed in the view definition, this
