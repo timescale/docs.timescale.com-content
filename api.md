@@ -5,9 +5,10 @@
 > - [add_compression_policy](#add_compression_policy)
 > - [add_dimension](#add_dimension)
 > - [add_data_node](#add_data_node)
+> - [add_job](#add_job)
 > - [add_reorder_policy](#add_reorder_policy)
 > - [add_retention_policy](#add_retention_policy)
-> - [alter_job_schedule](#alter_job_schedule)
+> - [alter_job](#alter_job)
 > - [alter table (compression)](#compression_alter-table)
 > - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
 > - [approximate_row_count](#approximate_row_count)
@@ -15,13 +16,14 @@
 > - [attach_tablespace](#attach_tablespace)
 > - [chunk_compression_stats](#chunk_compression_stats)
 > - [chunks_detailed_size](#chunks_detailed_size)
-> -	[compress_chunk](#compress_chunk)
+> - [compress_chunk](#compress_chunk)
 > - [create_distributed_hypertable](#create_distributed_hypertable)
 > - [create_hypertable](#create_hypertable)
 > - [create index (transaction per chunk)](#create_index)
 > - [create view (continuous aggregate)](#continuous_aggregate-create_view)
-> -	[decompress_chunk](#decompress_chunk)
+> - [decompress_chunk](#decompress_chunk)
 > - [delete_data_node](#delete_data_node)
+> - [delete_job](#delete_job)
 > - [detach_data_node](#detach_data_node)
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
@@ -44,6 +46,7 @@
 > - [remove_reorder_policy](#remove_reorder_policy)
 > - [remove_retention_policy](#remove_retention_policy)
 > - [reorder_chunk](#reorder_chunk)
+> - [run_job](#run_job)
 > - [set_chunk_time_interval](#set_chunk_time_interval)
 > - [set_integer_now_func](#set_integer_now_func)
 > - [set_number_partitions](#set_number_partitions)
@@ -57,11 +60,8 @@
 > - [timescaledb_information.compression_settings](#timescaledb_information-compression_settings)
 > - [timescaledb_information.data_node](#timescaledb_information-data_node)
 > - [timescaledb_information.dimensions](#timescaledb_information-dimensions)
-> - [timescaledb_information.drop_chunks_policies](#timescaledb_information-drop_chunks_policies)
 > - [timescaledb_information.hypertables](#timescaledb_information-hypertables)
 > - [timescaledb_information.job_stats](#timescaledb_information-job_stats)
-> - [timescaledb_information.reorder_policies](#timescaledb_information-reorder_policies)
-> - [timescaledb.license](#timescaledb_license)
 > - [timescaledb_pre_restore](#timescaledb_pre_restore)
 > - [timescaledb_post_restore](#timescaledb_post_restore)
 
@@ -1836,6 +1836,94 @@ SELECT add_continuous_aggregate_policy('conditions_summary',
 ```
 
 ---
+## add_job() :community_function: [](add_job)
+
+Register an action to be scheduled by our automation framework.
+Please read the [instructions][using-actions] for more details including
+multiple example actions.
+
+#### Required Arguments [](add_job-required-arguments)
+
+|Name|Description|
+|---|---|
+| `proc` | (REGPROC) Name of the function or procedure to register as job|
+| `schedule_interval` | (INTERVAL) Interval between executions of this job|
+
+#### Optional Arguments [](add_job-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `config` | (JSONB) Job-specific configuration (this will be passed to the function when executed)|
+| `initial_start` | (TIMESTAMPTZ) Time of first execution of job |
+| `scheduled` | (BOOLEAN) Set to `FALSE` to exclude this job from scheduling. Defaults to `TRUE`. |
+
+#### Returns [](add_job-returns)
+
+|Column|Description|
+|---|---|
+|`job_id`| (INTEGER)  TimescaleDB background job id |
+
+#### Sample Usage [](add_job-examples)
+
+```sql
+CREATE OR REPLACE PROCEDURE user_defined_action(job_id int, config jsonb) LANGUAGE PLPGSQL AS
+$$
+BEGIN
+  RAISE NOTICE 'Executing action % with config %', job_id, config;
+END
+$$;
+
+SELECT add_job('user_defined_action','1h');
+```
+
+Register the procedure `user_defined_action` to be run every hour.
+
+## delete_job() :community_function: [](delete_job)
+
+Delete a job registered with the automation framework.
+This works for user-defined actions as well as policies.
+
+If the job is currently running, the process will be terminated.
+
+#### Required Arguments [](delete_job-required-arguments)
+
+|Name|Description|
+|---|---|
+|`job_id`| (INTEGER)  TimescaleDB background job id |
+
+#### Sample Usage [](delete_job-examples)
+
+```sql
+SELECT delete_job(1000);
+```
+
+Delete the job with the job id 1000.
+
+## run_job() :community_function: [](run_job)
+
+Run a previously registered job in the current session.
+This works for user-defined actions as well as policies.
+Since `run_job` is implemented as stored procedure it cannot be executed
+inside a SELECT query but has to be executed with [CALL](postgres-call).
+
+>:TIP: Any background worker job can be run in foreground when executed with
+`run_job`. This can be useful to debug problems when combined with increased
+log level.
+
+#### Required Arguments [](run_job-required-arguments)
+
+|Name|Description|
+|---|---|
+|`job_id`| (INTEGER)  TimescaleDB background job id |
+
+#### Sample Usage [](run_job-examples)
+
+```sql
+SET client_min_messages TO DEBUG1;
+CALL run_job(1000);
+```
+
+Set log level shown to client to DEBUG1 and run the job with the job id 1000.
 
 ## add_retention_policy() :community_function: [](add_retention_policy)
 
@@ -1866,9 +1954,7 @@ one drop-chunks policy may exist per hypertable.
 |---|---|
 |`job_id`| (INTEGER)  TimescaleDB background job id created to implement this policy|
 
-
 #### Sample Usage [](add_retention_policy-examples)
-
 
 ```sql
 SELECT add_retention_policy('conditions', INTERVAL '6 months');
@@ -1975,31 +2061,24 @@ removes the existing reorder policy for the `conditions` table if it exists.
 
 ---
 
+## alter_job() :community_function: [](alter_job)
 
-## alter_job_schedule() :community_function: [](alter_job_schedule)
+Actions scheduled via TimescaleDB's automation framework run periodically in a
+background worker. You can change the schedule of their execution using `alter_job`.
+To alter an existing job, you must refer to it by `job_id`.
+The `job_id` which executes a given action and its current schedule can be found
+either in the `timescaledb_information.jobs` view, which lists information 
+about every scheduled action, as well as in `timescaledb_information.job_stats`.
+The `job_stats` view additionally contains information about when each job was
+last run and other useful statistics for deciding what the new schedule should be.
 
-Policy jobs are scheduled to run periodically via a job run in a background
-worker. You can change the schedule using `alter_job_schedule`. To alter an
-existing job, you must refer to it by `job_id`. The `job_id` which implements a
-given policy and its current schedule can be found in views in the
-`timescaledb_information` schema corresponding to different types of policies or
-in the general `timescaledb_information.job_stats` view. This view
-additionally contains information about when each job was last run and other
-useful statistics for deciding what the new schedule should be.
-
->:TIP: Altering the schedule will only change the frequency at which the
-background worker checks the policy. If you need to change the data retention
-interval or reorder by a different index, you'll need to remove the policy and
-add a new one.
-
-#### Required Arguments [](alter_job_schedule-required-arguments)
+#### Required Arguments [](alter_job-required-arguments)
 
 |Name|Description|
 |---|---|
 | `job_id` | (INTEGER) the id of the policy job being modified |
 
-
-#### Optional Arguments [](alter_job_schedule-optional-arguments)
+#### Optional Arguments [](alter_job-optional-arguments)
 
 |Name|Description|
 |---|---|
@@ -2007,39 +2086,43 @@ add a new one.
 | `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
 | `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
 | `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
-| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the job does not exist, a notice will be issued instead. Defaults to false. |
+| `scheduled` | (BOOLEAN)  Set to `FALSE` to exclude this job from being run as background job. |
+| `config` | (JSONB) Job-specific configuration (this will be passed to the function when executed)|
 | `next_start` | (TIMESTAMPTZ) The next time at which to run the job. The job can be paused by setting this value to 'infinity' (and restarted with a value of now()). |
+| `if_exists` | (BOOLEAN)  Set to true to avoid throwing an error if the job does not exist, a notice will be issued instead. Defaults to false. |
 
-#### Returns [](alter_job_schedule-returns)
+#### Returns [](alter_job-returns)
 
 |Column|Description|
 |---|---|
+| `job_id` | (INTEGER) the id of the job being modified |
 | `schedule_interval` | (INTERVAL)  The interval at which the job runs |
 | `max_runtime` | (INTERVAL) The maximum amount of time the job will be allowed to run by the background worker scheduler before it is stopped |
 | `max_retries` | (INTEGER)  The number of times the job will be retried should it fail |
 | `retry_period` | (INTERVAL) The amount of time the scheduler will wait between retries of the job on failure |
+| `scheduled` | (BOOLEAN)  True if this job will be executed by the TimescaleDB scheduler. |
+| `config` | (JSONB) Job-specific configuration (this will be passed to the function when executed)|
+| `next_start` | (TIMESTAMPTZ) The next time at which to run the job. |
 
-#### Sample Usage [](alter_job_schedule-examples)
+#### Sample Usage [](alter_job-examples)
 
 ```sql
-SELECT alter_job_schedule(job_id, schedule_interval => INTERVAL '2 days')
-FROM timescaledb_information.reorder_policies
-WHERE hypertable = 'conditions'::regclass;
+SELECT alter_job(1000, schedule_interval => INTERVAL '2 days');
 ```
-reschedules the reorder policy job for the `conditions` table so that it runs every two days.
+Reschedules the job with id 1000 so that it runs every two days.
 
 ```sql
-SELECT alter_job_schedule(job_id, schedule_interval => INTERVAL '5 minutes')
+SELECT alter_job(job_id, schedule_interval => INTERVAL '5 minutes')
 FROM timescaledb_information.continuous_aggregate_stats
 WHERE view_name = 'conditions_agg'::regclass;
 ```
-reschedules the continuous aggregate job for the `conditions_agg` view so that it runs every five minutes.
+Reschedules the continuous aggregate job for the `conditions_agg` view so that it runs every five minutes.
 
 ```sql
-SELECT alter_job_schedule(1015, next_start => '2020-03-15 09:00:00.0+00');
+SELECT alter_job(1015, next_start => '2020-03-15 09:00:00.0+00');
 ```
 
-reschedules continuous aggregate job `1015` so that the next execution of the
+Reschedules continuous aggregate job `1015` so that the next execution of the
 job starts at the specified time (9:00:00 am on March 15, 2020).  This same
 query could have simultaneously changed the `schedule_interval` or queried the
 `timescaledb_information.continuous_aggregate_stats` informational view to
@@ -3480,10 +3563,12 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [Slack]: https://slack-login.timescale.com
 [chunk detailed size]: #chunk_detailed_size
 [best practices]: #create_hypertable-best-practices
+[using-actions]: /using-timescaledb/actions
 [using-continuous-aggs]: /using-timescaledb/continuous-aggregates
 [using-compression]: /using-timescaledb/compression
 [blog-compression]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database/
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
+[postgres-call]: https://www.postgresql.org/docs/current/sql-call.html
 [postgres-tablespaces]: https://www.postgresql.org/docs/current/manage-ag-tablespaces.html
 [postgres-createindex]: https://www.postgresql.org/docs/current/sql-createindex.html
 [postgres-createtablespace]: https://www.postgresql.org/docs/current/sql-createtablespace.html

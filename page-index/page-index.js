@@ -413,6 +413,41 @@ const pageIndex = [
                     }
                 ]
             },{
+                Title: "Actions",
+                type: PAGE,
+                href: "actions",
+                children: [
+                    {
+                        Title: "Creating actions",
+                        type: ANCHOR,
+                        href: "#create"
+                    }, {
+                        Title: "Registering actions",
+                        type: ANCHOR,
+                        href: "#register"
+                    }, {
+                        Title: "Testing actions",
+                        type: ANCHOR,
+                        href: "#testing"
+                    }, {
+                        Title: "Altering and deleting actions",
+                        type: ANCHOR,
+                        href: "#alter-delete"
+                    }, {
+                        Title: "Example: Generic retention",
+                        type: ANCHOR,
+                        href: "#generic-retention"
+                    }, {
+                        Title: "Example: Tiered storage",
+                        type: ANCHOR,
+                        href: "#tiered-storage"
+                    }, {
+                        Title: "Example: Downsample and compress",
+                        type: ANCHOR,
+                        href: "#downsample-compress"
+                    }
+                ]
+            }, {
                 Title: "Visualizing data",
                 type: PAGE,
                 href: "visualizing-data"
