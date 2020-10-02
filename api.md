@@ -3265,7 +3265,7 @@ All sizes are in bytes.
 
 |Name|Description|
 |---|---|
-| `main_table` | (REGCLASS) Name of the hypertable |
+| `hypertable` | (REGCLASS) Name of the hypertable |
 
 #### Returns [](hypertable_compression_stats-returns)
 |Column|Description|
@@ -3319,7 +3319,7 @@ All sizes are in bytes.
 
 |Name|Description|
 |---|---|
-| `main_table` | (REGCLASS) Name of the hypertable |
+| `hypertable` | (REGCLASS) Name of the hypertable |
 
 #### Returns [](chunk_compression_stats-returns)
 |Column|Description|
@@ -3394,7 +3394,7 @@ information as a separate row per node.
 
 |Name|Description|
 |---|---|
-| `main_table` | (REGCLASS) Name of the hypertable |
+| `hypertable` | (REGCLASS) Name of the hypertable |
 
 #### Returns [](hypertable_detailed_size-returns)
 |Column|Description|
@@ -3436,7 +3436,7 @@ via the `timescaledb_information.chunks` view.
 
 |Name|Description|
 |---|---|
-| `main_table` | (REGCLASS) Name of the hypertable |
+| `hypertable` | (REGCLASS) Name of the hypertable |
 
 #### Returns [](chunks_detailed_size-returns)
 |Column|Description|
@@ -3473,7 +3473,7 @@ output of `hypertable_detailed_size` function.
 
 |Name|Description|
 |---|---|
-| `main_table` | (REGCLASS) Name of the hypertable |
+| `hypertable` | (REGCLASS) Name of the hypertable |
 
 #### Returns [](hypertable_size-returns)
 (BIGINT) Total disk space used by the specified table, including all indexes and TOAST data|
@@ -3497,7 +3497,7 @@ Get size of an index on a hypertable. The size is reported in bytes.
 
 |Name|Description|
 |---|---|
-| `main_table` | (REGCLASS) Name of the hypertable |
+| `index_name` | (REGCLASS) Name of the index on a  hypertable |
 
 #### Returns [](hypertable_index_size-returns)
 (BIGINT) Returns disk space used by the index. 
