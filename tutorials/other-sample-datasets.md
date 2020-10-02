@@ -14,9 +14,9 @@ you are importing them to has already been [set up with the TimescaleDB extensio
 memory, network) collected from mobile devices. (Click on the name to
 download.)
 
-1. [:DOWNLOAD_LINK: `devices_small`][devices-small] - 1,000 devices recorded over 1,000 time intervals
-1. [:DOWNLOAD_LINK: `devices_med`][devices-medium] - 5,000 devices recorded over 2,000 time intervals
-1. [:DOWNLOAD_LINK: `devices_big`][devices-big] - 3,000 devices recorded over 10,000 time intervals
+1. [:DOWNLOAD_LINK: `devices_small`][devices-small] - 1,000 devices recorded over 1,000 time intervals - 39MB
+1. [:DOWNLOAD_LINK: `devices_med`][devices-medium] - 5,000 devices recorded over 2,000 time intervals - 390MB
+1. [:DOWNLOAD_LINK: `devices_big`][devices-big] - 3,000 devices recorded over 10,000 time intervals - 1.2GB
 
 For more details and example usage, see [In-depth: Device ops datasets](#in-depth-devices).
 
@@ -24,9 +24,9 @@ For more details and example usage, see [In-depth: Device ops datasets](#in-dept
 humidity data from a variety of locations. (Click on the name to
 download.)
 
-1. [:DOWNLOAD_LINK: `weather_small`][weather-small] - 1,000 locations over 1,000 two-minute intervals
-1. [:DOWNLOAD_LINK: `weather_med`][weather-medium] - 1,000 locations over 15,000 two-minute intervals
-1. [:DOWNLOAD_LINK: `weather_big`][weather-big] - 2,000 locations over 20,000 two-minute intervals
+1. [:DOWNLOAD_LINK: `weather_small`][weather-small] - 1,000 locations over 1,000 two-minute intervals - 8.1MB
+1. [:DOWNLOAD_LINK: `weather_med`][weather-medium] - 1,000 locations over 15,000 two-minute intervals - 115MB
+1. [:DOWNLOAD_LINK: `weather_big`][weather-big] - 2,000 locations over 20,000 two-minute intervals - 305MB
 
 For more details and example usage, see [In-depth: Weather datasets](#in-depth-weather).
 
