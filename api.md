@@ -3,8 +3,9 @@
 >:TOPLIST:
 > ### Command List (A-Z)
 > - [add_compression_policy](#add_compression_policy)
-> - [add_dimension](#add_dimension)
+> - [add_continuous_aggregate_policy](#add_continuous_aggregate_policy)
 > - [add_data_node](#add_data_node)
+> - [add_dimension](#add_dimension)
 > - [add_job](#add_job)
 > - [add_reorder_policy](#add_reorder_policy)
 > - [add_retention_policy](#add_retention_policy)
@@ -43,6 +44,7 @@
 > - [move_chunk](#move_chunk)
 > - [refresh materialized view (continuous aggregate)](#continuous_aggregate-refresh_view)
 > - [remove_compression_policy](#remove_compression_policy)
+> - [remove_continuous_aggregate_policy](#remove_continuous_aggregate_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
 > - [remove_retention_policy](#remove_retention_policy)
 > - [reorder_chunk](#reorder_chunk)
@@ -1461,10 +1463,10 @@ automatically in the background after it reaches a given age.
 
 |Name|Description|
 |---|---|
-| `table_name` | (REGCLASS) Name of the table that the policy will act on.|
-| `time_interval` | (INTERVAL or integer) The age after which the policy job will compress chunks.|
+| `hypertable` | (REGCLASS) Name of the hypertable|
+| `compress_after` | (INTERVAL or integer) The age after which the policy job will compress chunks|
 
-The `time_interval` parameter should be specifified differently depending on the type of the time column of the hypertable:
+The `compress_after` parameter should be specified differently depending on the type of the time column of the hypertable:
 - For hypertables with TIMESTAMP, TIMESTAMPTZ, and DATE time columns: the time interval should be an INTERVAL type
 - For hypertables with integer-based timestamps: the time interval should be an integer type (this requires
 the [integer_now_func](#set_integer_now_func) to be set).
@@ -1489,7 +1491,7 @@ If you need to remove the compression policy. To re-start policy basd compressio
 
 |Name|Description|
 |---|---|
-| `table_name` | (REGCLASS) Name of the hypertable the policy should be removed from.|
+| `hypertable` | (REGCLASS) Name of the hypertable the policy should be removed from.|
 
 #### Sample Usage [](remove_compression_policy-sample-usage)
 Remove the compression policy from the 'cpu' table:
@@ -1807,15 +1809,14 @@ Create a policy that automatically refreshes a continuous aggregate.
 |Name|Description|
 |---|---|
 | `continuous_aggregate` | (REGCLASS) The continuous aggregate to add the policy for. |
-| `start_interval` | Start of the refresh window as an interval relative to the time when the policy is executed. |
-| `end_interval` | End of the refresh window as an interval relative to the time when the policy is executed. |
-| `schedule_interval` | Interval between refresh executions in wall-clock time. |
+| `start_offset` | (INTERVAL or integer) Start of the refresh window as an interval relative to the time when the policy is executed |
+| `end_offset` | (INTERVAL or integer) End of the refresh window as an interval relative to the time when the policy is executed |
+| `schedule_interval` | (INTERVAL) Interval between refresh executions in wall-clock time. |
 
-Note that it is not very useful to have a value of `start_interval`
-that is smaller than `schedule_interval` since that can lead to
-strange gaps in the continuous aggregate. For example, if you refresh
-every day but only refresh the last hour you will be missing updates
-of the first 23 hours of the day.
+The `start_offset` should be greater than `end_offset`.
+The `start_offset` and `end_offset` parameters should be specified differently depending on the type of the time column of the hypertable:
+- For hypertables with TIMESTAMP, TIMESTAMPTZ, and DATE time columns: the offset should be an INTERVAL type
+- For hypertables with integer-based timestamps: the offset should be an integer type.
 
 #### Optional Arguments [](add_continuous_aggregate_policy-optional-arguments)
 
@@ -1835,8 +1836,8 @@ of the first 23 hours of the day.
 Add a policy that refreshes the last month once an hour, excluding the latest hour from the aggregate (for performance reasons, it is recommended to exclude buckets that still see lots of writes):
 ```sql
 SELECT add_continuous_aggregate_policy('conditions_summary',
-	start_interval => INTERVAL '1 month',
-	end_interval => INTERVAL '1 hour',
+	start_offset => INTERVAL '1 month',
+	end_offset => INTERVAL '1 hour',
 	schedule_interval => INTERVAL '1 hour');
 ```
 
@@ -1930,28 +1931,42 @@ CALL run_job(1000);
 
 Set log level shown to client to DEBUG1 and run the job with the job id 1000.
 
+## remove_continuous_aggregate_policy() :community_function: [](remove_continuous_aggregate_policy)
+Remove refresh policy for a continuous aggregate.
+
+#### Required Arguments [](remove_continuous_aggregate_policy-required-arguments)
+
+|Name|Description|
+|---|---|
+| `continuous_aggregate` | (REGCLASS) Name of the continuous aggregate the policy should be removed from |
+
+#### Sample Usage [](remove_continuous_aggregate_policy-sample-usage)
+Remove the refresh policy from the 'cpu_view' continuous aggregate:
+``` sql
+SELECT remove_continuous_aggregate_policy('cpu_view');
+```
+----
+
 ## add_retention_policy() :community_function: [](add_retention_policy)
 
 Create a policy to drop chunks older than a given interval of a particular
 hypertable or continuous aggregate on a schedule in the background. (See [drop_chunks](#drop_chunks)).
 This implements a data retention policy and will remove data on a schedule. Only
-one drop-chunks policy may exist per hypertable.
+one retention policy may exist per hypertable.
 
 #### Required Arguments [](add_retention_policy-required-arguments)
 
 |Name|Description|
 |---|---|
-| `table_name` | (REGCLASS) Name of the hypertable or continuous aggregate to create the policy for. |
-| `retention_window` | (INTERVAL) Chunks fully older than this interval when the policy is run will be dropped|
+| `relation` | (REGCLASS) Name of the hypertable or continuous aggregate to create the policy for. |
+| `drop_after` | (INTERVAL) Chunks fully older than this interval when the policy is run will be dropped|
 
 #### Optional Arguments [](add_retention_policy-optional-arguments)
 
 |Name|Description|
 |---|---|
 | `if_not_exists` | (BOOLEAN) Set to true to avoid throwing an error if the drop_chunks_policy already exists. A notice is issued instead. Defaults to false. |
-| `cascade_to_materializations` | (BOOLEAN) Set to `TRUE` to delete chunk data in associated continuous aggregates. Defaults to `NULL`. `FALSE` is not yet supported. |
 
->:WARNING: If a drop chunks policy is setup which does not set `cascade_to_materializations` to either `TRUE` or `FALSE` on a hypertable that has a continuous aggregate, the policy will not drop any chunks.
 
 #### Returns [](add_retention_policy-returns)
 
@@ -1975,7 +1990,7 @@ Remove a policy to drop chunks of a particular hypertable.
 
 |Name|Description|
 |---|---|
-| `table_name` | (REGCLASS) Name of the hypertable or continuous aggregate to create the policy for. |
+| `relation` | (REGCLASS) Name of the hypertable or continuous aggregate from which to remove the policy |
 
 
 #### Optional Arguments [](remove_retention_policy-optional-arguments)
