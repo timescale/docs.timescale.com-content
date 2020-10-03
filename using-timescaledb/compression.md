@@ -296,14 +296,99 @@ SELECT compress_chunk(i) from show_chunks('conditions', newer_than, older_than) 
 
 ### Decompressing Chunks [](decompress-chunks)
 
-Next we will walk through what to do in the event that you need to backfill or
-update data that lives in a compressed chunk.
+In order to decompress individual chunks, you can run a `decompress_chunk`
+command in much the same way you can manually compress an individual chunk:
 
-TimescaleDB does not support inserts or updates into a compressed chunk. To insert
-or update data, we must first decompress the target chunks. But before we can do
-that, we need to turn off our compression policy. Otherwise that policy will attempt
-to re-compress the chunks that we are currently working on (not the desired result).
-To accomplish this we first find the job_id of the policy using:
+``` sql
+SELECT decompress_chunk('_timescaledb_internal._hyper_2_2_chunk');
+```
+
+Similar to above, you can also decompress a set of chunks based on a
+time range by first looking up this set of chunks via `show_chunks`:
+
+``` sql
+SELECT decompress_chunk(i) from show_chunks('conditions', newer_than, older_than) i;
+```
+
+Or if you want to have more precise matching constraints, including that you
+are using space partitioning (e.g., based on `device_id`):
+
+``` sql
+SELECT tableoid::regclass FROM metrics
+  WHERE time = '2000-01-01' AND device_id = 1
+  GROUP BY tableoid;
+
+                 tableoid
+------------------------------------------
+ _timescaledb_internal._hyper_72_37_chunk
+```
+
+Decompression might often be employed in the event that you need to backfill or
+update data that lives in a compressed chunk, as TimescaleDB does not currenty
+support modifying (inserting into, updating, deleted from) compressed chunks.
+
+Next we walk you through the instructions for preparing your table for
+inserting or backfilling data.   The general approach has four steps:
+
+1. Temporarily turn off any compression policy (as otherwise that policy will attempt
+to re-compress the chunks that we are currently working on)
+
+1. Decompress chunks that will be effected by modifications or backfill
+
+1. Perform the modifications or backfill
+
+1. Re-enable compression policy (which will have the effect of recompressing
+any of our recently-decompressed chunks)
+
+In the next sections, we describe some automated helper functions we provide
+that perform all five steps in a more automatic fashion, and then also walk you
+through more manual instructions.
+
+#### Automatically decompressing chunks for backfill
+
+In the [TimescaleDB Extras][timescaledb-extras] github repository, we provide
+explicit functions for [backfilling batch data to compressed
+chunks][timescaledb-extras-backfill], which is useful for inserting a *batch*
+of backfilled data (as opposed to individual row inserts). By "backfill", we
+mean inserting data corresponding to a timestamp well in the past, which given
+its timestamp, already corresponds to a compressed chunk.
+
+In the below example, we backfill data into a temporary table; such temporary
+tables are short-lived and only exist for the duration of the database
+session. Alternatively, if backfill is common, one might use a normal table for
+this instead, which would allow multiple writers to insert into the table at
+the same time before the `decompress_backfill` process.
+
+To use this procedure:
+
+- First, create a table with the same schema as the hypertable (in
+  this example, `cpu`) that we are backfilling into.
+
+```sql
+CREATE TEMPORARY TABLE cpu_temp AS SELECT * FROM cpu WITH NO DATA;
+```
+
+- Second, insert data into the backfill table.
+
+- Third, use a supplied backfill procedure to perform the above steps: halt
+  compression policy, identify those compressed chunks to which the backfilled
+  data corresponds, decompress those chunks, insert data from the backfill
+  table into the main hypertable, and then re-enable compression policy:
+
+```sql
+CALL decompress_backfill(staging_table=>'cpu_temp', destination_hypertable=>'cpu');`
+```
+
+If using a temp table, the table is automatically dropped at the end of your
+database session.  If using a normal table, after you are done backfilling the
+data successfully, you will likely want to truncate your table in preparation
+for the next backfill (or drop it completely).
+
+#### Manually decompressing chunks for backfill
+
+To perform these steps more manually, we first identify and turn off our
+compression policy, before manually decompressing chunks.  To accomplish this
+we first find the job_id of the policy using:
 
 ```sql
 SELECT s.job_id
@@ -367,3 +452,7 @@ of the data (e.g., inserts, updates, deletes) or the schema without manual decom
 In other words, chunks are immutable in compressed form. Attempts to modify the
 chunks' data will either error or fail silently (as preferred by users). We
 plan to remove this limitation in future releases.
+
+
+[timescaledb-extras]: https://github.com/timescale/timescaledb-extras
+[timescaledb-extras-backfill]: https://github.com/timescale/timescaledb-extras/blob/master/backfill.sql
