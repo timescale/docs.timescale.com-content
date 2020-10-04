@@ -271,15 +271,16 @@ You can see the results of the compression of that given chunk by running the fo
 
 ``` sql
 SELECT *
-FROM timescaledb_information.compressed_chunk_stats;
+FROM chunk_compression_stats('conditions');
 ```
 
-| hypertable_name | chunk_name | compression_status | uncompressed_heap_bytes | uncompressed_index_bytes | uncompressed_toast_bytes | uncompressed_total_bytes | compressed_heap_bytes | compressed_index_bytes | compressed_toast_bytes | compressed_total_bytes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |  --- |
-| my_hypertable | _timescaledb_internal._hyper_1_1_chunk | Compressed | 8192 bytes | 16 kB | 8192 bytes |   | 32 kB  | 8192 bytes   | 16 kB  | 8192 bytes | 32 kB |
-| my_hypertable | _timescaledb_internal._hyper_1_20_chunk | Uncompressed | | | | | | | | |
+| chunk_schema | chunk_name | compression_status | before_compression_table_bytes | before_compression_index_bytes | before_compression_toast_bytes | before_compression_total_bytes | after_compression_table_bytes | after_compression_index_bytes | after_compression_toast_bytes | after_compression_total_bytes | node_name |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _timescaledb_internal | _hyper_1_1_chunk | Compressed | 8192 bytes | 16 kB | 8192 bytes |  32 kB  | 8192 bytes   | 16 kB  | 8192 bytes | 32 kB | |
+| _timescaledb_internal | _hyper_1_20_chunk | Uncompressed | | | | | | | | | |
 
-This result set shows you the chunks for hypertables that have compression enabled, whether those chunks are compressed, and stats about those chunks.
+This result set shows you the chunks for the given hypertable, whether those
+chunks are compressed, and stats about those chunks.
 
 We could then proceed to compress all of the chunks in this example that are
 more than three days old by repeating the process for the remaining chunks
@@ -305,15 +306,16 @@ to re-compress the chunks that we are currently working on (not the desired resu
 To accomplish this we first find the job_id of the policy using:
 
 ```sql
-SELECT job_id, table_name
-FROM _timescaledb_config.bgw_policy_compress_chunks p
-INNER JOIN _timescaledb_catalog.hypertable h ON (h.id = p.hypertable_id);
+SELECT s.job_id
+FROM timescaledb_information.jobs j
+  INNER JOIN timescaledb_information.job_stats s ON j.job_id = s.job_id
+WHERE j.proc_name = 'policy_compression' AND s.hypertable_name = <target table>;
 ```
 
 Next, pause the job with:
 
 ``` sql
-SELECT alter_job_schedule(<job_id>, next_start=>'infinity');
+SELECT alter_job(<job_id>, scheduled => false);
 ```
 
 We have now paused the compress chunk policy from the hypertable which
@@ -339,10 +341,16 @@ Once your backfill and update operations are complete we can simply re-enable
 our compression policy job:
 
 ``` sql
-SELECT alter_job_schedule(<job_id>, next_start=>now());
+SELECT alter_job(<job_id>, scheduled => true);
 ```
-This job will run and re-compress any chunks that you may have decompressed
-during your backfill operation.
+
+This job will re-compress any chunks that were decompressed during your backfilling
+operation the next time it runs. To have it run immediately, you can expressly execute
+the command via [`run_job`](/api#run_job):
+
+``` sql
+CALL run_job(<job_id>);
+```
 
 ### Storage considerations for decompressing chunks [](storage-for-decompression)
 
