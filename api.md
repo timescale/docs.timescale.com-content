@@ -2728,9 +2728,9 @@ Get metadata information about hypertables.
 
 |Name|Description|
 |---|---|
-| `table_schema` | (NAME) Schema name of the hypertable |
-| `table_name` | (NAME) Table name of the hypertable |
-| `table_owner` | (NAME) Owner of the hypertable |
+| `hypertable_schema` | (NAME) Schema name of the hypertable |
+| `hypertable_name` | (NAME) Table name of the hypertable |
+| `owner` | (NAME) Owner of the hypertable |
 | `num_dimensions` | (SMALLINT) Number of dimensions |
 | `num_chunks` | (BIGINT) Number of chunks |
 | `compression_enabled` | (BOOLEAN) Is compression enabled on the hypertable?|
@@ -2748,11 +2748,11 @@ CREATE TABLE dist_table(time timestamptz, device int, temp float);
 SELECT create_distributed_hypertable('dist_table', 'time', 'device', replication_factor => 2);
 
 SELECT * FROM timescaledb_information.hypertables
-  WHERE table_name = 'dist_table';
+  WHERE hypertable_name = 'dist_table';
 
 -[ RECORD 1 ]-------+-----------
-table_schema        | public
-table_name          | dist_table
+hypertable_schema   | public
+hypertable_name     | dist_table
 owner               | postgres 
 num_dimensions      | 2
 num_chunks          | 3
@@ -2957,7 +2957,8 @@ Get metadata and settings information for continuous aggregates.
 
 |Name|Description|
 |---|---|
-|`view_name` | (REGCLASS) User supplied name for continuous aggregate view |
+|`view_schema` | (NAME) Schema for continuous aggregate view |
+|`view_name` | (NAME) User supplied name for continuous aggregate view |
 |`view_owner` | (NAME) Owner of the continuous aggregate view|
 |`schedule_interval` | (INTERVAL) Interval between updates of the continuous aggregate materialization|
 |`materialized_only` | (BOOLEAN) Return only materialized data when querying the continuous aggregate view. |
@@ -2970,6 +2971,7 @@ Get metadata and settings information for continuous aggregates.
 SELECT * FROM timescaledb_information.continuous_aggregates;
 
 -[ RECORD 1 ]---------------------+-------------------------------------------------
+view_schema                       | public 
 view_name                         | contagg_view
 view_owner                        | postgres
 schedule_interval                 | 00:30:00
@@ -2993,8 +2995,8 @@ and segmentby columns used by compression.
 
 |Name|Description|
 |---|---|
-| `table_schema` | (NAME) Schema name of the hypertable |
-| `table_name` | (NAME) Table name of the hypertable |
+| `hypertable_schema` | (NAME) Schema name of the hypertable |
+| `hypertable_name` | (NAME) Table name of the hypertable |
 | `attname` | (NAME) Name of the column used in the compression settings |
 | `segmentby_column_index` | (SMALLINT) Position of attname in the compress_segmentby list |
 | `orderby_column_index` | (SMALLINT) Position of attname in the compress_orderby list |
@@ -3011,9 +3013,9 @@ SELECT table_name FROM create_hypertable('hypertab', 'a_col');
 ALTER TABLE hypertab SET (timescaledb.compress, timescaledb.compress_segmentby = 'a_col,b_col', 
   timescaledb.compress_orderby = 'c_col desc, d_col asc nulls last');
 
-SELECT * FROM timescaledb_information.compression_settings WHERE table_name = 'hypertab';
+SELECT * FROM timescaledb_information.compression_settings WHERE hypertable_name = 'hypertab';
 
- schema_name | table_name | attname | segmentby_column_index | orderby_column_in
+ hypertable_schema | hypertable_name | attname | segmentby_column_index | orderby_column_in
 dex | orderby_asc | orderby_nullsfirst 
 -------------+------------+---------+------------------------+------------------
 ----+-------------+--------------------
@@ -3182,7 +3184,7 @@ Get information about continuous aggregate policy related statistics
 ``` sql
 SELECT  js.* FROM
   timescaledb_information.job_stats js, timescaledb_information.continuous_aggregates cagg
-  WHERE cagg.view_name = 'max_mat_view_timestamp'::regclass 
+  WHERE cagg.view_name = 'max_mat_view_timestamp' 
   and cagg.materialization_hypertable_name = js.hypertable_name;
 
 -[ RECORD 1 ]----------+------------------------------
