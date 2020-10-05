@@ -3,17 +3,18 @@
 Aggregate queries which touch large swathes of time-series data can
 take a long time to compute because the system needs to scan large
 amounts of data on every query execution. To make such queries faster,
-continuous aggregates allows pre-computing (or materializing) the
-aggregates, while also providing means to continuously, and with low
-overhead, keep them up-to-date as the underlying source data changes.
+a continuous aggregate allows materializing the computed aggregates,
+while also providing means to continuously, and with low overhead,
+keep them up-to-date as the underlying source data changes.
 
 Continuous aggregates are somewhat similar to PostgreSQL's
 [materialized views][postgres-materialized-views], but, unlike a
 materialized view, a continuous aggregate can be continuously and
-incrementally refreshed, either manually or via a policy that runs in
-the background. A refresh can cover the entire aggregate or just a
-specific time range. In either case, the refresh only recomputes the
-aggregate buckets that have changed since the last refresh.
+incrementally refreshed. The refreshing can be done either manually or
+via a policy that runs in the background, and can cover the entire
+continuous aggregate or just a specific time range. In either case,
+the refresh only recomputes the aggregate buckets that have changed
+since the last refresh.
  
 ### An introductory example [](quick-start)
 
@@ -185,11 +186,11 @@ Similar to the `refresh_continuous_aggregate` function, providing
 `NULL` to `start_offset` or `end_offset` makes the range open-ended
 and will extend to the beginning or end of time,
 respectively. However, it seldom makes sense to use `NULL` for the
-`end_offset`. Instead, it is recommended to set the `end_offset` such
-that at least one time bucket is excluded. For time-series data that
-see mostly in-order writes, the time buckets that still see lots of
-writes will quickly have out-of-date aggregates. Eliding the buckets
-will also provide better performance.
+`end_offset`. Instead, it is recommended to set the `end_offset` so
+that at least the most recent time bucket is excluded. For time-series
+data that see mostly in-order writes, the time buckets that still see
+lots of writes will quickly have out-of-date aggregates. Excluding
+those time buckets will provide better performance.
 
 For example, to create a policy for `conditions_summary_hourly` that
 keeps the continuous aggregate up to date with the underlying
@@ -310,28 +311,26 @@ continuous aggregate, write:
 CALL refresh_continuous_aggregate('conditions_summary_hourly, NULL, NULL);
 ```
 
-We do not recommend doing so for tables that see continuous ingest of
-new data since that would trigger a refresh of buckets that are not
-yet filled completely.
-
-However, note that this might materialize a lot of data, can affect
-other policies such as the data retention, and affects write
-amplification, so it should only be used rarely.
+However, we do not recommend open-ended refreshes on continuous
+aggregates when there is a continuous ingest of new data since that
+would trigger a refresh of time buckets that are not yet completely
+filled. It might also materialize a lot of data, increase write
+amplification, and affect other policies such as data retention.
 
 >:TIP: You should avoid refreshing time intervals that still see a lot
 >of writes, which is usually the last bucket of the continuous
->aggregate. These intervals are still changing and will not produce
->accurate aggregate anyway and refreshing unnecessarily will increase
->the write amplification, which will slow down the ingest rate of the
->hypertable. If you want to ensure that you read the latest bucket, you
->should instead rely on [real-time aggregates][real-time-aggregates].
+>aggregate. These intervals are still changing and are unlikely to
+>produce accurate aggregates, while at the same time slowing down the
+>ingest rate of the hypertable due to write amplification. If you want
+>to include the latest bucket in your queries, you should instead rely
+>on [real-time aggregation][real-time-aggregates].
 
 The `schedule_interval` option to `add_continuous_aggregate_policy`
-controls how frequently materialization jobs will be launched. Setting
-a shorter interval will mean materializations happen more frequently
-but each job consumes background worker resources while it is running.
+controls how frequently materialization jobs will be run. Setting a
+shorter interval will refresh more frequently but at the same time
+consume more background worker resources.
 
-**Using `timescaledb.information` Views:**
+#### Using `timescaledb.information` Views
 The various options used to create the continuous aggregate view, as well as its
 definition, can be found in the
 [`timescaledb_information.continuous_aggregates` view][api-continuous-aggregates-info],

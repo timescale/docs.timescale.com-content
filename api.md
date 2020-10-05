@@ -3085,7 +3085,7 @@ proc_schema       | _timescaledb_internal
 proc_name         | policy_refresh_continuous_aggregate
 owner             | postgres
 scheduled         | t
-config            | {"end_offset": "20 days", "start_offset": "10 
+config            | {"start_offset": "20 days", "end_offset": "10 
 days", "mat_hypertable_id": 2}
 next_start        | 2020-10-02 12:38:07.014042-04
 hypertable_schema | _timescaledb_internal
