@@ -250,7 +250,7 @@ DROP MATERIALIZED VIEW conditions_summary_hourly;
 
 ---
 
-### Using Continuous Aggregates [](using)
+### Querying Continuous Aggregates [](using)
 
 To query data from a continuous aggregate, use a `SELECT` query on
 the continuous aggregate view. For instance, you can get the average,
@@ -274,50 +274,26 @@ ORDER BY bucket DESC, device_id DESC LIMIT 20;
 
 ---
 
-### Real-Time Aggregates [](real-time-aggregates)
+### Real-Time Aggregation [](real-time-aggregates)
 
-Real-time aggregates are a capability (first introduced in TimescaleDB 1.7)
-whereby querying the *continuous aggregate view* will then compute
-fully up-to-date aggregate results by combining the materialized
-partial aggregate with recent data from the hypertable that has yet to
-be materialized by the continuous aggregate. By combining raw and
-materialized data in this way, one gets accurate and up-to-date
-results while still enjoying the speedups of pre-computing a large
-portion of the result.
+A query on a continuous aggregate will, by default, use *real-time
+aggregation* (first introduced in TimescaleDB 1.7) to combine
+materialized aggregates with recent data from the source
+hypertable. By combining raw and materialized data in this way,
+real-time aggregation produces accurate and up-to-date results while
+still benefiting from pre-computed aggregates for a large portion of
+the result.
 
-As an example, continuous aggregates _without_ this real-time capability make
-it really fast to get aggregate answers by pre-computing these values (such as
-the min/max/average value over each hour). This way, if you are collecting raw
-data every second, querying hourly data over the past week means reading 24 x 7
-= 168 values from the database, as opposed to processing 60 x 60 x 24 x 7 =
-604,800 values at query time.
+Real-time aggregation is the default behavior for any new continuous
+aggregates. To disable real-time aggregation and show only
+materialized data, add the parameter
+`timescaledb.materialized_only=true` when creating the continuous
+aggregate view or set it on an existing continuous aggregate using
+[`ALTER MATERIALIZED VIEW`][api-alter-cagg].
 
-But this type of continuous aggregate does not incorporate the very
-latest data, _i.e._, since the last time the asynchronous aggregation job ran
-inside the database. So if you are generating hourly rollups, you might only
-run this materialization job every hour.
-
-With real-time aggregates, a single, simple query will combine your
-pre-computed hourly rollups with the raw data from the last
-hour, to always give you an up-to-date answer.  Now, instead of touching
-604,800 rows of raw data, the query reads 167 pre-computed rows of
-hourly data and 3600 rows of raw secondly data, leading to significant
-performance improvements.
-
-Real-time aggregates are now the default behavior for any continuous
-aggregates. To revert to the previous behavior, in which the query
-touches materialized data only and doesn't combine with the latest raw
-data, add the parameter `timescaledb.materialized_only=true` when
-creating the continuous aggregate view.
-
-You can also use this in conjunction with the [`ALTER MATERIALIZED
-VIEW`][api-alter-cagg] to turn this feature on or off at any time.
-
->:TIP: To upgrade continuous aggregates that were created in a version
-earlier than TimescaleDB 1.7 to use real-time aggregates, alter the
-view to set `timescaledb.materialized_only=false`.  All subsequent
-queries to the view will immediately use the real-time aggregate
-feature.
+>:TIP: To use real-time aggregation on a continuous aggregate created
+in a version earlier than TimescaleDB 1.7, alter the view to set
+`timescaledb.materialized_only=false`.
 
 ---
 
@@ -354,25 +330,6 @@ The `schedule_interval` option to `add_continuous_aggregate_policy`
 controls how frequently materialization jobs will be launched. Setting
 a shorter interval will mean materializations happen more frequently
 but each job consumes background worker resources while it is running.
-
-#### Disabling real-time aggregates
-
-When querying the continuous aggregate view (for example,
-`conditions_summary_hourly`) by default you will get a complete view of
-the data including both the partially aggregated data and newer,
-unaggregated data in the hypertable (for example, `conditions`),
-based on the [real-time aggregate capability](#real-time-aggregate).
-
-If you, however, want to just get partially aggregated data and not
-include recent data that has yet to be materialized, you can set the
-option `timescaledb.materialized_only` to `true` using [`ALTER
-MATERIALIZED VIEW`][api-alter-cagg]:
-
-```sql
-ALTER MATERIALIZED VIEW conditions_summary_hourly SET (
-    timescaledb.materialized_only = true
-);
-```
 
 **Using `timescaledb.information` Views:**
 The various options used to create the continuous aggregate view, as well as its
