@@ -125,7 +125,7 @@ queries.
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of hypertable to add the dimension to.|
+| `hypertable` | Hypertable to add the dimension to.|
 | `column_name` | Name of the column to partition by.|
 
 #### Optional Arguments [](add_dimension-optional-arguments)
@@ -403,7 +403,7 @@ still work on the resulting hypertable.
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of table to convert to hypertable |
+| `relation` | Identifier of table to convert to hypertable. |
 | `time_column_name` | Name of the column containing time values as well as the primary column to partition by. |
 
 #### Optional Arguments [](create_hypertable-optional-arguments)
@@ -614,7 +614,7 @@ when creating distributed hypertables.
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of table to convert to hypertable |
+| `relation` | Identifier of table to convert to hypertable. |
 | `time_column_name` | Name of the column containing time values as well as the primary column to partition by. |
 
 #### Optional Arguments [](create_distributed_hypertable-optional-arguments)
@@ -958,7 +958,7 @@ specified one.
 
 |Name|Description|
 |---|---|
-| `hypertable_or_cagg` | Hypertable or continuous aggregate from which to drop chunks.
+| `relation` | Hypertable or continuous aggregate from which to drop chunks. |
 | `older_than` | Specification of cut-off point where any full chunks older than this timestamp should be removed. |
 
 #### Optional Arguments [](drop_chunks-optional-arguments)
@@ -1055,7 +1055,7 @@ not affected.
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of hypertable to update interval for.|
+| `hypertable` | Identifier of hypertable to update interval for.|
 | `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0.|
 
 #### Optional Arguments [](set_chunk_time_interval-optional-arguments)
@@ -1101,7 +1101,7 @@ hypertable. The new partitioning only affects new chunks.
 
 |Name|Description|
 |---|---|
-| `main_table` | Identifier of hypertable to update the number of partitions for.|
+| `hypertable` | Identifier of hypertable to update the number of partitions for.|
 | `number_partitions` | The new number of partitions for the dimension. Must be greater than 0 and less than 32,768.|
 
 #### Optional Arguments [](set_number_partitions-optional-arguments)
@@ -1225,7 +1225,7 @@ the same semantics as the `drop_chunks` [function](#drop_chunks).
 
 |Name|Description|
 |---|---|
-| `hypertable` | Hypertable name from which to select chunks. If not supplied, all chunks are shown. |
+| `relation` | Hypertable or continuous aggregate from which to select chunks. If not supplied, all chunks are shown. |
 | `older_than` | Specification of cut-off point where any full chunks older than this timestamp should be shown. |
 | `newer_than` | Specification of cut-off point where any full chunks newer than this timestamp should be shown. |
 
@@ -3267,7 +3267,7 @@ All sizes are in bytes.
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) Name of the hypertable |
+| `hypertable` | Hypertable to show stats for. |
 
 #### Returns [](hypertable_compression_stats-returns)
 |Column|Description|
@@ -3396,7 +3396,7 @@ information as a separate row per node.
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) Name of the hypertable |
+| `hypertable` | Hypertable to show detailed size of. |
 
 #### Returns [](hypertable_detailed_size-returns)
 |Column|Description|
@@ -3475,7 +3475,7 @@ output of `hypertable_detailed_size` function.
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) Name of the hypertable |
+| `hypertable` | Hypertable to show size of. |
 
 #### Returns [](hypertable_size-returns)
 (BIGINT) Total disk space used by the specified table, including all indexes and TOAST data|
