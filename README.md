@@ -59,6 +59,22 @@ or this:
 > some_command
 ```
 
+Additionally, code should have 2-space indentations where appropriate.  For SQL, for example,
+our standard is that the SELECT statement (or other DML/DDL commands) are on the first line,
+then all corresponding code that are part of the same statement are indented appropriately.
+For example:
+
+```sql
+SELECT time_bucket('1 hour', time) as hour,
+    device,
+    avg(value)
+  FROM table
+  WHERE time > NOW () - INTERVAL '1 hour'
+    AND device IN (1, 2, 3)
+  GROUP BY hour, device
+  ORDER BY hour DESC;
+```
+
 Otherwise the code highlighter may be disrupted.
 
 ### General formatting conventions
