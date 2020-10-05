@@ -186,15 +186,15 @@ which are added using the function
 
 This function takes takes three arguments:
 
-- The parameter `start_interval` indicate the start of the refresh
+- The parameter `start_offset` indicate the start of the refresh
   window relative to the current time when the policy executes.
-- The parameter `end_interval` indicate the end of the refresh window
+- The parameter `end_offset` indicate the end of the refresh window
   relative to the current time when the policy executes.
 - The parameter `schedule_interval` indicate the refresh interval in
   wall-clock time.
 
 Similar to the `refresh_continuous_aggregate` function, providing
-`NULL` to `start_interval` or `end_interval` makes the range
+`NULL` to `start_offset` or `end_offset` makes the range
 open-ended and will extend to the beginning or end of time,
 respectively.
 
@@ -204,15 +204,15 @@ hypertable `conditions` and run every hour, you would write:
 
 ```sql
 SELECT add_continuous_aggregate_policy('conditions_summary_hourly',
-	start_interval => NULL,
-	end_interval => INTERVAL '1 h',
+	start_offset => NULL,
+	end_offset => INTERVAL '1 h',
 	schedule_interval => INTERVAL '1 h');
 ```
 
 This will ensure that all data in the continuous aggregate is up to
 date with the hypertable except the last hour and also ensure that we
 do not try to refresh the last bucket of the continuous
-aggregate. Since we give an open-ended `start_interval`, any data that
+aggregate. Since we give an open-ended `start_offset`, any data that
 is removed from `conditions` (for example, by using `DELETE` or
 [`drop_chunks`][api-drop-chunks]) will also be removed from
 `conditions_summary_hourly`. In effect, the continuous aggregate will
@@ -221,16 +221,16 @@ always reflect the data in the underlying hypertable.
 If you instead want to keep the continuous aggregate up to date for
 say only the last 30 days.  the continuous aggregate even if it is
 removed from the underlying hypertable, you can set a range for the
-`start_interval`. For example, if you have a [data retention
+`start_offset`. For example, if you have a [data retention
 policy][sec-data-retention] that removed data older than one month,
-you can set `start_interval` to one month (or less) and thereby not
+you can set `start_offset` to one month (or less) and thereby not
 refresh data older than one month, which includes data that is
 removed.
 
 ```sql
 SELECT add_continuous_aggregate_policy('conditions_summary_hourly',
-	start_interval => INTERVAL '1 month',
-	end_interval => INTERVAL '1 h',
+	start_offset => INTERVAL '1 month',
+	end_offset => INTERVAL '1 h',
 	schedule_interval => INTERVAL '1 h');
 ```
 
@@ -254,7 +254,7 @@ aggregation. Older buckets rarely get updated and are usually
 aggregated only once.
 
 As a result, it is recommended to configure continuous aggregate
-policies with a positive `end_interval`, that is, the materialization
+policies with a positive `end_offset`, that is, the materialization
 will lag behind the most recent time by this amount. A recommended
 value is at least one time bucket.
 
