@@ -2,29 +2,27 @@
 
 Aggregate queries which touch large swathes of time-series data can
 take a long time to compute because the system needs to scan large
-amounts of data on every query execution. TimescaleDB continuous
-aggregates automatically calculate the results of a query in the
-background and materialize the results. Queries to the continuous
-aggregate view are then significantly faster as they touch less raw
-data in the hypertable and instead mostly use the pre-computed
-aggregates to build the view.
+amounts of data on every query execution. To make such queries faster,
+continuous aggregates allows pre-computing (or materializing) the
+aggregates, while also providing means to continuously, and without
+much overhead, keep them up-to-date as the underlying source data
+changes.
 
-Continuous aggregates are somewhat similar to PostgreSQL [materialized
-views][postgres-materialized-views], but unlike a materialized view,
-continuous aggregates do not need to be refreshed manually; the view
-will be refreshed automatically in the background as new data is
-added, or old data is modified. Additionally, it does not need to
-re-calculate all of the data on every refresh. Only new and/or
-invalidated data will be calculated.  Since this re-aggregation is
-automatic, it doesn’t add any maintenance burden to your database.
-
+Continuous aggregates are somewhat similar to PostgreSQL's
+[materialized views][postgres-materialized-views], but, unlike a
+materialized view, a continuous aggregate can be updated continuously
+and incrementally, either via manual refreshing or a policy that runs
+in the background. A refresh can cover the entire aggregate or just a
+specific time range. In either case, the refresh only recomputes the
+aggregate buckets that have changed since the last refresh.
+ 
 ### An introductory example [](quick-start)
 
 As a quick introductory example, let's create a hypertable
 `conditions` containing temperature data for devices and a continuous
 aggregate to compute the daily average, minimum, and maximum
 temperature. Start off by creating the hypertable and populate it with
-some random data:
+some data:
 
 ```sql
 CREATE TABLE conditions (
@@ -81,7 +79,7 @@ SELECT bucket, avg
 ORDER BY bucket;
 ```
 
-### A detailed look at continuous aggregate views [](detailed-look)
+### A detailed look at continuous aggregates [](detailed-look)
 
 As shown above, creating a refreshing [continuous
 aggregate][api-continuous-aggs] is a two-step process. First, one
@@ -92,7 +90,7 @@ policy needs to be created to keep it refreshed.
 
 You can create several continuous aggregates for the same
 hypertable. For example, we could create another continuous aggregate
-view that summarizes the hourly data.
+view for daily data.
 
 ```sql
 CREATE MATERIALIZED VIEW conditions_summary_daily
