@@ -125,8 +125,8 @@ queries.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Hypertable to add the dimension to.|
-| `column_name` | Name of the column to partition by.|
+| `hypertable` | (REGCLASS) Hypertable to add the dimension to.|
+| `column_name` | (NAME)  Column to partition by.|
 
 #### Optional Arguments [](add_dimension-optional-arguments)
 
@@ -359,8 +359,8 @@ tablespace.
 
 |Name|Description|
 |---|---|
-| `tablespace` | Name of the tablespace to attach.|
-| `hypertable` | Identifier of hypertable to attach the tablespace to.|
+| `tablespace` | (NAME) Name of the tablespace to attach.|
+| `hypertable` | (REGCLASS) Hypertable to attach the tablespace to.|
 
 Tablespaces need to be [created][postgres-createtablespace] before
 being attached to a hypertable. Once created, tablespaces can be
@@ -837,7 +837,7 @@ again be considered for chunk placement.
 
 |Name|Description|
 |---|---|
-| `tablespace` | Name of the tablespace to detach.|
+| `tablespace` | (NAME) Tablespace to detach.|
 
 When giving only the tablespace name as argument, the given tablespace
 will be detached from all hypertables that the current role has the
@@ -850,8 +850,8 @@ is issued.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Identifier of hypertable to detach a the tablespace from.|
-| `if_attached` | Set to true to avoid throwing an error if the tablespace is not attached to the given table. A notice is issued instead. Defaults to false. |
+| `hypertable` | (REGCLASS) Hypertable to detach a the tablespace from.|
+| `if_attached` | (BOOLEAN) Set to true to avoid throwing an error if the tablespace is not attached to the given table. A notice is issued instead. Defaults to false. |
 
 
 When specifying a specific hypertable, the tablespace will only be
@@ -887,7 +887,7 @@ tablespace.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Identifier of hypertable to detach a the tablespace from.|
+| `hypertable` | (REGCLASS) Hypertable to detach a the tablespace from.|
 
 #### Sample Usage [](detach_tablespaces-examples)
 
@@ -1055,7 +1055,7 @@ not affected.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Identifier of hypertable to update interval for.|
+| `hypertable` | (REGCLASS) Hypertable to update interval for.|
 | `chunk_time_interval` | Interval in event time that each new chunk covers. Must be > 0.|
 
 #### Optional Arguments [](set_chunk_time_interval-optional-arguments)
@@ -1101,7 +1101,7 @@ hypertable. The new partitioning only affects new chunks.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Identifier of hypertable to update the number of partitions for.|
+| `hypertable` | (REGCLASS) Hypertable to update the number of partitions for.|
 | `number_partitions` | The new number of partitions for the dimension. Must be greater than 0 and less than 32,768.|
 
 #### Optional Arguments [](set_number_partitions-optional-arguments)
@@ -1142,7 +1142,7 @@ chunk.
 
 |Name|Description|
 |---|---|
-| `main_table` | (REGCLASS) Identifier of hypertable to set the integer now function for .|
+| `main_table` | (REGCLASS) Hypertable to set the integer now function for .|
 | `integer_now_func` | (REGPROC) A function that returns the current time value in the same units as the time column. |
 
 #### Optional Arguments [](set_integer_now_func-optional-arguments)
@@ -1179,7 +1179,7 @@ the function will print a warning.
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) Identifier of the distributed hypertable to update the replication factor for.|
+| `hypertable` | (REGCLASS) Distributed hypertable to update the replication factor for.|
 | `replication_factor` | (INTEGER) The new value of the replication factor. Must be greater than 0, and smaller than or equal to the number of attached data nodes.|
 
 #### Errors
@@ -2027,7 +2027,7 @@ and re-create the policy if many older chunks have been affected.
 
 |Name|Description|
 |---|---|
-| `hypertable` | (REGCLASS) Name of the hypertable to create the policy for. |
+| `hypertable` | (REGCLASS) Hypertable to create the policy for. |
 | `index_name` | (NAME) Existing index by which to order rows on disk. |
 
 #### Optional Arguments [](add_reorder_policy-optional-arguments)
@@ -3267,7 +3267,7 @@ All sizes are in bytes.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Hypertable to show stats for. |
+| `hypertable` | (REGCLASS) Hypertable to show stats for. |
 
 #### Returns [](hypertable_compression_stats-returns)
 |Column|Description|
@@ -3396,7 +3396,7 @@ information as a separate row per node.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Hypertable to show detailed size of. |
+| `hypertable` | (REGCLASS) Hypertable to show detailed size of. |
 
 #### Returns [](hypertable_detailed_size-returns)
 |Column|Description|
@@ -3475,7 +3475,7 @@ output of `hypertable_detailed_size` function.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Hypertable to show size of. |
+| `hypertable` | (REGCLASS) Hypertable to show size of. |
 
 #### Returns [](hypertable_size-returns)
 (BIGINT) Total disk space used by the specified table, including all indexes and TOAST data|
@@ -3544,7 +3544,7 @@ Show the tablespaces attached to a hypertable.
 
 |Name|Description|
 |---|---|
-| `hypertable` | Identifier of hypertable to show attached tablespaces for.|
+| `hypertable` | (REGCLASS) Hypertable to show attached tablespaces for.|
 
 
 #### Sample Usage [](show_tablespaces-examples)
