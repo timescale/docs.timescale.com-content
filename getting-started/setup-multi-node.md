@@ -498,9 +498,9 @@ directory of the access node, you can do it through the following steps:
    ```bash
    pguser=postgres
    base=`echo -n $pguser | md5sum | cut -c1-32`
-   subj=/C=US/ST=New York/L=New York/O=Timescale/OU=Engineering/CN=$pguser
-   key_file=timescaledb/certs/$base.key
-   crt_file=timescaledb/certs/$base.crt
+   subj="/C=US/ST=New York/L=New York/O=Timescale/OU=Engineering/CN=$pguser"
+   key_file="timescaledb/certs/$base.key"
+   crt_file="timescaledb/certs/$base.crt"
    ```
 
    Here we copy most of the data from the server certificate for the
@@ -518,14 +518,14 @@ directory of the access node, you can do it through the following steps:
    will be removed later.
 
    ```bash
-   openssl req -new -sha256 -key $key_file -out $base.csr -subj $subj
+   openssl req -new -sha256 -key "$key_file" -out "$base.csr" -subj "$subj"
    ```
 
 4. Sign the certificate signing request with the instance key.
 
    ```bash
    openssl ca -batch -keyfile server.key -extensions v3_intermediate_ca \
-	   -days 3650 -notext -md sha256 -in $base.csr -out $crt_file
+	   -days 3650 -notext -md sha256 -in "$base.csr" -out "$crt_file"
    rm $base.csr
    ```
    
