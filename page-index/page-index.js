@@ -187,16 +187,24 @@ const pageIndex = [
             }, {
                 Title: "Setting up Multi-Node TimescaleDB",
                 type: PAGE,
-                href: "setup-multi-node",
+                href: "setup-multi-node-basic",
                 children: [
                     {
-                        Title: "Configuring Data Nodes",
-                        type: ANCHOR,
-                        href: "#config-data-nodes"
-                    }, {
-                        Title: "Data Node Authentication",
-                        type: ANCHOR,
-                        href: "#data-node-auth"
+                        Title: "Configuring authentication",
+                        type: PAGE,
+                        href: "setup-multi-node-auth",
+                        children: [
+                            {
+                                Title: "Password authentication",
+                                type: ANCHOR,
+                                href: "#multi-node-auth-password"
+                            }, {
+                                Title: "Certificate authentication",
+                                type: ANCHOR,
+                                href: "#multi-node-auth-certificate"
+                            }
+
+                        ]
                     }
                 ]
             }, {
@@ -265,7 +273,7 @@ const pageIndex = [
 		Title: "Distributed Hypertables",
                 type: PAGE,
                 href: "distributed-hypertables",
-		children: [
+                children: [
                     {
                         Title: "CREATE",
                         type: ANCHOR,
@@ -275,7 +283,7 @@ const pageIndex = [
                         type: ANCHOR,
                         href: "#changing-data-nodes"
                     }
-		]
+                ]
             }, {
                 Title: "Schema management",
                 type: PAGE,
@@ -360,9 +368,9 @@ const pageIndex = [
                         type: ANCHOR,
                         href: "#how-it-works"
                     }, {
-                      Title: "Advanced Usage",
-                      type: ANCHOR,
-                      href: "#advanced-usage"
+                        Title: "Advanced Usage",
+                        type: ANCHOR,
+                        href: "#advanced-usage"
                     }, {
                         Title: "Future Work",
                         type: ANCHOR,
