@@ -47,85 +47,7 @@ the `conditions` hypertable will still have data stretching back 36 hours.
 For more information on the `drop_chunks` function and related
 parameters, please review the [API documentation][drop_chunks].
 
-### Data Retention with Continuous Aggregates
-
-Continuing on the example above, you have discovered that you need
-daily summary of the average, minimum, and maximum temperature for
-each day, so you have created a continuous aggregate
-`conditions_summary_daily` to collect this data:
-
-```sql
-CREATE VIEW conditions_summary_daily
-WITH (timescaledb.continuous) AS
-SELECT device,
-       time_bucket(INTERVAL '1 day', "time") AS bucket,
-       AVG(temperature),
-       MAX(temperature),
-       MIN(temperature)
-FROM conditions
-GROUP BY device, bucket;
-```
-
-When you now try to drop chunks from `conditions` you get an error:
-
-```
-postgres=# SELECT drop_chunks(INTERVAL '30 days', 'conditions');
-ERROR:  cascade_to_materializations options must be set explicitly
-HINT:  Hypertables with continuous aggs must have the cascade_to_materializations option set to either true or false explicitly.
-```
-
-Since the data in `conditions_summary_daily` is now dependent on the
-data in `conditions` you have to explicitly say if you want to remove
-this data from the continuous aggregate using the
-`cascade_to_materializations` option. Not giving a value when there is
-a continuous aggregate defined on a hypertable will generate an error,
-as you can see above. To drop the chunks from `condition` and cascade
-it to drop the corresponding chunks in the continuous aggregate you
-set `cascade_to_materializations` to `TRUE`:
-
-```
-postgres=# SELECT COUNT(*)
-postgres-#   FROM drop_chunks(INTERVAL '30 days', 'conditions',
-postgres-#                    cascade_to_materializations => TRUE);
- count 
--------
-    61
-(1 row)
-```
-
-To only remove chunks from the hypertable `conditions` and not cascade
-to dropping chunks on the continuous aggregate
-`conditions_summary_daily` you can provide the value `FALSE` to
-`cascade_to_materialization`, but only after you have removed the
-dependency on the corresponding chunks in the continuous aggregate. To
-do that, use `ALTER VIEW` to change the
-`ignore_invalidation_older_than` parameter in the continuous aggregate
-to the same range that you intend to remove from the hypertable.
-
-```sql
-ALTER VIEW conditions_summary_daily SET (
-   timescaledb.ignore_invalidation_older_than = '29 days'
-);
-
-SELECT drop_chunks(INTERVAL '30 days', 'conditions',
-                   cascade_to_materialization => FALSE);
-```
-
-Dropping chunks from the materialized view is similar to dropping
-chunks from the tables with raw data. You can drop the chunks of the
-continuous aggregate using `drop_chunks`, but you need to set
-`ignore_invalidation_older_than` to ensure that new data outside the
-dropped region does not update the materialized table.
-
-```sql
-ALTER VIEW conditions_summary_daily SET (
-   timescaledb.ignore_invalidation_older_than = '29 days'
-);
-
-SELECT drop_chunks(INTERVAL '30 days', 'conditions_summary_daily');
-```
-
-### Automatic Data Retention Policies
+### Automatic Data Retention Policies [](retention-policy)
 
 TimescaleDB includes a background job scheduling framework for automating data
 management tasks, such as enabling easy data retention policies.
@@ -147,72 +69,58 @@ SELECT remove_retention_policy('conditions');
 
 The scheduler framework also allows one to view scheduled jobs:
 ```sql
-SELECT * FROM timescaledb_information.drop_chunks_policies;
+SELECT * FROM timescaledb_information.job_stats;
 ```
 
 For more information, please see the [API documentation][add_retention_policy].
 
+### Data Retention with Continuous Aggregates [](retention-with-aggregates)
 
-### Using External Job Schedulers
+Extra care must be taken when using retention policies or `drop_chunks` calls on
+hypertables which have [continuous aggregates][continuous_aggregates] defined on
+them. Similar to a refresh of a materialized view, a refresh on a continuous aggregate
+will update the aggregate to reflect changes in the underlying source data. This means
+that any chunks that are dropped in the region still being refreshed by the
+continuous aggregate will cause the chunk data to disappear from the aggregate as
+well. If the intent is to keep the aggregate while dropping the underlying data,
+the interval being dropped should not overlap with the offsets for the continuous
+aggregate.
 
-While the built-in scheduling framework automates data retention, the
-`drop_chunks` command can be combined with an external tool for job scheduling,
-like `crontab` or `systemd`, to schedule such commands.
+As an example, let's add a continuous aggregate to our `conditions` hypertable:
+```sql
+CREATE MATERIALIZED VIEW conditions_summary_daily (day, device, temp)
+WITH (timescaledb.continuous) AS
+  SELECT time_bucket('1 day', time), device, avg(temperature)
+  FROM conditions
+  GROUP BY (1, 2);
 
-#### Using Crontab
-
-The following cron job will drop chunks every day at 3am:
-
-```bash
-0 3 * * * /usr/bin/psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT drop_chunks('conditions', INTERVAL '24 hours');" >/dev/null 2>&1
+SELECT add_continuous_aggregate_policy('conditions_summary_daily', '7 days', '1 day', '1 day');
 ```
 
-The above cron job can easily be installed by running `crontab -e`.
+This will create the `conditions_summary_daily` aggregate which will store the daily
+temperature per device from our `conditions` table. However, we have a problem here
+if we're using our 24 hour retention policy from above, as our aggregate will capture
+changes to the data for up to seven days. As a result, we will update the aggregate
+when we drop the chunk from the table, and we'll ultimately end up with no data in our
+`conditions_summary_daily` table.
 
-
-#### Using a Systemd Timer
-
-On a systemd-based OS (most modern Linux distributions), a systemd [unit][] with
-accompanying unit [timer][] can also be used to implement a
-retention policy.
-
-First, create, e.g., `/etc/systemd/system/retention.service` unit file:
-
-```ini
-[Unit]
-Description=Drop chunks from the 'conditions' table
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT drop_chunks('conditions', INTERVAL '24 hours');"
+We can fix this by replacing the `conditions` retention policy with one having a more
+suitable interval:
+```sql
+SELECT remove_retention_policy('conditions');
+SELECT add_retention_policy('conditions', INTERVAL '30 days');
 ```
 
-Then create a timer to run this unit, e.g., `/etc/systemd/system/retention.timer`:
+It's worth noting that continuous aggregates are also valid targets for `drop_chunks`
+and retention policies. To continue our example, we now have our `conditions` table
+holding the last 30 days worth of data, and our `conditions_daily_summary` holding
+average daily values for an indefinite window after that. The following will change
+this to also drop the aggregate data after 600 days:
 
-```ini
-[Unit]
-Description=Run data retention at 3am daily
-
-[Timer]
-OnCalendar=*-*-* 03:00:00
-
-[Install]
-WantedBy=timers.target
+```sql
+SELECT add_retention_policy('conditions_summary_daily', INTERVAL '600 days');
 ```
-
-Once these units have been created, run
-
-```
-systemctl daemon-reload
-systemctl enable retention.timer
-systemctl start retention.timer
-```
-
-To make systemd load the timer unit, enable it by default on bootup,
-and immediately start it.
-
 
 [drop_chunks]: /api#drop_chunks
 [add_retention_policy]: /api#add_retention_policy
-[unit]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html
-[timer]: https://www.freedesktop.org/software/systemd/man/systemd.timer.html
+[continuous_aggregates]: /using-timescaledb/continuous-aggregates
