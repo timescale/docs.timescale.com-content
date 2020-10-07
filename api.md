@@ -1457,19 +1457,29 @@ ALTER TABLE metrics SET (timescaledb.compress, timescaledb.compress_orderby = 't
 
 ## add_compression_policy() :community_function: [](add_compression_policy)
 Allows you to set a policy by which the system will compress a chunk
-automatically in the background after it reaches a given age.
+automatically in the background after it reaches a given age. 
+
+Note that compression policies can only be created on hypertables that already
+have compression enabled, e.g., via the [`ALTER TABLE`](/api#compression_alter-table) command
+to set `timescaledb.compress` and other configuration parameters.
 
 #### Required Arguments [](add_compression_policy-required-arguments)
 
 |Name|Description|
 |---|---|
 | `hypertable` | (REGCLASS) Name of the hypertable|
-| `compress_after` | (INTERVAL or integer) The age after which the policy job will compress chunks|
+| `compress_after` | (INTERVAL or INTEGER) The age after which the policy job will compress chunks|
 
 The `compress_after` parameter should be specified differently depending on the type of the time column of the hypertable:
 - For hypertables with TIMESTAMP, TIMESTAMPTZ, and DATE time columns: the time interval should be an INTERVAL type
 - For hypertables with integer-based timestamps: the time interval should be an integer type (this requires
 the [integer_now_func](#set_integer_now_func) to be set).
+
+#### Optional Arguments [](add_compression_policy-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `if_not_exists` | (BOOLEAN) Setting to true will cause the command to fail with a warning instead of an error if a compression policy already exists on the hypertable. Defaults to false.|
 
 #### Sample Usage [](add_compression_policy-sample-usage)
 Add a policy to compress chunks older than 60 days on the 'cpu' hypertable.
@@ -1492,6 +1502,12 @@ If you need to remove the compression policy. To re-start policy basd compressio
 |Name|Description|
 |---|---|
 | `hypertable` | (REGCLASS) Name of the hypertable the policy should be removed from.|
+
+#### Optional Arguments [](remove_compression_policy-optional-arguments)
+
+|Name|Description|
+|---|---|
+| `if_exists` | (BOOLEAN) Setting to true will cause the command to fail with a notice instead of an error if a compression policy does not exist on the hypertable. Defaults to false.|
 
 #### Sample Usage [](remove_compression_policy-sample-usage)
 Remove the compression policy from the 'cpu' table:
