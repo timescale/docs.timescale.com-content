@@ -32,6 +32,7 @@ Learn how to monitor your Django application using Prometheus.
 - **[Visualize Geospatial data in Grafana][tutorial-grafana-geospatial]**: Use the Grafana WorldMap visualization to view your TimescaleDB data.
 - **[Use Grafana variables][tutorial-grafana-variables]**: Filter and customize your Grafana visualizations.
 - **[Visualizing Missing Data with Grafana][tutorial-grafana-missing-data]**: Learn how to visualize and aggregate missing time-series data in Grafana.
+- **[Setting up Grafana alerts][tutorial-grafana-alerts]**: Configure Grafana to alert you in Slack, PagerDuty, and more.
 
 ### Integrating with other products
 
@@ -44,6 +45,7 @@ Learn how to monitor your Django application using Prometheus.
 - **[Node and TimescaleDB][node-quickstart]**: A quick start guide for Node developers looking to use TimescaleDB.
 - **[Python and TimescaleDB][python-quickstart]**: A quick start guide for Python developers looking to use TimescaleDB.
 - **[Ruby on Rails and TimescaleDB][ruby-quickstart]**: A quick start guide for Ruby on Rails developers looking to use TimescaleDB.
+- **[Golang and TimescaleDB][go-quickstart]**: A quick start guide for Golang developers looking to use TimescaleDB.
 
 ### Additional resources
 
@@ -75,8 +77,10 @@ and pick up some valuable `psql` tips and tricks along the way.
 [tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial
 [tutorial-grafana-variables]: /tutorials/tutorial-grafana-variables
 [tutorial-grafana-missing-data]: /tutorials/tutorial-howto-visualize-missing-data-grafana
+[tutorial-grafana-alerts]: /tutorials/tutorial-grafana-alerts
 [node-quickstart]: /tutorials/quickstart-node
 [python-quickstart]: /tutorials/quickstart-python
 [ruby-quickstart]: /tutorials/quickstart-ruby
+[go-quickstart]: /tutorials/quickstart-go
 [simul-iot-data]: /tutorials/tutorial-howto-simulate-iot-sensor-data
 
