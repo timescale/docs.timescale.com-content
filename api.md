@@ -1816,7 +1816,7 @@ which will be run in the background to enforce it.
 Information about jobs created by policies can be viewed by querying 
 `timescaledb_information.jobs` and `timescaledb_information.job_stats`.
 
-## add_continuous_aggregate_policy() :community_function> [](add_continuous_aggregate_policy)
+## add_continuous_aggregate_policy() :community_function: [](add_continuous_aggregate_policy)
 
 Create a policy that automatically refreshes a continuous aggregate.
 
