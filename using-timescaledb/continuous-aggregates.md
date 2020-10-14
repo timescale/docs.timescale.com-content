@@ -2,29 +2,27 @@
 
 Aggregate queries which touch large swathes of time-series data can
 take a long time to compute because the system needs to scan large
-amounts of data on every query execution. TimescaleDB continuous
-aggregates automatically calculate the results of a query in the
-background and materialize the results. Queries to the continuous
-aggregate view are then significantly faster as they touch less raw
-data in the hypertable and instead mostly use the pre-computed
-aggregates to build the view.
+amounts of data on every query execution. To make such queries faster,
+a continuous aggregate allows materializing the computed aggregates,
+while also providing means to continuously, and with low overhead,
+keep them up-to-date as the underlying source data changes.
 
-Continuous aggregates are somewhat similar to PostgreSQL [materialized
-views][postgres-materialized-views], but unlike a materialized view,
-continuous aggregates do not need to be refreshed manually; the view
-will be refreshed automatically in the background as new data is
-added, or old data is modified. Additionally, it does not need to
-re-calculate all of the data on every refresh. Only new and/or
-invalidated data will be calculated.  Since this re-aggregation is
-automatic, it doesn’t add any maintenance burden to your database.
-
+Continuous aggregates are somewhat similar to PostgreSQL's
+[materialized views][postgres-materialized-views], but, unlike a
+materialized view, a continuous aggregate can be continuously and
+incrementally refreshed. The refreshing can be done either manually or
+via a policy that runs in the background, and can cover the entire
+continuous aggregate or just a specific time range. In either case,
+the refresh only recomputes the aggregate buckets that have changed
+since the last refresh.
+ 
 ### An introductory example [](quick-start)
 
 As a quick introductory example, let's create a hypertable
 `conditions` containing temperature data for devices and a continuous
 aggregate to compute the daily average, minimum, and maximum
 temperature. Start off by creating the hypertable and populate it with
-some random data:
+some data:
 
 ```sql
 CREATE TABLE conditions (
@@ -81,7 +79,7 @@ SELECT bucket, avg
 ORDER BY bucket;
 ```
 
-### A detailed look at continuous aggregate views [](detailed-look)
+### A detailed look at continuous aggregates [](detailed-look)
 
 As shown above, creating a refreshing [continuous
 aggregate][api-continuous-aggs] is a two-step process. First, one
@@ -91,8 +89,8 @@ MATERIALIZED VIEW`][postgres-createview] with the
 policy needs to be created to keep it refreshed.
 
 You can create several continuous aggregates for the same
-hypertable. For example, we could create another continuous aggregate
-view that summarizes the hourly data.
+hypertable. For example, you could create another continuous aggregate
+view for daily data.
 
 ```sql
 CREATE MATERIALIZED VIEW conditions_summary_daily
@@ -121,116 +119,111 @@ so that it contains the aggregates computed across the entire
 `conditions` hypertable.
 
 It might, however, not always be desirable to populate the continuous
-aggregate. If the amount of data in `conditions` is large and new data
-is continuously being added, it is usually more meaningful to control
-the order in which the data is refreshed or combine manual refresh
-with a policy. For example, it might be more interesting to see the
-recent data but historical data can be deferred to later. In those
-cases, the `WITH NO DATA` option can be used to avoid aggregating the
-data during creation.
+aggregate when created. If the amount of data in `conditions` is large
+and new data is continuously being added, it is often more useful to
+control the order in which the data is refreshed by combining manual
+refresh with a policy. For example, one could use a policy to refresh
+only recent (and future) data while historical data is left to manual
+refreshes. In those cases, the `WITH NO DATA` option can be used to
+avoid aggregating all the data during creation.
 
-You could then add a policy to control the refresh of the recent data,
-and also run manual refreshes using
-[`refresh_continuous_aggregate`][refresh_continuous_aggregate] to
-refresh the historical data in a controlled manner. For example, to
-refresh one month of data you could write:
+The [`refresh_continuous_aggregate`][refresh_continuous_aggregate]
+command is used for manual refreshing. For example, to refresh one
+month of data you could write:
 
 ```sql
 CALL refresh_continuous_aggregate('conditions_summary_hourly', '2020-05-01', '2020-06-01');
 ```
 
-Unlike a regular materialized view, the refresh will only recompute
-the data within the window that has changed in the underlying
-hypertable since the last refresh. Therefore, if only a few buckets
-need updating, then the refresh is quick.
+Unlike a regular materialized view, the refresh command will only
+recompute the data within the window that has changed in the
+underlying hypertable since the last refresh. Therefore, if only a few
+buckets need updating, then the refresh is quick.
 
 Note that the end range is exclusive and aligned to the buckets of the
 continuous aggregate, so this will refresh only the buckets that are
 fully in the date range `['2020-05-01', '2020-06-01')`, that is, up to
 but not including `2020-06-01`. While it is possible to use `NULL` to
 indicate an open-ended range, we do not in general recommend using
-it. For more information, see the [Advanced Usage](#advanced-usage)
-section below.
+it. Such a refresh might materialize a lot of data, have a negative
+affect on performance, and can affect other policies such as data
+retention. For more information, see the [Advanced
+Usage](#advanced-usage) section below.
 
-However, note that this might materialize a lot of data, can affect
-other policies such as the data retention, and affects write
-amplification, so it should only be used rarely.
-
-Continuous aggregates are supported for most aggregates that can be
-[parallelized by PostgreSQL][postgres-parallel-agg], which includes
-the normal aggregation functions like `SUM` and `AVG`. However,
+Continuous aggregates are supported for most aggregate functions that
+can be [parallelized by PostgreSQL][postgres-parallel-agg], which
+includes the normal aggregates like `SUM` and `AVG`. However,
 aggregates using `ORDER BY` and `DISTINCT` cannot be used with
 continuous aggregates since they are not possible to parallelize by
-PostgreSQL. In addition, TimescaleDB continuous aggregates does not
+PostgreSQL. In addition, TimescaleDB continuous aggregates do not
 currently support the `FILTER` clause (not to be confused with
 `WHERE`) even though it is possible to parallelize but we might add
 support for this in a future version.
 
 #### Automatic refresh with a continuous aggregate policy
 
-You can refresh the continuous aggregate view manually as mentioned
-above, but you can also automate the refresh by adding a continuous
-aggregate policies to automatically refresh data.
+Continuous aggregate policies can be configured to support different
+use cases. For example, you might want to:
 
-There are a few situations that you might want to automate:
+- have the continuous aggregate and the hypertable be in sync, even
+  when data is removed from the hypertable, or
+- keep the aggregate data in the continuous aggregate when removing
+  source data from the hypertable.
 
-- You want the continuous aggregate and the hypertable to be in sync,
-  even when data is removed from the hypertable.
-- You want to aggregate data from the hypertable into the continuous
-  aggregate but want to keep the aggregated data in the continuous
-  aggregate when removing data from the hypertable.
-
-These cases can be automatied using a *continuous aggregate policy*,
-which are added using the function
+These use cases are supported by different configuration to
 [`add_continuous_aggregate_policy`][add-continuous-aggregate-policy].
 
-This function takes takes three arguments:
+This function takes three arguments:
 
-- The parameter `start_interval` indicate the start of the refresh
+- The parameter `start_offset` indicates the start of the refresh
   window relative to the current time when the policy executes.
-- The parameter `end_interval` indicate the end of the refresh window
+- The parameter `end_offset` indicates the end of the refresh window
   relative to the current time when the policy executes.
-- The parameter `schedule_interval` indicate the refresh interval in
+- The parameter `schedule_interval` indicates the refresh interval in
   wall-clock time.
 
 Similar to the `refresh_continuous_aggregate` function, providing
-`NULL` to `start_interval` or `end_interval` makes the range
-open-ended and will extend to the beginning or end of time,
-respectively.
+`NULL` to `start_offset` or `end_offset` makes the range open-ended
+and will extend to the beginning or end of time,
+respectively. However, it seldom makes sense to use `NULL` for the
+`end_offset`. Instead, it is recommended to set the `end_offset` so
+that at least the most recent time bucket is excluded. For time-series
+data that see mostly in-order writes, the time buckets that still see
+lots of writes will quickly have out-of-date aggregates. Excluding
+those time buckets will provide better performance.
 
 For example, to create a policy for `conditions_summary_hourly` that
 keeps the continuous aggregate up to date with the underlying
-hypertable `conditions` and run every hour, you would write:
+hypertable `conditions` and runs every hour, you would write:
 
 ```sql
 SELECT add_continuous_aggregate_policy('conditions_summary_hourly',
-	start_interval => NULL,
-	end_interval => INTERVAL '1 h',
+	start_offset => NULL,
+	end_offset => INTERVAL '1 h',
 	schedule_interval => INTERVAL '1 h');
 ```
 
 This will ensure that all data in the continuous aggregate is up to
 date with the hypertable except the last hour and also ensure that we
 do not try to refresh the last bucket of the continuous
-aggregate. Since we give an open-ended `start_interval`, any data that
+aggregate. Since we give an open-ended `start_offset`, any data that
 is removed from `conditions` (for example, by using `DELETE` or
 [`drop_chunks`][api-drop-chunks]) will also be removed from
 `conditions_summary_hourly`. In effect, the continuous aggregate will
 always reflect the data in the underlying hypertable.
 
-If you instead want to keep the continuous aggregate up to date for
-say only the last 30 days.  the continuous aggregate even if it is
-removed from the underlying hypertable, you can set a range for the
-`start_interval`. For example, if you have a [data retention
-policy][sec-data-retention] that removed data older than one month,
-you can set `start_interval` to one month (or less) and thereby not
-refresh data older than one month, which includes data that is
-removed.
+If you instead want to keep data in the continuous aggregate even if
+the source data is removed from the underlying hypertable, you also
+need to set the `start_offset` in way that is compatible with the
+[data retention policy][sec-data-retention] on the source
+hypertable. For example, if you have a retention policy that removes
+data older than one month, you need to set `start_offset` to one month
+(or less) and thereby not refresh the region of dropped data.
 
 ```sql
 SELECT add_continuous_aggregate_policy('conditions_summary_hourly',
-	start_interval => INTERVAL '1 month',
-	end_interval => INTERVAL '1 h',
+	start_offset => INTERVAL '1 month',
+	end_offset => INTERVAL '1 h',
 	schedule_interval => INTERVAL '1 h');
 ```
 
@@ -247,17 +240,6 @@ SELECT add_continuous_aggregate_policy('conditions_summary_hourly',
 >You can read more about data retention with continuous aggregates in
 >the [*Data retention*][sec-data-retention] section.
 
-Time-series data is typically ordered, so it is usually the last
-bucket that gets most of the updates. Recomputing the last bucket when
-new data arrives negates many of the benefits of using continuous
-aggregation. Older buckets rarely get updated and are usually
-aggregated only once.
-
-As a result, it is recommended to configure continuous aggregate
-policies with a positive `end_interval`, that is, the materialization
-will lag behind the most recent time by this amount. A recommended
-value is at least one time bucket.
-
 A continuous aggregate may be dropped by using the `DROP MATERIALIZED
 VIEW` command. It does not affect the data in the hypertable from
 which the continuous aggregate is derived (`conditions` in the example
@@ -269,7 +251,7 @@ DROP MATERIALIZED VIEW conditions_summary_hourly;
 
 ---
 
-### Using Continuous Aggregates [](using)
+### Querying Continuous Aggregates [](using)
 
 To query data from a continuous aggregate, use a `SELECT` query on
 the continuous aggregate view. For instance, you can get the average,
@@ -293,50 +275,26 @@ ORDER BY bucket DESC, device_id DESC LIMIT 20;
 
 ---
 
-### Real-Time Aggregates [](real-time-aggregates)
+### Real-Time Aggregation [](real-time-aggregates)
 
-Real-time aggregates are a capability (first introduced in TimescaleDB 1.7)
-whereby querying the *continuous aggregate view* will then compute
-fully up-to-date aggregate results by combining the materialized
-partial aggregate with recent data from the hypertable that has yet to
-be materialized by the continuous aggregate. By combining raw and
-materialized data in this way, one gets accurate and up-to-date
-results while still enjoying the speedups of pre-computing a large
-portion of the result.
+A query on a continuous aggregate will, by default, use *real-time
+aggregation* (first introduced in TimescaleDB 1.7) to combine
+materialized aggregates with recent data from the source
+hypertable. By combining raw and materialized data in this way,
+real-time aggregation produces accurate and up-to-date results while
+still benefiting from pre-computed aggregates for a large portion of
+the result.
 
-As an example, continuous aggregates _without_ this real-time capability make
-it really fast to get aggregate answers by pre-computing these values (such as
-the min/max/average value over each hour). This way, if you are collecting raw
-data every second, querying hourly data over the past week means reading 24 x 7
-= 168 values from the database, as opposed to processing 60 x 60 x 24 x 7 =
-604,800 values at query time.
+Real-time aggregation is the default behavior for any new continuous
+aggregates. To disable real-time aggregation and show only
+materialized data, add the parameter
+`timescaledb.materialized_only=true` when creating the continuous
+aggregate view or set it on an existing continuous aggregate using
+[`ALTER MATERIALIZED VIEW`][api-alter-cagg].
 
-But this type of continuous aggregate does not incorporate the very
-latest data, _i.e._, since the last time the asynchronous aggregation job ran
-inside the database. So if you are generating hourly rollups, you might only
-run this materialization job every hour.
-
-With real-time aggregates, a single, simple query will combine your
-pre-computed hourly rollups with the raw data from the last
-hour, to always give you an up-to-date answer.  Now, instead of touching
-604,800 rows of raw data, the query reads 167 pre-computed rows of
-hourly data and 3600 rows of raw secondly data, leading to significant
-performance improvements.
-
-Real-time aggregates are now the default behavior for any continuous
-aggregates. To revert to the previous behavior, in which the query
-touches materialized data only and doesn't combine with the latest raw
-data, add the parameter `timescaledb.materialized_only=true` when
-creating the continuous aggregate view.
-
-You can also use this in conjunction with the [`ALTER MATERIALIZED
-VIEW`][api-alter-cagg] to turn this feature on or off at any time.
-
->:TIP: To upgrade continuous aggregates that were created in a version
-earlier than TimescaleDB 1.7 to use real-time aggregates, alter the
-view to set `timescaledb.materialized_only=false`.  All subsequent
-queries to the view will immediately use the real-time aggregate
-feature.
+>:TIP: To use real-time aggregation on a continuous aggregate created
+in a version earlier than TimescaleDB 1.7, alter the view to set
+`timescaledb.materialized_only=false`.
 
 ---
 
@@ -353,47 +311,26 @@ continuous aggregate, write:
 CALL refresh_continuous_aggregate('conditions_summary_hourly, NULL, NULL);
 ```
 
-We do not recommend doing so for tables that see continuous ingest of
-new data since that would trigger a refresh of buckets that are not
-yet filled completely.
-
-However, note that this might materialize a lot of data, can affect
-other policies such as the data retention, and affects write
-amplification, so it should only be used rarely.
+However, we do not recommend open-ended refreshes on continuous
+aggregates when there is a continuous ingest of new data since that
+would trigger a refresh of time buckets that are not yet completely
+filled. It might also materialize a lot of data, increase write
+amplification, and affect other policies such as data retention.
 
 >:TIP: You should avoid refreshing time intervals that still see a lot
 >of writes, which is usually the last bucket of the continuous
->aggregate. These intervals are still changing and will not produce
->accurate aggregate anyway and refreshing unnecessarily will increase
->the write amplification, which will slow down the ingest rate of the
->hypertable. If you want to ensure that you read the latest bucket, you
->should instead rely on [real-time aggregates][real-time-aggregates].
+>aggregate. These intervals are still changing and are unlikely to
+>produce accurate aggregates, while at the same time slowing down the
+>ingest rate of the hypertable due to write amplification. If you want
+>to include the latest bucket in your queries, you should instead rely
+>on [real-time aggregation][real-time-aggregates].
 
 The `schedule_interval` option to `add_continuous_aggregate_policy`
-controls how frequently materialization jobs will be launched. Setting
-a shorter interval will mean materializations happen more frequently
-but each job consumes background worker resources while it is running.
+controls how frequently materialization jobs will be run. Setting a
+shorter interval will refresh more frequently but at the same time
+consume more background worker resources.
 
-#### Disabling real-time aggregates
-
-When querying the continuous aggregate view (for example,
-`conditions_summary_hourly`) by default you will get a complete view of
-the data including both the partially aggregated data and newer,
-unaggregated data in the hypertable (for example, `conditions`),
-based on the [real-time aggregate capability](#real-time-aggregate).
-
-If you, however, want to just get partially aggregated data and not
-include recent data that has yet to be materialized, you can set the
-option `timescaledb.materialized_only` to `true` using [`ALTER
-MATERIALIZED VIEW`][api-alter-cagg]:
-
-```sql
-ALTER MATERIALIZED VIEW conditions_summary_hourly SET (
-    timescaledb.materialized_only = true
-);
-```
-
-**Using `timescaledb.information` Views:**
+#### Using `timescaledb.information` Views
 The various options used to create the continuous aggregate view, as well as its
 definition, can be found in the
 [`timescaledb_information.continuous_aggregates` view][api-continuous-aggregates-info],
