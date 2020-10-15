@@ -65,14 +65,13 @@ CREATE TABLE rides_count(
 SELECT create_hypertable('rides_count', 'one_hour');
 
 INSERT INTO rides_count
-  SELECT time_bucket_gapfill('3 hour', pickup_datetime, '2016-01-01 00:00:00','2016-01-31 23:59:59') AS three_hour,
-    locf(AVG(trip_length)) AS length
+  SELECT time_bucket_gapfill('1 hour', pickup_datetime, '2016-01-01 00:00:00','2016-01-31 23:59:59') AS one_hour,
+    COUNT(*) AS count
   FROM rides
   WHERE ST_Distance(pickup_geom, ST_Transform(ST_SetSRID(ST_MakePoint(-74.0113,40.7075),4326),2163)) < 400 
-    AND ST_Distance(dropoff_geom, ST_Transform(ST_SetSRID(ST_MakePoint(-73.9851,40.7589),4326),2163)) < 400
     AND pickup_datetime < '2016-02-01'
-  GROUP BY three_hour
-  ORDER BY three_hour;
+  GROUP BY one_hour
+  ORDER BY one_hour;
 ```
 
 Notice that we have made the `rides_count` table a TimescaleDB hypertable.
