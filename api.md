@@ -60,7 +60,7 @@
 > - [timescaledb_information.chunks](#timescaledb_information-chunks)
 > - [timescaledb_information.continuous_aggregates](#timescaledb_information-continuous_aggregate)
 > - [timescaledb_information.compression_settings](#timescaledb_information-compression_settings)
-> - [timescaledb_information.data_node](#timescaledb_information-data_node)
+> - [timescaledb_information.data_nodes](#timescaledb_information-data_nodes)
 > - [timescaledb_information.dimensions](#timescaledb_information-dimensions)
 > - [timescaledb_information.hypertables](#timescaledb_information-hypertables)
 > - [timescaledb_information.jobs](#timescaledb_information-jobs)
@@ -2705,7 +2705,7 @@ ORDER BY day;
 
 ## Utilities/Statistics [](utilities)
 
-## timescaledb_information.data_node [](timescaledb_information-data_node)
+## timescaledb_information.data_nodes [](timescaledb_information-data_nodes)
 
 Get information on data nodes. This function is specific to running
 TimescaleDB in a multi-node setup.
@@ -2717,22 +2717,18 @@ TimescaleDB in a multi-node setup.
 | `node_name` | Data node name. |
 | `owner` | Oid of the user, who added the data node. |
 | `options` | Options used when creating the data node. |
-| `node_up` | (BOOLEAN) Data node responds to ping. |
-| `num_dist_tables` | Number of distributed hypertables that use this data node. This metric is only available if a node is up. |
-| `num_dist_chunks` | Total number of distributed chunks associated with distributed hypertables stored in data node. This metric is only available if a node is up. |
-| `total_dist_size` | Total amount of distributed data stored in data node. Data and chunks in non-distributed hypertables are not included in this metric. |
 
 #### Sample Usage
 
-Get liveness and metrics from data nodes.
+Get metadata related to data nodes.
 
 ```sql
-SELECT * FROM timescaledb_information.data_node;
+SELECT * FROM timescaledb_information.data_nodes;
 
- node_name    | owner      | options                        | server_up | num_dist_tables | num_dist_chunks | total_dist_size
---------------+------------+--------------------------------+-----------+-----------------+-----------------+----------------
- dn_1         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 96 MB
- dn_2         | 16388      | {host=localhost,port=15432}    |  t        |               1 | 50              | 400 MB
+ node_name    | owner      | options                        
+--------------+------------+--------------------------------
+ dn1         | postgres   | {host=localhost,port=15431,dbname=test}   
+ dn2         | postgres   | {host=localhost,port=15432,dbname=test} 
 (2 rows)
 ```
 
@@ -2893,7 +2889,7 @@ the [dimensions view](#timescaledb_information-dimensions) should be used instea
 
 If the chunk's primary dimension is of a time datatype, `range_start` and
 `range_end` are set.  Otherwise, if the primary dimension type is integer based,
-`range_start_integer` and `range_end_integer`.
+`range_start_integer` and `range_end_integer` are set.
 
 #### Available Columns [](timescaledb_information-chunks-available-columns)
 
@@ -2976,7 +2972,6 @@ Get metadata and settings information for continuous aggregates.
 |`view_schema` | (NAME) Schema for continuous aggregate view |
 |`view_name` | (NAME) User supplied name for continuous aggregate view |
 |`view_owner` | (NAME) Owner of the continuous aggregate view|
-|`schedule_interval` | (INTERVAL) Interval between updates of the continuous aggregate materialization|
 |`materialized_only` | (BOOLEAN) Return only materialized data when querying the continuous aggregate view. |
 |`materialization_hypertable_schema` | (NAME) Schema of the underlying materialization table|
 |`materialization_hypertable_name` | (NAME) Name of the underlying materialization table|
@@ -2990,7 +2985,6 @@ SELECT * FROM timescaledb_information.continuous_aggregates;
 view_schema                       | public 
 view_name                         | contagg_view
 view_owner                        | postgres
-schedule_interval                 | 00:30:00
 materialized_only                 | f
 materialization_hypertable_schema | _timescaledb_internal
 materialization_hypertable_name   | _materialized_hypertable_2
@@ -3172,7 +3166,7 @@ used to implement the policy succeeded and when it is scheduled to run next.
 |`last_run_started_at`| (TIMESTAMP WITH TIME ZONE) Start time of the last job|
 |`last_successful_finish`| (TIMESTAMP WITH TIME ZONE) Time when the job completed successfully|
 |`last_run_status` | (TEXT) Whether the last run succeeded or failed |
-|`job_status`| (TEXT) Status of the job. Valid values are ‘Running’ and ‘Scheduled’|
+|`job_status`| (TEXT) Status of the job. Valid values are ‘Running’, ‘Scheduled’ and 'Paused'|
 |`last_run_duration`| (INTERVAL) Duration of last run of the job|
 |`next_scheduled_run` | (TIMESTAMP WITH TIME ZONE) Start time of the next run |
 |`total_runs` | (BIGINT) The total number of runs of this job|
