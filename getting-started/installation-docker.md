@@ -87,19 +87,7 @@ CREATE EXTENSION postgis;
 ```
 For more instructions on using PostGIS, [see our tutorial][tutorial-postgis].
 
-## Prebuilt with Prometheus adapter [](prometheus-docker)
 
-We have a Prometheus adapter and extension that, when used together, allow you to
-both query and write to TimescaleDB as a long-term store for Prometheus. This
-image is published under the name `timescale/pg_prometheus` rather than `timescale/timescaledb`.
-To download and run this image, follow the same instructions as above, but use this image name
-instead.
-
-You can also manually install the adapter and extension. Our [Prometheus storage adapter][adapter-github]
-can be compiled from source code or downloaded as a Linux or Darwin binary. Our [pg_prometheus extension][prometheus-extension] can be compiled from source code. Please visit the associated
-GitHub links for more information.
-
-For more instructions on using our Prometheus adapter, [see our tutorial][tutorial-prometheus].
 
 [Docker Hub]: https://hub.docker.com/r/timescale/timescaledb/
 [docker-vulnerability]: https://www.techrepublic.com/article/how-to-fix-the-docker-and-ufw-security-flaw
@@ -107,6 +95,4 @@ For more instructions on using our Prometheus adapter, [see our tutorial][tutori
 [alpine Linux]: https://alpinelinux.org/
 [docker-data-volumes]: https://docs.docker.com/storage/volumes/
 [tutorial-postgis]: http://docs.timescale.com/tutorials/tutorial-hello-nyc#tutorial-postgis
-[adapter-github]: https://github.com/timescale/prometheus-postgresql-adapter
-[prometheus-extension]: https://github.com/timescale/pg_prometheus
-[tutorial-prometheus]: /tutorials/prometheus-adapter
+

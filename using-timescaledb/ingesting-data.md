@@ -13,20 +13,23 @@ Below, we discuss some popular frameworks and systems used in conjunction with T
 
 ## Prometheus [](prometheus)
 
-Prometheus is a popular tool used to monitor infrastructure metrics. It can scrape
-any endpoints that expose metrics in a Prometheus-compatible format. The metrics are
-stored in Prometheus and can be queried using PromQL. Prometheus itself is not built for
-long-term metrics storage, and instead, supports a variety of remote storage
-solutions.
+Prometheus is a popular tool used to monitor infrastructure metrics. It can scrape any
+endpoints that expose metrics in a Prometheus-compatible format. The metrics are stored in
+Prometheus and can be queried using PromQL. Prometheus itself is not built for long-term
+metrics storage, and instead, supports a variety of remote storage solutions.
 
-We developed a [Prometheus adapter][prometheus-adapter] and [Prometheus extension][pg-prometheus]
-that allows Prometheus to use TimescaleDB as a remote store for long-term metrics. The adapter and
-extension work together to support both inserts and read queries through Prometheus. Queries
-run through Prometheus will automatically query TimescaleDB to surface longer term
-metrics. You can also expand your [querying capabilities][SQL-monitoring] by using SQL with
-TimescaleDB. Read more about how to set up Prometheus with TimescaleDB in our
-[Prometheus tutorial][prometheus-tutorial]. You can also consider using [Grafana][grafana]
-or [other visualization tools][other-viz-tools] to visualize your metrics.
+We developed a [Promscale][promscale-blog] that allows Prometheus to use TimescaleDB as a
+remote store for long-term metrics. Promscale supports both PromQL and SQL, PromQL queries
+can be directed to the Promscale endpoint or Prometheus instance and the [SQL
+API][promscale-sql] can be accessed by connecting to Timescale directly. It also offers
+other native time-series capabilities, such as automatically[compressing your
+data][timescale-compression], retention policies, continuous aggregate views,
+downsampling, data gap-filling, and interpolation. It is already natively supported by
+Grafana via the [Prometheus][prometheus-grafana] and PostgreSQL/TimescaleDB
+[postgres-grafana] data sources.
+
+Read more about Promscale and how we designed it to perform well in our [design
+doc][design-doc] or check out our [github project][promscale-github].
 
 ## PostgreSQL and TimescaleDB output plugin for Telegraf [](postgresql-and-timescaledb-output-plugin-for-telegraf)
 
@@ -79,10 +82,11 @@ and get started with this [tutorial][tutorial-streamsets].
 
 
 [writing-data]: /using-timescaledb/writing-data
-[prometheus-adapter]: https://github.com/timescale/prometheus-postgresql-adapter
-[pg-prometheus]: https://github.com/timescale/pg_prometheus
-[SQL-monitoring]: https://www.timescale.com/blog/sql-nosql-data-storage-for-prometheus-devops-monitoring-postgresql-timescaledb-time-series-3cde27fd1e07
-[prometheus-tutorial]: /tutorials/prometheus-adapter
+[prometheus-grafana]: https://grafana.com/docs/grafana/latest/datasources/prometheus/
+[postgres-grafana]: https://grafana.com/docs/grafana/latest/datasources/postgres/
+[promscale-blog]: https://blog.timescale.com/blog/promscale-analytical-platform-long-term-store-for-prometheus-combined-sql-promql-postgresql/
+[promscale-sql]: https://github.com/timescale/promscale/blob/master/docs/sql_schema.md
+[timescale-compression]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database/
 [grafana]: /using-timescaledb/visualizing-data#grafana
 [other-viz-tools]: /using-timescaledb/visualizing-data#other-viz-tools
 [pull-request]: https://github.com/influxdata/telegraf/pull/3428
