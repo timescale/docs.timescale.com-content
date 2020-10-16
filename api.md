@@ -968,7 +968,6 @@ specified one.
 |---|---|
 | `newer_than` | Specification of cut-off point where any full chunks newer than this timestamp should be removed. |
 | `verbose` | (BOOLEAN) Setting to true will display messages about the progress of the reorder command. Defaults to false.|
-| `cascade_to_materializations` | Set to `TRUE` to delete chunk data in associated continuous aggregates. Defaults to `NULL`. `FALSE` is not yet supported.
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
@@ -992,8 +991,6 @@ specifying `newer_than => 4 months` and `older_than => 3 months` will drop all f
 4 months old. Similarly, specifying `newer_than => '2017-01-01'` and `older_than => '2017-02-01'` will drop
 all full chunks between '2017-01-01' and '2017-02-01'. Specifying parameters that do not result in an overlapping
 intersection between two ranges will result in an error.
-
->:TIP: By default, calling `drop_chunks` on a table that has a continuous aggregate will throw an error. This can be resolved by setting `cascade_to_materializations` to `TRUE`, which will cause the corresponding aggregated data to also be dropped.
 
 #### Sample Usage [](drop_chunks-examples)
 
@@ -1038,11 +1035,6 @@ SELECT drop_chunks('conditions', 1483228800000);
 Drop all chunks older than 3 months ago and newer than 4 months ago from hypertable `conditions`:
 ```sql
 SELECT drop_chunks('conditions', older_than => interval '3 months', newer_than => interval '4 months')
-```
-
-Drop all chunks older than 3 months, and delete this data from any continuous aggregates based on it:
-```sql
-SELECT drop_chunks('conditions', interval '3 months', cascade_to_materializations => true);
 ```
 
 ---
