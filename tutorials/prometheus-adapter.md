@@ -1,3 +1,13 @@
+# Sunset Notice
+
+>:WARNING: This page contains a tutorial for a deprecated method of storing Prometheus data in
+> TimescaleDB. It has been replaced by [Promscale][promscale-blog]. We are in the process of 
+> adding tutorials to our docs, in the meantime, use our [README][promscale-readme].
+> 
+> If you are interested in learning more about why we decided to re-design
+> our integration, check out our [design doc][design-doc] or our 
+> [github project][promscale-github].
+
 # Getting Started with Prometheus and TimescaleDB
 
 If you've ever needed a monitoring solution for your infrastructure, then you've
@@ -381,7 +391,10 @@ ORDER BY hour_bucket;
 
 Integrating your Prometheus instance(s) with TimescaleDB is simple and risk-free. All your data will still be available in Prometheus and you can continue using all the Prometheus features as before. TimescaleDB’s integration just gives you scalability, durability, and greater query power, opening up a door for a completely new perspective on your monitoring data.
 
-
+[promscale-blog]: https://blog.timescale.com/blog/promscale-analytical-platform-long-term-store-for-prometheus-combined-sql-promql-postgresql/
+[promscale-readme]: https://github.com/timescale/promscale/blob/master/README.md
+[design-doc]: https://tsdb.co/prom-design-doc
+[promscale-github]: https://github.com/timescale/promscale
 [Prometheus]: https://prometheus.io/
 [timescaledb vs]: /introduction/timescaledb-vs-postgres
 [prometheus docs]: https://prometheus.io/docs/prometheus/2.3/storage/

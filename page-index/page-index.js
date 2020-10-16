@@ -550,7 +550,7 @@ const pageIndex = [
                 children: []
             }, {
                 Title: "Visualize Prometheus data in Grafana",
-                type: PAGE,
+                type: NON_MENU_PAGE,
                 href: "tutorial-use-timescale-prometheus-grafana",
                 children: []
             }, {
@@ -560,7 +560,7 @@ const pageIndex = [
                 children: []
             }, {
                 Title: "Integration with Prometheus",
-                type: PAGE,
+                type: NON_MENU_PAGE,
                 href: "prometheus-adapter",
                 children: []
             }, {
