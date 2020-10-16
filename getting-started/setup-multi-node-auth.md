@@ -240,9 +240,9 @@ To generate a key and certificate file:
   ```bash
   pguser=postgres #change value for a different user name
   base=`echo -n $pguser | md5sum | cut -c1-32`
-  subj=/C=US/ST=New York/L=New York/O=Timescale/OU=Engineering/CN=$pguser
-  key_file=timescaledb/certs/$base.key
-  crt_file=timescaledb/certs/$base.crt
+  subj="/C=US/ST=New York/L=New York/O=Timescale/OU=Engineering/CN=$pguser"
+  key_file="timescaledb/certs/$base.key"
+  crt_file="timescaledb/certs/$base.crt"
   ```
 
   Most of the data is copied from the server certificate for the
@@ -252,7 +252,7 @@ To generate a key and certificate file:
 2. Generate a new random user key.
 
   ```bash
-  openssl genpkey -algorithm RSA -out $key_file
+  openssl genpkey -algorithm RSA -out "$key_file"
   ```
 
 3. Generate a certificate signing request. The CSR file is just
@@ -260,14 +260,14 @@ To generate a key and certificate file:
   will be removed later.
 
   ```bash
-  openssl req -new -sha256 -key $key_file -out $base.csr -subj $subj
+  openssl req -new -sha256 -key $key_file -out "$base.csr" -subj "$subj"
   ```
 
 4. Sign the certificate signing request with the node key.
 
   ```bash
   openssl ca -batch -keyfile server.key -extensions v3_intermediate_ca \
-	   -days 3650 -notext -md sha256 -in $base.csr -out $crt_file
+	   -days 3650 -notext -md sha256 -in "$base.csr" -out "$crt_file"
   rm $base.csr
   ```
    
