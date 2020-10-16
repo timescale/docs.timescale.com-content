@@ -20,9 +20,7 @@ data analysis and make forecasts on your data.
 
 ### Integrating with Prometheus
 
-- **[Visualize Prometheus long-term metrics using Grafana][prometheus-grafana]**: Build visualizations in Grafana to obtain insight into your long-term Prometheus metrics stored in TimescaleDB.
 - **[Setup a Prometheus endpoint to monitor Timescale Cloud][prometheus-tsc-endpoint]**: Configure Prometheus to collect monitoring data about your Timescale Cloud instance.
-- **[Prometheus adapter][]**: Integrate TimescaleDB with Prometheus monitoring for scalability and SQL powers.
 - **[Monitoring Django with Prometheus][monitor-django-prometheus]**:
 Learn how to monitor your Django application using Prometheus.
 
@@ -62,7 +60,6 @@ and pick up some valuable `psql` tips and tricks along the way.
 [Replication]: /tutorials/replication
 [Continuous Aggregates]: /tutorials/continuous-aggs-tutorial
 [Outflux]: /tutorials/outflux
-[Prometheus adapter]: /tutorials/prometheus-adapter
 [Grafana]: /tutorials/tutorial-grafana
 [Telegraf Output Plugin]: /tutorials/telegraf-output-plugin
 [Data Sets]: /tutorials/other-sample-datasets
@@ -71,7 +68,6 @@ and pick up some valuable `psql` tips and tricks along the way.
 [Crypto]: /tutorials/analyze-cryptocurrency-data
 [Tableau]: /tutorials/visualizing-time-series-data-in-tableau
 [prometheus-tsc-endpoint]: /tutorials/tutorial-setting-up-timescale-cloud-endpoint-for-prometheus
-[prometheus-grafana]: /tutorials/tutorial-use-timescale-prometheus-grafana
 [monitor-django-prometheus]: /tutorials/tutorial-howto-monitor-django-prometheus
 [tutorial-grafana-dashboards]: /tutorials/tutorial-grafana-dashboards
 [tutorial-grafana-geospatial]: /tutorials/tutorial-grafana-geospatial

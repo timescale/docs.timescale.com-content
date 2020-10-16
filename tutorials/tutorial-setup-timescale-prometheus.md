@@ -1,12 +1,12 @@
 # Sunset Notice
 
 >:WARNING: This page contains a tutorial for a deprecated method of storing Prometheus data in
-> TimescaleDB. We are now in the process of re-designing our 
-> prometheus-timescaledb integration.
+> TimescaleDB. It has been replaced by [Promscale][promscale-blog]. We are in the process of 
+> adding tutorials to our docs, in the meantime, use our [README][promscale-readme].
 > 
 > If you are interested in learning more about why we decided to re-design
 > our integration, check out our [design doc][design-doc] or our 
-> [github project][github-project].
+> [github project][promscale-github].
 
 # Tutorial: Use TimescaleDB to Store Prometheus Metrics Data
 
@@ -331,8 +331,10 @@ the data.
 on how to optimize TimescaleDB for storing and analyzing Prometheus metrics, as well as 
 how to create sample dashboards using TimescaleDB and Grafana.
 
+[promscale-blog]: https://blog.timescale.com/blog/promscale-analytical-platform-long-term-store-for-prometheus-combined-sql-promql-postgresql/
+[promscale-readme]: https://github.com/timescale/promscale/blob/master/README.md
 [design-doc]: https://tsdb.co/prom-design-doc
-[github-project]: https://github.com/timescale/timescale-prometheus 
+[promscale-github]: https://github.com/timescale/promscale
 [get-prometheus]: https://prometheus.io
 [get-grafana]: http://grafana.com
 [sample-database]: https://s3.amazonaws.com/docs.iobeam.com/examples/prometheus-grafana/prom_data_csvs.zip

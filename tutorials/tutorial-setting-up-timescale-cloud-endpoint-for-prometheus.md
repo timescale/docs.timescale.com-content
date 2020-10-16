@@ -5,8 +5,7 @@ database by monitoring it using [Prometheus][get-prometheus], a popular
 open-source metrics-based systems monitoring solution. This tutorial will 
 take you through setting up a Prometheus endpoint for a database running 
 in [Timescale Cloud][timescale-cloud]. To create a monitoring system to ingest and analyze 
-Prometheus metrics from your Timescale Cloud instance, see 
-this [tutorial][monitoring-setup-tutorial]
+Prometheus metrics from your Timescale Cloud instance, you can use [Promscale][promscale]!
 
 This will expose metrics from the [node_exporter][node-exporter-metrics] as well 
 as [pg_stats][pg-stats-metrics] metrics.
@@ -90,15 +89,14 @@ service on Timescale Cloud!
 
 ### Next Steps
 
-Next, [create a monitoring system][monitoring-setup-tutorial] using Timescale, 
-Grafana, and Prometheus to ingest and analyze Prometheus metrics from your 
-Timescale Cloud instance.
+Next, [use Promscale][promscale] with Timescale, Grafana, and Prometheus to ingest 
+and analyze Prometheus metrics from your Timescale Cloud instance.
 
 
 [timescale-cloud]: https://www.timescale.com/products
 [timescale-cloud-install]: /getting-started/explore-cloud
 [get-prometheus]: https://prometheus.io
 [timescale-cloud-get-started]: /getting-started/exploring-cloud
-[monitoring-setup-tutorial]: /tutorials/tutorial-setup-timescale-prometheus
 [pg-stats-metrics]: https://www.postgresql.org/docs/current/monitoring-stats.html
+[promscale]: https://github.com/timescale/timescale-prometheus
 [node-exporter-metrics]: https://github.com/prometheus/node_exporter
