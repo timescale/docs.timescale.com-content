@@ -418,9 +418,9 @@ still work on the resulting hypertable.
 | `partitioning_func` | The function to use for calculating a value's partition.|
 | `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
 | `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
-| `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
+| `migrate_data` | Set to TRUE to migrate any existing data from the `relation` table to chunks in the new hypertable. A non-empty table will generate an error without this option. Large tables may take significant time to migrate. Defaults to FALSE. |
 | `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
-| `replication_factor` | If set to 1 or greater, will create a distributed hypertable. Values greater than 1 are currently not recommended. The default value is NULL. When creating a distributed hypertable, consider using [`create_distributed_hypertable`](#create_distributed_hypertable) in place of `create_hypertable`. |
+| `replication_factor` | If set to 1 or greater, will create a distributed hypertable. Default is NULL. When creating a distributed hypertable, consider using [`create_distributed_hypertable`](#create_distributed_hypertable) in place of `create_hypertable`. |
 | `data_nodes` | This is the set of data nodes that will be used for this table if it is distributed. This has no impact on non-distributed hypertables. If no data nodes are specified, a distributed hypertable will use all data nodes known by this instance. |
 
 #### Returns [](create_hypertable-returns)
@@ -430,7 +430,7 @@ still work on the resulting hypertable.
 | `hypertable_id` | ID of the hypertable in TimescaleDB. |
 | `schema_name` | Schema name of the table converted to hypertable. |
 | `table_name` | Table name of the table converted to hypertable. |
-| `created` | True if the hypertable was created, false when `if_not_exists` is true and no hypertable was created. |
+| `created` | TRUE if the hypertable was created, FALSE when `if_not_exists` is true and no hypertable was created. |
 
 >:TIP: If you use `SELECT * FROM create_hypertable(...)` you will get the return value formatted
 as a table with column headings.
@@ -621,20 +621,18 @@ when creating distributed hypertables.
 
 |Name|Description|
 |---|---|
-| `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
-| `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
+| `partitioning_column` | Name of an additional column to partition by. |
+| `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. Default is the number of `data_nodes`. |
+| `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
+| `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
 | `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of TimescaleDB v0.11.0, default is 7 days, unless adaptive chunking (DEPRECATED)  is enabled, in which case the interval starts at 1 day. For previous versions, default is 1 month. |
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
-| `associated_schema_name` | Name of the schema for internal hypertable tables. Default is "_timescaledb_internal". |
-| `associated_table_prefix` | Prefix for internal hypertable chunk names. Default is "_hyper". |
-| `migrate_data` | Set to `true` to migrate any existing `main_table` data to chunks in the new hypertable. A non-empty table will generate an error without this option. Note that, for large tables, the migration might take a long time. Defaults to false. |
+| `migrate_data` | Set to TRUE to migrate any existing data from the `relation` table to chunks in the new hypertable. A non-empty table will generate an error without this option. Large tables may take significant time to migrate. Defaults to FALSE. |
 | `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
-| `replication_factor` | This will determine the number of data nodes each incoming write is written to.  The default value is 1 and this is required to be 1 or greater, but note that values greater than 1 are not recommended in the current implementation. |
-| `data_nodes` | This is the set of data nodes that will be used for this table.  If this is not present then all data nodes known by this instance will be used to distribute the hypertable. |
-| `chunk_target_size` | DEPRECATED - The target size of a chunk (including indexes) in `kB`, `MB`, `GB`, or `TB`. Setting this to `estimate` or a non-zero chunk size, e.g., `2GB` will enable adaptive chunking (a DEPRECATED feature). The `estimate` setting will estimate a target chunk size based on system information. Adaptive chunking is disabled by default. |
-| `chunk_sizing_func` | DEPRECATED - Allows setting a custom chunk sizing function for adaptive chunking (a DEPRECATED feature). The built-in chunk sizing function will be used by default. Note that `chunk_target_size` needs to be set to use this function.  |
+| `replication_factor` | The number of data nodes to which the same data is written to. This is done by creating chunk copies on this amount of data nodes.  Must be >= 1; default is to 1.  Read [the best practices](#create_distributed_hypertable-best-practices) before changing the default. |
+| `data_nodes` | The set of data nodes used for the distributed hypertable.  If not present, defaults to all data nodes known by the access node (the node on which the distributed hypertable is created). |
 
 #### Returns
 
@@ -643,7 +641,7 @@ when creating distributed hypertables.
 | `hypertable_id` | ID of the hypertable in TimescaleDB. |
 | `schema_name` | Schema name of the table converted to hypertable. |
 | `table_name` | Table name of the table converted to hypertable. |
-| `created` | True if the hypertable was created, false when `if_not_exists` is true and no hypertable was created. |
+| `created` | TRUE if the hypertable was created, FALSE when `if_not_exists` is TRUE and no hypertable was created. |
 
 #### Sample Usage [](create_distributed_hypertable-examples)
 
@@ -688,6 +686,19 @@ most recent chunks).
 If space partitioning is not being used, the `chunk_time_interval`
 should be the same as the non-distributed case, as all of the incoming
 data will be handled by a single node.
+
+**Replication factor:**  The hypertable's `replication_factor` defines to how
+many data nodes a newly created chunk will be replicated.  That is, a chunk
+with a `replication_factor` of three will exist on three separate data nodes,
+and rows written to that chunk will be inserted (as part of a two-phase
+commit protocol) to all three chunk copies.  For chunks replicated more
+than once, if a data node fails or is removed, no data will be lost, and writes
+can continue to succeed on the remaining chunk copies.  However, the chunks
+present on the lost data node will now be under-replicated.  Currently, it is 
+not possible to restore under-replicated chunks, although this limitation will
+be removed in a future release. To avoid such inconsistency, we do not yet
+recommend using `replication_factor` > 1, and instead rely on physical
+replication of each data node if such fault-tolerance is required.
 
 ---
 
