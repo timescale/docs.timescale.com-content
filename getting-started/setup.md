@@ -35,8 +35,12 @@ Lastly add TimescaleDB:
 \c tutorial
 
 -- Extend the database with TimescaleDB
-CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
+CREATE EXTENSION IF NOT EXISTS timescaledb;
 ```
+
+>:TIP: If you want to install a version that is not the most
+recent available on your system you can specify the version like so:
+`CREATE EXTENSION timescaledb VERSION '1.7.4';`
 
 _That's it!_  Connecting to the new database is as simple as:
 
