@@ -335,7 +335,7 @@ The various options used to create the continuous aggregate view, as well as its
 definition, can be found in the
 [`timescaledb_information.continuous_aggregates` view][api-continuous-aggregates-info],
 and information about the state and progress of the materialization background worker jobs can be found in the
-[`timescaledb_information.continuous_aggregate_stats` view][api-continuous-aggregate-stats].
+[`timescaledb_information.job_stats` view][api-job-stats].
 These views can be quite useful for administering continuous aggregates and
 tuning other options noted below.
 
@@ -554,7 +554,7 @@ SELECT min_time::timestamp FROM device_summary;
 [api-refresh-continuous-aggs]: /api#continuous_aggregate-refresh_view
 [api-alter-cagg]: /api#continuous_aggregate-alter_view
 [api-continuous-aggregates-info]: /api#timescaledb_information-continuous_aggregate
-[api-continuous-aggregate-stats]: /api#timescaledb_information-continuous_aggregate_stats
+[api-job-stats]: /api#timescaledb_information-job_stats
 [api-drop-chunks]: /api#drop_chunks
 [api-set-chunk-interval]: /api#set_chunk_time_interval
 [api-set-integer-now-func]: /api#set_integer_now_func
