@@ -2148,21 +2148,18 @@ SELECT alter_job(1000, schedule_interval => INTERVAL '2 days');
 Reschedules the job with id 1000 so that it runs every two days.
 
 ```sql
-SELECT alter_job(job_id, schedule_interval => INTERVAL '5 minutes')
-FROM timescaledb_information.continuous_aggregate_stats
-WHERE view_name = 'conditions_agg'::regclass;
+SELECT alter_job(job_id, scheduled => false)
+FROM timescaledb_information.jobs
+WHERE proc_name = 'policy_compression' AND hypertable_name = 'conditions'
 ```
-Reschedules the continuous aggregate job for the `conditions_agg` view so that it runs every five minutes.
+Disables scheduling of the compression policy on hypertable `conditions`.
 
 ```sql
 SELECT alter_job(1015, next_start => '2020-03-15 09:00:00.0+00');
 ```
 
 Reschedules continuous aggregate job `1015` so that the next execution of the
-job starts at the specified time (9:00:00 am on March 15, 2020).  This same
-query could have simultaneously changed the `schedule_interval` or queried the
-`timescaledb_information.continuous_aggregate_stats` informational view to
-extract the `job_id`, as shown above.
+job starts at the specified time (9:00:00 am on March 15, 2020).
 
 ---
 ## Analytics [](analytics)

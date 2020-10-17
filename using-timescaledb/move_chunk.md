@@ -179,7 +179,6 @@ verbose=>TRUE);
 [postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
 [api-refresh-continuous-aggs]: /api#continuous_aggregate-refresh_view
 [api-continuous-aggregates-info]: /api#timescaledb_information-continuous_aggregate
-[api-continuous-aggregate-stats]: /api#timescaledb_information-continuous_aggregate_stats
 [api-drop-chunks]: /api#drop_chunks
 [api-set-chunk-interval]: /api#set_chunk_time_interval
 [api-add-retention]: /api#add_retention_policy
