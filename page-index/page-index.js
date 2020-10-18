@@ -378,10 +378,6 @@ const pageIndex = [
                     }
                 ]
             }, {
-                Title: "Data Tiering",
-		type: NON_MENU_PAGE,
-                href: "move_chunk"
-            }, {
                 Title: "Continuous Aggregates",
                 type: PAGE,
                 href: "continuous-aggregates",
@@ -456,6 +452,14 @@ const pageIndex = [
                     }
                 ]
             }, {
+                Title: "Data retention",
+                type: PAGE,
+                href: "data-retention"
+            }, {
+                Title: "Data tiering",
+                type: PAGE,
+                href: "data-tiering"
+            }, {
                 Title: "Visualizing data",
                 type: PAGE,
                 href: "visualizing-data"
@@ -463,10 +467,6 @@ const pageIndex = [
                 Title: "Ingesting data",
                 type: PAGE,
                 href: "ingesting-data"
-            }, {
-                Title: "Data retention",
-                type: PAGE,
-                href: "data-retention"
             }, {
                 Title: "Troubleshooting",
                 type: PAGE,

@@ -1356,14 +1356,18 @@ runs a reorder on the `_timescaledb_internal._hyper_1_10_chunk` chunk using the 
 ---
 
 ## move_chunk() :community_function: [](move_chunk)
+
 TimescaleDB allows users to move data (and indexes) to alternative
 tablespaces. This allows the user the ability to move data to more cost
 effective storage as it ages. This function acts like the combination of the
 [PostgreSQL CLUSTER command][postgres-cluster] and the
 [PostgreSQL ALTER TABLE...SET TABLESPACE command][postgres-altertable].
-However, it uses lower lock levels so that, unlike with these PostgreSQL
-commands, the chunk and hypertable are able to be read for most of the
-process. It does use a bit more disk space during the operation.
+
+Unlike these PostgreSQL commands, however, the `move_chunk` function employs
+lower lock levels so that the chunk and hypertable are able to be read for most
+of the process. This comes at a cost of slightly higher disk usage during the
+operation. For a more detailed discussion of this capability, please see the
+[Data Tiering][using-data-tiering] documentation.
 
 #### Required Arguments [](move_chunk-required-arguments)
 
@@ -3656,6 +3660,7 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [using-actions]: /using-timescaledb/actions
 [using-continuous-aggs]: /using-timescaledb/continuous-aggregates
 [using-compression]: /using-timescaledb/compression
+[using-data-tiering]: /using-timescaledb/data-tiering
 [blog-compression]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database/
 [downloaded separately]: https://raw.githubusercontent.com/timescale/timescaledb/master/scripts/dump_meta_data.sql
 [postgres-call]: https://www.postgresql.org/docs/current/sql-call.html
