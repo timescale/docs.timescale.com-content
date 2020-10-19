@@ -474,12 +474,11 @@ CREATE ROLE ssl_cert;
 
 The access node does not have any user keys nor certificates, so it
 cannot yet log into the data node. The user keys and certificates are
-normally stored in `timescaledb/certs` under the data directory, so we
-need to store the user key files and user certificate files here.
+by default stored in `timescaledb/certs` under the data directory, so
+we need to store the user key files and user certificate files here.
 
->:TIP: The location of the user certificates and keys are relative to
->`ssl_dir`, so you can place it outside the data directory by setting
->`ssl_dir` to some other value.
+>:TIP: You can configure the location of the user certificates and
+>keys by setting `timescaledb.ssl_dir`.
 
 The key and certificate file names are constructed by taking the MD5
 sum of the role name and using it as the base for both the key and the

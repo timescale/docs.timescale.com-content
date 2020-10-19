@@ -228,8 +228,8 @@ The access node does not have any user keys nor certificates, so it cannot yet l
 into the data node.  User key files and user certificates are stored in 
 `timescaledb/certs` in the data directory.
 
->:TIP: To move the location of the user certificates and keys outside of the data 
-directory, set `ssl_dir` to another value.
+>:TIP: You can configure the location of the user certificates and
+>keys outside of the data directory using `timescaledb.ssl_dir`.
 
 To generate a key and certificate file:
 
