@@ -1,5 +1,10 @@
 # Distributed Hypertables
 
+>:WARNING: Distributed hypertables are currently in BETA and
+are not yet meant for production use. For more information, please
+[contact us][contact] or join the #multinode-beta channel in our
+[community Slack][slack].
+
 Hypertables handle large amounts of data by breaking it up into
 smaller pieces (chunks), allowing operations to execute
 efficiently. When the amount of data is expected to be beyond what a
@@ -98,6 +103,65 @@ the data node's data is outside the retention window,
 [`drop_chunks`][drop_chunks] can be used to delete the data on the data
 node.
 
+### Native Replication for Distributed Hypertables [](native-replication)
+
+A hypertable can have a *replication factor* that tells how many
+replicas of chunks that should be created. The default replication
+factor is 1, which means that each row of data is written to a single
+chunk. If you set the replication factor of a hypertable to a higher
+value, chunks will be replicated and each row of data will be written
+to that many chunks.
+
+To create a hypertable with a replication factor higher than 1, you
+can use the `replication_factor` parameter to
+[`create_distributed_hypertable`][create_distributed_hypertable]. For
+example, if you want to create a hypertable where each chunk has three
+replicas:
+
+```sql
+SELECT create_distributed_hypertable('conditions', 'time', 'location',
+	replication_factor => 3);
+```
+
+If you already have a hypertable and instead want to change the
+replication factor, you can use the function
+[`set_replication_factor`][set_replication_factor].
+
+```sql
+SELECT set_replication_factor('conditions', 3);
+```
+
+Having a replication factor larger than one is a simple way to ensure
+that you have redundancy of the data and that a crash of a data node
+will not cause you to lose the data. This, however, comes at the cost
+of an increased average commit time and more data to manage.
+
+Read-only query execution is not affected by the redundant data: the
+query will just be split up and send the sub-query to *one* of the
+replicas (not all of them), so the replication factor does not affect
+query execution time in any significant manner.
+
+When executing a commit on the access node, the commit will
+acknowledge the transaction until it has received acknowledgements
+that the transaction is committed on all data nodes. If the
+transaction fails on one more data nodes, or a connection times out,
+the transaction will be aborted.
+
+#### Limitations
+
+The distributed commit protocol is stable and ensures transactional
+semantics even in the presence of data node failures, but if a data
+node crashes permanently, it has to be replaced with a new data node
+that is consistent with the other data nodes.
+
+To be able to recover the system into a operational state, you
+therefore have to ensure that you have a standby of each data node. On
+failure, you then need to promote it to be the primary and add a new
+standby to handle further crashes. The standby can be either a
+[warm][warm-standby] or a [hot standby][hot-standby].
+
+[hot-standby]: https://www.postgresql.org/docs/current/hot-standby.html
+[warm-standby]: https://www.postgresql.org/docs/current/warm-standby.html
 [getting-started-multi-node]: /getting-started/setup-multi-node
 [add_data_node]: /api#add_data_node
 [drop_chunks]: /api#drop_chunks
