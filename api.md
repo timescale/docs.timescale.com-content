@@ -260,25 +260,13 @@ error or a notice depending on the value of `if_not_exists`.
 
 If `bootstrap` is true, the function will attempt to bootstrap the
 data node by:
-1. Connecting to the database given in `bootstrap_database`.
-2. Creating the database given in `database` that will serve as the
+1. Creating the database given in `database` that will serve as the
    new data node.
-3. Loading the TimescaleDB extension in the new database.
-4. Setting metadata to make the data node part of the distributed
+2. Loading the TimescaleDB extension in the new database.
+3. Setting metadata to make the data node part of the distributed
    database.
 
 See [boostrapping description][multinode-bootstrap] for details.
-
-#### Errors
-
-An error will be given if:
-* The function is executed inside a transaction.
-* The function is executed in a database that is already a data node.
-* The data node already exists and `if_not_exists` is `FALSE`.
-* The port number is not valid for use as a port number.
-* If `boostrap` is `FALSE` and the database was not previously
-  bootstrapped.
-
 
 #### Required Arguments [](add_data_node-required-arguments)
 
@@ -295,7 +283,6 @@ An error will be given if:
 | `port`               | Port to use on the remote data node. The default is the PostgreSQL port used by the access node on which the function is executed. |
 | `if_not_exists`      | Do not fail if the data node already exists. The default is `FALSE`. |
 | `bootstrap`          | Bootstrap the remote data node. The default is `TRUE`. |
-| `bootstrap_database` | Database to use when bootstrapping as described above. The default is `'postgres'`. |
 
 #### Returns [](add_data_node-returns)
 
@@ -308,6 +295,16 @@ An error will be given if:
 | `node_created`      | Was the data node created locally                 |
 | `database_created`  | Was the database created on the remote data node  |
 | `extension_created` | Was the extension created on the remote data node |
+
+#### Errors
+
+An error will be given if:
+* The function is executed inside a transaction.
+* The function is executed in a database that is already a data node.
+* The data node already exists and `if_not_exists` is `FALSE`.
+* The port number is not valid for use as a port number.
+* If `boostrap` is `FALSE` and the database was not previously
+  bootstrapped.
 
 #### Sample usage [](add_data_node-examples)
 
