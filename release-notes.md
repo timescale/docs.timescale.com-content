@@ -12,34 +12,134 @@ can view active developments on GitHub at any time.
 
 ### What to expect from our next release
 
-The team is actively working on the multi-node version
-of TimescaleDB which is currently in beta. You can read more about our
-architecture and design for distributed hypertables
+The team is finishing up work on the first release of distributed hypertables
+supported by multi-node TimescaleDB, which will be part of the TimescaleDB 2.0
+release.  We are currently in the middle of formal Release Candidates (RC) for
+2.0; these RC releases support in-place upgrades from 1.x and subsequent
+upgrades to 2.0.
+
+You can read more about our architecture and design for distributed hypertables
 [here](https://docs.timescale.com/v2.0/introduction/architecture#distributed-hypertables).
 To test out the beta version for yourself, join our #multinode channel on
 [community slack](https://slack.timescale.com/) for installation details and
-follow these [setup
-instructions](https://docs.timescale.com/v2.0/getting-started/setup-multi-node).
+follow these [setup instructions](https://docs.timescale.com/v2.0/getting-started/setup-multi-node-basic).
 
-Currently, we expect this major feature to be released
-in the second half 2020, and we will share more information once
-it's available.
+In addition to multi-node, we've also reassessed how some core
+functionality works, and, as a result, made APIs simpler and more consistent,
+while also empowering users with more control and flexibility to customize
+behaviors to suit your needs.  Some of these API updates are **breaking changes**.
 
-The 2.0 release will also include some API changes to informational views,
-features, and other capabilities to make TimescaleDB easier to use and manage.
+What's new in TimescaleDB 2.0:
 
+- **Multi-node TimescaleDB**: Distribute hypertables across multiple nodes for
+  more scale and reliability.
 
->:TIP:TimescaleDB 2.0 is currently available as a release candidate and we encourage
+- **Continuous Aggregates 2.0**: Use an improved API to manually refresh data
+  or automatically set policies (more control over your data).
+
+- **User-defined Actions**: Define custom behaviors inside the database and
+  schedule them, using our job scheduling system.
+
+- **All remaining enterprise features now in Community Edition**: everything's
+  free and a more permissive Timescale License grants more rights to users.
+
+- **New and improved informational views**: Get more insight about hypertables,
+  chunks, policies, and job scheduling.
+
+>:TIP:As TimescaleDB 2.0 is currently available as a release candidate, we encourage
 >users to upgrade in testing environments to gain experience and provide feedback on 
 >new and updated features.
 >
->See [Changes in TimescaleDB 2.0](https://docs.timescale.com/v2.0/release-notes/changes-in-timescaledb-2) for more
->information and links to installation instructions
+>Especially because some API updates are **breaking changes**, we recommend reviewing the
+>[Changes in TimescaleDB 2.0](https://docs.timescale.com/v2.0/release-notes/changes-in-timescaledb-2)
+>for more information and links to installation instructions.
 
 ## Release Notes
 
 In this section, we will cover historical information on
 past releases and how you can learn more.
+
+## 2.0.0-rc2 (2020-10-21)
+
+This release candidate contains bugfixes since the previous release candidate.
+
+**Minor Features**
+* #2520 Support non-transactional distibuted_exec
+
+**Bugfixes**
+* #2307 Overflow handling for refresh policy with integer time
+* #2503 Remove error for correct bootstrap of data node
+* #2507 Fix validation logic when adding a new data node
+* #2510 Fix outer join qual propagation
+* #2514 Lock dimension slices when creating new chunk
+* #2515 Add if_attached argument to detach_data_node()
+* #2517 Fix member access within misaligned address in chunk_update_colstats
+* #2525 Fix index creation on hypertables with dropped columns
+* #2543 Pass correct status to lock_job
+* #2544 Assume custom time type range is same as bigint
+* #2563 Fix DecompressChunk path generation
+* #2564 Improve continuous aggregate datatype handling
+* #2568 Change use of ssl_dir GUC
+* #2571 Make errors and messages conform to style guide
+* #2577 Exclude compressed chunks from ANALYZE/VACUUM
+
+## 2.0.0-rc1 (2020-10-06)
+
+This release adds major new features and bugfixes since the 1.7.4 release.
+We deem it moderate priority for upgrading.
+
+This release adds the long-awaited support for distributed hypertables to
+TimescaleDB. With 2.0, users can create distributed hypertables across
+multiple instances of TimescaleDB, configured so that one instance serves
+as an access node and multiple others as data nodes. All queries for a
+distributed hypertable are issued to the access node, but inserted data
+and queries are pushed down across data nodes for greater scale and
+performance.
+
+This release also adds support for user-defined actions allowing users to
+define actions that are run by the TimescaleDB automation framework.
+
+In addition to these major new features, the 2.0 branch introduces _breaking_ changes
+to APIs and existing features, such as continuous aggregates. These changes are not
+backwards compatible and might require changes to clients and/or scripts that rely on
+the previous APIs. Please review our updated documentation and do proper testing to
+ensure compatibility with your existing applications.
+
+The noticeable breaking changes in APIs are:
+- Redefined functions for policies
+- A continuous aggregate is now created with `CREATE MATERIALIZED VIEW`
+  instead of `CREATE VIEW` and automated refreshing requires adding a policy
+  via `add_continuous_aggregate_policy`
+- Redesign of informational views, including new (and more general) views for
+  information about policies and user-defined actions
+
+This release candidate is upgradable, so if you are on a previous release (e.g., 1.7.4)
+you can upgrade to the release candidate and later expect to be able to upgrade to the
+final 2.0 release. However, please carefully consider your compatibility requirements
+_before_ upgrading.
+
+**Major Features**
+* #1923 Add support for distributed hypertables
+* #2006 Add support for user-defined actions
+* #2435 Move enterprise features to community
+* #2437 Update Timescale License
+
+**Minor Features**
+* #2011 Constify TIMESTAMPTZ OP INTERVAL in constraints
+* #2105 Support moving compressed chunks
+
+**Bugfixes**
+* #1843 Improve handling of "dropped" chunks
+* #1886 Change ChunkAppend leader to use worker subplan
+* #2116 Propagate privileges from hypertables to chunks
+* #2263 Fix timestamp overflow in time_bucket optimization
+* #2270 Fix handling of non-reference counted TupleDescs in gapfill
+* #2325 Fix rename constraint/rename index
+* #2370 Fix detection of hypertables in subqueries
+* #2376 Fix caggs width expression handling on int based hypertables
+* #2416 Check insert privileges to create chunk
+* #2428 Allow owner change of continuous aggregate
+* #2436 Propagate grants in continuous aggregates
 
 ### 1.7.4 (2020-09-08)
 
