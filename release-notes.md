@@ -15,11 +15,11 @@ can view active developments on GitHub at any time.
 The team is actively working on the multi-node version
 of TimescaleDB which is currently in beta. You can read more about our
 architecture and design for distributed hypertables
-[here](https://docs.timescale.com/beta-v2.0.0/introduction/architecture#distributed-hypertables).
+[here](https://docs.timescale.com/v2.0/introduction/architecture#distributed-hypertables).
 To test out the beta version for yourself, join our #multinode-beta channel on
 [community slack](https://slack.timescale.com/) for installation details and
 follow these [setup
-instructions](https://docs.timescale.com/beta-v2.0.0/getting-started/setup-multi-node).
+instructions](https://docs.timescale.com/v2.0/getting-started/setup-multi-node).
 
 Currently, we expect this major feature to be released
 in the second half 2020, and we will share more information once
@@ -27,6 +27,14 @@ it's available.
 
 The 2.0 release will also include some API changes to informational views,
 features, and other capabilities to make TimescaleDB easier to use and manage.
+
+
+>:TIP:TimescaleDB 2.0 is currently available as a release candidate and we encourage
+>users to upgrade in testing environments to gain experience and provide feedback on 
+>new and updated features.
+>
+>See [Changes in TimescaleDB 2.0](https://docs.timescale.com/v2.0/release-notes/changes-in-timescaledb-2) for more
+>information and links to installation instructions
 
 ## Release Notes
 

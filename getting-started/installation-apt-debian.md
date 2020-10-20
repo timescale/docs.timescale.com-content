@@ -1,6 +1,6 @@
->:WARNING: Our scaling out capabilities are currently in BETA and
-are not available through this installation method. For more information,
-please [contact us][contact] or join the #multinode-beta channel in our 
+>:WARNING: These installation instructions will install the current Release Candidate
+for TimescaleDB 2.0, which includes the ability to setup [Multi-Node capabilities][multi-node-basic]. For
+more information, please [contact us][contact] or join the #multinode-beta channel in our 
 [community Slack][slack].
 
 ## apt Installation (Debian) [](installation-apt-debian)
@@ -39,7 +39,7 @@ wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | sudo ap
 sudo apt-get update
 
 # Now install appropriate package for PG version
-sudo apt-get install timescaledb-postgresql-:pg_version:
+sudo apt-get install timescaledb-2-postgresql-:pg_version:
 ```
 
 #### Configure your database
@@ -63,11 +63,7 @@ To get started you'll now need to restart PostgreSQL:
 sudo service postgresql restart
 ```
 
->:TIP: Our standard binary releases are licensed under the Timescale License,
-which allows to use all our capabilities.
-If you want to use a version that contains _only_ Apache 2.0 licensed
-code, you should install the package `timescaledb-oss-postgresql-:pg_version:`.
-
 [config]: /getting-started/configuring
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
+[multi-node-basic]: /getting-started/setup-multi-node-basic

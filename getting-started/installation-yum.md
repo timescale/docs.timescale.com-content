@@ -1,6 +1,6 @@
->:WARNING: Our scaling out capabilities are currently in BETA and
-are not available through this installation method. For more information,
-please [contact us][contact] or join the #multinode-beta channel in our 
+>:WARNING: These installation instructions will install the current Release Candidate
+for TimescaleDB 2.0, which includes the ability to setup [Multi-Node capabilities][multi-node-basic]. For
+more information, please [contact us][contact] or join the #multinode-beta channel in our 
 [community Slack][slack].
 
 ## yum Installation [](installation-yum)
@@ -52,7 +52,7 @@ EOL
 sudo yum update -y
 
 # Now install appropriate package for PG version
-sudo yum install -y timescaledb-postgresql-:pg_version:
+sudo yum install -y timescaledb-2-postgresql-:pg_version:
 ```
 
 #### Configure your database
@@ -74,14 +74,10 @@ To get started you'll need to restart PostgreSQL and add
 a `postgres` [superuser][createuser] (used in the rest of the docs). Please
 refer to your distribution for how to restart services.
 
->:TIP: Our standard binary releases are licensed under the Timescale License,
-which allows to use all our capabilities.
-If you want to use a version that contains _only_ Apache 2.0 licensed
-code, you should install the package `timescaledb-oss-postgresql-:pg_version:`.
-
 [pgdg]: https://yum.postgresql.org/repopackages.php
 [yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation
 [config]: /getting-started/configuring
 [createuser]: https://www.postgresql.org/docs/current/sql-createrole.html
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
+[multi-node-basic]: /getting-started/setup-multi-node-basic
