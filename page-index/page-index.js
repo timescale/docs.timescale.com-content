@@ -51,19 +51,6 @@ const pageIndex = [
                 component: "InstallationPage",
                 children: [
                     {
-                        Title: "Timescale Cloud",
-                        type: DIRECTORY,
-                        href: "timescale-cloud",
-                        src: "//assets.iobeam.com/images/docs/timescale_cloud_logo.svg",
-                        children: [
-                            {
-                                Title: "Timescale Cloud",
-                                type: NON_MENU_PAGE,
-                                options: {pg_version: []},
-                                href: "installation-timescale-cloud"
-                            }
-                       ]
-                    }, {
                         Title: "Docker",
                         type: DIRECTORY,
                         href: "docker",
@@ -121,50 +108,6 @@ const pageIndex = [
                                 Title: "Source",
                                 type: NON_MENU_PAGE,
                                 href: "installation-source"
-                            }
-                        ]
-                    }, {
-                        Title: "Windows",
-                        type: DIRECTORY,
-                        href: "windows",
-                        src: "//assets.iobeam.com/images/docs/Windows_logo_-_2012.svg",
-                        children: [
-                            {
-                                Title: "Installer (.zip)",
-                                type: NON_MENU_PAGE,
-                                href: "installation-windows"
-                            }, {
-                                Title: "Source",
-                                type: NON_MENU_PAGE,
-                                href: "installation-source-windows"
-                            }
-                        ]
-                    }, {
-                        Title: "MacOS",
-                        type: DIRECTORY,
-                        href: "macos",
-                        src: "//assets.iobeam.com/images/docs/Apple_logo_black.svg",
-                        children: [
-                            {
-                                Title: "Homebrew",
-                                type: NON_MENU_PAGE,
-                                href: "installation-homebrew"
-                            }, {
-                                Title: "Source",
-                                type: NON_MENU_PAGE,
-                                href: "installation-source"
-                            }
-                        ]
-                    }, {
-                        Title: "AMI",
-                        type: DIRECTORY,
-                        href: "ami",
-                        src: "//assets.iobeam.com/images/docs/aws_logo.svg",
-                        children: [
-                            {
-                                Title: "Amazon AMI (Ubuntu)",
-                                type: NON_MENU_PAGE,
-                                href: "installation-ubuntu-ami"
                             }
                         ]
                     }
@@ -495,10 +438,6 @@ const pageIndex = [
                 type: PAGE,
                 href: "tooling"
             }, {
-                Title: "Update software",
-                type: PAGE,
-                href: "update-db"
-            }, {
                 Title: "Telemetry",
                 type: PAGE,
                 href: "telemetry"
@@ -695,7 +634,7 @@ const pageIndex = [
             }, {
                 type: HIDDEN_REDIRECT,
                 href: "update-db",
-                to: "/using-timescaledb/update-db"
+                to: "/update-timescaledb"
             }, {
                 type: HIDDEN_REDIRECT,
                 href: "data-retention",
@@ -732,8 +671,35 @@ const pageIndex = [
     }, {
         Title: "Release Notes",
         type: PAGE,
-        href: "release-notes"
+        href: "release-notes",
+        children: [
+            {
+                Title: "Changes in TimescaleDB 2.0",
+                type: PAGE,
+                href: "changes-in-timescaledb-2"
+            }
+        ]
     }, {
+        Title: "Update TimescaleDB",
+        type: PAGE,
+        href: "update-timescaledb",
+        children: [
+            {
+                Title: "Updating TimescaleDB from 1.x to 2.0",
+                type: PAGE,
+                href: "update-tsdb-2"
+            }, {
+                Title: "Updating Docker",
+                type: PAGE,
+                href: "update-docker"
+            }, {
+                Title: "Upgrading PostgreSQL",
+                type: PAGE,
+                href: "upgrade-pg"
+            }
+        ]
+    },
+     {
         Title: "GitHub",
         type: LINK,
         href: "https://github.com/timescale/timescaledb"
