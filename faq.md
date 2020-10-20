@@ -372,6 +372,6 @@ See our [updating documentation][update]. [[Top]](#top)
 [contact]: https://www.timescale.com/contact
 [join_slack]: https://slack-login.timescale.com/
 [install]: /getting-started/installation
-[update]: /using-timescaledb/update-db
+[update]: /update-timescaledb
 [compression-docs]: /using-timescaledb/compression
 [compression-blog]: https://blog.timescale.com/blog/building-columnar-compression-in-a-row-oriented-database/

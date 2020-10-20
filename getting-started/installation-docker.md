@@ -5,7 +5,7 @@
 Start a TimescaleDB instance, pulling our Docker image from [Docker Hub][] if it has not been already installed:
 
 ```bash
-docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:latest-pg:pg_version:
+docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:x.y.z-pg:pg_version:
 ```
 
 >:WARNING: The -p flag binds the container port to the host port, meaning
@@ -48,7 +48,7 @@ While the above `run` command will pull the Docker image on demand,
 you can also -- and for upgrades, **need to** -- explicitly pull our image from [Docker Hub][]:
 
 ```bash
-docker pull timescale/timescaledb:latest-pg:pg_version:
+docker pull timescale/timescaledb:x.y.z-pg:pg_version:
 ```
 
 When running a Docker image, if one prefers to store the data in a
