@@ -427,10 +427,6 @@ const pageIndex = [
                 type: PAGE,
                 href: "tooling"
             }, {
-                Title: "Update software",
-                type: PAGE,
-                href: "update-db"
-            }, {
                 Title: "Telemetry",
                 type: PAGE,
                 href: "telemetry"
@@ -618,7 +614,7 @@ const pageIndex = [
             }, {
                 type: HIDDEN_REDIRECT,
                 href: "update-db",
-                to: "/using-timescaledb/update-db"
+                to: "/update-timescaledb"
             }, {
                 type: HIDDEN_REDIRECT,
                 href: "data-retention",
@@ -657,6 +653,26 @@ const pageIndex = [
         type: PAGE,
         href: "release-notes"
     }, {
+        Title: "Update TimescaleDB",
+        type: PAGE,
+        href: "update-timescaledb",
+        children: [
+            {
+                Title: "Updating TimescaleDB from 1.x to 1.7.4",
+                type: PAGE,
+                href: "update-tsdb-1"
+            }, {
+                Title: "Updating Docker",
+                type: PAGE,
+                href: "update-docker"
+            }, {
+                Title: "Upgrading PostgreSQL",
+                type: PAGE,
+                href: "upgrade-pg"
+            }
+        ]
+    },
+     {
         Title: "GitHub",
         type: LINK,
         href: "https://github.com/timescale/timescaledb"
