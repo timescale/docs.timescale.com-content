@@ -50,10 +50,10 @@ PostgreSQL 12 and TimescaleDB 2.0 would be:
 Before starting the upgrade to TimescaleDB 2.0, **we highly recommend checking the database log for errors 
 related to failed retention policies that were occurring in TimescaleDB 1.x** and then either remove them or 
 update them to be compatible with existing continuous aggregates. Any remaining retention policies that are 
-still incompatible with the 'ignore_invalidation_older_than' setting will automatically be disabled during 
+still incompatible with the `ignore_invalidation_older_than` setting will automatically be disabled during 
 the upgrade and a notice provided.
 
->:TIP:Read more about changes to continuous aggregates and data retension policies [here][retention-cagg-changes]
+>:TIP:Read more about changes to continuous aggregates and data retension policies [here][retention-cagg-changes].
 
 
 ### Update TimescaleDB [](start-update)
