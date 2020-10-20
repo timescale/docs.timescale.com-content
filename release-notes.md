@@ -16,7 +16,7 @@ The team is actively working on the multi-node version
 of TimescaleDB which is currently in beta. You can read more about our
 architecture and design for distributed hypertables
 [here](https://docs.timescale.com/v2.0/introduction/architecture#distributed-hypertables).
-To test out the beta version for yourself, join our #multinode-beta channel on
+To test out the beta version for yourself, join our #multinode channel on
 [community slack](https://slack.timescale.com/) for installation details and
 follow these [setup
 instructions](https://docs.timescale.com/v2.0/getting-started/setup-multi-node).

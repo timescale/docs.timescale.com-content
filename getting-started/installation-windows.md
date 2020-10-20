@@ -1,6 +1,6 @@
 >:WARNING: Our scaling out capabilities are currently in BETA and
 are not available through this installation method. For more information,
-please [contact us][contact] or join the #multinode-beta channel in our 
+please [contact us][contact] or join the #multinode channel in our 
 [community Slack][slack].
 
 ## Windows ZIP Installer [](installation-windows)

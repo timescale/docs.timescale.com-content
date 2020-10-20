@@ -1,6 +1,6 @@
 # Updating a TimescaleDB Docker installation
 
-As a more concrete example, the following steps should be taken with a docker
+The following steps should be taken with a docker
 installation to upgrade to the latest TimescaleDB version, while
 retaining data across the updates.
 

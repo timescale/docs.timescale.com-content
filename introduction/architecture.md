@@ -140,9 +140,9 @@ For more on the motivation and design of TimescaleDB, please see our
 
 ## Distributed Hypertables [](distributed-hypertables)
 
->:WARNING: Distributed hypertables are currently in BETA.
-This feature is not meant for production use. For more information,
-please [contact us][contact] or join the #multinode-beta channel in our 
+>:WARNING: Distributed hypertables and [multi-node capabilities][multi-node-basic]
+are currently in BETA. This feature is not meant for production use. For more information,
+please [contact us][contact] or join the #multinode channel in our 
 [community Slack][slack].
 
 TimescaleDB supports distributing hypertables across multiple nodes
@@ -227,3 +227,4 @@ can be changed, the column on which the data is partitioned can not be changed.
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
 [distributed-hypertable-limitations]: /using-timescaledb/limitations#distributed-hypertable-limitations
+[multi-node-basic]: /getting-started/setup-multi-node-basic

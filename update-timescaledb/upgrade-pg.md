@@ -4,7 +4,7 @@
 Each release of TimescaleDB is compatible with specific versions of PostgreSQL. Over time we will add support
 for a newer version of PostgreSQL while simultaneously dropping support for an older versions. 
 
-When the supported versions of PostgreSQL changes, you may need to upgrade the version of the **PostgreSQL instance** (e.g. from 10 to 12) before you can install the latest release of TimescaleDB
+When the supported versions of PostgreSQL changes, you may need to upgrade the version of the **PostgreSQL instance** (e.g. from 10 to 12) before you can install the latest release of TimescaleDB.
 
 To upgrade PostgreSQL, you have two choices, as outlined in the PostgreSQL online documentation. 
 
@@ -13,7 +13,7 @@ To upgrade PostgreSQL, you have two choices, as outlined in the PostgreSQL onlin
 [`pg_upgrade`][pg_upgrade] is a tool that avoids the need to dump all data and then import it
 into a new instance of PostgreSQL after a new version is installed. Instead, `pg_update` allows you to 
 retain the data files of your current PostgreSQL installation while binding the new PostgreSQL binary
-runtime to them. This is currently supported for all releases 8.4 and greater.:
+runtime to them. This is currently supported for all releases 8.4 and greater.
 
  ```
  pg_upgrade -b oldbindir -B newbindir -d olddatadir -D newdatadir"

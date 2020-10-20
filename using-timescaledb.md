@@ -32,12 +32,14 @@ compatible with the PostgreSQL streaming replication protocol, as explained in o
 [streaming replication tutorial][replication]. Streaming replication setups can be
 further extended to offer high availability and failover using community tools like [patroni][patroni].
 
-Write clustering for multi-node TimescaleDB deployments is under active development, and we're
-excited to share our progress with the community soon. That being said, workloads that
-may require a multi-node deployment on NoSQL databases can often be handled by
-a single TimescaleDB instance with one or more read replicas. The power of using a
-relational database to handle production-level time series data is discussed in further
-detail in this [blog post][nosql-blog-post].
+Write clustering for multi-node TimescaleDB deployments is now available with
+TimescaleDB 2.0. Read more about [multi-node capabilities][multi-node-basic] 
+or join our #multinode channel in our [community Slack][slack]
+
+That being said, workloads that may require a multi-node deployment on NoSQL databases
+can often be handled by a single TimescaleDB instance with one or more read replicas. 
+The power of using a relational database to handle production-level time series data 
+is discussed in further detail in this [blog post][nosql-blog-post].
 
 If you're entirely new to PostgreSQL, here are some resources to help you get started:
 - [PostgreSQL Manuals][postgres-manuals]
@@ -57,3 +59,5 @@ If you're entirely new to SQL, here are some resources to help you get started:
 [tutorialspoint]: https://www.tutorialspoint.com/sql/
 [khanacademy]: https://www.khanacademy.org/computing/computer-programming/sql
 [codecademy]: https://www.codecademy.com/learn/learn-sql
+[slack]: https://slack.timescale.com/
+[multi-node-basic]: /getting-started/setup-multi-node-basic
