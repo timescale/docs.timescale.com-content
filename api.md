@@ -1170,7 +1170,7 @@ GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
 Note that continuous aggregates have some limitations of what types of
 queries they can support, described in more length below.  For example,
 the `FROM` clause must provide only one hypertable, i.e., no joins, views or 
-subqueries ares upported, the `GROUP BY` clause must include a time bucket on 
+subqueries are supported. The `GROUP BY` clause must include a time bucket on 
 the hypertable's time column, and all aggregates must be parallelizable.
 
 #### Parameters
