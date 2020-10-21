@@ -626,9 +626,9 @@ when creating distributed hypertables.
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
-| `migrate_data` | Set to TRUE to migrate any existing data from the `relation` table to chunks in the new hypertable. A non-empty table will generate an error without this option. Large tables may take significant time to migrate. Defaults to FALSE. |
+| `migrate_data` | Set to TRUE to migrate any existing data from the `relation` table to chunks in the new hypertable. A non-empty table will generate an error without this option. Large tables may take significant time to migrate. Default is FALSE. |
 | `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
-| `replication_factor` | The number of data nodes to which the same data is written to. This is done by creating chunk copies on this amount of data nodes.  Must be >= 1; default is to 1.  Read [the best practices](#create_distributed_hypertable-best-practices) before changing the default. |
+| `replication_factor` | The number of data nodes to which the same data is written to. This is done by creating chunk copies on this amount of data nodes.  Must be >= 1; default is 1.  Read [the best practices](#create_distributed_hypertable-best-practices) before changing the default. |
 | `data_nodes` | The set of data nodes used for the distributed hypertable.  If not present, defaults to all data nodes known by the access node (the node on which the distributed hypertable is created). |
 
 #### Returns
