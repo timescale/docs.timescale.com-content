@@ -222,9 +222,25 @@ const pageIndex = [
                         type: ANCHOR,
                         href: "#create"
                     }, {
-                        Title: "Changing Data nodes",
+                        Title: "INSERT",
                         type: ANCHOR,
-                        href: "#changing-data-nodes"
+                        href: "#insert"
+                    }, {
+                        Title: "SELECT",
+                        type: ANCHOR,
+                        href: "#select"
+                    }, {
+                        Title: "Data node management",
+                        type: ANCHOR,
+                        href: "#data-node-management"
+                    }, {
+                        Title: "Native replication",
+                        type: ANCHOR,
+                        href: "#native-replication"
+                    }, {
+                        Title: "Transactions and Consistency Model",
+                        type: ANCHOR,
+                        href: "#consistency-model"
                     }
                 ]
             }, {

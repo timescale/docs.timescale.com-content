@@ -20,8 +20,12 @@ CREATE TABLE conditions (
 );
 ```
 
-1. Then, execute the TimescaleDB [`create_hypertable`][create_hypertable] command on this
-newly created table.
+1. Then, execute the TimescaleDB
+[`create_hypertable`][create_hypertable] command on this newly created
+table, or use
+[`create_distributed_hypertable`][create_distributed_hypertable] to
+create a [distributed hypertable][using-distributed-hypertables] that
+scales out across multiple data nodes.
 
 >:TIP: If you need to *migrate* data from an existing table to a hypertable, make
 sure to set the `migrate_data` argument to `true` when calling the function.
@@ -68,15 +72,6 @@ DROP TABLE conditions;
 ```
 
 ---
-
-### Distributing a Hypertable across Multiple Nodes [](distributing)
-
-Hypertables can be distributed over several nodes using the
-[`create_distributed_hypertable`][create_distributed_hypertable]
-command instead of the regular `create_hypertable` command. Note,
-however, that this requires you to first configure a distributed
-database by [adding one or more data nodes][add_data_node].
-
 
 ### Best Practices [](best-practices)
 
@@ -179,6 +174,7 @@ spatial partitioning is required* on a single node.
 [add_data_node]: /api#add_data_node
 [create_hypertable]: /api#create_hypertable
 [create_distributed_hypertable]: /api#create_distributed_hypertable
+[using-distributed-hypertables]: /using-timescaledb/distributed-hypertables
 [migrate-from-postgresql]: /getting-started/migrating-data
 [postgres-altertable]: https://www.postgresql.org/docs/current/sql-altertable.html
 [set_chunk_time_interval]: /api#set_chunk_time_interval
