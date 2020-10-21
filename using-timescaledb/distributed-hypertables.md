@@ -1,10 +1,5 @@
 # Distributed Hypertables
 
->:WARNING: Distributed hypertables and [multi-node capabilities][multi-node-basic]
-are currently in BETA. This feature is not meant for production use. For more information,
-please [contact us][contact] or join the #multinode channel in our 
-[community Slack][slack].
-
 Hypertables handle large amounts of data by breaking it up into
 smaller pieces (chunks), allowing operations to execute
 efficiently. When the amount of data is expected to be beyond what a
