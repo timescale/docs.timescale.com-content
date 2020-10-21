@@ -343,7 +343,7 @@ always be refreshed at a later time, either manually or via a policy.
 To ensure that previously ignored backfill can be refreshed after the upgrade to TimescaleDB 2.0, the upgrade 
 process will mark the region older than the `ignore_invalidation_older_than` threshold as “requiring refresh”. 
 This allows a manual refresh to bring a continuous aggregate up-to-date with the underlying source data. If 
-the `ignore_invalidation_older_than` threshold was modified at some point to longer interval, we recommend 
+the `ignore_invalidation_older_than` threshold was modified at some point to a longer interval, we recommend 
 setting it back to the smaller interval prior to upgrading to ensure that all the backfill can be refreshed, 
 if one so desires. 
 
