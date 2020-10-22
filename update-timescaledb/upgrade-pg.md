@@ -11,7 +11,7 @@ To upgrade PostgreSQL, you have two choices, as outlined in the PostgreSQL onlin
 ### Use `pg_upgrade`
 
 [`pg_upgrade`][pg_upgrade] is a tool that avoids the need to dump all data and then import it
-into a new instance of PostgreSQL after a new version is installed. Instead, `pg_update` allows you to 
+into a new instance of PostgreSQL after a new version is installed. Instead, `pg_upgrade` allows you to 
 retain the data files of your current PostgreSQL installation while binding the new PostgreSQL binary
 runtime to them. This is currently supported for all releases 8.4 and greater.
 
