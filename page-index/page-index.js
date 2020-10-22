@@ -662,6 +662,41 @@ const pageIndex = [
             }
         ]
     }, {
+	Title: "Configuration",
+	type: PAGE,
+	href: "guc",
+	children: [
+	    {
+		Title: "Hypertables",
+                type: ANCHOR,
+                href: "#hypertables"
+		
+	    }, {
+		Title: "Compression",
+                type: ANCHOR,
+                href: "#compression"
+		
+	    }, {
+		Title: "Continuous Aggregates",
+                type: ANCHOR,
+                href: "#continuous-aggregates"
+		
+	    }, {
+		Title: "Distributed Hypertables",
+                type: ANCHOR,
+                href: "#multinode"
+		
+	    }, {
+		Title: "Polices",
+                type: ANCHOR,
+                href: "#policies"
+	    }, {
+		Title: "Administration",
+                type: ANCHOR,
+                href: "#administration"
+	    }
+	]
+    }, {
         Title: "Development",
         type: PAGE,
         href: "development",
