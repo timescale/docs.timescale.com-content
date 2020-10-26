@@ -1,44 +1,5 @@
 # TimescaleDB Configuration
 
-## Hypertables [](hypertables)
-
-#### timescaledb.enable_constraint_aware_append (bool) [](#enable_constraint_aware_append)
-
-Enable constraint exclusion at execution time. It is by default enabled.
-
-#### timescaledb.enable_ordered_append (bool) [](#enable_ordered_append)
-
-Enable ordered append optimization for queries that are ordered by the
-time dimension. It is by default enabled.
-
-#### timescaledb.enable_chunk_append (bool) [](#enable_chunk_append)
-
-Enable chunk append node. It is by default enabled.
-
-#### timescaledb.enable_parallel_chunk_append (bool) [](#enable_parallel_chunk_append)
-
-Enable parallel aware chunk append node. It is by default enabled.
-
-#### timescaledb.enable_runtime_exclusion (bool) [](#enable_runtime_exclusion)
-
-Enable runtime chunk exclusion in chunk append node. It is by default enabled.
-
-#### timescaledb.enable_constraint_exclusion (bool) [](#enable_constraint_exclusion)
-
-Enable planner constraint exclusion. It is by default enabled.
-
-## Compression [](compression)
-
-#### timescaledb.enable_transparent_decompression (bool) [](#enable_transparent_decompression)
-
-Enable transparent decompression when querying hypertable. It is by default enabled.
-
-## Continuous Aggregates [](continuous-aggregates)
-
-#### timescaledb.enable_cagg_reorder_groupby (bool) [](#enable_cagg_reorder_groupby)
-
-Enable group-by clause reordering for continuous aggregates. It is by default enabled.
-
 ## Policies [](policies)
 
 #### timescaledb.max_background_workers (int) [](#max_background_workers)
