@@ -24,8 +24,11 @@ hypertables. In addition, the following limitations apply specifically
 to distributed hypertables:
 
 - Background job scheduling is not supported.
+- User defined actions is not supported.
 - Continuous aggregates are not supported.
-- Compression policies are not supported.
+- Compression policies are not supported. However, you can enable 
+  compression on the distributed hypertable and manually 
+  execute `compress_chunk`.
 - Reordering chunks is not supported.
 - Tablespaces cannot be attached to a distributed hypertable on the
   access node. It is still possible attach tablespaces on data nodes.
@@ -39,7 +42,10 @@ to distributed hypertables:
   hypertable must be present on the access node and all data
   nodes. This applies also to referenced values.
 - Parallel-aware scans and appends are not supported.
-
+- A consistent restore point for backup/restore across nodes is not 
+  natively provided; care must be taken when restoring individual 
+  backups to access and data nodes.
+ 
 Note that these limitations concern usage from the access node. Some
 currently unsupported features (like background scheduling and
 continuous aggregates) might still work on individual data nodes, but

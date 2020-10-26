@@ -6,6 +6,8 @@ physical backups with `pg_basebackup` or another tool, or logical backups with
 `pg_dump` and `pg_restore`. Physical backups may also be used with Write-Ahead Log
 (WAL) archiving to achieve an ongoing backup.
 
+>:WARNING:TimescaleDB currently does not natively support a consistent restore point for multi-node environments. Care should be taken to ensure third-party solutions properly quiesce the environment before backing up, so that the backup point used across nodes does not have outstanding transactions.
+
 ## Performing Physical Backups [](physical-backups)
 
 For full instance physical backups (which are especially useful for starting up
@@ -57,19 +59,13 @@ SELECT timescaledb_post_restore();
  the extension in its backup, which leads to problems if you are
  restoring into a database instance with a more recent extension
  version installed.  (In particular, the backup could be for some
- version 1.1, but then the `CREATE EXTENSION timescaledb` command just
- installs the latest (say, 1.3), and thus does not have the
- opportunity to run our upgrade scripts.)  We are looking into
- submitting a fix for `pg_dump`.
+ version 1.6, but then the `CREATE EXTENSION timescaledb` command just
+ installs the latest (say, 1.7), and thus does not have the
+ opportunity to run our upgrade scripts.)  
 >
 >The workaround is that when restoring from a backup, you need to
  restore to a PostgreSQL instance with the same extension version
  installed, and *then* upgrade the version.
-
->:WARNING: When restoring from versions before 1.3, you must follow
-  the instructions for restoring from earlier versions. You can select
-  docs for previous versions of the database in the sidebar.
-
 
 <!-- -->
 >:WARNING: These instructions do not work if you use flags to selectively
