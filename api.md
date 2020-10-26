@@ -1610,7 +1610,7 @@ CREATE MATERIALIZED VIEW <view_name> [ ( column_name [, ...] ) ]
 SELECT <grouping_exprs>, <aggregate_functions>
     FROM <hypertable>
 [WHERE ... ]
-GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
+GROUP BY time_bucket( <const_value>, <partition_col_of_hypertable> ),
          [ optional grouping exprs>]
 [HAVING ...]
 ```
@@ -1716,10 +1716,10 @@ WITH (timescaledb.continuous) AS
 ---
 
 ## ALTER MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
-`ALTER MATERIALIZED VIEW` statement can be used to modify some of the `WITH` clause [options](#continuous_aggregate-create_view-with) for the continuous aggregate view.
+`ALTER MATERIALIZED VIEW` statement can be used to modify some of the `WITH` clause [options](#continuous_aggregate-create_view-with-optional) for the continuous aggregate view.
 
 ``` sql
-ALTER MATERIALIZED VIEW <view_name> SET ( timescaledb.<option> =  <value> )
+ALTER MATERIALIZED VIEW <view_name> SET ( timescaledb.<option> =  <value> [, ... ] )
 ```
 #### Parameters
 |Name|Description|
