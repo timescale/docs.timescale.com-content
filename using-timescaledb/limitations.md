@@ -25,7 +25,7 @@ to distributed hypertables:
 
 - Background job scheduling is not supported.
 - Continuous aggregates are not supported.
-- Compressed hypertables are not supported.
+- Compression policies are not supported.
 - Reordering chunks is not supported.
 - Tablespaces cannot be attached to a distributed hypertable on the
   access node. It is still possible attach tablespaces on data nodes.
