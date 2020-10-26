@@ -1163,7 +1163,7 @@ AS
 SELECT <grouping_exprs>, <aggregate_functions>
     FROM <hypertable>
 [WHERE ... ]
-GROUP BY <time_bucket( <const_value>, <partition_col_of_hypertable> ),
+GROUP BY time_bucket( <const_value>, <partition_col_of_hypertable> ),
          [ optional grouping exprs>]
 [HAVING ...]
 ```
@@ -1297,11 +1297,12 @@ AS
 
 ---
 
+<<<<<<< HEAD
 ## ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
-`ALTER VIEW` statement can be used to modify the `WITH` clause [options](#continuous_aggregate-create_view-with) for the continuous aggregate view.
+`ALTER VIEW` statement can be used to modify some of the `WITH` clause [options](#continuous_aggregate-create_view-with-optional) for the continuous aggregate view.
 
 ``` sql
-ALTER VIEW <view_name> SET ( timescaledb.option =  <value> )
+ALTER VIEW <view_name> SET ( timescaledb.<option> =  <value> [, ... ] )
 ```
 #### Parameters
 |Name|Description|
