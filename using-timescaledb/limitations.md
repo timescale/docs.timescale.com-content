@@ -45,9 +45,12 @@ to distributed hypertables:
 - A consistent restore point for backup/restore across nodes is not 
   natively provided; care must be taken when restoring individual 
   backups to access and data nodes.
+- Native replication limitations are described [here][native-replication].
  
 Note that these limitations concern usage from the access node. Some
 currently unsupported features (like background scheduling and
 continuous aggregates) might still work on individual data nodes, but
 such usage is neither tested nor officially supported. Future versions
 of TimescaleDB might remove some of these limitations.
+
+[native-replication]: /using-timescaledb/distributed-hypertables#native-replication
