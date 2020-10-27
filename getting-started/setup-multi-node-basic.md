@@ -6,21 +6,30 @@ point for user access;
 - One or more data nodes to store and organize distributed data.     
 
 All nodes begin as single-node TimescaleDBs, i.e., hosts with a running 
-PostgreSQL instance and a loaded TimescaleDB extension.  More detail on 
-the architecture can be found in the [Architecture][architecture] section. For 
-the below setup instructions, "data node" and "access node" will be used to refer 
-to both the server running TimescaleDB, as well as the TimescaleDB instance itself.
-The steps for creating a basic multi-node setup are as follows:
+PostgreSQL instance and a loaded TimescaleDB extension. This is assumed for 
+"access node" and "data node" in the instructions. More detail on 
+the architecture can be found in the [Architecture][architecture] section.
+
+The multi-node can be created as self-managed or hosted on Timescale Cloud or Forge.
+
+The prerequisites for creating multi-node setup are:
+- One PostgreSQL instance to act as an access node
+- One or more PostgreSQL instances to act as data nodes
+- TimescaleDB [installed][install] and [set up][setup] on all nodes
+- Access to a superuser role (e.g. `postgres`) on all nodes
+
+In the case of Timescale Cloud and Forge the created services will already contain
+PostgreSQL with TimescaleDB loaded and the created user `tsdbadmin` is superuser.
+Then after deciding which service node is an access node and which are data nodes, follow
+the instruction to [Initialize data nodes from the access node](#init_data_nodes_on_access_node).
+
+For self-managed multi-node the steps for creating a basic multi-node setup are as follows:
 
 ## Basic setup
 1. Configure data nodes for communication with the access node
 1. Initialize data nodes from the access node 
 
 ### Prerequisites
-- One PostgreSQL instance to act as an access node
-- One or more PostgreSQL instances to act as data nodes
-- TimescaleDB [installed][install] and [set up][setup] on all nodes
-- Access to a superuser role (e.g. `postgres`) on all nodes
 
 ### 1. Configure data nodes for node-to-node communication
 To enable communication between the access node and the data nodes, data 
@@ -68,7 +77,7 @@ on the data node:
 pg_ctl reload
 ```
 
-### 2. Initialize data nodes from the access node
+### 2. Initialize data nodes from the access node [](init_data_nodes_on_access_node)
 While connected to the access node (psql), use the command:
 
 ```sql
