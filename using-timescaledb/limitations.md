@@ -46,7 +46,11 @@ to distributed hypertables:
   natively provided; care must be taken when restoring individual 
   backups to access and data nodes.
 - Native replication limitations are described [here][native-replication].
- 
+- User defined functions have to be manually installed on the data nodes 
+  so that the function definition is available on both access and data
+  nodes. This is particularly relevant for functions that are
+  registered with `set_integer_now_func`.
+
 Note that these limitations concern usage from the access node. Some
 currently unsupported features (like background scheduling and
 continuous aggregates) might still work on individual data nodes, but
