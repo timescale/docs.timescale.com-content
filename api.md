@@ -42,7 +42,7 @@
 > - [last](#last)
 > - [locf](#locf)
 > - [move_chunk](#move_chunk)
-> - [refresh materialized view (continuous aggregate)](#continuous_aggregate-refresh_view)
+> - [refresh_continuous_aggregate](#refresh_continuous_aggregate)
 > - [remove_compression_policy](#remove_compression_policy)
 > - [remove_continuous_aggregate_policy](#remove_continuous_aggregate_policy)
 > - [remove_reorder_policy](#remove_reorder_policy)
@@ -1589,8 +1589,8 @@ please see [using TimescaleDB Continuous Aggregates][using-continuous-aggs].
 
 *  [CREATE MATERIALIZED VIEW](#continuous_aggregate-create_view)
 *  [ALTER MATERIALIZED VIEW](#continuous_aggregate-alter_view)
-*  [REFRESH MATERIALIZED VIEW](#continuous_aggregate-refresh_view)
 *  [DROP MATERIALIZED VIEW](#continuous_aggregate-drop_view)
+*  [refresh_continuous_aggregate()](#refresh_continuous_aggregate)
 
 ## CREATE MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-create_view)
 `CREATE MATERIALIZED VIEW` statement is used to create continuous aggregates.
@@ -1739,25 +1739,6 @@ The only option that currently can be modified with `ALTER
 MATERIALIZED VIEW` is `materialized_only`. The other options
 `continuous` and `create_group_indexes` can only be set when creating
 the continuous aggregate.
-
----
-
-## REFRESH MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-refresh_view)
-The continuous aggregate view can be manually updated by using `REFRESH MATERIALIZED VIEW` statement. A background materializer job will run immediately and update the
- continuous aggregate.
-``` sql
-REFRESH MATERIALIZED VIEW <view_name>
-```
-#### Parameters
-|Name|Description|
-|---|---|
-| `<view_name>` | Name (optionally schema-qualified) of continuous aggregate view to be created.|
-
-#### Sample Usage [](continuous_aggregate-refresh_view-examples)
-Update the continuous aggregate view immediately.
-```sql
-REFRESH MATERIALIZED VIEW contagg_view;
-```
 
 ---
 
