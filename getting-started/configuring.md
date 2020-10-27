@@ -241,7 +241,7 @@ Set TimescaleDB in restoring mode. It is by default disabled.
 #### `timescaledb.license (string)` [](license)
 
 TimescaleDB license type. Determines which features are enabled. The
-variable value defaults to `timescale`.
+variable can be set to `timescale` or `apache`.  Defaults to `timescale`.
 
 #### `timescaledb.telemetry_level (enum)` [](telemetry_level)
 
