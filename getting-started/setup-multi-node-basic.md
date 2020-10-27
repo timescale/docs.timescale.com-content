@@ -10,74 +10,19 @@ PostgreSQL instance and a loaded TimescaleDB extension. This is assumed for
 "access node" and "data node" in the instructions. More detail on 
 the architecture can be found in the [Architecture][architecture] section.
 
-The multi-node can be created as self-managed or hosted on Timescale Cloud or Forge.
+TimescaleDB multi-node can be created as part of a self-managed deployment
+or (coming soon) as a managed cloud deployment.  In order to set up a
+self-managed cluster, including how to configure the nodes for secure
+communication and creating users/roles across servers, please follow
+[these instructions][advanced setup].
 
-The prerequisites for creating multi-node setup are:
-- One PostgreSQL instance to act as an access node
-- One or more PostgreSQL instances to act as data nodes
-- TimescaleDB [installed][install] and [set up][setup] on all nodes
-- Access to a superuser role (e.g. `postgres`) on all nodes
+In the case of Timescale Cloud and Forge, the created services already contain
+PostgreSQL with TimescaleDB loaded and the created user `tsdbadmin` as superuser.
+In this case, all you will need to do is decide which service should be the access
+node, and follow the instructions in the next section.  More information will be
+forthcoming as TimescaleDB multi-node is made available on these cloud platforms.
 
-In the case of Timescale Cloud and Forge the created services will already contain
-PostgreSQL with TimescaleDB loaded and the created user `tsdbadmin` is superuser.
-Then after deciding which service node is an access node and which are data nodes, follow
-the instruction to [Initialize data nodes from the access node](#init_data_nodes_on_access_node).
-
-For self-managed multi-node the steps for creating a basic multi-node setup are as follows:
-
-## Basic setup
-1. Configure data nodes for communication with the access node
-1. Initialize data nodes from the access node 
-
-### Prerequisites
-
-### 1. Configure data nodes for node-to-node communication
-To enable communication between the access node and the data nodes, data 
-nodes must be configured to authorize connections from the access node.  The 
-simplest way is to use "trust" authentication which provides unencumbered client 
-access to the nodes. This method must be applied to every data node.
-
->:WARNING: The "trust" authentication method allows insecure access to all 
-nodes.  For production implementations, please use more secure 
-methods of authentication (see [advanced setup][] for examples).
-
-#### Edit authentication configuration file on data nodes
-Client authentication is usually configured in the `pg_hba.conf`([reference doc]
-[postgresql-hba]) file located in the data directory.  If the file is not located 
-there, connect to the instance with `psql` and execute the command:
-
-```sql
-SHOW hba_file;
-``` 
-
-To enable "trust" authentication, add a line to `pg_hba.conf` to allow
-access to the instance. Ex: for an access node ip address `192.0.2.20`:
-
-```
-# TYPE  DATABASE  USER  ADDRESS      METHOD
-host    all       all   192.0.2.20   trust
-```
-
-#### Edit main configuration
-It is necessary to change the parameter `max_prepared_transactions` to a 
-non-zero value if it hasn't been changed already ('150' is recommended). The 
-parameter is located in `postgresql.conf`, typically in the data directory. If it 
-isn't there, connect to the node (`psql`) and get the path with:
-
-```
-SHOW config_file;
-```
-
-##### Reload server configuration
-
-To reload the server configuration, you can use the following command
-on the data node:
-
-```
-pg_ctl reload
-```
-
-### 2. Initialize data nodes from the access node [](init_data_nodes_on_access_node)
+## Initialize data nodes from the access node [](init_data_nodes_on_access_node)
 While connected to the access node (psql), use the command:
 
 ```sql
@@ -88,6 +33,19 @@ SELECT add_data_node('example_node_name', host => 'example_host_address');
 is the host name or IP address of the data node.
 
 The system should be up and running at this point.
+
+## (Optional) Add user roles to the distributed database
+
+After adding your data nodes, it is possible to create and use distributed hypertables,
+but only if running as a superuser common to all nodes (e.g., by default,
+the `postgres` user).
+
+If using a self-managed multi-node cluster, you may wish to create new users with
+multi-node access, or add access to existing roles.  Please refer to the following
+sections depending on the authentication mechanism you are using:
+- Adding roles using [trust authentication][trust_role_setup]
+- Adding roles using [password authentication][password_role_setup]
+- Adding roles using [certificate authentication][certificate_role_setup]
 
 ---
 ## Next steps
@@ -108,6 +66,9 @@ docs:
 [install]: /getting-started/installation
 [setup]: /getting-started/setup
 [advanced setup]: /getting-started/setup-multi-node-basic/setup-multi-node-auth
+[trust_role_setup]: /getting-started/setup-multi-node-basic/setup-multi-node-auth#multi-node-auth-trust-roles
+[password_role_setup]: /getting-started/setup-multi-node-basic/setup-multi-node-auth#multi-node-auth-password-roles
+[certificate_role_setup]: /getting-started/setup-multi-node-basic/setup-multi-node-auth#multi-node-auth-certificate-roles
 [postgresql-hba]: https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
 [max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
 [distributed hypertables]: /using-timescaledb/distributed-hypertables
