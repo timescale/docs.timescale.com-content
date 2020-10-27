@@ -70,7 +70,7 @@ concurrent and parallel execution of a query across the data nodes.
 You can now insert data into the distributed hypertable and the data
 will automatically be routed to the correct data node.
 
-### Best Practices for Partitioning
+### Best Practices for Partitioning [](partitioning-best-practices)
 
 Like a regular hypertable, a distributed hypertable needs to be
 partitioned along a "time" dimension (e.g., a `timestamptz`
@@ -221,7 +221,7 @@ unsupported, however. To see how the a query is pushed down to a data
 node, use `EXPLAIN VERBOSE` on the query and inspect the query plan
 and the remote SQL statement sent to each data node.
 
-### Limitations of Pushing Down Queries
+### Limitations of Pushing Down Queries [](push-down-limitations)
 
 The query planner might not always be able to push down queries,
 however, or it can only push down parts of it:
