@@ -161,7 +161,24 @@ const pageIndex = [
             }, {
                 Title: "Configuration",
                 type: PAGE,
-                href: "configuring"
+                href: "configuring",
+                children: [
+                    {
+                        Title: "Postgres Settings",
+                        type: ANCHOR,
+                        href: "#postgres-config"
+                    },
+                    {
+                        Title: "TimescaleDB Settings",
+                        type: ANCHOR,
+                        href: "#timescaledb-config"
+                    },
+                    {
+                        Title: "Docker Settings",
+                        type: ANCHOR,
+                        href: "#docker-config"
+                    }
+                ]
             }, {
                 Title: "Setting up Grafana",
                 type: PAGE,
@@ -661,41 +678,6 @@ const pageIndex = [
                 to: "/api"
             }
         ]
-    }, {
-	Title: "Configuration",
-	type: PAGE,
-	href: "guc",
-	children: [
-	    {
-		Title: "Hypertables",
-                type: ANCHOR,
-                href: "#hypertables"
-		
-	    }, {
-		Title: "Compression",
-                type: ANCHOR,
-                href: "#compression"
-		
-	    }, {
-		Title: "Continuous Aggregates",
-                type: ANCHOR,
-                href: "#continuous-aggregates"
-		
-	    }, {
-		Title: "Distributed Hypertables",
-                type: ANCHOR,
-                href: "#multinode"
-		
-	    }, {
-		Title: "Polices",
-                type: ANCHOR,
-                href: "#policies"
-	    }, {
-		Title: "Administration",
-                type: ANCHOR,
-                href: "#administration"
-	    }
-	]
     }, {
         Title: "Development",
         type: PAGE,
