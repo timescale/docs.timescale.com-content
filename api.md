@@ -82,13 +82,34 @@ partitioning (e.g., for a second time partition) or hash partitioning.
 converted to a hypertable (via `create_hypertable`), but must similarly
 be run only on an empty hypertable.
 
-**Space partitions**: The use of additional partitioning is a very
-specialized use case.  **Most users will not need to use it.**
+**Space partitions**: Using space partitions is highly recommended
+for [distributed hypertables](#create_distributed_hypertable) to achieve
+efficient scale-out performance. For [regular hypertables](#create_hypertable)
+that exist only on a single node, additional partitioning can be used
+for specialized use cases and not recommended for most users.
 
 Space partitions use hashing: Every distinct item is hashed to one of
 *N* buckets.  Remember that we are already using (flexible) time
 intervals to manage chunk sizes; the main purpose of space
-partitioning is to enable parallel I/O to the same time interval.
+partitioning is to enable parallelization across multiple 
+data nodes (in the case of distributed hypertables) or
+across multiple disks within the same time interval
+(in the case of single-node deployments).
+
+### Parallelizing queries across multiple data nodes [](add_dimension-multi_node)
+
+In a distributed hypertable, space partitioning enables inserts to be
+parallelized across data nodes, even while the inserted rows share
+timestamps from the same time interval, and thus increases the ingest rate.
+Query performance also benefits by being able to parallelize queries 
+across nodes, particularly when full or partial aggregations can be
+"pushed down" to data nodes (e.g., as in the query
+`avg(temperature) FROM conditions GROUP BY hour, location`
+when using `location` as a space partition). Please see our
+[best practices about partitioning in distributed hypertables][distributed-hypertable-partitioning-best-practices]
+for more information.
+
+### Parallelizing disk I/O on a single node [](add_dimension-single_node)
 
 Parallel I/O can benefit in two scenarios: (a) two or more concurrent
 queries should be able to read from different disks in parallel, or
@@ -165,8 +186,7 @@ is the number of milliseconds since the UNIX epoch).
 
 >:WARNING: Supporting more than **one** additional dimension is currently
  experimental.  For any production environments, users are recommended
- to use at most one "space" dimension (in addition to the required
- time dimension specified in `create_hypertable`).
+ to use at most one "space" dimension.
 
 #### Sample Usage [](add_dimension-examples)
 
@@ -185,6 +205,20 @@ SELECT create_hypertable('conditions', 'time', 'location', 2);
 SELECT add_dimension('conditions', 'time_received', chunk_time_interval => INTERVAL '1 day');
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2);
 SELECT add_dimension('conditions', 'device_id', number_partitions => 2, if_not_exists => true);
+```
+
+Now in a multi-node example for distributed hypertables with a cluster 
+of one access node and two data nodes, configure the access node for 
+access to the two data nodes. Then, convert table `conditions` to 
+a distributed hypertable with just time partitioning on column `time`, 
+and finally add a space partitioning dimension on `location`
+with two partitions (as the number of the attached data nodes).
+
+```sql
+SELECT add_data_node('dn1', host => 'dn1.example.com');
+SELECT add_data_node('dn2', host => 'dn2.example.com');
+SELECT create_distributed_hypertable('conditions', 'time');
+SELECT add_dimension('conditions', 'location', number_partitions => 2);
 ```
 
 ---
@@ -596,8 +630,11 @@ total chunk sizes via the [`chunks_detailed_size`](#chunks_detailed_size)
 function.
 
 **Space partitions:** In most cases, it is advised for users not to use
-space partitions. The rare cases in which space partitions may be useful
-are described in the [add_dimension](#add_dimension) section.
+space partitions. However, if you create a distributed hypertable, it is 
+important to create space partitioning, see 
+[create_distributed_hypertable](#create_distributed_hypertable). 
+The rare cases in which space partitions may be useful for non-distributed
+hypertables are described in the [add_dimension](#add_dimension) section.
 
 ---
 
@@ -3661,6 +3698,8 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [postgres-lock]: https://www.postgresql.org/docs/current/sql-lock.html
 [migrate-from-postgresql]: /getting-started/migrating-data
 [memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
+[multinode]: /getting-started/setup-multi-node-basic
+[distributed-hypertable-partitioning-best-practices]: /using-timescaledb/distributed-hypertables#partitioning-best-practices
 [telemetry]: /using-timescaledb/telemetry
 [caveats]: /using-timescaledb/continuous-aggregates
 [backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore
