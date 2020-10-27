@@ -1476,7 +1476,7 @@ to set `timescaledb.compress` and other configuration parameters.
 | `compress_after` | (INTERVAL or INTEGER) The age after which the policy job will compress chunks|
 
 The `compress_after` parameter should be specified differently depending on the type of the time column of the hypertable:
-- For hypertables with TIMESTAMP, TIMESTAMPTZ, and DATE time columns: the time interval should be an INTERVAL type
+- For hypertables with TIMESTAMP, TIMESTAMPTZ, and DATE time columns: the time interval should be an INTERVAL type.
 - For hypertables with integer-based timestamps: the time interval should be an integer type (this requires
 the [integer_now_func](#set_integer_now_func) to be set).
 
@@ -1989,7 +1989,14 @@ one retention policy may exist per hypertable.
 |Name|Description|
 |---|---|
 | `relation` | (REGCLASS) Name of the hypertable or continuous aggregate to create the policy for. |
-| `drop_after` | (INTERVAL) Chunks fully older than this interval when the policy is run will be dropped|
+| `drop_after` | (INTERVAL or INTEGER) Chunks fully older than this interval when the policy is run will be dropped|
+
+The `drop_after` parameter should be specified differently depending on the 
+type of the time column of the hypertable:
+- For hypertables with TIMESTAMP, TIMESTAMPTZ, and DATE time columns: the time 
+interval should be an INTERVAL type.
+- For hypertables with integer-based timestamps: the time interval should be an 
+integer type (this requires the [integer_now_func](#set_integer_now_func) to be set).
 
 #### Optional Arguments [](add_retention_policy-optional-arguments)
 
@@ -2005,11 +2012,15 @@ one retention policy may exist per hypertable.
 
 #### Sample Usage [](add_retention_policy-examples)
 
+Create a data retention policy to discard chunks greater than 6 months old:
 ```sql
 SELECT add_retention_policy('conditions', INTERVAL '6 months');
 ```
 
-creates a data retention policy to discard chunks greater than 6 months old.
+Create a data retention policy with an integer-based time column: 
+```sql
+SELECT add_retention_policy('conditions', BIGINT '600000');
+```
 
 ---
 ## remove_retention_policy() :community_function: [](remove_retention_policy)
