@@ -955,7 +955,7 @@ The procedure can run distributed commands transactionally, so a command
 is executed either everywhere or nowhere. However, not all SQL commands can run in a 
 transaction. This can be toggled with the argument `transactional`. Note if the execution 
 is not transactional, a failure on one of the data node will require manual dealing with
-the appeared inconsistency.
+any introduced inconsistency.
 
 Note that the command is _not_ executed on the access node itself and
 it is not possible to chain multiple commands together in one call.
