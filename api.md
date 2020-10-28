@@ -1297,7 +1297,6 @@ AS
 
 ---
 
-<<<<<<< HEAD
 ## ALTER VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
 `ALTER VIEW` statement can be used to modify some of the `WITH` clause [options](#continuous_aggregate-create_view-with-optional) for the continuous aggregate view.
 
