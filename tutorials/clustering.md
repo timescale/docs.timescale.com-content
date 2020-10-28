@@ -163,11 +163,11 @@ SELECT * FROM timescaledb_information.data_node;
 
 Now that you have created a database and added a couple data nodes, let's go
 ahead and create a new user role we can use for our distributed database.
-You can use Timescale's `distributed_exec` function to perform this action on
+You can use Timescale's `distributed_exec` procedure to perform this action on
 the data nodes:
 ```sql
 CREATE ROLE testuser WITH LOGIN PASSWORD 'testpass';
-SELECT * FROM distributed_exec($$ CREATE ROLE testuser WITH LOGIN PASSWORD 'testpass' $$);
+CALL distributed_exec($$ CREATE ROLE testuser WITH LOGIN PASSWORD 'testpass' $$);
 ```
 
 This creates the same user role on all the data nodes. It is important that

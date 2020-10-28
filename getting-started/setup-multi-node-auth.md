@@ -82,11 +82,11 @@ CREATE ROLE alice WITH LOGIN PASSWORD 'foobar';
 
 Note: The `postgres` user should already exist, so shouldn't need to be added to each node.
 
-Then, to create the same user on all data nodes, use the `distributed_exec` function 
+Then, to create the same user on all data nodes, use the `distributed_exec` procedure 
 ([API docs][distributed_exec]) from the access node:
 
 ```sql
-SELECT distributed_exec($$CREATE USER alice WITH PASSWORD 'foobar'$$);
+CALL distributed_exec($$CREATE USER alice WITH PASSWORD 'foobar'$$);
 ```
 
 and the system setup is complete.
