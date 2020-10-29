@@ -133,10 +133,15 @@ const pageIndex = [
                 href: "setup-multi-node-basic",
                 children: [
                     {
-                        Title: "Configuring authentication",
+                        Title: "Advanced Setup",
                         type: PAGE,
                         href: "setup-multi-node-auth",
                         children: [
+                            {
+                                Title: "Trust authentication",
+                                type: ANCHOR,
+                                href: "#multi-node-auth-trust"
+                            },
                             {
                                 Title: "Password authentication",
                                 type: ANCHOR,
