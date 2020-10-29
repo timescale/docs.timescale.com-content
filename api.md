@@ -2046,6 +2046,11 @@ call (unless as a subquery where the outer query does the type cast).
 | `start` | The start of the gapfill period (timestamp/timestamptz/date)|
 | `finish` | The end of the gapfill period (timestamp/timestamptz/date)|
 
+Note that explicitly provided `start` and `stop` or derived from WHERE clause values 
+need to be simple expressions. Such expressions should be evaluated to constants 
+at the query planning. For example, simple expressions can contain constants or 
+call to `now()`, but cannot reference to columns of a table.
+
 ### For Integer Time Inputs
 
 #### Required Arguments [](time_bucket_gapfill-integer-required-arguments)
