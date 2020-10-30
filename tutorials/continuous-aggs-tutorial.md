@@ -16,7 +16,7 @@ GROUP BY bucket;
 
 However, performing this query as written requires scanning all the data within
 the hypertable, which can be inefficient if this query is called frequently. A
-**continuous aggregate** recomputes the query automatically at user specified
+**continuous aggregate** recomputes the query automatically at user-specified
 time intervals and materializes the results into a table. When the user
 queries the continuous aggregate, the system reads and processes the much smaller materialized
 table. This speeds up the query significantly. This is particularly useful when
@@ -326,4 +326,3 @@ You will find more details about the Continuous Aggregate API in the [documentat
 [nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
 [tsdb_doc]: https://docs.timescale.com/v2.0/api#continuous-aggregates
 [install-timescale]: /getting-started/installation
-
