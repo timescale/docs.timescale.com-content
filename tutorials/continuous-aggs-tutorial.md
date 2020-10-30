@@ -280,7 +280,7 @@ next_start                      | 2020-10-29 15:59:51
 materialization_hypertable_name | _materialized_hypertable_9
 ```
 
-Notice that the `start_offset` is not set to `1 mon`.
+Notice that the `start_offset` is now set to `1 mon`.
 
 ## Using `WITH NO DATA` when creating a Continuous Aggregate [](with-no-data)
 
