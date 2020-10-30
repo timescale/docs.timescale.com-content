@@ -175,8 +175,9 @@ of time TimescaleDB will look at when refreshing the data in the continuous aggr
 will look for changes to data in the underlying hypertable, while `end_offset` is the 
 most recent timestamp interval that will be considered.
 
->:TIP:In TimescaleDB 1.x, `start_offset` was called `ignore_invalidation_oder_than` and
->`end_offset` was called `refresh_lag`
+>:TIP:Comparing to TimescaleDB 1.x, `start_offset` is related to
+> `ignore_invalidation_older_than` and `end_offset` is similar to `refresh_lag`,
+> although the semantics of these new parameters are much simpler to understand.
 
 For example, if we expect frequent updates to the *rides*  table for the current hour, we do not
 want to materialize the aggregates for that range. We would set the `end_offset = INTERVAL '1h'` 
