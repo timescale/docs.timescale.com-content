@@ -327,5 +327,5 @@ You will find more details about the Continuous Aggregate API in its [documentat
 
 [hello_timescale]: /tutorials/tutorial-hello-timescale
 [nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
-[tsdb_doc]: /api#continuous-aggregates
+[cagg_api]: /api#continuous-aggregates
 [install-timescale]: /getting-started/installation
