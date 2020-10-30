@@ -1666,7 +1666,7 @@ GROUP BY time_bucket( <const_value>, <partition_col_of_hypertable> ),
 ```
 Note that continuous aggregates have some limitations of what types of
 queries they can support, described in more length below.  For example,
-the `FROM` clause must provide only one hypertable, i.e., no joins, views or 
+the `FROM` clause must provide only one hypertable, i.e., no joins, CTEs, views or 
 subqueries are supported. The `GROUP BY` clause must include a time bucket on 
 the hypertable's time column, and all aggregates must be parallelizable.
 
@@ -1759,10 +1759,10 @@ WITH (timescaledb.continuous) AS
     GROUP BY time_bucket('1h', timec);
 ```
 
->:TIP: In order to keep the continuous aggregate up to date with incoming data,
->the `end_offset` of the [continuous aggregate policy](#add_continuous_aggregate_policy)
->can be set to `-<bucket_width>`. Please note that by doing so, you will incur higher 
->write amplification and incur performance penalties.
+>:TIP: By default, continuous aggregates will always provide the most up-to-date aggregation
+>by utilizing our real-time aggregate optimization. This feature retrieves data from the precomputed
+>continuous aggregate and then fills in the most recent period, that has not yet been 
+>materialized, from raw data in your hypertable.
 ---
 
 ## ALTER MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
