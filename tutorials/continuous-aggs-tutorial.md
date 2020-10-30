@@ -33,7 +33,7 @@ helpful if you've seen SQL before.
 To start, [install TimescaleDB][install-timescale]. Once your installation is complete, 
 we can proceed to ingesting or creating sample data and finishing the tutorial.
 
-### 1. Download and Load Data
+### 1. Download and Load Data [](step-1)
 
 Let's start by downloading the data.
 
@@ -74,7 +74,7 @@ The data is now ready for you to use.
 psql -U postgres -h localhost -d nyc_data
 ```
 
-### 2. Create a continuous aggregate query
+### 2. Create a continuous aggregate query [](step-2)
 Let us assume we use the following query frequently to calculate hourly ride statistics.
 
 ```sql
@@ -149,7 +149,7 @@ from the **timescaledb_information.continuous_aggregates** view joined to the
 SELECT view_name, schedule_interval, 
   config ->> 'start_offset' as start_offset,
   config ->> 'end_offset' as end_offset,
-  date_trunc('second',next_start::timestamp) as next_start,
+  next_start,
   materialization_hypertable_name
 FROM timescaledb_information.continuous_aggregates ca
   INNER JOIN timescaledb_information.jobs j 
@@ -193,7 +193,7 @@ time_bucket('1h', pickup_datetime) > max(pickup_time) - INTERVAL '7 days'
   AND time_bucket('1h', pickup_datetime) < max(pickup_time) - '1h'
 ``` 
 
-### 3. Queries using continuous aggregates
+### 3. Queries using continuous aggregates [](step-3)
 We can use the continuous aggregate just like any other `VIEW` in a `SELECT` query.
 
 ``` sql
@@ -204,7 +204,7 @@ SELECT vendor_id, day, total_rides FROM cagg_rides_view WHERE total_rides > 1500
 (1 row)
 ```
 
-### 4. Statistics for continuous aggregates
+### 4. Statistics for continuous aggregates [](step-4)
 
 We can view information about the jobs that update the continuous aggregate
 using the **timescaledb_information.job_stats** view.
@@ -245,7 +245,7 @@ aggregate. `next_start` says when the next scheduled update will occur.
 `last_sucessful_finish` and `last_run_duration` allow you to see when the
 scheduled aggregate finished and how long it took to run.
 
-### 5. Update the Continuous Aggregate schedule
+### 5. Update the Continuous Aggregate schedule [](step-5)
 Altering the schedule or parameters of a continuous aggregate policy is accomplished by
 first removing the existing policy and then creating a new updated policy with the
 desired settings.
@@ -264,7 +264,7 @@ SELECT add_continuous_aggregate_policy('cagg_rides_view',
 SELECT view_name, schedule_interval, 
   config ->> 'start_offset' as start_offset,
   config ->> 'end_offset' as end_offset,
-  date_trunc('second',next_start::timestamp) as next_start,
+  next_start,
   materialization_hypertable_name
 FROM timescaledb_information.continuous_aggregates ca
   INNER JOIN timescaledb_information.jobs j 
@@ -296,8 +296,10 @@ you need to manually refresh history up to the current `start_offset` to allow
 real-time queries to run efficiently.
 
 Using the example in **Step 2** above, if we had years worth of data, a better approach 
-to creating the continuous aggregate is shown in the SQL below which includes `WITH NO DATA`
-and specifically refreshes the history separate from the continuous aggregate refresh policy:
+to creating the continuous aggregate is shown in the SQL below which:
+1. Creates the continuous aggregate using the `WITH NO DATA`,
+1. Refreshes the history explicitly, then
+1. Adds the continuous aggregate refresh policy separately.
 
 ```sql
 CREATE MATERIALIZED VIEW cagg_rides_view WITH
@@ -312,12 +314,12 @@ FROM rides
 GROUP BY vendor_id, time_bucket('1h', pickup_datetime)
 WITH NO DATA;
 
+CALL refresh_continuous_aggregate('cagg_rides_view', NULL, localtimestamp - INTERVAL '1 week');
+
 SELECT add_continuous_aggregate_policy('cagg_rides_view', 
   start_offset => INTERVAL '1 week',
   end_offset   => INTERVAL '1 hour',
   schedule_interval => INTERVAL '30 minutes');
-
-CALL refresh_continuous_aggregate('cagg_rides_view', NULL, localtimestamp - INTERVAL '1 week');
 ```
 
 
