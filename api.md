@@ -1759,10 +1759,6 @@ WITH (timescaledb.continuous) AS
     GROUP BY time_bucket('1h', timec);
 ```
 
->:TIP: By default, continuous aggregates will always provide the most up-to-date aggregation
->by utilizing our real-time aggregate optimization. This feature retrieves data from the precomputed
->continuous aggregate and then fills in the most recent period, that has not yet been 
->materialized, from raw data in your hypertable.
 ---
 
 ## ALTER MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
