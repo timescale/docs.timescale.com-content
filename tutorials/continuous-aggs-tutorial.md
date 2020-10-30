@@ -323,7 +323,7 @@ SELECT add_continuous_aggregate_policy('cagg_rides_view',
 ```
 
 
-You will find more details about the Continuous Aggregate API in the [documentation][cagg_api].
+You will find more details about the Continuous Aggregate API in its [documentation][cagg_api].
 
 [hello_timescale]: /tutorials/tutorial-hello-timescale
 [nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
