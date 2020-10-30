@@ -181,7 +181,7 @@ most recent timestamp interval that will be considered.
 
 For example, if we expect frequent updates to the *rides*  table for the current hour, we do not
 want to materialize the aggregates for that range. We would set the `end_offset = INTERVAL '1h'` 
-to indicate that. (If you don't specify an `end_offset` the default value is twice the
+to indicate that. (If you don't specify an `end_offset`, the default value is twice the
 bucket_width used by the `time_bucket` expression.) 
 
 So given the continuous aggregate policy that we created above, the continuous aggregate will get
