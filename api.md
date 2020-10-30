@@ -11,7 +11,7 @@
 > - [add_retention_policy](#add_retention_policy)
 > - [alter_job](#alter_job)
 > - [alter table (compression)](#compression_alter-table)
-> - [alter view (continuous aggregate)](#continuous_aggregate-alter_view)
+> - [alter materialized view (continuous aggregate)](#continuous_aggregate-alter_view)
 > - [approximate_row_count](#approximate_row_count)
 > - [attach_data_node](#attach_data_node)
 > - [attach_tablespace](#attach_tablespace)
@@ -21,7 +21,7 @@
 > - [create_distributed_hypertable](#create_distributed_hypertable)
 > - [create_hypertable](#create_hypertable)
 > - [create index (transaction per chunk)](#create_index)
-> - [create view (continuous aggregate)](#continuous_aggregate-create_view)
+> - [create materialized view (continuous aggregate)](#continuous_aggregate-create_view)
 > - [decompress_chunk](#decompress_chunk)
 > - [delete_data_node](#delete_data_node)
 > - [delete_job](#delete_job)
@@ -30,7 +30,7 @@
 > - [detach_tablespaces](#detach_tablespaces)
 > - [distributed_exec](#distributed_exec)
 > - [drop_chunks](#drop_chunks)
-> - [drop view (continuous aggregate)](#continuous_aggregate-drop_view)
+> - [drop materialized view (continuous aggregate)](#continuous_aggregate-drop_view)
 > - [first](#first)
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
@@ -1666,7 +1666,7 @@ GROUP BY time_bucket( <const_value>, <partition_col_of_hypertable> ),
 ```
 Note that continuous aggregates have some limitations of what types of
 queries they can support, described in more length below.  For example,
-the `FROM` clause must provide only one hypertable, i.e., no joins, views or 
+the `FROM` clause must provide only one hypertable, i.e., no joins, CTEs, views or 
 subqueries are supported. The `GROUP BY` clause must include a time bucket on 
 the hypertable's time column, and all aggregates must be parallelizable.
 
@@ -1751,10 +1751,6 @@ WITH (timescaledb.continuous) AS
     GROUP BY time_bucket('30day', timec);
 ```
 
->:TIP: In order to keep the continuous aggregate up to date with incoming data,
-the refresh lag can be set to `-<bucket_width>`. Please note that by doing so,
-you will incur higher write amplification and incur performance penalties.
-
 ```sql
 CREATE MATERIALIZED VIEW continuous_aggregate_view( timec, minl, sumt, sumh )
 WITH (timescaledb.continuous) AS
@@ -1831,8 +1827,8 @@ supplied should also be `timestamptz`).
 |Name|Description|
 |---|---|
 | `continuous_aggregate` | (REGCLASS) The continuous aggregate to refresh. |
-| `window_start` | Start of the window to refresh, has to be before `window_end`. |
-| `window_end` | End of the window to refresh, has to be after `window_start`. |
+| `window_start` | Start of the window to refresh, has to be before `window_end`. `NULL` is eqivalent to `MIN(timestamp)` of the hypertable. |
+| `window_end` | End of the window to refresh, has to be after `window_start`. `NULL` is eqivalent to `MAX(timestamp)` of the hypertable. |
 
 #### Sample Usage [](refresh_continuous_aggregate-examples)
 
