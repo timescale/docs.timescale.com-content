@@ -51,8 +51,8 @@ nodes.  For production implementations, please use more secure
 methods of authentication.
 
 #### 1. Edit authentication configuration file on data nodes
-Client authentication is usually configured in the `pg_hba.conf`([reference doc]
-[postgresql-hba]) file located in the data directory.  If the file is not located 
+Client authentication is usually configured in the `pg_hba.conf` ([reference doc][postgresql-hba])
+file located in the data directory.  If the file is not located 
 there, connect to the instance with `psql` and execute the command:
 
 ```sql
@@ -445,3 +445,6 @@ docs:
 [detach_data_node]: /api#detach_data_node
 [distributed_exec]: /api#distributed_exec
 [configuration]: /getting-started/configuring
+[install]: /getting-started/installation
+[setup]: /getting-started/setup
+[postgresql-hba]: https://www.postgresql.org/docs/12/auth-pg-hba-conf.html
