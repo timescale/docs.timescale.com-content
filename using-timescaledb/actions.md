@@ -27,22 +27,23 @@ $$;
 ### Registering Actions [](register)
 
 In order to register your action for execution within TimescaleDB's
-job scheduler, you next need to `add_job` with the name of your action
+job scheduler, you next need to [`add_job`](api-add_job) with the name of your action
 as well as the schedule on which it is run.
 
 When registered, the action's `job_id` and `config` are stored in the
-TimescaleDB catalog. The `config` JSONB can be modified with `alter_job`.
+TimescaleDB catalog. The `config` JSONB can be modified with [`alter_job`](api-alter_job).
 `job_id` and `config` will be passed as arguments when the procedure is
-executed as background process or when expressly called with `run_job`.
+executed as background process or when expressly called with [`run_job`](api-run_job).
 
 Register the created job with the automation framework. `add_job` returns the job_id
-which can be used to execute the job manually with `run_job`.
+which can be used to execute the job manually with `run_job`:
 
 ```sql
-SELECT add_job('user_defined_action','1h');
+SELECT add_job('user_defined_action','1h', config => '{"hypertable":"metr"}');
 ```
 
-To get a list of all currently registered jobs you can query `timescaledb_information.jobs`.
+To get a list of all currently registered jobs you can query 
+[`timescaledb_information.jobs`](api-timescaledb_information-jobs):
 
 ```sql
 SELECT * FROM timescaledb_information.jobs;
@@ -50,13 +51,13 @@ SELECT * FROM timescaledb_information.jobs;
 
 ### Testing and Debugging Jobs [](testing)
 
-Any background worker job can be run in foreground when executed with `run_job`. This can
-be useful to debug problems when combined with increased log level.
+Any background worker job can be run in foreground when executed with [`run_job`](api-run_job). 
+This can be useful to debug problems when combined with increased log level.
 
 Since `run_job` is implemented as stored procedure it cannot be executed
 inside a SELECT query but has to be executed with [CALL](postgres-call).
 
-Set log level shown to client to DEBUG1 and run the job with the job id 1000.
+Set log level shown to client to `DEBUG1` and run the job with the job id 1000:
 
 ```sql
 SET client_min_messages TO DEBUG1;
@@ -65,32 +66,33 @@ CALL run_job(1000);
 
 ### Altering and Dropping Actions [](alter-delete)
 
-You can alter the config or scheduling parameters with `alter_job`.
+You can alter the config or scheduling parameters with [`alter_job`](api-alter_job).
+
+Replace the entire JSON config for job with id 1000 with the specified JSON:
 
 ```sql
 SELECT alter_job(1000, config => '{"hypertable":"metrics"}');
 ```
 
-Replaces the entire JSON config for job with id 1000 with the specified JSON.
+Disable automatic scheduling of the job with id 1000. The job can still be run manually
+with `run_job`:
 
 ```sql
 SELECT alter_job(1000, scheduled => false);
 ```
 
-Disables automatic scheduling of the job with id 1000. The job can still be run manually
-with `run_job`.
+Reenable automatic scheduling of the job with id 1000:
 
 ```sql
 SELECT alter_job(1000, scheduled => true);
 ```
 
-Reenables automatic scheduling of the job with id 1000.
+Delete the job with id 1000 from the automation framework with [`delete_job`](api-delete_job):
 
 ```sql
 SELECT delete_job(1000);
 ```
 
-Deletes the job with id 1000 from the automation framework.
 
 ## Examples [](examples)
 
@@ -249,7 +251,12 @@ Register job to run daily downsampling and compressing chunks older than
 SELECT add_job('downsample_compress','1d', config => '{"lag":"12 month"}');
 ```
 
+[api-add_job]: /api#add_job
+[api-alter_job]: /api#alter_job
+[api-delete_job]: /api#delete_job
+[api-run_job]: /api#run_job
 [api-move_chunk]: /api#move_chunk
+[api-timescaledb_information-jobs]: /api#timescaledb_information-jobs
 [postgres-call]: https://www.postgresql.org/docs/current/sql-call.html
 [postgres-createfunction]: https://www.postgresql.org/docs/current/sql-createfunction.html
 [postgres-createprocedure]: https://www.postgresql.org/docs/current/sql-createprocedure.html
