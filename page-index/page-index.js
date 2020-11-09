@@ -161,7 +161,7 @@ const pageIndex = [
                 href: "exploring-cloud"
             }, {
                 Title: "Setting up Timescale Forge",
-                type: NON_MENU_PAGE,
+                type: PAGE,
                 href: "exploring-forge"
             }, {
                 Title: "Configuration",
