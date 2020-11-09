@@ -6,7 +6,7 @@ Use these instructions to update TimescaleDB within the 1.x version.
 >users to upgrade in testing environments to gain experience and provide feedback on 
 >new and updated features.
 >
->See [Changes in TimescaleDB 2.0]() for more information and links to installation 
+>See [Changes in TimescaleDB 2.0][changes-in-2.0] for more information and links to installation 
 >instructions
 
 ### TimescaleDB Release Compatibility
@@ -137,9 +137,10 @@ ALTER EXTENSION timescaledb UPDATE;
 You can then run the `\dx` command to make sure you have the
 latest version of TimescaleDB installed.
 
+[changes-in-2.0]: /v2.0/release-notes/changes-in-timescaledb-2
 [upgrade-pg]: /update-timescaledb/upgrade-pg
 [update-tsdb-1]: /update-timescaledb/update-db-1
-[update-tsdb-2]: https://docs.timescale.com/v2.0/update-timescaledb/update-db-2
+[update-tsdb-2]: /v2.0/update-timescaledb/update-db-2
 [pg_upgrade]: https://www.postgresql.org/docs/current/static/pgupgrade.html
 [backup]: /using-timescaledb/backup
 [Install]: /getting-started/installation
