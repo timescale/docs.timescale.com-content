@@ -337,7 +337,7 @@ An error will be given if:
 * The function is executed in a database that is already a data node.
 * The data node already exists and `if_not_exists` is `FALSE`.
 * The port number is not valid for use as a port number.
-* If `boostrap` is `FALSE` and the database was not previously
+* If `bootstrap` is `FALSE` and the database was not previously
   bootstrapped.
 
 #### Sample usage [](add_data_node-examples)
@@ -1238,7 +1238,7 @@ the function will print a warning.
 An error will be given if:
 - `hypertable` is not a distributed hypertable.
 - `replication_factor` is less than `1`, which cannot be set on a distributed hypertable.
-- `replication_factor` is bigger than the number of attached data ndoes.
+- `replication_factor` is bigger than the number of attached data nodes.
 
 If a bigger replication factor is desired, it is necessary to attach more data nodes
 by using [attach_data_node](#attach_data_node).
@@ -1456,7 +1456,7 @@ Setting up compression on TimescaleDB requires users to first [configure the
 hypertable for compression](#compression_alter-table) and then [set up a
 policy](#add_compression_policy) for when to compress chunks.
 
-Advanced usage of compression alows users to [compress chunks
+Advanced usage of compression allows users to [compress chunks
 manually](#compress_chunk), instead of automatically as they age.
 
 #### Restrictions
@@ -1550,7 +1550,7 @@ SELECT add_compression_policy('table_with_bigint_time', BIGINT '600000');
 ```
 
 ## remove_compression_policy() :community_function: [](remove_compression_policy)
-If you need to remove the compression policy. To re-start policy basd compression again you will need to re-add the policy.
+If you need to remove the compression policy. To re-start policy-based compression again you will need to re-add the policy.
 
 #### Required Arguments [](remove_compression_policy-required-arguments)
 
@@ -1585,7 +1585,7 @@ suggest using the policy framework instead.
 
 |Name|Description|
 |---|---|
-| `chunk_name` | (REGCLASS) Name of the chunck to be compressed|
+| `chunk_name` | (REGCLASS) Name of the chunk to be compressed|
 
 
 #### Optional Arguments [](compress_chunk-optional-arguments)
@@ -1609,7 +1609,7 @@ useful for backfilling old data.
 >:TIP: Prior to decompressing chunks for the purpose of data backfill or updating you should
 first stop any compression policy that is active on the hypertable you plan to perform this
 operation on.  Once the update and/or backfill is complete simply turn the policy back on
-and the system will recompress your chucks.
+and the system will recompress your chunks.
 
 #### Required Arguments [](decompress_chunk-required-arguments)
 |Name|Description|
@@ -1792,8 +1792,8 @@ the continuous aggregate.
 Continuous aggregate views can be dropped using the `DROP MATERIALIZED VIEW` statement.
 
 This statement deletes the continuous aggregate and all its internal
-objects. To also delete other dependent objects&mdash;such as a view
-defined on the continuous aggregate&mdash;add the `CASCADE`
+objects. To also delete other dependent objects, such as a view
+defined on the continuous aggregate, add the `CASCADE`
 option. Dropping a continuous aggregate does not affect the data in
 the underlying hypertable from which the continuous aggregate is
 derived.
@@ -3628,7 +3628,7 @@ SELECT * FROM show_tablespaces('conditions');
 Perform the proper operations to allow restoring of the database via `pg_restore` to commence.
 Specifically this sets the `timescaledb.restoring` GUC to `on` and stops any
 background workers which may have been performing tasks until the [`timescaledb_post_restore`](#timescaledb_post_restore)
-fuction is run following the restore. See [backup/restore docs][backup-restore] for more information.
+function is run following the restore. See [backup/restore docs][backup-restore] for more information.
 
 >:WARNING: Using this function when doing an upgrade could cause
 >issues in TimescaleDB versions before 1.7.1.
