@@ -186,8 +186,8 @@ total_failures         | 0
 
 
 [upgrade-pg]: /update-timescaledb/upgrade-pg
-[update-tsdb-1]: /update-timescaledb/update-db-1
-[update-tsdb-2]: /update-timescaledb/update-db-2
+[update-tsdb-1]: /v1.7/update-timescaledb/update-tsdb-1
+[update-tsdb-2]: /update-timescaledb/update-tsdb-2
 [pg_upgrade]: https://www.postgresql.org/docs/current/static/pgupgrade.html
 [backup]: /using-timescaledb/backup
 [Install]: /getting-started/installation
@@ -197,6 +197,6 @@ total_failures         | 0
 [caggs]: /using-timescaledb/continuous-aggregates
 [compression]: /using-timescaledb/compression
 [retention]: /using-timescaledb/data-retention
-[retention-cagg-changes]: /getting-started/changes-in-timescaledb-2#retention-and-caggs
+[retention-cagg-changes]: /release-notes/changes-in-timescaledb-2#retention-and-caggs
 [changes-in-ts2]: /release-notes/changes-in-timescaledb-2
 [changes-in-ts2-caggs]: /release-notes/changes-in-timescaledb-2#updating-continuous-aggregates
