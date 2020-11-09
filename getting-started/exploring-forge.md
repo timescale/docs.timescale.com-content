@@ -9,6 +9,8 @@ completing your first tutorial project.
 
 ### Step 1: Create a Timescale Forge account
 
+Sign up for Timescale Forge by visiting [forge.timescale.com][forge-signup].
+
 Provide your full name, email address, and a strong password to start:
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-signup-page.png" alt="Sign up for Timescale Forge"/>
@@ -101,6 +103,7 @@ or [contact us][contact-timescale] directly.
 
 Now, it's time to forge!
 
+[forge-signup]: https://forge.timescale.com
 [billing-info]: /forge/managing-billing-payments
 [slack-info]: https://slack-login.timescale.com
 [install-psql]: /getting-started/install-psql-tutorial
