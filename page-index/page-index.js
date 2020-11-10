@@ -64,6 +64,19 @@ const pageIndex = [
                             }
                        ]
                     }, {
+                        Title: "Timescale Forge",
+                        type: DIRECTORY,
+                        href: "timescale-forge",
+                        src: "//assets.iobeam.com/images/docs/timescale_forge_logo.svg",
+                        children: [
+                            {
+                                Title: "Timescale Forge",
+                                type: NON_MENU_PAGE,
+                                options: {pg_version: []},
+                                href: "installation-timescale-forge"
+                            }
+                       ]
+                    }, {
                         Title: "Docker",
                         type: DIRECTORY,
                         href: "docker",
@@ -191,7 +204,7 @@ const pageIndex = [
                 href: "exploring-cloud"
             }, {
                 Title: "Setting up Timescale Forge",
-                type: NON_MENU_PAGE,
+                type: PAGE,
                 href: "exploring-forge"
             }, {
                 Title: "Setting up Enterprise",
