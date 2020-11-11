@@ -280,27 +280,37 @@ with [`add_data_node`](#add_data_node) first before attaching it.
 ---
 ## add_data_node() [](add_data_node)
 
-Add a new data node to the database to be used for creating
-distributed hypertables.
-
-Newly created distributed hypertables will be able to make use of this
-data node for apportioning data across the distributed database. Note
-that existing distributed hypertables will not automatically use the
-newly added data node. For existing distributed hypertables to use
-added data nodes, use [`attach_data_node`](#attach_data_node).
+Add a new data node on the access node to be used by distributed
+hypertables. The data node will automatically be used by distributed
+hypertables that are created after the data node has been added, while
+existing distributed hypertables require an additional
+[`attach_data_node`](#attach_data_node).
 
 If the data node already exists, the command will abort with either an
 error or a notice depending on the value of `if_not_exists`.
 
-If `bootstrap` is true, the function will attempt to bootstrap the
-data node by:
+For security purposes, only superusers or users with necessary
+privileges can add data nodes (see below for details). When adding a
+data node, the access node will also try to connect to the data node
+and therefore needs a way to authenticate with it. TimescaleDB
+currently supports several different such authentication methods for
+flexibility (including trust, user mappings, password, and certificate
+methods). Please refer to [Setting up Multi-Node
+TimescaleDB][multinode] for more information about node-to-node
+authentication.
+
+Unless `bootstrap` is false, the function will attempt to bootstrap
+the data node by:
 1. Creating the database given in `database` that will serve as the
    new data node.
 2. Loading the TimescaleDB extension in the new database.
 3. Setting metadata to make the data node part of the distributed
    database.
 
-See [boostrapping description][multinode-bootstrap] for details.
+Note that user roles are not automatically created on the new data
+node during bootstrapping. The [`distributed_exec`](#distributed_exec)
+procedure can be used to create additional roles on the data node
+after it is added.
 
 #### Required Arguments [](add_data_node-required-arguments)
 
@@ -317,6 +327,7 @@ See [boostrapping description][multinode-bootstrap] for details.
 | `port`               | Port to use on the remote data node. The default is the PostgreSQL port used by the access node on which the function is executed. |
 | `if_not_exists`      | Do not fail if the data node already exists. The default is `FALSE`. |
 | `bootstrap`          | Bootstrap the remote data node. The default is `TRUE`. |
+| `password`           | Password for authenticating with the remote data node during bootstrapping or validation. A password only needs to be provided if the data node requires password authentication and a password for the user does not exist in a local password file on the access node. If password authentication is not used, the specified password will be ignored. |
 
 #### Returns [](add_data_node-returns)
 
@@ -336,9 +347,25 @@ An error will be given if:
 * The function is executed inside a transaction.
 * The function is executed in a database that is already a data node.
 * The data node already exists and `if_not_exists` is `FALSE`.
-* The port number is not valid for use as a port number.
+* The access node cannot connect to the data node due to a network
+  failure or invalid configuration (e.g., wrong port, or there is no
+  way to authenticate the user).
 * If `bootstrap` is `FALSE` and the database was not previously
   bootstrapped.
+
+#### Privileges
+
+To add a data node, you must be a superuser or have the `USAGE`
+privilege on the `timescaledb_fdw` foreign data wrapper. To grant such
+privileges to a regular user role, do:
+
+```sql
+GRANT USAGE ON FOREIGN DATA WRAPPER timescaledb_fdw TO <newrole>;
+```
+
+Note, however, that superuser privileges might still be necessary on
+the data node in order to bootstrap it, including creating the
+TimescaleDB extension on the data node unless it is already installed.
 
 #### Sample usage [](add_data_node-examples)
 
@@ -3717,5 +3744,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [telemetry]: /using-timescaledb/telemetry
 [caveats]: /using-timescaledb/continuous-aggregates
 [backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore
-[multinode-bootstrap]: /multinode/bootstrapping
 [real-time-aggregates]: /using-timescaledb/continuous-aggregates#real-time-aggregates
