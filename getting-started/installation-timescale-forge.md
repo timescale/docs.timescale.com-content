@@ -1,8 +1,3 @@
->:WARNING: Our scaling out capabilities are currently in BETA and
-are not available through this installation method. For more information,
-please [contact us][contact] or join the #multinode channel in our 
-[community Slack][slack].
-
 ## Installation (Timescale Forge) [](installation-timescale-forge)
 
 Timescale Forge is a time-series platform that provides
@@ -16,10 +11,10 @@ You can register for a Timescale Forge account on the
 >:TIP: Timescale Forge automatically gives you access to all the features
 and capabilities in [TimescaleDB][timescale-features].
 
-Now that your database account is setup, it's time to
-[setup Timescale Forge][timescale-forge-setup].
+Now that your database account is set up, it's time to
+[set up Timescale Forge][timescale-forge-setup].
 
-[sign-up]: https://forge.timescale.com
+[sign-up]: https://forge.timescale.com/signup
 [timescale-features]: https://www.timescale.com/products
 [timescale-forge-setup]: /getting-started/exploring-forge
 [contact]: https://www.timescale.com/contact
