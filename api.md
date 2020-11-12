@@ -3663,8 +3663,8 @@ View or set currently used TimescaleDB license.
 It is possible to limit access to features by license by changing the `timescaledb.license`
 settings parameter in the server configuration file or on the server command line. For instance,
 by setting `timescaledb.license` to `apache`, it is only possible to use TimescaleDB features
-that are implemented under the Apache 2 license. The default value is `timescale`, however, which
-allows access to all features.
+that are implemented under the Apache 2 license. The default value is `timescale` and it
+allows access to all features. In the case of only apache binary the license value is `apache`.
 
 #### Sample Usage [](timescaledb_license-key-examples)
 
