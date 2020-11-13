@@ -52,16 +52,8 @@ You can now create distributed hypertables using
 use distributed hypertables as a non-superuser, the user role needs to
 exist on all data nodes and have the correct privileges to use the
 data nodes on the access node. Please refer to the next section for
-instruction on how to create roles on all data nodes and grant data
+instructions on how to create roles on all data nodes and grant data
 node privileges.
-
-It should now be possible to create distributed hypertables, e.g.,
-running as the default `postgres` superuser. If you wish to create and
-use distributed hypertables as a non-superuser, the user role needs to
-be distributed as well (i.e., exist on all data nodes) and requires
-privileges to use the data nodes on the access node. Please refer to
-the next section for instructions on how to create distributed roles
-and grant data node privileges.
 
 ## (Optional) Add roles to all data nodes
 
