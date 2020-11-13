@@ -212,8 +212,8 @@ The planner can consider two methods to push down aggregates:
 
 >:TIP: The settings variable
 >[`enable_partitionwise_aggregate`][partitionwise_agg_guc] must be set
->to `TRUE` on the access node to make sure that the planner considers
->pushing down computations to data nodes (the default is `FALSE`).
+>to `on` on the access node to make sure that the planner considers
+>pushing down computations to data nodes (the default is `off`).
 
 Other types of computations that can be pushed down include sorting
 operations, groupings, and joins. Joins on data nodes are currently
@@ -258,6 +258,23 @@ above limitations. For instance, to get around the limitation of not
 pushing down the `now()` function, the function is constified on the
 access node so that the resulting timestamp is instead pushed down to
 the data nodes.
+
+### Settings for improving query performance
+
+There are a number of configuration parameters that are important for
+good query performance on a distributed hypertable. The following
+settings apply to the access node.
+
+* `enable_partitionwise_aggregate` should be set to `on`.
+* `jit` should be set to `off` as JIT compilation currently doesn't
+  work well with distributed hypertables.
+* `timescaledb.remote_data_fetcher` defaults to `cursor`, which is the
+  recommended setting for most use cases. However, the `cursor`
+  fetcher doesn't support parallel query execution on data nodes,
+  which might prevent faster query execution. It is possible to change
+  this value to `rowbyrow` for better query performance, although this
+  might not work with some queries that include sub-queries or common
+  table expressions (CTEs).
 
 ## Data Node Management [](data-node-management)
 

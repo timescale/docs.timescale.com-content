@@ -11,11 +11,23 @@ To start, you'll need to have the following:
 
 ## Multi-node configuration
 
-In additions to the [normal configuration for TimescaleDB][configuration], it is also necessary to
-change the parameter `max_prepared_transactions` to a non-zero value on all nodes
-(if not already set, '150' is recommended). The parameter is located in
-`postgresql.conf`, typically in the data directory. If it isn't there, connect to
-the node (`psql`) and get the path with:
+In addition to the [normal configuration for
+TimescaleDB][configuration], we recommend the following settings that
+are specific to multi-node operation:
+
+* `max_prepared_transactions` must be set to a non-zero value on all
+data nodes (if not already set, `150` is recommended).
+* `enable_partitionwise_aggregate` should be set to `on` on the access
+  node for good query performance. Otherwise, queries will not be
+  pushed down to the data nodes.
+* `jit` should be set to `off` on the access node as JIT currently
+  doesn't work well with distributed queries. JIT can still be enabled
+  on the data nodes.
+
+Each of the above settings parameters can be configured for the
+instance in `postgresql.conf`, typically located in the data
+directory. If the file isn't there, connect to the node (`psql`) and
+get the path with:
 
 ```sql
 SHOW config_file;
