@@ -87,7 +87,7 @@ synchronous replication configurations.
 #### Asynchronous Replication with 1 Replica
 
 ```
-listen_address = "*"
+listen_addresses = '*'
 wal_level = replica
 max_wal_senders = 1
 max_replication_slots = 1
