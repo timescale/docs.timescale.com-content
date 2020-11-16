@@ -71,7 +71,7 @@ docker volumes.
 >:TIP: Our standard binary releases are licensed under the Timescale License,
 which allows to use all our capabilities.
 If you want to use a version that contains _only_ Apache 2.0 licensed
-code, you should pull the tag `2.0.0-rc2-pg:pg_version:-oss`.
+code, you should pull the tag `x.y.z-pg:pg_version:-oss`.
 
 ## Prebuilt with PostGIS [](postgis-docker)
 
