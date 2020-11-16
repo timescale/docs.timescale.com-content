@@ -8,7 +8,7 @@ for time-series. In addition to multi-node capabilities, this release includes n
 features - and improvements to existing ones - focused on giving users more flexibility,
  control over their data and the ability to customize behavior to suit their needs.
 
-To facilitate many of the improvements in [TimescaleDB 2.0](https://github.com/timescale/timescaledb/releases/tag/2.0.0-rc2),
+To facilitate many of the improvements in [TimescaleDB 2.0](https://github.com/timescale/timescaledb/releases/tag/2.0.0-rc3),
  several existing APIs and function definitions have been modified which may require updates to your existing code. 
 
 Most notably, the following API and PostgreSQL compatibility changes may impact 
@@ -319,6 +319,48 @@ data wasn’t always materialized as expected.
 After upgrading to TimescaleDB 2.0, **retention policies will no longer fail due to incompatibilities with 
 continuous aggregates** and users have to ensure that retention and continuous aggregate policies have the 
 desired interplay. 
+
+Another change in 2.0 is that `drop_chunks` and the retention policy will no longer 
+automatically refresh continuous aggregates to account for changes in original hypertable 
+after the last refresh. Previously, the goal was to ensure that all updates were processed 
+prior to dropping chunks in the original hypertable. In practice, it often didn't work as intended.
+
+In TimescaleDB 2.0 users can ensure that all updates are processed before dropping data by 
+combining the following experimental function, which refreshes updates in the given chunk, 
+with `drop_chunks`.
+```sql
+_timescaledb_internal.refresh_continuous_aggregate(continuous_aggregate REGCLASS, chunk REGCLASS)
+```
+The example below demonstrates how to use the chunk-based refresh function to define a 
+retention policy, which ensures that all updates to data in the original hypertable are 
+refreshed in all continuous aggregates prior dropping chunks older than 2 weeks:
+
+```sql
+CREATE OR REPLACE PROCEDURE refresh_and_drop_policy(job_id int, config jsonb) LANGUAGE PLPGSQL AS
+$$
+DECLARE
+  drop_after interval;
+  hypertable text;
+BEGIN
+  SELECT jsonb_object_field_text(config, 'drop_after')::interval
+    INTO STRICT drop_after;
+  SELECT jsonb_object_field_text(config, 'hypertable')::regclass
+    INTO STRICT hypertable;
+  BEGIN
+    SELECT _timescaledb_internal.refresh_continuous_aggregate(cagg, 
+        show_chunks(older_than => drop_after))
+    FROM _timescaledb_catalog.continuous_agg cagg, _timescaledb_catalog.hypertable hyper
+    WHERE cagg.raw_hypertable_id = hyper.id AND 
+      format('%I.%I', hyper.schema_name, hyper.table_name)::regclass = hypertable;
+
+    SELECT drop_chunks(hypertable, older_than => drop_after);
+  END;
+END
+$$;
+
+SELECT add_job('refresh_and_drop_policy', '2 weeks', 
+   config => '{"hypertable":"public.conditions", "drop_after":"2 weeks"}');
+```
 
 ### Differences in the handling of backfill on continuous aggregates [](cagg-backfill)
 
