@@ -9,12 +9,12 @@ The following instructions assume that your docker instance is named
 commands.
 
 #### Step 1: Pull new image [](update-docker-1)
-Install the current TimescaleDB 2.0-RC2 image:
+Install the current TimescaleDB 2.0-RC3 image:
 
 ```bash
-docker pull timescale/timescaledb:2.0.0-rc2-pg12
+docker pull timescale/timescaledb:2.0.0-rc3-pg12
 ```
->:TIP: If you are using PostgreSQL 11 images, use the tag `2.0.0-rc2-pg11`.
+>:TIP: If you are using PostgreSQL 11 images, use the tag `2.0.0-rc3-pg11`.
 
 #### Step 2: Determine mount point used by old container [](update-docker-2)
 As you'll want to restart the new docker image pointing to a mount point
