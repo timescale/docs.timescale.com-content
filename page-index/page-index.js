@@ -49,6 +49,7 @@ const pageIndex = [
                 href: "installation",
                 options: {pg_version: ["12", "11"]},
                 component: "InstallationPage",
+                showNewsletterForm: true,
                 children: [
                     {
                         Title: "Timescale Cloud",
