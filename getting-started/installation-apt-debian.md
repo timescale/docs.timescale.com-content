@@ -42,6 +42,30 @@ sudo apt-get update
 sudo apt-get install timescaledb-2-postgresql-:pg_version:
 ```
 
+#### Upgrading from TimescaleDB 1.x
+If you are upgrading from TimescaleDB 1.x, the `apt` package will as to first
+uninstall the previous version of TimescaleDB and then install the latest TimescaleDB 2.0
+binaries. The feedback in your terminal should look similar to the following:
+
+```bash
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following additional packages will be installed:
+  timescaledb-2-loader-postgresql-12
+The following packages will be REMOVED:
+  timescaledb-loader-postgresql-12 timescaledb-postgresql-12
+The following NEW packages will be installed:
+  timescaledb-2-loader-postgresql-12 timescaledb-2-postgresql-12
+0 upgraded, 2 newly installed, 2 to remove and 11 not upgraded.
+Need to get 953 kB of archives.
+After this operation, 1314 kB of additional disk space will be used.
+Do you want to continue? [Y/n]
+```
+
+Once you confirm and install the newest binary package, you must still perform the
+EXTENSION update as discussed in [Updating Timescale to 2.0][update-tsdb-2]
+
 #### Configure your database
 
 There are a [variety of settings that can be configured][config] for your
@@ -67,3 +91,4 @@ sudo service postgresql restart
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
 [multi-node-basic]: /getting-started/setup-multi-node-basic
+[update-tsdb-2]: /update-timescaeldb/update-tsdb-2

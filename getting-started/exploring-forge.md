@@ -29,16 +29,15 @@ and, failing that, please [contact us][contact-timescale].
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-creation.png" alt="Set up a Timescale Forge service"/>
 
 1. First, supply your service name (e.g., `acmecorp-test` or `acmecorp-dev`).
-1. Next, choose your CPU and memory configuration, from (0.5 CPU, 2GB RAM) to (4 CPU, 16 GB RAM).
-1. Select your storage requirements, from 25 GB to 500 GB.  Note with TimescaleDB compression, this is typically equivalent to 400 GB to over 8 TB of uncompressed storage (although compression rates can vary based on your data).
+1. Next, choose your CPU and memory configuration, from (0.5 CPU, 2GB RAM) to (8 CPU, 32 GB RAM).
+1. Select your storage requirements, from 25 GB to 1 TB.  Note with TimescaleDB compression, this is typically equivalent to 400 GB to over 16 TB of uncompressed storage (although compression rates can vary based on your data).
 1. Note the estimated cost of running your chosen configuration. Feel free to [contact us][contact-timescale] if you would like to discuss pricing and configuration options best suited for your use case.
 1. Click 'Create service' once your configuration is complete.
 
-We'll be adding additional CPU and storage configurations in the future.  We'll
-also be adding the ability to quickly switch CPU configurations and storage
-options for your existing database with just a click, so you can scale with
-your usage needs.  For now, please [reach out][contact-timescale] if you need
-to reconfigure an existing service.
+>:TIP:Don't worry if too much about the size settings that you choose initially. With Timescale Forge,
+it's easy to modify both the compute (CPU/Memory) and storage associated with the service
+that you just created. As you get to know Timescale and how your data processing needs vary,
+it's easy to [right-size your service with a few clicks](#forge-resize)!
 
 After you select 'Create service', you will see confirmation of your service account and
 password information. You should save the information in this confirmation screen in 
@@ -93,6 +92,56 @@ You will have an unthrottled, 30-day free trial with Timescale Forge to
 continue to test your use case. Before the end of your trial, we encourage you 
 to add your credit card information. This will ensure a smooth transition after 
 your trial period concludes.
+
+## Resizing Compute and Storage in Timescale Forge [](forge-resize)
+
+Timescale Forge allows you to resize compute (CPU/RAM) and storage independently at any time. This is extremely
+useful when users have a need to increase storage (for instance) but not compute. The Timescale Forge 
+console makes this very easy to do for any service.
+
+Before you modify the compute or storage settings for a Forge Service, please note the following limitations
+and when a change to these settings will result in momentary downtime.
+
+**Storage**: Storage changes are applied with no downtime, typically available within a few seconds. Other
+things to note about storage changes:
+ * At the current time, storage can only be increased in size.
+ * Storage size changes can only be made once every six (6) hours.
+ * Storage can be modified in 25GB increments between 25GB-500GB, and then in 100GB increments between 500GB-1TB.
+
+**Compute**: Modifications to the compute settings of your service (up or down) can be applied at any time, however,
+please note the following:
+ * **_There will be momentary downtime_** while the compute settings are applied. In most cases, this downtime
+will be less than a minute.
+ * Because there will be an interruption to your service, you should plan accordingly to have the settings 
+ applied at an appropriate service window.
+
+### Step 1: View Service operation details 
+To modify the compute or storage of your Service, first select the Service that you want to modify. This
+will display the _service details_ which list four tabs across the top: Overview, Operations, Metrics, and Logs.
+
+Select **_Operations_**.
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-operations.png" alt="View Timescale Forge service operational information"/>
+
+### Step 2: Display the current Service Resources
+Under the Operations tab, you can perform the same **Basic** operations as before (Reset password, Pause service, Delete service).
+There is now a second, advanced section on the left labeled **Resources**. Selecting this option displays the current resource
+settings for the Service.
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-resources.png" alt="View Timescale Forge service resource information"/>
+
+### Step 3: Modify Service resources
+Once you have navigated to the current Service resources, it's easy to modify either the compute (CPU/Memory) or
+disk size. As you modify either setting, notice that the current and new hourly charges are displayed in real-time
+so that it's easy to verify how these changes will impact your costs.
+
+As noted above, changes to disk size will not cause any downtime, but size can only be increased at the current time, 
+and only once every six (6) hours. 
+
+When you're satisfied with the changes, click **Apply** (storage resizes only) or **Apply and Restart** (when modifying compute resources).
+
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-restart.png" alt="View Timescale Forge service apply resize"/>
+
 
 ### Summary
 
