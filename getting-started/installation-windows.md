@@ -1,8 +1,3 @@
->:WARNING: Our scaling out capabilities are currently in BETA and
-are not available through this installation method. For more information,
-please [contact us][contact] or join the #multinode channel in our 
-[community Slack][slack].
-
 ## Windows ZIP Installer [](installation-windows)
 
 **Note: TimescaleDB requires PostgreSQL 11 or 12.**
@@ -27,6 +22,10 @@ TimescaleDB installation completed succesfully.
 Press ENTER/Return key to close...
 ```
 Go ahead and press ENTER to close the window
+
+#### Updating from TimescaleDB 1.x to 2.0
+Once the latest TimescaleDB 2.0 are installed, you can update the EXTENSION 
+in your database as discussed in [Updating Timescale to 2.0][update-tsdb-2].
 
 #### Configure your database
 
@@ -54,3 +53,4 @@ to `bootstrap`.
 [config]: /getting-started/configuring
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
+[update-tsdb-2]: /update-timescaledb/update-tsdb-2

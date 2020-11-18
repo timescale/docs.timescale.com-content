@@ -122,7 +122,23 @@ const pageIndex = [
                 href: "installation-source",
               },
             ],
-          },
+          }, {
+            Title: "Windows",
+            type: DIRECTORY,
+            href: "windows",
+            src: "//assets.iobeam.com/images/docs/Windows_logo_-_2012.svg",
+            children: [
+                {
+                    Title: "Installer (.zip)",
+                    type: NON_MENU_PAGE,
+                    href: "installation-windows"
+                }, {
+                    Title: "Source",
+                    type: NON_MENU_PAGE,
+                    href: "installation-source-windows"
+                }
+            ]
+        },
         ],
       },
       {
