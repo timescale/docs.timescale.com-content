@@ -66,7 +66,7 @@ Then, restart the PostgreSQL instance.
 
 #### Updating from TimescaleDB 1.x to 2.0
 Once the latest TimescaleDB 2.0 are installed, you can update the EXTENSION 
-in your database as discussed in [Updating Timescale to 2.0][update-tsdb-2]
+in your database as discussed in [Updating Timescale to 2.0][update-tsdb-2].
 
 
 >:TIP: Our standard binary releases are licensed under the Timescale License,
@@ -78,4 +78,4 @@ to `bootstrap`.
 [CMake]: https://cmake.org/
 [github-releases]: https://github.com/timescale/timescaledb/releases
 [github-timescale]: https://github.com/timescale/timescaledb
-[update-tsdb-2]: /update-timescaeldb/update-tsdb-2
+[update-tsdb-2]: /update-timescaledb/update-tsdb-2

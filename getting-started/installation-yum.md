@@ -57,7 +57,7 @@ sudo yum install -y timescaledb-2-postgresql-:pg_version:
 
 #### Upgrading from TimescaleDB 1.x
 If you are upgrading from TimescaleDB 1.x, the EXTENSION must be updated 
-in the database as discussed in [Updating Timescale to 2.0][update-tsdb-2]
+in the database as discussed in [Updating Timescale to 2.0][update-tsdb-2].
 
 #### Configure your database
 
@@ -85,4 +85,4 @@ refer to your distribution for how to restart services.
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
 [multi-node-basic]: /getting-started/setup-multi-node-basic
-[update-tsdb-2]: /update-timescaeldb/update-tsdb-2
+[update-tsdb-2]: /update-timescaledb/update-tsdb-2

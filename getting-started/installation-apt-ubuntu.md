@@ -65,7 +65,7 @@ Do you want to continue? [Y/n]
 ```
 
 Once you confirm and install the newest binary package, you must still perform the
-EXTENSION update as discussed in [Updating Timescale to 2.0][update-tsdb-2]
+EXTENSION update as discussed in [Updating Timescale to 2.0][update-tsdb-2].
 
 #### Configure your database
 
@@ -93,4 +93,4 @@ sudo service postgresql restart
 [contact]: https://www.timescale.com/contact
 [slack]: https://slack.timescale.com/
 [multi-node-basic]: /getting-started/setup-multi-node-basic
-[update-tsdb-2]: /update-timescaeldb/update-tsdb-2
+[update-tsdb-2]: /update-timescaledb/update-tsdb-2

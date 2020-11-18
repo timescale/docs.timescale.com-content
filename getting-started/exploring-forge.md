@@ -36,7 +36,7 @@ and, failing that, please [contact us][contact-timescale].
 
 >:TIP:Don't worry if too much about the size settings that you choose initially. With Timescale Forge,
 it's easy to modify both the compute (CPU/Memory) and storage associated with the service
-that you just created. As you get to know Timescale and how your data processing needs vary,
+that you just created. As you get to know TimescaleDB and how your data processing needs vary,
 it's easy to [right-size your service with a few clicks](#forge-resize)!
 
 After you select 'Create service', you will see confirmation of your service account and
@@ -108,10 +108,10 @@ things to note about storage changes:
  * Storage size changes can only be made once every six (6) hours.
  * Storage can be modified in 25GB increments between 25GB-500GB, and then in 100GB increments between 500GB-1TB.
 
-**Compute**: Modifications to the compute settings of your service (up or down) can be applied at any time, however,
+**Compute**: Modifications to the compute size of your service (increases or decreases) can be applied at any time, however,
 please note the following:
  * **_There will be momentary downtime_** while the compute settings are applied. In most cases, this downtime
-will be less than a minute.
+will be less than 30 seconds.
  * Because there will be an interruption to your service, you should plan accordingly to have the settings 
  applied at an appropriate service window.
 
