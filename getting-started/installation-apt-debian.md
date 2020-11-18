@@ -63,7 +63,7 @@ After this operation, 1314 kB of additional disk space will be used.
 Do you want to continue? [Y/n]
 ```
 
-Once you confirm and install the newest binary package, you must still perform the
+Once you confirm and install the newest binary package, perform the
 EXTENSION update as discussed in [Updating Timescale to 2.0][update-tsdb-2].
 
 #### Configure your database
