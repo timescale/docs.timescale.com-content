@@ -43,7 +43,7 @@ sudo apt-get install timescaledb-2-postgresql-:pg_version:
 ```
 
 #### Upgrading from TimescaleDB 1.x
-If you are upgrading from TimescaleDB 1.x, the `apt` package will as to first
+If you are upgrading from TimescaleDB 1.x, the `apt` package will first
 uninstall the previous version of TimescaleDB and then install the latest TimescaleDB 2.0
 binaries. The feedback in your terminal should look similar to the following:
 
