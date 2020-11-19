@@ -1750,6 +1750,7 @@ the hypertable's time column, and all aggregates must be parallelizable.
 - All functions and their arguments included in `SELECT`, `GROUP BY`
   and `HAVING` clauses must be [immutable][postgres-immutable].
 - The view is not allowed to be a [security barrier view][postgres-security-barrier].
+- Window functions cannot be used in conjunction with continuous aggregates.
 
 [postgres-immutable]:https://www.postgresql.org/docs/current/xfunc-volatility.html
 [postgres-parallel-agg]:https://www.postgresql.org/docs/current/parallel-plans.html#PARALLEL-AGGREGATION
