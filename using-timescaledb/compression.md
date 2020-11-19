@@ -441,6 +441,11 @@ additional storage overhead needed to decompress chunks. This is key when you ar
 provisioning storage for use with TimescaleDB. You want to ensure that you plan for
 enough storage headroom to decompress some chunks if needed.
 
+### Interactions with other TimescaleDB features
+
+Since compression performs an implicit reordering of data using `segmentby` and `orderby`, 
+it is not recommended to combine this feature with [reordering][]. 
+
 ## Future Work [](future-work)
 
 One of the current limitations of TimescaleDB is that once chunks are converted
@@ -453,3 +458,4 @@ plan to remove this limitation in future releases.
 
 [timescaledb-extras]: https://github.com/timescale/timescaledb-extras
 [timescaledb-extras-backfill]: https://github.com/timescale/timescaledb-extras/blob/master/backfill.sql
+[reordering]: /api#reorder_chunk
