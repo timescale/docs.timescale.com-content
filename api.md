@@ -252,7 +252,7 @@ still work on the resulting hypertable.
 |Name|Description|
 |---|---|
 | `partitioning_column` | Name of an additional column to partition by. If provided, the `number_partitions` argument must also be provided. |
-| `number_partitions` | Number of hash partitions to use for `partitioning_column`. Must be > 0. |
+| `number_partitions` | Number of [hash partitions][] to use for `partitioning_column`. Must be > 0. |
 | `chunk_time_interval` | Interval in event time that each chunk covers. Must be > 0. As of TimescaleDB v0.11.0, default is 7 days. For previous versions, default is 1 month. |
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
@@ -2885,3 +2885,5 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [telemetry]: /using-timescaledb/telemetry
 [caveats]: /using-timescaledb/continuous-aggregates
 [backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore
+[real-time-aggregates]: /using-timescaledb/continuous-aggregates#real-time-aggregates
+[hash partitions]: /using-timescaledb/hypertables#best-practices-space-partitions

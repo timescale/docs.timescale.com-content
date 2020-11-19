@@ -122,8 +122,10 @@ taken if you make heavy use of expensive index types (e.g., some
 PostGIS geospatial indexes).  During testing, you might check your
 total chunk sizes via the [`chunk_relation_size`][chunk_relation_size] function.
 
-**Space partitions**: The use of additional partitioning is a very
-specialized use case.  **Most users will not need to use it.**
+**Space partitions**: [](best-practices-space-partitions)
+Space partitioning is optional but can make
+sense for certain types of data and is recommended when using
+distributed hypertables.
 
 Space partitions use hashing: Every distinct item is hashed to one of
 N buckets.  Remember that we are already using (flexible) time
