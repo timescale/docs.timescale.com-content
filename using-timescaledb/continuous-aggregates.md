@@ -469,6 +469,14 @@ to `false` when creating the view will prevent this.  If we want to create
 additional indexes or drop some of the default ones, we can do so by creating or
 dropping the appropriate indexes on the materialization hypertable directly.
 
+**Choosing an appropriate bucket interval:**
+The materialisation of the continuous aggregates stores partials, which are then 
+used to calculate the final aggregations at query time.  This means that there is
+a base amount of overhead for any query, which becomes a greater factor for smaller
+intervals.  For smaller intervals, it can be more performant to run an aggregate 
+query on the raw data in the hypertable, so test both methods to determine what is
+best for your data set and desired bucket interval. 
+
 **Dealing with Timezones:**
 Functions that depend on a local timezone setting inside a continuous aggregate
 are not supported. We cannot cast to a local time because the timezone setting
