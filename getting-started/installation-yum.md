@@ -67,7 +67,10 @@ parallelism, and other settings.
 
 To get started you'll need to restart PostgreSQL and add
 a `postgres` [superuser][createuser] (used in the rest of the docs). Please
-refer to your distribution for how to restart services.
+refer to your distribution for how to restart services, for example:
+```
+sudo -u postgres service postgres-:pg_version: start
+```
 
 >:TIP: Our standard binary releases are licensed under the Timescale License.
 This means that you can use all of our free Community capabilities and
