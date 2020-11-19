@@ -51,7 +51,7 @@ EC2 instance type that is optimized for EBS attached volumes. For information on
 EBS optimized EC2 instance type, see the AWS [instance configuration page][].
 
 [setup]: /getting-started/setup
-[postgres instructions]: https://docs.boundlessgeo.com/suite/1.1.1/dataadmin/pgGettingStarted/firstconnect.html
+[postgres instructions]: https://www.postgresql.org/docs/current/sql-createrole.html
 [pg_hba]: https://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html
 [configuration]: /getting-started/configuring
 [instance configuration page]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-ec2-config.html
