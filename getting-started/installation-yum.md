@@ -76,7 +76,10 @@ parallelism, and other settings.
 
 To get started you'll need to restart PostgreSQL and add
 a `postgres` [superuser][createuser] (used in the rest of the docs). Please
-refer to your distribution for how to restart services.
+refer to your distribution for how to restart services, for example:
+```
+sudo -u postgres service postgres-:pg_version: start
+```
 
 [pgdg]: https://yum.postgresql.org/repopackages.php
 [yuminstall]: https://wiki.postgresql.org/wiki/YUM_Installation
