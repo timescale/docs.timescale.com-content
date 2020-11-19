@@ -142,6 +142,8 @@ After converting this data to a single row, the data in “array” form:
 |---|---|---|---|---|
 | [12:00:02, 12:00:02, 12:00:01, 12:00:1 ]| [1, 2, 1, 2]|[88.2, 300.5, 88.6, 299.1]|[20, 30, 25, 40] |[0.8, 0.9, 0.85, 0.95]|
 
+> :TIP: Standard indexes are not used when reading from compressed chunks!  TimescaleDB creates and uses custom indexes to incorporate the `segmentby` and `orderby` parameters during compression.
+
 ### Understanding the segmentby option [](understanding-segmentby)
 
 We can segment compressed rows by specific columns, so that each compressed
