@@ -43,7 +43,7 @@ which need to be run from `psql`:
 ```sql
 CREATE DATABASE tutorial;
 \c tutorial --connect to the db where we'll perform the restore
-CREATE EXTENSION timescaledb;
+CREATE EXTENSION IF NOT EXISTS timescaledb;
 SELECT timescaledb_pre_restore();
 
 -- execute the restore (or from a shell)
