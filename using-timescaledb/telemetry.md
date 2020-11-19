@@ -105,7 +105,7 @@ database, but not for other databases in the instance. If `ALTER SYSTEM` is
 run, this will disable telemetry for the entire instance.
 Note that superuser privileges are necessary to run `ALTER SYSTEM`.
 
-After running the desired command, reload the new server configuration in order
+After running the desired command, reload the new server configuration with `SELECT pg_reload_conf()` in order
 for the configuration changes to take effect.
 
 If at a later time you wish to re-enable version checking and telemetry, either
