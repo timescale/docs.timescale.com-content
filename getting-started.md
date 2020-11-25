@@ -60,7 +60,7 @@ Here are some of our favorite features, along with links to learn more:
 ### Using TimescaleDB
 
 The best way to gain familiarity with TimescaleDB is to use it. The following 
-utorials (complete with sample data) will help you learn how to harness the 
+tutorials (complete with sample data) will help you learn how to harness the 
 power of your time-series data and give you a guided tour of TimescaleDB.
 
 - Start with [Hello Timescale][hello-timescale], our 20-minute guided tour of TimescaleDB
@@ -99,4 +99,3 @@ Our world-class support team is here to support you through multiple channels:
 [slack-community]: https://slack.timescale.com/
 [paid-support]: https://www.timescale.com/support
 [community-options]: https://www.timescale.com/community
-
