@@ -465,6 +465,36 @@ CALL distributed_exec($$ CREATE ROLE testrole LOGIN $$);
 ```
 
 ---
+## Data node maintenance job on the access node
+
+It is highly recommended that the access node is configured to run a
+maintenance job that regularly "heals" any non-completed distributed
+transactions. A distributed transaction can remain in a non-completed
+state in case a data node reboots or experiences temporary issues. The
+access node keeps a log of distributed transactions so that nodes that
+haven't yet completed their part of the distributed transaction can
+later complete it at the access node's request. The maintenance job
+can be run as a user-defined action (custom job):
+
+
+```sql
+CREATE OR REPLACE PROCEDURE data_node_maintenance(job_id int, config jsonb)
+LANGUAGE SQL AS
+$$
+    SELECT _timescaledb_internal.remote_txn_heal_data_node(fs.oid)
+    FROM pg_foreign_server fs, pg_foreign_data_wrapper fdw
+    WHERE fs.srvfdw = fdw.oid
+    AND fdw.fdwname = 'timescaledb_fdw';
+$$;
+
+SELECT add_job('data_node_maintenance', '5m');
+```
+
+It is also possible to schedule this job to run from outside the
+database, e.g, via a CRON job. Note that the job must be scheduled
+separately for each distributed database.
+
+---
 
 ## Next steps
 To start working with the system, you can look at documentation for [distributed hypertables][].
