@@ -49,7 +49,7 @@ Here are some of our favorite features, along with links to learn more:
 - Analyze your data using advanced [time-series analytical functions][time-series-functions] (e.g., gap filling, LOCF, interpolation)
 - [Native compression][using-compression] can reduce storage by up to 90%, saving you a significant amount of money on your time-series deployment
 - [Continuous aggregates][using-continuous-aggregates] automatically calculate the results of a query in the background and materialize the results
-- [Data retention][using-data-retention] policies help you decide when to store old data based on its relevance to your use case
+- [Data retention][using-data-retention] policies allow you to decide how long raw data is kept, separately from data rollups stored in Continuous Aggregates
 - Achieve petabyte scale with [Multi-node][multinode] (distributed hypertables)
 - Support for [high cardinality][high-cardinality] datasets
 - Support for all PostgreSQL extensions, such as [PostGIS][hello-timescale]
