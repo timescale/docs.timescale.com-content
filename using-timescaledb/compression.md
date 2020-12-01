@@ -386,7 +386,7 @@ database session.  If using a normal table, after you are done backfilling the
 data successfully, you will likely want to truncate your table in preparation
 for the next backfill (or drop it completely).
 
-#### Manually decompressing chunks for backfill
+#### Manually decompressing chunks for backfill [](manual-decompression)
 
 To perform these steps more manually, we first identify and turn off our
 compression policy, before manually decompressing chunks.  To accomplish this
@@ -459,7 +459,13 @@ of the data (e.g., inserts, updates, deletes) or the schema without manual decom
 In other words, chunks are immutable in compressed form. Attempts to modify the
 chunks' data will either error or fail silently (as preferred by users). We
 plan to remove this limitation in future releases.
+If you still need to modify the schema for a hypertable, you will have to turn off 
+compression. First, [manually decompress compressed chunks and delete any compression policies on that table](#manual-decompression) 
+After that, disable compression using `ALTER TABLE`.
 
+``` sql
+ALTER TABLE conditions SET (timescaledb.compress = false );
+```
 
 [timescaledb-extras]: https://github.com/timescale/timescaledb-extras
 [timescaledb-extras-backfill]: https://github.com/timescale/timescaledb-extras/blob/master/backfill.sql
