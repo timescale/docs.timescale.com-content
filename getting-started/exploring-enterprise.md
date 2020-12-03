@@ -1,3 +1,6 @@
+>:TIP: Timescale no longer has an Enterprise tier.  All enterprise functions have been moved
+to the Community tier (many in v1.7, the remainder in v2.0), and are available to use freely.
+
 # Exploring TimescaleDB Enterprise
 
 TimescaleDB currently offers three product lines: OSS, Community, and Enterprise.
