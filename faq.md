@@ -160,7 +160,7 @@ benchmarks on standard cloud VMs we regularly test  TimescaleDB to 10+ billion
 rows, while sustaining insert rates of 100-200k rows / second (1-2 million metric
 inserts / second).
 
-With more powerful hardware, users have scaled TimescaleDB to 500 billion rows of data
+With more powerful hardware, users have scaled TimescaleDB to trillions of rows of data
 while sustaining 400k row inserts / second. In this case, customers took advantage of
 the fact that we allow users to elastically add disks (i.e., RAID), in order to scale
 up capacity on a single node. As disks are added, chunks are redistributed across them,
@@ -206,14 +206,13 @@ parallelization support offered in PostgreSQL 10.
 
 To recap, we currently support read-only clustering via PostgreSQL streaming
 replication for high availability and for increasing query throughput. TimescaleDB's
-single node scalability (to over 500 billion rows / 50TB), achieved by elastically
+single node scalability (to trillions of rows), achieved by elastically
 adding disk space (especially simple using network attached disks in cloud environments),
 applies to these read-only clusters.
 
-Full, scale-out clustering (i.e., for data volumes > 500 billion rows
-and ingest rates > 300K row inserts / second) is in the works and will
-leverage the automated partitioning capabilities already available in
-single-node TimescaleDB today. [[Top]](#top)
+Full, scale-out clustering (i.e., for ingest rates > 300K row inserts / second)
+leverages the automated partitioning capabilities already available in
+single-node TimescaleDB. [[Top]](#top)
 
 ### **What are hypertables and chunks?** [](hypertable-chunks)
 Our [documentation][docs-architecture] describes these design elements in more depth. [[Top]](#top)
