@@ -7,6 +7,7 @@
 - [Visual C++ Redistributable for Visual Studio 2015][c_plus] (included in VS 2015 and later)
 - A standard **PostgreSQL :pg_version: 64-bit** installation
 - Make sure all relevant binaries are in your PATH: (use [pg_config][])
+- Installation must be performed from an account with admin privileges
 
 #### Build & Install
 
