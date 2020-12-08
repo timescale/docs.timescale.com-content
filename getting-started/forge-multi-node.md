@@ -59,8 +59,8 @@ access node.
 Currently, any newly created Service in Timescale Forge still uses TimescaleDB 
 1.7.4 by default. This will be the case until we release TimescaleDB 2.0 for 
 production (sometime in late December 2020). Therefore,  to enable multi-node 
-functionality, you need to manually upgrade each TimescaleDB Service to the newest 
- TimescaleDB 2.0 version available, currently Release Candidate 3 (RC3).
+functionality, **you need to manually upgrade each TimescaleDB Service to the newest 
+ TimescaleDB 2.0 version available, currently Release Candidate 3 (RC3)**.
 
 To do this, we recommend using `psql` to connect to all Services created in Step 1 
 and running an extension update command.
@@ -210,11 +210,13 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO mn_user1;
 ```
 
 While connected to the access node we can use a specially designed function to 
-execute SQL commands against data nodes:
+execute SQL commands against data nodes. Notice that the list of nodes is included
+and for this example, it is assumed that both data nodes exist and are added to
+the access node.
 
 ```SQL
-CALL distributed_exec(query => 'CREATE ROLE mn_user1 LOGIN PASSWORD $$password$$', node_list => '{dn1}');
-CALL distributed_exec(query => 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO mn_user1;', node_list => '{dn1}');
+CALL distributed_exec(query => 'CREATE ROLE mn_user1 LOGIN PASSWORD $$password$$', node_list => '{dn1,dn2}');
+CALL distributed_exec(query => 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO mn_user1;', node_list => '{dn1,dn2}');
 ```
 
 Finally we add a user mapping for our newly added user so that the AN can connect 
