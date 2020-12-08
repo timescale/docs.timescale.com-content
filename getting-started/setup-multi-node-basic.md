@@ -1,5 +1,10 @@
 # Set up multi-node TimescaleDB [](basic-multi-node-setup)
 
+>:TIP:Consider following our how-to, [Setting up TimescaleDB 2.0 Multi-node on 
+Timescale Forge][multinode-on-forge], to setup and explore a multi-node cluster in Timescale Forge,
+our fully managed database service. [Sign-up for your free][sign-up], 30-day trial and get
+started today!
+
 A multi-node TimescaleDB implementation consists of: 
 - One access node to handle ingest, data routing and act as an entry 
 point for user access; 
@@ -116,3 +121,5 @@ docs:
 [delete_data_node]: /api#delete_data_node
 [detach_data_node]: /api#detach_data_node
 [distributed_exec]: /api#distributed_exec
+[multinode-on-forge]: /getting-started/exploring-forge/forge-multi-node
+[sign-up]: https://forge.timescale.com/signup
