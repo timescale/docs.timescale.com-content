@@ -196,6 +196,13 @@ const pageIndex = [
         Title: "Setting up Timescale Forge",
         type: PAGE,
         href: "exploring-forge",
+        children: [
+          {
+            Title: "Multi-node setup",
+            type: PAGE,
+            href: "forge-multi-node",
+          }
+        ]
       },
       {
         Title: "Configuration",
