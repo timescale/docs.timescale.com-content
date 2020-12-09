@@ -8,8 +8,8 @@ instances to scale both reads and writes.
 In this how-to, we’ll show you how to create a multi-node cluster in your Timescale 
 Forge account using TimescaleDB 2.0-RC3. 
 
-This document details a “DIY” multi-node experience on Forge until the console UI 
-provides thetools to do it. In the future we will offer a point-and-click multi-node 
+This document details a "do-it-yourself" (DIY) multi-node experience on Forge.
+In the future, we will offer a seamless point-and-click multi-node
 experience within the Timescale Forge console UI, but we wanted to provide a way 
 for users to setup and test this feature before that interface is available. 
 
@@ -29,7 +29,7 @@ are not intended to be accessed directly once joined to a multi-node cluster.
 
 >:TIP:A proper TimescaleDB cluster should have at least two data nodes to begin 
 realizing the benefits of distributed hypertables. While it is technically possible
-to add just one data node to a cluster, this will often perform worse than a 
+to add just one data node to a cluster, this will perform worse than a
 single TimescaleDB instance and is not recommended. 
 
 ## Step 1: Create Services for Access and Data node Services
