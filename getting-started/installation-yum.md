@@ -20,8 +20,8 @@ sure to remove non-`yum` installations before using this method.
 You'll need to [download the correct PGDG from PostgreSQL][pgdg] for
 your operating system and architecture and install it:
 ```bash
-# Download PGDG for PostgreSQL 11, e.g. for RHEL 7:
-sudo yum install -y https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+# Download PGDG:
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(rpm -E %{rhel})-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
 ## Follow the initial setup instructions found below:
 ```
@@ -31,11 +31,11 @@ Further setup instructions [are found here][yuminstall].
 Add TimescaleDB's third party repository and install TimescaleDB,
 which will download any dependencies it needs from the PostgreSQL repo:
 ```bash
-# Add our repo
+# Add timescaledb repo
 sudo tee /etc/yum.repos.d/timescale_timescaledb.repo <<EOL
 [timescale_timescaledb]
 name=timescale_timescaledb
-baseurl=https://packagecloud.io/timescale/timescaledb/el/7/\$basearch
+baseurl=https://packagecloud.io/timescale/timescaledb/el/$(rpm -E %{rhel})/timescaledb-postgresql-:pg_version:\$basearch
 repo_gpgcheck=1
 gpgcheck=0
 enabled=1
@@ -44,7 +44,12 @@ sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 metadata_expire=300
 EOL
+
 sudo yum update -y
+
+# disable builtin postgres packages on CentOs 8
+if command -v dnf; then sudo dnf -qy module disable postgresql; fi
+
 
 # Now install appropriate package for PG version
 sudo yum install -y timescaledb-postgresql-:pg_version:
