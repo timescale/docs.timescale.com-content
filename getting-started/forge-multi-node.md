@@ -30,7 +30,7 @@ are not intended to be accessed directly once joined to a multi-node cluster.
 >:TIP:A proper TimescaleDB cluster should have at least two data nodes to begin 
 realizing the benefits of distributed hypertables. While it is technically possible
 to add just one data node to a cluster, this will perform worse than a
-single TimescaleDB instance and is not recommended. 
+single-node TimescaleDB instance and is not recommended. 
 
 ## Step 1: Create Services for Access and Data node Services
 
@@ -38,16 +38,15 @@ First, you need to create new Services within your Forge account. As mentioned
 earlier, you should create _at least_ three Services to set up a multi-node cluster: 
 one access node and two data nodes. 
 
-Because there is currently no way to distinguish between the access node and data 
-nodes within the Timescale Forge console, **we strongly recommend that you include 
+There is currently no way to distinguish between the access node and data 
+nodes within the Timescale Forge console, **so we strongly recommend that you include 
 “AN” and “DN” in the names of each service, respectively (eg. “AN-mycluster”, 
-“DN1-mycluster”, “DN2-mycluster”, etc.)**. Again, remember that Services can only
-assume one role in a cluster (access or data node), and only one Service can act 
-as the access node.
+“DN1-mycluster”, “DN2-mycluster”, etc.)**. Services can only assume one role in a 
+cluster (access or data node), and only one Service can act as the access node.
 
-For simplicity you can start with the same hardware configuration for all the 
-Services. On Timescale Forge, Service configuration can be modified later to better 
-tune access and data node requirements.
+For simplicity you can start with the same hardware configuration for all Services. 
+On Timescale Forge, Service configuration can be modified later to better tune access 
+and data node requirements.
 
 >:TIP:More advanced users might consider using larger disks on data nodes (this is 
 where the distributed hypertable data is stored) and more memory and CPU for the 
@@ -102,7 +101,7 @@ tsdb=> \dx
 
 Once you’ve created your new Services and upgraded TimescaleDB, you’ll enable 
 communication between the access node and all data nodes. The currently supported 
-method for enabling communication between nodes is through **user mapping authentication**.
+method for securing communication between nodes is through **user mapping authentication**.
 
 This is also a manual process for now.  As we continue to develop Timescale Forge
 and multi-node functionality, this process will be a much smoother user experience,
@@ -111,10 +110,9 @@ completed directly from the Timescale Forge Console.
 
 ### About user mapping authentication
 
-We currently support **user mapping authentication** because it allows users to 
-continue connecting with the `tsdbadmin` PostgreSQL user for all data access and
-cluster management. It also allows you to continue making secure (SSL) connections
-to your Timescale Forge Access node. 
+**User mapping authentication** allows users to continue connecting with the `tsdbadmin` 
+PostgreSQL user for all data access and cluster management. It also allows you to continue 
+making secure (SSL) connections to your Timescale Forge Access node. 
 
 With user mapping authentication, you don’t need to manage any new users, however, 
 **you  need to have the passwords for the `tsdbadmin` user from each data node at hand**. 
@@ -122,9 +120,9 @@ With user mapping authentication, you don’t need to manage any new users, howe
 The main limitation of this approach is that any password changes to the connected
 `tsdbadmin` user on a data node will break the mapping connection and impact normal 
 cluster operations. Any time a password is changed on a data node, you'll need to 
-complete the mapping process outlined below must be done again to re-establish the
-connection between the access node and the affected data node. [You can read about 
-user mapping in the PostgreSQL documentation][postgres-user-mapping].
+complete the mapping process outlined below to re-establish the connection between 
+the access node and the affected data node. You can read about user mapping in 
+the [PostgreSQL documentation][postgres-user-mapping].
 
 ### Step 3a: Add each data node
 
@@ -168,7 +166,7 @@ cluster. **Always invoke these commands from the access node!**
 
 ## Step 4: Create a distributed hyptertable
 
-Finally, can create a distributed hypertable and add data to verify everything is
+Finally, we can create a distributed hypertable and add data to verify that everything is
 set up and working correctly.
 
 ```SQL
@@ -192,15 +190,15 @@ column (`sensor_id`) for the distributed hypertable. This is intentional, and
 **recommended**, for distributed hypertable setups. Previously, with regular, 
 single-node hypertables, there was often little benefit in specifying a partition 
 key when creating the hypertable. With distributed hyptertables, however, adding
-a partition key is essential to ensure that data is distribute across data nodes 
+a partition key is essential to ensure that data is distributed across data nodes 
 on something more than just time. Otherwise, all data for a specific time range 
 will go to one chunk on one node, rather than being distributed across each data 
 node for the same time range.
 
 ### Adding another user (optional)
 
-One of the other advantages of user mapping based approach allows us to add 
-additional users to the multi-node cluster.
+One of the other advantages of the user-mapping-based approach is that it allows 
+us to add additional users to the multi-node cluster.
 
 From the **access node**, create a new user and GRANT all privileges. 
 
