@@ -1,8 +1,6 @@
 # Set up multi-node TimescaleDB [](basic-multi-node-setup)
 
->:TIP:Consider following our how-to, [Setting up TimescaleDB 2.0 Multi-node on 
-Timescale Forge][multinode-on-forge], to setup and explore a multi-node cluster in Timescale Forge,
-our fully managed database service. [Sign-up for your free][sign-up], 30-day trial and get
+>:TIP:Consider following our how-to, in order to [setup and explore a multi-node cluster in Timescale Forge][multinode-on-forge], our fully managed database service. [Sign-up for your free][sign-up], 30-day trial and get
 started today!
 
 A multi-node TimescaleDB implementation consists of: 
