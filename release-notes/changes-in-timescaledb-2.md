@@ -346,15 +346,15 @@ BEGIN
     INTO STRICT drop_after;
   SELECT jsonb_object_field_text(config, 'hypertable')::regclass
     INTO STRICT hypertable;
-  BEGIN
-    SELECT _timescaledb_internal.refresh_continuous_aggregate(cagg, 
-        show_chunks(older_than => drop_after))
-    FROM _timescaledb_catalog.continuous_agg cagg, _timescaledb_catalog.hypertable hyper
-    WHERE cagg.raw_hypertable_id = hyper.id AND 
-      format('%I.%I', hyper.schema_name, hyper.table_name)::regclass = hypertable;
+
+  BEGIN;
+  SELECT _timescaledb_internal.refresh_continuous_aggregate(cagg, 
+      show_chunks(older_than => drop_after))
+  FROM timescaledb_information.continuous_aggregates
+  WHERE format('%I.%I', hypertable_schema, hypertable_name)::regclass = hypertable;
 
     SELECT drop_chunks(hypertable, older_than => drop_after);
-  END;
+  COMMIT;
 END
 $$;
 

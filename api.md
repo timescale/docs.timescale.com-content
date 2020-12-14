@@ -3050,6 +3050,8 @@ Get metadata and settings information for continuous aggregates.
 
 |Name|Description|
 |---|---|
+|`hypertable_schema` | (NAME) Schema of the hypertable from the continuous aggregate view|
+|`hypertable_name` | (NAME) Name of the hypertable from the continuous aggregate view|
 |`view_schema` | (NAME) Schema for continuous aggregate view |
 |`view_name` | (NAME) User supplied name for continuous aggregate view |
 |`view_owner` | (NAME) Owner of the continuous aggregate view|
@@ -3063,6 +3065,8 @@ Get metadata and settings information for continuous aggregates.
 SELECT * FROM timescaledb_information.continuous_aggregates;
 
 -[ RECORD 1 ]---------------------+-------------------------------------------------
+hypertable_schema                 | public
+hypertable_name                   | foo
 view_schema                       | public 
 view_name                         | contagg_view
 view_owner                        | postgres
