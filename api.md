@@ -2986,7 +2986,7 @@ If the chunk's primary dimension is of a time datatype, `range_start` and
 | `range_end` | (TIMESTAMP WITH TIME ZONE) End of the range for the chunk's dimension |
 | `range_start_integer` | (BIGINT) Start of the range for the chunk's dimension, if the dimension type is integer based |
 | `range_end_integer` | (BIGINT) End of the range for the chunk's dimension, if the dimension type is integer based |
-| `is_compressed` | (BOOLEAN) Is the data in the chunk compressed?|
+| `is_compressed` | (BOOLEAN) Is the data in the chunk compressed? NULL for distributed chunks. Use `chunk_compression_stats()` function to get compression status for distributed chunks.|
 | `chunk_tablespace` | (NAME) Tablespace used by the chunk|
 | `data_nodes` | (NAME[]) Nodes on which the chunk is replicated. This is applicable only to chunks for distributed hypertables |
 
