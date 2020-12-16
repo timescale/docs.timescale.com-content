@@ -687,16 +687,29 @@ const pageIndex = [
             }
         ]
     },
-     {
+    {
         Title: "GitHub",
         type: LINK,
         href: "https://github.com/timescale/timescaledb"
-    }, {
+    },
+    {
         Title: "Main",
         type: TITLE_PAGE,
         href: "main"
-    }
-
+    },
+    {
+      Title: "Clustering",
+      type: DIRECTORY,
+      href: "clustering",
+      src: "//assets.iobeam.com/images/docs/Centos_Red_Hat_logo.svg",
+      children: [
+        {
+          type: HIDDEN_REDIRECT,
+          href: "getting-started/scaling-out",
+          to: "/update-timescaledb",
+        },
+      ],
+    },
 ];
 
 export default pageIndex;
