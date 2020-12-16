@@ -122,23 +122,25 @@ const pageIndex = [
                 href: "installation-source",
               },
             ],
-          }, {
+          },
+          {
             Title: "Windows",
             type: DIRECTORY,
             href: "windows",
             src: "//assets.iobeam.com/images/docs/Windows_logo_-_2012.svg",
             children: [
-                {
-                    Title: "Installer (.zip)",
-                    type: NON_MENU_PAGE,
-                    href: "installation-windows"
-                }, {
-                    Title: "Source",
-                    type: NON_MENU_PAGE,
-                    href: "installation-source-windows"
-                }
-            ]
-        },
+              {
+                Title: "Installer (.zip)",
+                type: NON_MENU_PAGE,
+                href: "installation-windows",
+              },
+              {
+                Title: "Source",
+                type: NON_MENU_PAGE,
+                href: "installation-source-windows",
+              },
+            ],
+          },
         ],
       },
       {
@@ -201,8 +203,8 @@ const pageIndex = [
             Title: "Multi-node setup",
             type: PAGE,
             href: "forge-multi-node",
-          }
-        ]
+          },
+        ],
       },
       {
         Title: "Configuration",
@@ -892,6 +894,19 @@ const pageIndex = [
     Title: "Main",
     type: TITLE_PAGE,
     href: "main",
+  },
+  {
+    Title: "Clustering",
+    type: DIRECTORY,
+    href: "clustering",
+    src: "//assets.iobeam.com/images/docs/Centos_Red_Hat_logo.svg",
+    children: [
+      {
+        type: HIDDEN_REDIRECT,
+        href: "getting-started/scaling-out",
+        to: "/update-timescaledb",
+      },
+    ],
   },
 ];
 
