@@ -102,13 +102,20 @@ workers you allocate here will run background jobs when needed.
 For larger queries, PostgreSQL automatically uses parallel workers if
 they are available. To configure this use the `max_parallel_workers` setting.
 Increasing this setting will improve query performance for
-larger queries.  Smaller queries may not trigger parallel workers.
+larger queries. Smaller queries may not trigger parallel workers. By default,
+this setting corresponds to the number of CPUs available. Use the `--cpus` flag
+or the `TS_TUNE_NUM_CPUS` docker environment variable to change it.
 
 Finally, you must configure `max_worker_processes` to be at least the sum of
 `timescaledb.max_background_workers` and `max_parallel_workers`.
 `max_worker_processes` is the total pool of workers available to both
 background and parallel workers (as well as a handful of built-in PostgreSQL
 workers).
+
+By default, `timescaledb-tune` sets `timescaledb.max_background_workers` to 8.
+In order to change this setting, use the `--max-bg-workers` flag or the
+`TS_TUNE_MAX_BG_WORKERS` docker environment variable. The `max_worker_processes`
+setting will automatically be adjusted as well.
 
 ### Disk-write settings [](disk-write)
 
