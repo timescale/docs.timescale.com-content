@@ -8,11 +8,10 @@ the most essential values are set to reflect the size of the new Service.
 
 There are times, however, when your specific workload may require tuning some of
 the many available TimescaleDB and PostgreSQL parameters. By providing the ability
-to tune various runtime settings, Timescale Forge provides a lot of flexibility
-in providing the balance and flexibility you need when running your workloads
+to tune various runtime settings, Timescale Forge provides the balance and flexibility you need when running your workloads
 in our hosted environment.
 
-**Note**: Modifications of most parameters can be applied without restarting
+>:WARNING: Modifications of most parameters can be applied without restarting
 the Timescale Forge Service. However, as when modifying the compute resources
 of a running Service, some settings will require that a restart be performed,
 resulting in some brief downtime (usually about 30 seconds).
@@ -52,7 +51,7 @@ dialog will be displayed which lists the parameters that will be modified. Click
 
 ## Configuring Advanced Parameters
 It is also possible to configure a wide variety of Service database parameters
-but toggling the **Show advanced parameters** toggle in the upper-right corner
+by flipping the **Show advanced parameters** toggle in the upper-right corner
 of the **Settings** tab.
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-settings-advanced.png" alt="View Timescale Forge service configuration changes confirmation dialog"/>
