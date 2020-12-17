@@ -49,7 +49,7 @@ dialog will be displayed which lists the parameters that will be modified. Click
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-settings-confirm.png" alt="View Timescale Forge service configuration changes confirmation dialog"/>
 
 
-## Configuring Advanced Parameters
+## Configuring Advanced Parameters [](advanced-parameters)
 It is also possible to configure a wide variety of Service database parameters
 by flipping the **Show advanced parameters** toggle in the upper-right corner
 of the **Settings** tab.

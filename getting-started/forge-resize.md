@@ -31,7 +31,7 @@ Select **_Operations_**.
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-operations.png" alt="View Timescale Forge service operational information"/>
 
-### Step 2: Display the current Service Resources
+## Step 2: Display the current Service Resources [](service-resources)
 Under the Operations tab, you can perform the same **Basic** operations as before 
 (Reset password, Pause service, Delete service). There is now a second, advanced
 section on the left labeled **Resources**. Selecting this option displays the 
@@ -39,7 +39,7 @@ current resource settings for the Service.
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-resources.png" alt="View Timescale Forge service resource information"/>
 
-### Step 3: Modify Service resources
+## Step 3: Modify Service resources [](modify-resources)
 Once you have navigated to the current Service resources, it's easy to modify 
 either the compute (CPU/Memory) or disk size. As you modify either setting, 
 notice that the current and new hourly charges are displayed in real-time
