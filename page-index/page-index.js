@@ -200,6 +200,16 @@ const pageIndex = [
         href: "exploring-forge",
         children: [
           {
+            Title: "Resize compute and storage",
+            type: PAGE,
+            href: "forge-resize",
+          },
+          {
+            Title: "Customize database configuration",
+            type: PAGE,
+            href: "forge-configuration",
+          },
+          {
             Title: "Multi-node setup",
             type: PAGE,
             href: "forge-multi-node",
