@@ -7,7 +7,7 @@ start and less expensive to operate.
 This tutorial will walk you through setting up your Timescale Forge account and
 completing your first tutorial project.
 
-### Step 1: Create a Timescale Forge account
+### Step 1: Create a Timescale Forge account [](step1-create-account)
 
 Sign up for Timescale Forge by visiting [forge.timescale.com][forge-signup].
 
@@ -19,7 +19,7 @@ You will need to confirm your account by clicking the link you receive via
 email. If you do not receive this link, please first check your spam folder 
 and, failing that, please [contact us][contact-timescale].
 
-### Step 2: Create your first service
+### Step 2: Create your first service [](step2-create-service)
 
  After you complete account verification, you can visit the 
  [Timescale Forge console][forge-console] and login with your credentials.
@@ -66,7 +66,7 @@ a service altogether.
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-details.png" alt="View Timescale Forge service information"/>
 
-### Step 3: Complete your first tutorial
+### Step 3: Complete your first tutorial [](step3-tutorial)
 
 Congratulations! You are now up and running with Timescale Forge. In order to
 familiarize yourself with the features and capabilities of the product, we
