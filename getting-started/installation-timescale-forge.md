@@ -14,6 +14,8 @@ and capabilities in [TimescaleDB][timescale-features].
 Now that your database account is set up, it's time to
 [set up Timescale Forge][timescale-forge-setup].
 
+---
+
 [sign-up]: https://forge.timescale.com/signup
 [timescale-features]: https://www.timescale.com/products
 [timescale-forge-setup]: /getting-started/exploring-forge
