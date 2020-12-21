@@ -16,7 +16,7 @@ the Timescale Forge Service. However, as when modifying the compute resources
 of a running Service, some settings will require that a restart be performed,
 resulting in some brief downtime (usually about 30 seconds).
 
-## Step 1: View Service operation details  [](service-details)
+### Step 1: View Service operation details  [](service-details)
 To modify configuration parameters, first select the Service that 
 you want to modify. This will display the _service details_ which list tabs
 across the top: Overview, Operations, Metrics, Logs, and Settings.
@@ -25,7 +25,7 @@ Select **_Settings_**.
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-settings-basic.png" alt="View Timescale Forge service operational information"/>
 
-## Step 2: Modify basic parameters [](basic-parameters)
+### Step 2: Modify basic parameters [](basic-parameters)
 Under the Settings tab, you can modify a limited set of the parameters that are
 most often modified in a TimescaleDB or PostgreSQL instance. To modify a 
 configured value, simply click into on the **_value_** that you would like to
@@ -34,7 +34,7 @@ outside of that field will save the value to be applied.
 
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-settings-modify.png" alt="View Timescale Forge service settings modification"/>
 
-## Step 3: Apply configuration changes [](apply-changes)
+### Step 3: Apply configuration changes [](apply-changes)
 Once you have modified the basic configuration parameters that you would like to
 change, click the **Apply Changes** button. For some changes, such as `timescaledb.max_background_workers`
 (pictured below), the Service needs to be restarted. Therefore, the
