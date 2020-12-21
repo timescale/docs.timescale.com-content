@@ -1,8 +1,3 @@
->:WARNING: Our scaling out capabilities are currently in BETA and
-are not available through this installation method. For more information,
-please [contact us][contact] or join the #multinode channel in our 
-[community Slack][slack].
-
 ## Installation (Timescale Cloud) [](installation-timescale-cloud)
 
 Timescale Cloud is a Database as a Service (DBaaS) offering that provides
