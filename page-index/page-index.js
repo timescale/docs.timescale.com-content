@@ -57,6 +57,34 @@ const pageIndex = [
         showNewsletterForm: true,
         children: [
           {
+            Title: "Timescale Cloud",
+            type: DIRECTORY,
+            href: "timescale-cloud",
+            src: "//assets.iobeam.com/images/docs/timescale_cloud_logo.svg",
+            children: [
+              {
+                Title: "Timescale Cloud",
+                type: NON_MENU_PAGE,
+                options: { pg_version: [] },
+                href: "installation-timescale-cloud",
+              },
+            ],
+          },
+          {
+            Title: "Timescale Forge",
+            type: DIRECTORY,
+            href: "timescale-forge",
+            src: "//assets.iobeam.com/images/docs/timescale_forge_logo.svg",
+            children: [
+              {
+                Title: "Timescale Forge",
+                type: NON_MENU_PAGE,
+                options: { pg_version: [] },
+                href: "installation-timescale-forge",
+              },
+            ],
+          },
+          {
             Title: "Docker",
             type: DIRECTORY,
             href: "docker",

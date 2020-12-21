@@ -24,6 +24,8 @@ and capabilities in [TimescaleDB][timescale-features].
 Now that your database account is setup, it's time to
 [setup Timescale Cloud][timescale-cloud-setup].
 
+---
+
 [sign-up]: https://www.timescale.com/cloud-signup
 [portal]: http://portal.timescale.cloud
 [timescale-features]: https://www.timescale.com/products
