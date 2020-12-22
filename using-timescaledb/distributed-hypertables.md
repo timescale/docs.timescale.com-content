@@ -30,12 +30,12 @@ if the roles involved exist identically on all data nodes. Further,
 joins between a local table and a distributed hypertable requires
 fetching the raw data from data nodes and performing the join locally.
 
->:WARNING: Distributed hypertables currently have some limitations when 
-compared to non-distributed hypertables. Before creating a distributed hypertable
-for production workloads, please review our 
-[limitations][distributed-hypertable-limitations] document to ensure that your
-use case will work as expected. You can also [contact us][contact] or join the 
-#multinode channel in our [community Slack][slack].
+>:WARNING: Distributed hypertables currently have some limitations
+when compared to non-distributed hypertables. Before creating a
+distributed hypertable for production workloads, please review our
+[limitations][distributed-hypertable-limitations] document to ensure
+that your use case will work as expected. You can also [contact
+us][contact] or join the #multinode channel in our [community Slack][slack].
 
 ## Creating a Distributed Hypertable [](create)
 
