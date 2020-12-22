@@ -207,9 +207,9 @@ const pageIndex = [
         href: "setup-multi-node-basic",
         children: [
           {
-            Title: "Advanced Setup",
+            Title: "Self-Managed Deployments",
             type: PAGE,
-            href: "setup-multi-node-auth",
+            href: "multi-node-self-managed",
             children: [
               {
                 Title: "Trust authentication",
@@ -225,6 +225,11 @@ const pageIndex = [
                 Title: "Certificate authentication",
                 type: ANCHOR,
                 href: "#multi-node-auth-certificate",
+              },
+              {
+                Title: "Maintenance tasks",
+                type: ANCHOR,
+                href: "#multi-node-maintenance",
               },
             ],
           },
