@@ -465,7 +465,7 @@ CALL distributed_exec($$ CREATE ROLE testrole LOGIN $$);
 ```
 
 ---
-## Data node maintenance job on the access node
+## Maintenance tasks [](multi-node-maintenance)
 
 It is highly recommended that the access node is configured to run a
 maintenance job that regularly "heals" any non-completed distributed
