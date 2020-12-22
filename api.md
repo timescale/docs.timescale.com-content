@@ -1119,7 +1119,7 @@ SELECT drop_chunks('conditions', 1483228800000);
 
 Drop all chunks older than 3 months ago and newer than 4 months ago from hypertable `conditions`:
 ```sql
-SELECT drop_chunks('conditions', older_than => interval '3 months', newer_than => interval '4 months')
+SELECT drop_chunks('conditions', older_than => INTERVAL '3 months', newer_than => INTERVAL '4 months')
 ```
 
 ---
@@ -3437,7 +3437,7 @@ All sizes are in bytes.
 #### Sample Usage [](chunk_compression_stats-examples)
 ```sql
 SELECT * FROM chunk_compression_stats('conditions')
-  ORDER BY chunk_name limit 2;
+  ORDER BY chunk_name LIMIT 2;
 
 -[ RECORD 1 ]------------------+----------------------
 chunk_schema                   | _timescaledb_internal
@@ -3469,7 +3469,7 @@ node_name                      |
 
 Use `pg_size_pretty` get the output in a more human friendly format.
 ```sql
-SELECT pg_size_pretty(after_compression_total_bytes) as total
+SELECT pg_size_pretty(after_compression_total_bytes) AS total
   FROM chunk_compression_stats('conditions')
   WHERE compression_status = 'Compressed';
 
