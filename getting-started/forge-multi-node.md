@@ -78,7 +78,7 @@ Once you are connected to each service, immediately run the following SQL as the
 **first** command to update TimescaleDB version to 2.0:
 
 ```SQL
-ALTER EXTENSION timescaledb UPDATE TO "2.0.0"; 
+ALTER EXTENSION timescaledb UPDATE TO '2.0.0';
 ```
 >:WARNING:If you created your service before 12/21/2020, note that your version of
  TimescaleDB has an upgrade path to 2.0.0-rc3 instead of 2.0.0, so replace the
@@ -137,13 +137,18 @@ connections. Copy this hostname to use in the `add_data_node` command below.
 <img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-internal-dns.png" alt="Timescale Forge multi-node connection information"/>
 
 Once you have the **password** and **internal, Multi-node** hostname for each data node
-Service, connect to the access node using the `tsdbadmin` user and add a data node to
-your cluster.
+Service, connect to the access node using the `tsdbadmin` user.
 
-```SQL
+```bash
 psql -h {AN hostname} -p {port} tsdb tsdbadmin
 
-SELECT add_data_node('dn1', host => 'your_DN1_hostname', port => 5432 , password => 'tsdbadmin_user_password_for_DN1', bootstrap => false);
+```
+
+Then add a data node as follows.
+
+```sql
+SELECT add_data_node('dn1', host => 'your_DN1_hostname',
+	password => 'tsdbadmin_user_password_for_DN1');
 ```
 
 To list added data nodes we can run `\des+` command if using `psql`. 
@@ -242,7 +247,15 @@ stored in any of these object will reside only on the access node.
 2. There is no limitation on the number of distributed hypertables a user can 
 create on the access node.
 3. Finally, remember that once a Service is marked as an access node or data node,
- it cannot be used to create another TimescaleDB cluster. 
+ it cannot be used to create another TimescaleDB multi-node cluster.
+
+## Maintenance tasks
+
+A multi-node TimescaleDB setup requires regular maintenance; in
+particular, the distributed transaction log needs to be cleaned up and
+non-completed transactions should be "healed". Please refer to our
+standard [multi-node documentation][maintenance-tasks] for
+instructions on how to configure a user-defined action for this task.
 
 ## Summary [](summary)
 
@@ -257,6 +270,7 @@ And as always, consider joining our vibrant community [Slack channel][slack] to 
 questions and learn from Timescale staff and other community members. 
 
 [sign-up]: https://forge.timescale.com/signup
+[maintenance-tasks]: /getting-started/setup-multi-node-basic#multi-node-maintenance
 [timescale-forge-setup]: /getting-started/exploring-forge
 [slack]: https://slack.timescale.com/
 [changes-in-tsdb2]: /release-notes/changes-in-timescaledb-2
