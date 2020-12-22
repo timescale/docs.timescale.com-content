@@ -107,10 +107,10 @@ docs:
 [architecture]: /introduction/architecture#single-node-vs-clustering
 [install]: /getting-started/installation
 [setup]: /getting-started/setup
-[advanced setup]: /getting-started/setup-multi-node-basic/setup-multi-node-auth
-[trust_role_setup]: /getting-started/setup-multi-node-basic/setup-multi-node-auth#multi-node-auth-trust-roles
-[password_role_setup]: /getting-started/setup-multi-node-basic/setup-multi-node-auth#multi-node-auth-password-roles
-[certificate_role_setup]: /getting-started/setup-multi-node-basic/setup-multi-node-auth#multi-node-auth-certificate-roles
+[advanced setup]: /getting-started/setup-multi-node-basic/multi-node-self-managed
+[trust_role_setup]: /getting-started/setup-multi-node-basic/multi-node-self-managed#multi-node-auth-trust-roles
+[password_role_setup]: /getting-started/setup-multi-node-basic/multi-node-self-managed#multi-node-auth-password-roles
+[certificate_role_setup]: /getting-started/setup-multi-node-basic/multi-node-self-managed#multi-node-auth-certificate-roles
 [postgresql-hba]: https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
 [max_prepared_transactions]: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PREPARED-TRANSACTIONS
 [distributed hypertables]: /using-timescaledb/distributed-hypertables
