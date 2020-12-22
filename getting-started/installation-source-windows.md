@@ -5,8 +5,8 @@
 #### Prerequisites
 
 - A standard **PostgreSQL :pg_version: 64-bit** installation
-- Visual Studio 2017 (with [CMake][] and Git components)  
-  **or** Visual Studio 2015/2016 (with [CMake][] version 3.4+ and Git components)
+- Visual Studio 2017 (with [CMake][] and Git components)
+  **or** Visual Studio 2015/2016 (with [CMake][] version 3.11+ and Git components)
 - Make sure all relevant binaries are in your PATH: `pg_config` and `cmake`
 
 #### Build & Install with Local PostgreSQL
@@ -65,7 +65,7 @@ shared_preload_libraries = 'timescaledb'
 Then, restart the PostgreSQL instance.
 
 #### Updating from TimescaleDB 1.x to 2.0
-Once the latest TimescaleDB 2.0 are installed, you can update the EXTENSION 
+Once the latest TimescaleDB 2.0 are installed, you can update the EXTENSION
 in your database as discussed in [Updating Timescale to 2.0][update-tsdb-2].
 
 
@@ -73,7 +73,7 @@ in your database as discussed in [Updating Timescale to 2.0][update-tsdb-2].
 which allows to use all our capabilities.
 To build a version of this software that contains
 source code that is only licensed under Apache License 2.0, pass `-DAPACHE_ONLY=1`
-to `bootstrap`.   
+to `bootstrap`.
 
 [CMake]: https://cmake.org/
 [github-releases]: https://github.com/timescale/timescaledb/releases

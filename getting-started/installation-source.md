@@ -6,7 +6,7 @@
 
 - A standard **PostgreSQL :pg_version:** installation with development environment (header files) (see https://www.postgresql.org/download/ for the appropriate package)
 - C compiler (e.g., gcc or clang)
-- [CMake][] version 3.4 or greater
+- [CMake][] version 3.11 or greater
 
 #### Build & Install with Local PostgreSQL
 >:TIP: It is **highly recommended** that you checkout the latest
@@ -58,7 +58,7 @@ Then, restart the PostgreSQL instance.
 which allows to use all our capabilities.
 To build a version of this software that contains
 source code that is only licensed under Apache License 2.0, pass `-DAPACHE_ONLY=1`
-to `bootstrap`.   
+to `bootstrap`.
 
 [CMake]: https://cmake.org/
 [github-releases]: https://github.com/timescale/timescaledb/releases
