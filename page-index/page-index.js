@@ -207,6 +207,21 @@ const pageIndex = [
         href: "setup-multi-node-basic",
         children: [
           {
+              Title: "Initialize data nodes",
+              type: ANCHOR,
+              href: "#init_data_nodes_on_access_node",
+          },
+	      {
+              Title: "Add roles",
+              type: ANCHOR,
+              href: "#add-roles-to-data-nodes",
+          },
+		  {
+              Title: "Maintenance tasks",
+              type: ANCHOR,
+              href: "#multi-node-maintenance",
+          },
+		  {
             Title: "Self-Managed Deployments",
             type: PAGE,
             href: "multi-node-self-managed",
@@ -226,13 +241,8 @@ const pageIndex = [
                 type: ANCHOR,
                 href: "#multi-node-auth-certificate",
               },
-              {
-                Title: "Maintenance tasks",
-                type: ANCHOR,
-                href: "#multi-node-maintenance",
-              },
             ],
-          },
+          },		 
         ],
       },
       {

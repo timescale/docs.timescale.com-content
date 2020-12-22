@@ -58,7 +58,7 @@ data nodes on the access node. Please refer to the next section for
 instructions on how to create roles on all data nodes and grant data
 node privileges.
 
-## (Optional) Add roles to all data nodes
+## (Optional) Add roles to all data nodes [](add-roles-to-data-nodes)
 
 When you add a role on the access node it will not be automatically
 created on the data nodes. Therefore, the role must also be created on
@@ -88,6 +88,38 @@ GRANT USAGE ON FOREIGN SERVER <data node name>, <data node name>, ... TO testrol
 >:TIP: It is possible to grant data node usage to `PUBLIC`, in which
 >case all user roles (including future ones) will be able to use the
 >specified data nodes.
+
+## Maintenance tasks [](multi-node-maintenance)
+
+It is highly recommended that the access node is configured to run a
+maintenance job that regularly "heals" any non-completed distributed
+transactions. A distributed transaction ensures atomic execution
+across multiple data nodes and can remain in a non-completed state in
+case a data node reboots or experiences temporary issues. The access
+node keeps a log of distributed transactions so that nodes that
+haven't yet completed their part of the distributed transaction can
+later complete it at the access node's request. The log requires
+regular cleanup to "garbage collect" transactions that have completed
+and heal those that haven't. The maintenance job can be run as a
+user-defined action (custom job):
+
+
+```sql
+CREATE OR REPLACE PROCEDURE data_node_maintenance(job_id int, config jsonb)
+LANGUAGE SQL AS
+$$
+    SELECT _timescaledb_internal.remote_txn_heal_data_node(fs.oid)
+    FROM pg_foreign_server fs, pg_foreign_data_wrapper fdw
+    WHERE fs.srvfdw = fdw.oid
+    AND fdw.fdwname = 'timescaledb_fdw';
+$$;
+
+SELECT add_job('data_node_maintenance', '5m');
+```
+
+It is also possible to schedule this job to run from outside the
+database, e.g, via a CRON job. Note that the job must be scheduled
+separately for each database that contains distributed hypertables.
 
 ---
 ## Next steps
