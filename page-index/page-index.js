@@ -169,6 +169,19 @@ const pageIndex = [
               },
             ],
           },
+          {
+            Title: "AMI",
+            type: DIRECTORY,
+            href: "ami",
+            src: "//assets.iobeam.com/images/docs/aws_logo.svg",
+            children: [
+              {
+                Title: "Amazon AMI (Ubuntu)",
+                type: NON_MENU_PAGE,
+                href: "installation-ubuntu-ami",
+              },
+            ],
+          },
         ],
       },
       {
