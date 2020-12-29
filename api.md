@@ -1294,18 +1294,24 @@ HINT:  Decrease the replication factor or attach more data nodes to the hypertab
 ---
 
 ## show_chunks() [](show_chunks)
-Get list of chunks associated with hypertables.
+Get list of chunks associated with a hypertable.
 
-#### Optional Arguments [](show_chunks-optional-arguments)
+Function accepts the following required and optional arguments. These arguments 
+have the same semantics as the `drop_chunks` [function](#drop_chunks).
 
-Function accepts the following arguments. These arguments have
-the same semantics as the `drop_chunks` [function](#drop_chunks).
+#### Required Arguments [](show_chunks-required-arguments)
 
 |Name|Description|
 |---|---|
-| `relation` | Hypertable or continuous aggregate from which to select chunks. If not supplied, all chunks are shown. |
-| `older_than` | Specification of cut-off point where any full chunks older than this timestamp should be shown. |
-| `newer_than` | Specification of cut-off point where any full chunks newer than this timestamp should be shown. |
+| `relation` | (REGCLASS) Hypertable or continuous aggregate from which to select chunks. |
+
+#### Optional Arguments [](show_chunks-optional-arguments)
+
+
+|Name|Description|
+|---|---|
+| `older_than` | (ANY) Specification of cut-off point where any full chunks older than this timestamp should be shown. |
+| `newer_than` | (ANY) Specification of cut-off point where any full chunks newer than this timestamp should be shown. |
 
 The `older_than` and `newer_than` parameters can be specified in two ways:
 
@@ -1326,39 +1332,9 @@ intersection between two ranges will result in an error.
 
 #### Sample Usage [](show_chunks-examples)
 
-Get list of all chunks. Returns 0 if there are no hypertables:
-```sql
-SELECT show_chunks();
-```
-
-The expected output:
-```sql
- show_chunks
----------------------------------------
- _timescaledb_internal._hyper_1_10_chunk
- _timescaledb_internal._hyper_1_11_chunk
- _timescaledb_internal._hyper_1_12_chunk
- _timescaledb_internal._hyper_1_13_chunk
- _timescaledb_internal._hyper_1_14_chunk
- _timescaledb_internal._hyper_1_15_chunk
- _timescaledb_internal._hyper_1_16_chunk
- _timescaledb_internal._hyper_1_17_chunk
- _timescaledb_internal._hyper_1_18_chunk
-```
-
 Get list of all chunks associated with a table:
 ```sql
 SELECT show_chunks('conditions');
-```
-
-Get all chunks older than 3 months:
-```sql
-SELECT show_chunks(older_than => INTERVAL '3 months');
-```
-
-Get all chunks more than 3 months in the future. This is useful for showing data ingested with incorrect clocks:
-```sql
-SELECT show_chunks(newer_than => now() + INTERVAL '3 months');
 ```
 
 Get all chunks from hypertable `conditions` older than 3 months:
@@ -1369,16 +1345,6 @@ SELECT show_chunks('conditions', older_than => INTERVAL '3 months');
 Get all chunks from hypertable `conditions` before 2017:
 ```sql
 SELECT show_chunks('conditions', older_than => DATE '2017-01-01');
-```
-
-Get all chunks newer than 3 months:
-```sql
-SELECT show_chunks(newer_than => INTERVAL '3 months');
-```
-
-Get all chunks older than 3 months and newer than 4 months:
-```sql
-SELECT show_chunks(older_than => INTERVAL '3 months', newer_than => INTERVAL '4 months');
 ```
 
 ---
