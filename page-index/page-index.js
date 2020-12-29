@@ -207,6 +207,11 @@ const pageIndex = [
         href: "setup-multi-node-basic",
         children: [
           {
+            type: HIDDEN_REDIRECT,
+            href: "setup-multi-node-auth",
+            to: "/getting-started/setup-multi-node-basic/multi-node-self-managed",
+          },
+          {
               Title: "Initialize data nodes",
               type: ANCHOR,
               href: "#init_data_nodes_on_access_node",
@@ -221,7 +226,7 @@ const pageIndex = [
               type: ANCHOR,
               href: "#multi-node-maintenance",
           },
-		  {
+          {
             Title: "Self-Managed Deployments",
             type: PAGE,
             href: "multi-node-self-managed",
