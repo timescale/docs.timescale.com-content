@@ -23,8 +23,9 @@ All the limitations of regular hypertables also apply to distributed
 hypertables. In addition, the following limitations apply specifically
 to distributed hypertables:
 
-- Background job scheduling is not supported.
-- User defined actions is not supported.
+- Distributed scheduling of background jobs is not supported. Background jobs 
+  created on an access node are scheduled and executed on this access node 
+  without distributing the jobs to data nodes.
 - Continuous aggregates are not supported.
 - Compression policies are not supported. However, you can enable 
   compression on the distributed hypertable and manually 
@@ -52,7 +53,7 @@ to distributed hypertables:
   registered with `set_integer_now_func`.
 
 Note that these limitations concern usage from the access node. Some
-currently unsupported features (like background scheduling and
+currently unsupported features (like compression policy or
 continuous aggregates) might still work on individual data nodes, but
 such usage is neither tested nor officially supported. Future versions
 of TimescaleDB might remove some of these limitations.
