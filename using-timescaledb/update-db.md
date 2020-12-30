@@ -34,8 +34,11 @@ triggering the load of a previous TimescaleDB version on session startup.
 It must also be the first command you execute in the session. 
 <!-- -->
 
->:WARNING: If upgrading from a TimescaleDB version older than 0.12.0,
+>:WARNING: When upgrading from an old version of TimescaleDB before upgrading 
+to version 0.12.0 or version 1.5.0,
 you will need to restart your database before calling `ALTER EXTENSION`.
+After upgrading to 1.6.1 you will need to restart the database 
+before restoring a backup.
 Remember that restarting PostgreSQL is accomplished via different
 commands on different platforms:
 - Linux services: `sudo service postgresql restart`
