@@ -1,8 +1,3 @@
->:WARNING: These installation instructions will install the current Release Candidate
-for TimescaleDB 2.0, which includes the ability to setup [multi-node capabilities][multi-node-basic]. For
-more information, please [contact us][contact] or join the #multinode channel in our 
-[community Slack][slack].
-
 ## apt Installation (Ubuntu) [](installation-apt-ubuntu)
 
 This will install TimescaleDB via `apt` on Ubuntu distros.
