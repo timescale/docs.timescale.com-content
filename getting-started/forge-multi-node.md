@@ -52,55 +52,13 @@ and data node requirements.
 where the distributed hypertable data is stored) and more memory and CPU for the 
 access node.
 
-### Step 2: Upgrade the Services to v2.0 [](step2-upgrade-service)
+>:WARNING: Services created prior to January 2021 may be running TimescaleDB
+v1.7.4 or earlier.  We recommend creating a new Service when setting up
+multi-node, although some earlier Services may be upgradable to v2.0.
 
-Currently, any newly created Service in Timescale Forge still uses TimescaleDB 
-1.7.4 by default. This will be the case until we release TimescaleDB 2.0 for 
-production (sometime in late December 2020). Therefore,  to enable multi-node 
-functionality, **you need to manually upgrade each TimescaleDB Service to the newest 
- TimescaleDB 2.0 version available, currently Release Candidate 3 (RC3)**.
+### Step 2: Add Data Nodes to the cluster [](step2-add-nodes)
 
-To do this, we recommend using `psql` to connect to all Services created in Step 1 
-and running an extension update command.
-
-```bash
-psql -X -h {hostname} -p {port} tsdb tsdbadmin
-```
-
-There are a few things to note when running this command on Forge.
-
- * First, note that we’ve passed the `-X ` parameter to `psql`. This prevents `psql`
-  from preloading the existing extension which would block the update command. 
- * Second, you must connect with the `tsdbadmin` user for this update to work on 
- your Timescale Forge Services.
-
-Once you are connected to each service, immediately run the following SQL as the
-**first** command to update TimescaleDB version to 2.0:
-
-```SQL
-ALTER EXTENSION timescaledb UPDATE TO '2.0.0';
-```
->:WARNING:If you created your service before 12/21/2020, note that your version of
- TimescaleDB has an upgrade path to 2.0.0-rc3 instead of 2.0.0, so replace the
- text above with "v2.0.0-rc3". An update in early January 2021 will provide
- 2.0.0 to all current services.
-
-To verify that the update was successful, run the `\dx` command to list the version 
-of TimescaleDB that is currently active in the database. You should see "2.0.0" 
-listed under "Version" as shown below.
-
-```bash
-tsdb=> \dx
-                       List of installed extensions
-    Name     |  Version  |   Schema   |       Description                            
--------------+-----------+------------+---------------------------------------
- plpgsql     | 1.0       | pg_catalog | PL/pgSQL procedural language
- timescaledb | 2.0.0     | public     | Enables scalable inserts and complex queries for time-series data
-```
-
-### Step 3: Add Data Nodes to the cluster [](step3-add-nodes)
-
-Once you’ve created your new Services and upgraded TimescaleDB, you’ll enable 
+Once you've created your new Services, you'll enable
 communication between the access node and all data nodes. The currently supported 
 method for securing communication between nodes is through **user mapping authentication**.
 
@@ -126,7 +84,7 @@ complete the mapping process outlined below to re-establish the connection betwe
 the access node and the affected data node. You can read about user mapping in 
 the [PostgreSQL documentation][postgres-user-mapping].
 
-### Step 3a: Add each data node using the **Internal host** [](step3a-add-data-node)
+### Step 2a: Add each data node using the **Internal host** [](step2a-add-data-node)
 
 For this step, you'll need to copy the **Internal host** listed under the
 **Multi-node Connection Info** heading of the Service details. For every Service,
@@ -167,7 +125,7 @@ FDW options          | (host 'fd71nenmk8-an.c8mhe44nad', port '5432', dbname 'ts
 Description          | 
 ```
 
-### Step 3b: Add a User Mapping for each data node [](step3b-add-user-mapping)
+### Step 2b: Add a User Mapping for each data node [](step2b-add-user-mapping)
 
 Now we can create a `USER MAPPING` that will enable communication between the 
 access node and data node.
@@ -179,7 +137,7 @@ CREATE USER MAPPING FOR tsdbadmin SERVER dn1 OPTIONS (user 'tsdbadmin', password
 Repeat these steps for each additional data node that you want to add to the 
 cluster. **Always invoke these commands from the access node!**
 
-### Step 4: Create a distributed hyptertable [](step4-create-hypertable)
+### Step 3: Create a distributed hyptertable [](step3-create-hypertable)
 
 Finally, we can create a distributed hypertable and add data to verify that everything is
 set up and working correctly.
