@@ -564,7 +564,7 @@ implement a number of these aggregates.
 
 
 [fff-system]: https://en.wikipedia.org/wiki/FFF_system
-[sec-data-retention]: /using-timescaledb/data_retention#data-retention
+[sec-data-retention]: /using-timescaledb/data-retention#data-retention
 [postgres-materialized-views]: https://www.postgresql.org/docs/current/rules-materializedviews.html
 [api-continuous-aggs]:/api#continuous-aggregates
 [postgres-createview]: https://www.postgresql.org/docs/current/static/sql-createview.html
