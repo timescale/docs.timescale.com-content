@@ -1756,7 +1756,16 @@ WITH (timescaledb.continuous) AS
 ---
 
 ## ALTER MATERIALIZED VIEW (Continuous Aggregate) :community_function: [](continuous_aggregate-alter_view)
-`ALTER MATERIALIZED VIEW` statement can be used to modify some of the `WITH` clause [options](#continuous_aggregate-create_view-with-optional) for the continuous aggregate view.
+`ALTER MATERIALIZED VIEW` statement can be used to modify some of the `WITH` clause [options](#continuous_aggregate-create_view-with-optional) for the continuous aggregate view. 
+`ALTER MATERIALIZED VIEW` statement also supports the following 
+[PostgreSQL clauses][postgres-alterview] on the 
+continuous aggregate view: 
+
+- `RENAME TO` clause to rename the continuous aggregate view;
+- `SET SCHEMA` clause to set the new schema for the continuous aggregate view;
+- `SET TABLESPACE` clause to move the materialization of the continuous 
+  aggregate view to the new tablespace;
+- `OWNER TO` clause to set new owner for the continuous aggregate view.
 
 ``` sql
 ALTER MATERIALIZED VIEW <view_name> SET ( timescaledb.<option> =  <value> [, ... ] )
@@ -3707,6 +3716,7 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [postgres-createtablespace]: https://www.postgresql.org/docs/current/sql-createtablespace.html
 [postgres-cluster]: https://www.postgresql.org/docs/current/sql-cluster.html
 [postgres-altertable]: https://www.postgresql.org/docs/current/sql-altertable.html
+[postgres-alterview]: https://www.postgresql.org/docs/current/sql-altermaterializedview.html
 [postgres-lock]: https://www.postgresql.org/docs/current/sql-lock.html
 [migrate-from-postgresql]: /getting-started/migrating-data
 [memory-units]: https://www.postgresql.org/docs/current/static/config-setting.html#CONFIG-SETTING-NAMES-VALUES
