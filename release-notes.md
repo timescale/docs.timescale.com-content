@@ -18,7 +18,7 @@ From our next release (2.0.1) we are planning to bring:
 - Adding and renaming columns to compressed hypertables as a step towards advancing our suport for compressed hypertables.
 - As well as some bug fixes.
 
-We are currently in the Generally Availble (GA) version 2.0.
+We are currently in the Generally Available (GA) version 2.0.
 
 You can read more about our architecture and design for distributed hypertables
 [here](https://docs.timescale.com/v2.0/introduction/architecture#distributed-hypertables).
