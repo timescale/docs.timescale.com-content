@@ -13,9 +13,9 @@ We are currently focusing on making our priorities known by that community and y
 ### What to expect from our next release
 
 From our next release (2.0.1) we are planning to bring:
-- [Support for PostgreSQL 13](https://github.com/timescale/timescaledb/issues/2779): PG13 was released on September 24, 2020 and offers signifficant improvements in performance and usability. We want to provide our users the latest and greatest versions of PG.
-- Backup and restore for multi-node deployments so our users can restore their data to a consisstent state across all nodes.
-- Adding and renaming columns to compressed hypertables as a step towards advancing our suport for compressed hypertables.
+- [Support for PostgreSQL 13](https://github.com/timescale/timescaledb/issues/2779): PG13 was released on September 24, 2020 and offers significant improvements in performance and usability. We want to provide our users the latest and greatest versions of PG.
+- Backup and restore for multi-node deployments so our users can restore their data to a consistent state across all nodes.
+- Adding and renaming columns to compressed hypertables as a step towards advancing our support for compressed hypertables.
 - As well as some bug fixes.
 
 We are currently in the Generally Available (GA) version 2.0.
