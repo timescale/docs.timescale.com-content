@@ -7,16 +7,18 @@ been released.
 
 ## Future Plans
 
-As a reminder, TimescaleDB is open-source and you
-can view active developments on GitHub at any time.
+TimescaleDB is an open source project with a vibrant community. 
+We are currently focusing on making our priorities known by that community and you are free to visit us on our Github repo and meet us on our [community Slack](https://timescaledb.slack.com).
 
 ### What to expect from our next release
 
-The team is finishing up work on the first release of distributed hypertables
-supported by multi-node TimescaleDB, which will be part of the TimescaleDB 2.0
-release.  We are currently in the middle of formal Release Candidates (RC) for
-2.0; these RC releases support in-place upgrades from 1.x and subsequent
-upgrades to 2.0.
+From our next release (2.0.1) we are planning to bring:
+- [Support for PostgreSQL 13](https://github.com/timescale/timescaledb/issues/2779): PG13 was released on September 24, 2020 and offers signifficant improvements in performance and usability. We want to provide our users the latest and greatest versions of PG.
+- Backup and restore for multi-node deployments so our users can restore their data to a consisstent state across all nodes.
+- Adding and renaming columns to compressed hypertables as a step towards advancing our suport for compressed hypertables.
+- As well as some bug fixes.
+
+We are currently in the Generally Availble (GA) version 2.0.
 
 You can read more about our architecture and design for distributed hypertables
 [here](https://docs.timescale.com/v2.0/introduction/architecture#distributed-hypertables).
