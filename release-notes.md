@@ -48,7 +48,7 @@ What's new in TimescaleDB 2.0:
 - **New and improved informational views**: Get more insight about hypertables,
   chunks, policies, and job scheduling.
 
->:TIP:As TimescaleDB 2.0 is currently available as a release candidate, we encourage
+>:TIP: TimescaleDB 2.0 is currently GA, we encourage
 >users to upgrade in testing environments to gain experience and provide feedback on 
 >new and updated features.
 >
