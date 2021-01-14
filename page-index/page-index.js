@@ -182,6 +182,24 @@ const pageIndex = [
               },
             ],
           },
+          {
+            Title: "MacOS",
+            type: DIRECTORY,
+            href: "macos",
+            src: "//assets.iobeam.com/images/docs/Apple_logo_black.svg",
+            children: [
+              {
+                Title: "Homebrew",
+                type: NON_MENU_PAGE,
+                href: "installation-homebrew",
+              },
+              {
+                Title: "Source",
+                type: NON_MENU_PAGE,
+                href: "installation-source",
+              },
+            ],
+          }
         ],
       },
       {
@@ -209,22 +227,23 @@ const pageIndex = [
           {
             type: HIDDEN_REDIRECT,
             href: "setup-multi-node-auth",
-            to: "/getting-started/setup-multi-node-basic/multi-node-self-managed",
+            to:
+              "/getting-started/setup-multi-node-basic/multi-node-self-managed",
           },
           {
-              Title: "Initialize data nodes",
-              type: ANCHOR,
-              href: "#init_data_nodes_on_access_node",
+            Title: "Initialize data nodes",
+            type: ANCHOR,
+            href: "#init_data_nodes_on_access_node",
           },
-	      {
-              Title: "Add roles",
-              type: ANCHOR,
-              href: "#add-roles-to-data-nodes",
+          {
+            Title: "Add roles",
+            type: ANCHOR,
+            href: "#add-roles-to-data-nodes",
           },
-		  {
-              Title: "Maintenance tasks",
-              type: ANCHOR,
-              href: "#multi-node-maintenance",
+          {
+            Title: "Maintenance tasks",
+            type: ANCHOR,
+            href: "#multi-node-maintenance",
           },
           {
             Title: "Self-Managed Deployments",
@@ -247,7 +266,7 @@ const pageIndex = [
                 href: "#multi-node-auth-certificate",
               },
             ],
-          },		 
+          },
         ],
       },
       {
