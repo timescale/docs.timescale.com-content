@@ -164,6 +164,10 @@ const pageIndex = [
                                 type: NON_MENU_PAGE,
                                 href: "installation-homebrew"
                             }, {
+                                Title: "MacPorts",
+                                type: NON_MENU_PAGE,
+                                href: "installation-macports"
+                            }, {
                                 Title: "Source",
                                 type: NON_MENU_PAGE,
                                 href: "installation-source"
