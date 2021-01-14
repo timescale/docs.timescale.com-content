@@ -7,8 +7,9 @@ been released.
 
 ## Future Plans
 
-TimescaleDB is an open source project with a vibrant community. 
-We are currently focusing on making our priorities known by that community and you are free to visit us on our Github repo and meet us on our [community Slack](https://timescaledb.slack.com).
+TimescaleDB is an open-source project with a vibrant community. 
+We are currently focusing on making our priorities known by that community; 
+we welcome you to visit our Github repo or join our [Slack community](https://slack.timescale.com).
 
 ### What to expect from our next release
 
