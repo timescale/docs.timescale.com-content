@@ -15,7 +15,7 @@ we welcome you to visit our Github repo or join our [Slack community](https://sl
 
 For our next release (2.0.1), we plan to add:
 - [Support for PostgreSQL 13](https://github.com/timescale/timescaledb/issues/2779): PG13 offers various improvements in performance and usability. We want to provide our users the latest and greatest versions of PG.
-- Backup and restore for multi-node deployments so our users can restore their data to a consistent state across all nodes.
+- Consistent distributed restore points for multi-node deployments, so our users can employ backup and restore across entire multi-node clusters, and ensure that restores can happen to a transactionally-consistent point-in-time.
 - Adding and renaming columns to compressed hypertables as a step towards advancing our support for compressed hypertables.
 - As well as some bug fixes.
 
