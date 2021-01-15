@@ -7,16 +7,19 @@ been released.
 
 ## Future Plans
 
-As a reminder, TimescaleDB is open-source and you
-can view active developments on GitHub at any time.
+TimescaleDB is an open-source project with a vibrant community. 
+We are currently focusing on making our priorities known by that community; 
+we welcome you to visit our Github repo or join our [Slack community](https://slack.timescale.com).
 
 ### What to expect from our next release
 
-The team is finishing up work on the first release of distributed hypertables
-supported by multi-node TimescaleDB, which will be part of the TimescaleDB 2.0
-release.  We are currently in the middle of formal Release Candidates (RC) for
-2.0; these RC releases support in-place upgrades from 1.x and subsequent
-upgrades to 2.0.
+For our next release (2.0.1), we plan to add:
+- [Support for PostgreSQL 13](https://github.com/timescale/timescaledb/issues/2779): PG13 offers various improvements in performance and usability. We want to provide our users the latest and greatest versions of PG.
+- Consistent distributed restore points for multi-node deployments, so our users can employ backup and restore across entire multi-node clusters, and ensure that restores can happen to a transactionally-consistent point-in-time.
+- The ability to add and rename columns to compressed hypertables, as a step towards advancing our support for compressed hypertables (and enable them to be more mutable).
+- Various bug fixes.
+
+We are currently in the Generally Available (GA) version 2.0.
 
 You can read more about our architecture and design for distributed hypertables
 [here](https://docs.timescale.com/v2.0/introduction/architecture#distributed-hypertables).
@@ -46,7 +49,7 @@ What's new in TimescaleDB 2.0:
 - **New and improved informational views**: Get more insight about hypertables,
   chunks, policies, and job scheduling.
 
->:TIP:As TimescaleDB 2.0 is currently available as a release candidate, we encourage
+>:TIP: TimescaleDB 2.0 is currently GA, we encourage
 >users to upgrade in testing environments to gain experience and provide feedback on 
 >new and updated features.
 >
