@@ -23,6 +23,10 @@ data nodes (if not already set, `150` is recommended).
 * `jit` should be set to `off` on the access node as JIT currently
   doesn't work well with distributed queries. JIT can still be enabled
   on the data nodes.
+* `statement_timeout` should be disabled on the data nodes and managed
+  through the access node configuration if desired. This setting is disabled
+  by default in PostgreSQL, but may be worth verifying in your specific
+  environment.
 
 Each of the above settings parameters can be configured for the
 instance in `postgresql.conf`, typically located in the data
