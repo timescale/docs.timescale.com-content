@@ -451,10 +451,16 @@ experimental feature.
 
 ## create_hypertable() [](create_hypertable)
 
-Creates a TimescaleDB hypertable from a PostgreSQL table (replacing the
-latter), partitioned on time and with the option to partition
-on one or more other columns (i.e., space).
-All actions, such as `ALTER TABLE`, `SELECT`, etc.,
+Creates a TimescaleDB hypertable from a PostgreSQL table (replacing
+the latter), partitioned on time and with the option to partition on
+one or more other columns (i.e., space). The PostgreSQL table cannot
+be an already partitioned table (declarative partitioning or
+inheritance). In case of a non-empty table, it is possible to migrate
+the data during hypertable creation using the `migrate_data` option,
+although this might take a long time and has certain limitations when
+the table contains foreign key constraints (see below).
+
+After creation, all actions, such as `ALTER TABLE`, `SELECT`, etc.,
 still work on the resulting hypertable.
 
 #### Required Arguments [](create_hypertable-required-arguments)
@@ -667,9 +673,15 @@ hypertables are described in the [add_dimension](#add_dimension) section.
 
 ## create_distributed_hypertable() [](create_distributed_hypertable)
 
-Creates a TimescaleDB hypertable distributed across a multinode
-environment.  Use this function in place of [`create_hypertable`](#create_hypertable)
-when creating distributed hypertables.
+Creates a TimescaleDB hypertable distributed across multiple data
+nodes. Use this function in place of
+[`create_hypertable`](#create_hypertable) when creating a distributed
+hypertable. Creating a distributed hypertable is governed by the same
+basic limitations as when creating a regular hypertable, e.g., the
+PostgreSQL table turned into a distributed hypertable cannot already
+be partitioned. Further, it is not possible to turn a regular
+hypertable into a distributed hypertable and data migration (via the
+`migrate_data` option) is currently unsupported.
 
 #### Required Arguments [](create_distributed_hypertable-required-arguments)
 
@@ -690,7 +702,7 @@ when creating distributed hypertables.
 | `create_default_indexes` | Boolean whether to create default indexes on time/partitioning columns. Default is TRUE. |
 | `if_not_exists` | Boolean whether to print warning if table already converted to hypertable or raise exception. Default is FALSE. |
 | `partitioning_func` | The function to use for calculating a value's partition.|
-| `migrate_data` | Set to TRUE to migrate any existing data from the `relation` table to chunks in the new hypertable. A non-empty table will generate an error without this option. Large tables may take significant time to migrate. Default is FALSE. |
+| `migrate_data` | Currently, this option is not supported for distributed hypertables and will generate an error if set to TRUE. |
 | `time_partitioning_func` | Function to convert incompatible primary time column values to compatible ones. The function must be `IMMUTABLE`. |
 | `replication_factor` | The number of data nodes to which the same data is written to. This is done by creating chunk copies on this amount of data nodes.  Must be >= 1; default is 1.  Read [the best practices](#create_distributed_hypertable-best-practices) before changing the default. |
 | `data_nodes` | The set of data nodes used for the distributed hypertable.  If not present, defaults to all data nodes known by the access node (the node on which the distributed hypertable is created). |
