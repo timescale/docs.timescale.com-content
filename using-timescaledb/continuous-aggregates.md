@@ -62,7 +62,7 @@ aggregate is refreshed on a regular basis.
 SELECT add_continuous_aggregate_policy('conditions_summary_hourly',
 	start_offset => INTERVAL '1 month',
 	end_offset => INTERVAL '1 h',
-	schedule_interval => INTERVAL '5 min');
+	schedule_interval => INTERVAL '1 h');
 ```
 
 In this case, the continuous aggregate will be refreshed every hour
