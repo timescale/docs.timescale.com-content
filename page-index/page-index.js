@@ -273,6 +273,13 @@ const pageIndex = [
         Title: "Setting up Timescale Cloud",
         type: PAGE,
         href: "exploring-cloud",
+        children: [
+          {
+            Title: "Multi-node setup",
+            type: PAGE,
+            href: "cloud-multi-node",
+          },
+        ]
       },
       {
         Title: "Setting up Timescale Forge",
