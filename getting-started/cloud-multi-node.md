@@ -1,4 +1,4 @@
->:TIP:Timescale currently offers two options for cloud hosting. If you are a
+>:TIP:Timescale currently offers two hosting options. If you are a
 Timescale Forge user, please use the documentation for [setting up multi-node
 on Forge][forge-multi-node] instead.
 
@@ -48,19 +48,17 @@ where the distributed hypertable data is stored) and more memory and CPU for the
 access node.
 
 >:WARNING: To setup your first multi-node instance in Timescale Cloud, you will
-need to create new instances which will default to TimescaleDB 2.0, the version
-required to implement a multi-node cluster.
+need to create new Services for the Access Node and Data Nodes.
 
 ### Step 2: Modify Access Node settings [](step2)
 
 The hard work of handling distributed queries in a multi-node cluster is handled
-by TimescaleDB for you. Some queries, however, will work better in a distributed
-environment when parameters allow TimescaleDB to more efficiently push down 
-some types of queries to the data nodes, or not have JIT interfere with a
-distributed planning process.
+by TimescaleDB for you. Some queries, however, will perform better in a distributed
+environment when TimescaleDB is configured to more efficiently push down 
+some types of queries to the data nodes.
 
 To that end, we highly recommend the following settings be modified for the 
-**Access Node** only under the **Advanced Configuration** section.
+**Access Node** only using the **Advanced Configuration** section in the Timescale Cloud console.
 
 * `pg.jit` = off
 * `pg.max_prepared_transactions` > 0 (150 is a recommended starting value)
