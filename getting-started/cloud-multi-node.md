@@ -33,7 +33,7 @@ First, you need to create new Services within your Cloud account. As mentioned
 earlier, you should create _at least_ three Services to set up a multi-node cluster: 
 one access node and two data nodes. 
 
-There is currently no way to distinguish between the access node and data 
+There is currently no way to visually distinguish between the access node and data 
 nodes within the Timescale Cloud console, **so we strongly recommend that you include 
 “AN" and "DN" in the names of each service, respectively (eg. "an-mycluster", 
 "dn1-mycluster", "dn2-mycluster", etc.)**. Services can only assume one role in a 
@@ -73,7 +73,7 @@ Once you've created your new Services, you'll enable communication between the
 access node and all data nodes. The currently supported method for securing 
 communication between nodes is through **user mapping authentication**.
 
-Currently, this is a one-time, manual process that must be completed for
+This is a one-time, manual process that must be completed for
 each data node.
 
 #### About user mapping authentication
@@ -83,7 +83,7 @@ PostgreSQL user for all data access and cluster management. It also allows you t
 making secure (SSL) connections to your Timescale Cloud Access node. 
 
 With user mapping authentication, you don’t need to manage any new users, however, 
-**you  need to have the passwords for the `tsdbadmin` user from each data node you 
+**you need to have the passwords for the `tsdbadmin` user from each data node you 
 will be adding to the cluster**. 
 
 The main limitation of this approach is that any password changes to the connected
@@ -174,10 +174,9 @@ column (`sensor_id`) for the distributed hypertable. This is intentional, and
 **recommended**, for distributed hypertable setups. Previously, with regular, 
 single-node hypertables, there was often little benefit in specifying a partition 
 key when creating the hypertable. With distributed hyptertables, however, adding
-a partition key is essential to ensure that data is distributed across data nodes 
-on something more than just time. Otherwise, all data for a specific time range 
-will go to one chunk on one node, rather than being distributed across each data 
-node for the same time range.
+a partition key is essential to ensure that data is efficiently distributed across data nodes. 
+Otherwise, all data for a specific time range will go to one chunk on one node, rather than 
+being distributed across all available data nodes for the same time range.
 
 ## Adding additional database users (optional) [](add-database-users)
 
@@ -212,11 +211,11 @@ A few final reminders as you begin to explore the opportunities of a multi-node 
 
 1. Multi-node clusters can still use _regular_, non-distributed features like 
 regular hypertables, PostgreSQL tables, and continuous aggregations. The data 
-stored in any of these object will reside only on the access node.
+stored in any of these objects will reside only on the access node.
 2. There is no limitation on the number of distributed hypertables a user can 
 create on the access node.
 3. Finally, remember that once a Service is marked as an access node or data node,
- it cannot be used to create another TimescaleDB multi-node cluster.
+ it cannot be used as part of another TimescaleDB multi-node cluster.
 
 ## Maintenance tasks
 
@@ -232,7 +231,7 @@ Now that you have a basic TimescaleDB multi-node cluster, consider using one of
 our [large sample datasets][sample-data]
 to create more distributed hypertables, or consider using your new cluster 
 as a target for Prometheus data via [Promscale][promscale].
-Whatever your time-series data need, TimescaleDB multi-node opens up an entirely 
+Whatever your time-series data needs, TimescaleDB multi-node opens up an entirely 
 new level of opportunity for your time-series data.
 
 And as always, consider joining our vibrant community [Slack channel][slack] to ask
