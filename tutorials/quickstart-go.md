@@ -879,6 +879,6 @@ Golang application, be sure to check out these advanced TimescaleDB tutorials:
 [hypertable-docs]: /api#create_hypertable
 [parallel-copy-tool]: https://github.com/timescale/timescaledb-parallel-copy
 [pgx-docs]: https://pkg.go.dev/github.com/jackc/pgx
-[hello-timescale]: tutorials/tutorial-hello-timescale
+[hello-timescale]: /tutorials/tutorial-hello-timescale
 
 
