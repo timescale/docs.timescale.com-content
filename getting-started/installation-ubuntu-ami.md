@@ -9,15 +9,15 @@ See below for the image id corresponding to each region for the most recent Time
 
 Region | Image ID
 --- | ---
-us-east-1 (North Virginia) | ami-05f94dc4b55853f2b
-us-east-2 (Ohio) | ami-0761c83f2a430b407
-us-west-1 (North California) | ami-09b3def867594c401
-us-west-2 (Oregon) | ami-058c2dd146f031a20
-eu-central-1 (Germany) | ami-0d9cb98acad0a798f
-eu-north-1 (Sweden) | ami-034562aa7321d7dea
-eu-west-1 (Ireland) | ami-0802cda1d35e796c4
-eu-west-2 (England) | ami-0d3cb21d91e8efa47
-eu-west-3 (France) | ami-000288fcf874c8e12
+us-east-1 (North Virginia) | ami-00fd91eb722f59b02
+us-east-2 (Ohio) | ami-0e84add0567582adb
+us-west-1 (North California) | ami-0d8eee1e46e5949ed
+us-west-2 (Oregon) | ami-004ea5f880504430d
+eu-central-1 (Germany) | ami-09392c2c402763a22
+eu-north-1 (Sweden) | ami-06296d1c7bdcabe33
+eu-west-1 (Ireland) | ami-01a76bf846dde4ca5
+eu-west-2 (England) | ami-06b0859c2e955cbd5
+eu-west-3 (France) | ami-02f821dffa3e1cc5e
 
 To launch the AMI, go to the `AMIs` section of your AWS EC2 Dashboard run the following steps:
 
