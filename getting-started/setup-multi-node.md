@@ -1,10 +1,5 @@
 # Setting up Multi-Node TimescaleDB
 
->:WARNING: Distributed hypertables and [multi-node capabilities][multi-node-basic]
-are currently in BETA. This feature is not meant for production use. For more information,
-please [contact us][contact] or join the #multinode channel in our 
-[community Slack][slack].
-
 Data nodes together with an *access node* constitute the
 multi-node TimescaleDB architecture
 ([architecture][]). All the nodes are TimescaleDB instances,

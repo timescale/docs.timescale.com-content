@@ -1,10 +1,5 @@
 # Tutorial: Scaling out TimescaleDB
 
->:WARNING: Distributed hypertables and [multi-node capabilities][multi-node-basic]
-are currently in BETA. This feature is not meant for production use. For more information,
-please [contact us][contact] or join the #multinode channel in our 
-[community Slack][slack].
-
 TimescaleDB can be run in a multi-node setup, with one primary access node distributing
 writes and queries to multiple data nodes. For more information on the actual
 underlying architecture, you can view our [architecture][architecture] section.
