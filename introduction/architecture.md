@@ -140,11 +140,6 @@ For more on the motivation and design of TimescaleDB, please see our
 
 ## Distributed Hypertables [](distributed-hypertables)
 
->:WARNING: Distributed hypertables and [multi-node capabilities][multi-node-basic]
-are currently in BETA. This feature is not meant for production use. For more information,
-please [contact us][contact] or join the #multinode channel in our 
-[community Slack][slack].
-
 TimescaleDB supports distributing hypertables across multiple nodes
 (i.e., a cluster) by leveraging the same hypertable and chunk
 primitives as described above. This allows TimescaleDB to scale
