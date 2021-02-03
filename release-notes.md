@@ -176,6 +176,38 @@ Since the last release candidate 4, there are several bugfixes:
 * #2751 Fix crash and cancel when adding data node
 * #2763 Fix check constraint on hypertable metadata table
 
+**Thanks**
+
+Thanks to all contributors for the TimescaleDB 2.0 release:
+* @airton-neto for reporting a bug in executing some queries with UNION
+* @nshah14285 for reporting an issue with propagating privileges
+* @kalman5 for reporting an issue with renaming constraints
+* @LbaNeXte for reporting a bug in decompression for queries with 
+  subqueries
+* @semtexzv for reporting an issue with continuous aggregates on 
+  int-based hypertables
+* @mr-ns for reporting an issue with privileges for creating chunks
+* @cloud-rocket for reporting an issue with setting an owner on 
+  continuous aggregate
+* @jocrau for reporting a bug during creating an index with transaction
+  per chunk
+* @fvannee for reporting an issue with custom time types
+* @ArtificialPB for reporting a bug in executing queries with 
+  conditional ordering on compressed hypertable
+* @dutchgecko for reporting an issue with continuous aggregate datatype
+  handling
+* @lambdaq for suggesting to improve error message in continuous 
+  aggregate creation
+* @francesco11112 for reporting memory issue on COPY
+* @Netskeh for reporting bug on time_bucket problem in continuous 
+  aggregates
+* @mr-ns for reporting the issue with CTEs on distributed hypertables
+* @akamensky for reporting an issue with recursive cache invalidation
+* @ryanbooz for reporting slow queries with real-time aggregation on 
+  continuous aggregates
+* @cevian for reporting an issue with disabling compression on 
+  distributed hypertables
+
 ## 2.0.0-rc4 (2020-12-02)
 
 This release candidate contains bugfixes since the previous release
