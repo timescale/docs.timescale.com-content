@@ -234,6 +234,10 @@ distributed hypertables.
 * #2698 Improve memory handling for remote COPY
 * #2555 Set metadata for chunks compressed before 2.0
 
+**Thanks**
+* @francesco11112 for reporting memory issue on COPY
+* @Netskeh for reporting bug on time_bucket problem in continuous
+  aggregates
 
 ## 2.0.0-rc3 (2020-11-12)
 
@@ -260,6 +264,12 @@ chunks.
 * #2625 Fix subquery errors when using AsyncAppend
 * #2626 Fix incorrect total_table_pages setting for compressed scan
 * #2628 Stop recursion in cache invalidation
+
+**Thanks**
+* @mr-ns for reporting the issue with CTEs on distributed hypertables
+* @akamensky for reporting an issue with recursive cache invalidation
+* @ryanbooz for reporting slow queries with real-time aggregation on
+  continuous aggregates
 
 ## 2.0.0-rc2 (2020-10-21)
 
