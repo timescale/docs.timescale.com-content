@@ -199,7 +199,7 @@ const pageIndex = [
                 href: "installation-source",
               },
             ],
-          }
+          },
         ],
       },
       {
@@ -279,7 +279,7 @@ const pageIndex = [
             type: PAGE,
             href: "cloud-multi-node",
           },
-        ]
+        ],
       },
       {
         Title: "Setting up Timescale Forge",
@@ -692,6 +692,33 @@ const pageIndex = [
         type: PAGE,
         href: "tutorial-hello-timescale",
         children: [],
+      },
+      {
+        Title: "Getting Started with Promscale",
+        type: PAGE,
+        href: "getting-started-with-promscale",
+        children: [
+          {
+            Title: "The Benefits of using Promscale",
+            type: PAGE,
+            href: "promscale-benefits",
+          },
+          {
+            Title: "How Promscale Works",
+            type: PAGE,
+            href: "promscale-how-it-works",
+          },
+          {
+            Title: "Installing Promscale",
+            type: PAGE,
+            href: "promscale-install",
+          },
+          {
+            Title: "Run Queries with PromQL and SQL",
+            type: PAGE,
+            href: "promscale-run-queries",
+          },
+        ],
       },
       {
         Title: "Time-series forecasting",
