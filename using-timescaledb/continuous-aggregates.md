@@ -40,7 +40,7 @@ FROM generate_series(TIMESTAMP '2020-01-01 00:00:00',
 		     INTERVAL '10 min') AS time;
 ```
 
-You can then create a continuous aggregate view to compute the daily
+You can then create a continuous aggregate view to compute the hourly
 average, minimum, and maximum temperature:
 
 ```sql
@@ -69,7 +69,7 @@ In this case, the continuous aggregate will be refreshed every hour
 and refresh the last month's data.
 
 You can now run a normal `SELECT` on the continuous aggregate and it
-will give you the aggregated data, for example, to select the daily
+will give you the aggregated data, for example, to select the hourly
 averages for device 1 during the first three months:
 
 ```sql
