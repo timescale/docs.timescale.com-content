@@ -270,7 +270,7 @@ something like:
 SELECT * FROM conditions_summary_hourly
 WHERE max - min > 1800
   AND bucket >= '2020-01-01' AND bucket < '2020-04-01'
-ORDER BY bucket DESC, device_id DESC LIMIT 20;
+ORDER BY bucket DESC, device DESC LIMIT 20;
 ```
 
 ---
