@@ -160,8 +160,8 @@ something like:
 ```sql
 SELECT * FROM conditions_summary_daily
 WHERE max - min > 1800
-  AND bucket >= '2018-01-01' AND bucket < '2018-04-01'
-ORDER BY bucket DESC, device_id DESC LIMIT 20;
+  AND bucket >= '2020-01-01' AND bucket < '2020-04-01'
+ORDER BY bucket DESC, device DESC LIMIT 20;
 ```
 
 ### Advanced Usage
