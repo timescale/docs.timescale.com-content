@@ -11,13 +11,14 @@ automated migration scripts that convert any internal state if necessary.
 
 ### TimescaleDB Release Compatibility [](compatibility)
 
-TimescaleDB currently has two major release versions listed below. Please ensure that your version of
+TimescaleDB currently has three major release versions listed below. Please ensure that your version of
 PostgreSQL is supported with the extension version you want to install or update.
 
  TimescaleDB Release |   Supported PostgreSQL Release
  --------------------|-------------------------------
- 1.7.4               | 9.6, 10, 11, 12
- 2.0-RC1+            | 11, 12
+ 1.7                 | 9.6, 10, 11, 12
+ 2.0                 | 11, 12
+ 2.1                 | 11, 12, 13
 
 >:TIP:If you need to upgrade PostgreSQL first, please see [our documentation][upgrade-pg].
 

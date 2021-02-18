@@ -8,12 +8,14 @@ Use these instructions to update TimescaleDB 1.x to TimescaleDB 2.0
 
 ### TimescaleDB Release Compatibility [](compatibility)
 
-TimescaleDB 2.0 currently supports the following PostgreSQL releases. If you are not currently running 
+TimescaleDB currently supports the following PostgreSQL releases. If you are not currently running 
 a compatible release, please upgrade before updating TimescaleDB.
 
  TimescaleDB Release |   Supported PostgreSQL Release
  --------------------|-------------------------------
- 2.0-RC1+            | 11, 12
+ 1.7                 | 9.6, 10, 11, 12
+ 2.0                 | 11, 12
+ 2.1                 | 11, 12, 13
 
 >:TIP:If you need to upgrade PostgreSQL first, please see [our documentation][upgrade-pg].
 
