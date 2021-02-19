@@ -451,14 +451,48 @@ enough storage headroom to decompress some chunks if needed.
 Since compression performs an implicit reordering of data using `segmentby` and `orderby`, 
 it is not recommended to combine this feature with [reordering][]. 
 
+### Schema modifications [] (compression-schema-changes)
+
+As of TimescaleDB 2.1, we provide some ability to modify
+the table definition for hypertables with compressed chunks. Users
+can add nullable columns and rename existing columns.
+
+## Add nullable columns
+
+The following syntax is supported.
+
+``` sql
+ALTER TABLE <hypertable> ADD COLUMN <column_name> <datatype>;
+```
+Note that adding constraints to the new column is not supported.
+
+Sample usage:
+``` sql
+ALTER TABLE conditions ADD COLUMN device_id integer;
+```
+
+## Rename columns
+
+The following syntax is supported.
+
+``` sql
+ALTER TABLE <hypertable> RENAME <column_name> TO <new_name>;
+```
+
+Sample usage:
+``` sql
+ALTER TABLE conditions RENAME device_id TO devid;
+```
+
 ## Future Work [](future-work)
 
 One of the current limitations of TimescaleDB is that once chunks are converted
-into compressed column form, we do not currently allow any further modifications
-of the data (e.g., inserts, updates, deletes) or the schema without manual decompression.
+into compressed column form, we do not currently allow further modifications
+of the data (e.g., inserts, updates, deletes) or the schema without manual decompression, except as noted [above](#compression-schema-changes).
 In other words, chunks are immutable in compressed form. Attempts to modify the
 chunks' data will either error or fail silently (as preferred by users). We
 plan to remove this limitation in future releases.
+
 If you still need to modify the schema for a hypertable, you will have to turn off 
 compression. First, [manually decompress compressed chunks and delete any compression policies on that table](#manual-decompression) 
 After that, disable compression using `ALTER TABLE`.
