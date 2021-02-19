@@ -1471,6 +1471,9 @@ chunks. The data can be queried without any modifications, however if you
 need to backfill or update data in a compressed chunk you will need to
 decompress the chunk(s) first.
 
+Starting with TimescaleDB 2.1, users have the ability to modify the schema
+of hypertables that have compressed chunks.
+Specifically, [you can add columns to and rename existing columns of such compressed hypertables](#compression-schema-changes).
 
 #### Associated commands
 *	[ALTER TABLE](#compression_alter-table)
@@ -3739,3 +3742,4 @@ and then inspect `dump_file.txt` before sending it together with a bug report or
 [backup-restore]: /using-timescaledb/backup#pg_dump-pg_restore
 [real-time-aggregates]: /using-timescaledb/continuous-aggregates#real-time-aggregates
 [hash partitions]: /using-timescaledb/hypertables#best-practices-space-partitions
+[compression-schema-changes]: /using-timescaledb/compression#compression-schema-changes
