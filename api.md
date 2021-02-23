@@ -1835,29 +1835,78 @@ DROP MATERIALIZED VIEW contagg_view;
 
 ## refresh_continuous_aggregate() :community_function: [](refresh_continuous_aggregate)
 
-Refresh all buckets of a continuous aggregate between two points of
-time. 
+Refresh all buckets of a continuous aggregate in the _refresh window_
+given by `window_start` and `window_end`.
 
-The function expects the parameter values to have the same time type
-as used in the continuous aggregate's time bucket expression (e.g., if
-the time bucket specifies in `timestamptz`, then the start and end time
-supplied should also be `timestamptz`).
+A continuous aggregate materializes aggregates in time buckets (e.g.,
+min, max, average over 1 day worth of data), as determined by the
+`time_bucket` interval specified when the continuous aggregate was
+created. Therefore, when refreshing the continuous aggregate, only
+buckets that completely fit within the refresh window will be
+refreshed. In other words, it is not possible to compute the aggregate
+over, for example, half a bucket. Therefore, any buckets that do no
+fit within the given refresh window will be excluded.
+
+The function expects the window parameter values to have a time type
+that is compatible with the continuous aggregate's time bucket
+expression&mdash;for example, if the time bucket is specified in
+`TIMESTAMP WITH TIME ZONE`, then the start and end time should be a
+date or timestamp type. Note that a continuous aggregate using the
+`TIMESTAMP WITH TIME ZONE` type aligns with the UTC time zone, so, if
+`window_start` and `window_end` is specified in the local time zone,
+any time zone shift relative UTC needs to be accounted for when
+refreshing in order to align with bucket boundaries (for examples, see
+[Sample Usage](#refresh_continuous_aggregate-examples)).
+
 
 #### Required Arguments [](refresh_continuous_aggregate-required-arguments)
 
 |Name|Description|
 |---|---|
 | `continuous_aggregate` | (REGCLASS) The continuous aggregate to refresh. |
-| `window_start` | Start of the window to refresh, has to be before `window_end`. `NULL` is eqivalent to `MIN(timestamp)` of the hypertable. |
-| `window_end` | End of the window to refresh, has to be after `window_start`. `NULL` is eqivalent to `MAX(timestamp)` of the hypertable. |
+| `window_start` | Start of the window to refresh (inclusive), has to be before `window_end`. `NULL` is equivalent to an open-ended start of the window. |
+| `window_end` | End of the window to refresh (exclusive), has to be after `window_start`. `NULL` is equivalent to open-ended end of the window. |
+
+#### Errors
+
+An error is given if:
+
+- The refresh window does not cover at least one full bucket. Note
+  that, even though the window is one bucket in size, it might not
+  align with the start and the end of a bucket in the continuous
+  aggregate.
+- The function is called in a transaction block.
+  
 
 #### Sample Usage [](refresh_continuous_aggregate-examples)
 
-Refresh the continuous aggregate `conditions` between `2020-01-01` and
-`2020-02-01` exclusive.
+A continuous aggregate `conditions_summary` uses the `TIMESTAMP WITH TIME
+ZONE` type and has a bucket size of 1 day. To refresh only 1 day
+(bucket) between `2020-01-01` (inclusive) and `2020-01-02`
+(exclusive):
 
 ```sql
-CALL refresh_continuous_aggregate('conditions', '2020-01-01', '2020-02-01');
+CALL refresh_continuous_aggregate('conditions_summary', '2020-01-01 00:00 UTC', '2020-01-02 00:00 UTC');
+```
+
+If the local time zone is already UTC, the time zone information can be elided:
+
+```sql
+CALL refresh_continuous_aggregate('conditions_summary', '2020-01-01', '2020-01-02');
+```
+
+Alternatively, refresh at least two buckets to ensure at least one
+bucket is refreshed, irrespective of local time zone:
+
+```sql
+CALL refresh_continuous_aggregate('conditions_summary', '2020-01-01', '2020-01-03');
+```
+
+To refresh a longer interval, e.g., one month between `2020-01-01`
+(inclusive) and `2020-02-01` (exclusive):
+
+```sql
+CALL refresh_continuous_aggregate('conditions_summary', '2020-01-01 00:00 UTC', '2020-02-01 00:00 UTC');
 ```
 
 ---
@@ -1880,7 +1929,18 @@ Information about jobs created by policies can be viewed by querying
 
 ## add_continuous_aggregate_policy() :community_function: [](add_continuous_aggregate_policy)
 
-Create a policy that automatically refreshes a continuous aggregate.
+Create a policy that automatically refreshes a continuous
+aggregate. When the policy runs it refreshes the continuous aggregate
+in the refresh window range given by the `start_offset` and
+`end_offset` relative the current time when the policy executes. Since
+a refresh only materializes full buckets, and the policy execution
+time likely won't align with the end of a bucket, the policy's refresh
+window must be at least two buckets in size to ensure that at least
+one bucket is refreshed when the policy runs. Note that the manual
+refresh function
+[`refresh_continuous_aggregate`](#refresh_continuous_aggregate) allows
+specifying a window of only one bucket, since it is possible to
+manually align its refresh window with bucket boundaries.
 
 #### Required Arguments [](add_continuous_aggregate_policy-required-arguments)
 
@@ -1909,15 +1969,28 @@ The `start_offset` and `end_offset` parameters should be specified differently d
 |`job_id`| (INTEGER)  TimescaleDB background job id created to implement this policy|
 
 
+#### Errors
+
+An error will be given if:
+
+- The `start_offset` or `end_offset` specify a range less than two buckets in size.
+- The type of `start_offset` or `end_offset` is not compatible with
+  the time type of the continuous aggregate.
+
 #### Sample Usage [](add_continuous_aggregate_policy-examples)
 
-Add a policy that refreshes the last month once an hour, excluding the latest hour from the aggregate (for performance reasons, it is recommended to exclude buckets that still see lots of writes):
+Add a policy that refreshes the last month once an hour, excluding the
+latest hour from the aggregate:
+
 ```sql
 SELECT add_continuous_aggregate_policy('conditions_summary',
 	start_offset => INTERVAL '1 month',
 	end_offset => INTERVAL '1 hour',
 	schedule_interval => INTERVAL '1 hour');
 ```
+
+Note that, for performance reasons, it is recommended to exclude
+buckets that still see lots of writes.
 
 ---
 ## add_job() :community_function: [](add_job)
