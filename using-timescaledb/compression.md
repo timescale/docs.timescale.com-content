@@ -451,13 +451,13 @@ enough storage headroom to decompress some chunks if needed.
 Since compression performs an implicit reordering of data using `segmentby` and `orderby`, 
 it is not recommended to combine this feature with [reordering][]. 
 
-### Schema modifications [] (compression-schema-changes)
+### Schema modifications [](compression-schema-changes)
 
 As of TimescaleDB 2.1, we provide some ability to modify
 the table definition for hypertables with compressed chunks. Users
 can add nullable columns and rename existing columns.
 
-## Add nullable columns
+#### Add nullable columns
 
 The following syntax is supported.
 
@@ -471,7 +471,7 @@ Sample usage:
 ALTER TABLE conditions ADD COLUMN device_id integer;
 ```
 
-## Rename columns
+#### Rename columns
 
 The following syntax is supported.
 
