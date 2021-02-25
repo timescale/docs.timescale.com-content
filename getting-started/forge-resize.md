@@ -12,8 +12,7 @@ note the following limitations and when a change to these settings will result i
 within a few seconds. Other things to note about storage changes:
  * At the current time, storage can only be _increased_ in size.
  * Storage size changes can only be made once every six (6) hours.
- * Storage can be modified in 25GB increments between 25GB-500GB, and then in 
- 100GB increments between 500GB-1TB.
+ * Storage can be modified in various increments between 25GB and 4TB.
 
 **Compute**: Modifications to the compute size of your service (increases or 
 decreases) can be applied at any time, however, please note the following:
@@ -37,7 +36,7 @@ Under the Operations tab, you can perform the same **Basic** operations as befor
 section on the left labeled **Resources**. Selecting this option displays the 
 current resource settings for the Service.
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-resources.png" alt="View Timescale Forge service resource information"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-resources-4tb.png" alt="View Timescale Forge service resource information"/>
 
 ## Step 3: Modify Service resources [](modify-resources)
 Once you have navigated to the current Service resources, it's easy to modify 
@@ -51,4 +50,4 @@ and you can increase disk size once every six (6) hours.
 
 When you're satisfied with the changes, click **Apply** (storage resizes only) or **Apply and Restart** (when modifying compute resources).
 
-<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-restart.png" alt="View Timescale Forge service apply resize"/>
+<img class="main-content__illustration" src="https://assets.iobeam.com/images/docs/forge_images/timescale-forge-service-restart-4tb.png" alt="View Timescale Forge service apply resize"/>
