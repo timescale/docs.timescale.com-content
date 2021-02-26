@@ -16,8 +16,8 @@ we welcome you to visit our Github repo or join our [Slack community](https://sl
 For our next release, we plan to add:
 
 - Consistent distributed restore points for multi-node deployments, so our users can employ backup and restore across entire multi-node clusters, and ensure that restores can happen to a transactionally-consistent point-in-time.
-- Partially mutable compressed chunks to suport INSERTs into a compressed hypertable.
-- Multinode Query Performance Improvements.
+- Partially mutable compressed chunks to support INSERTs into a compressed hypertable.
+- Query performance improvements for distributed hypertables.
 - Various bug fixes.
 
 We are currently in the Generally Available (GA) version 2.1.
