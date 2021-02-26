@@ -35,8 +35,14 @@ behaviors to suit your needs.  Some of these API updates are **breaking changes*
 
 What's new in TimescaleDB 2.1:
 
-- [Support for PostgreSQL 13.2](https://github.com/timescale/timescaledb/issues/2779): PG13.2 offers various improvements in: Functionality, Administration, Security among others. Also, as a result of our own @svenklemm upstream report of CVE-2021-20229 on PostgreSQL, we have waited for the release of PG13.2 (released FEB 11) to get the safest experience to our users.
-- Support to [ALTER/RENAME columns for compressed hypertables](https://github.com/timescale/timescaledb-private/issues/849), this simplifies the user journey if a user wants to change the schema and they have already compressed their hypertables. 
+- [Support for PostgreSQL 13.2](https://github.com/timescale/timescaledb/issues/2779):
+PG13.2 offers various improvements in functionality, administration, and security,
+among others. Also, as a result of our own @svenklemm upstream report of
+CVE-2021-20229 on PostgreSQL, we have waited for the release of PG13.2
+(released Feb 11, 2021) to provide the safest experience to our users.
+- Support for [ALTER/RENAME columns for compressed hypertables](https://github.com/timescale/timescaledb-private/issues/849), 
+which simplifies the user journey if a user wants to change the schema and
+they have already compressed their hypertables. 
 
 >:TIP: TimescaleDB 2.1 is currently GA, we encourage
 >users to upgrade in testing environments to gain experience and provide feedback on 
