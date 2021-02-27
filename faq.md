@@ -86,31 +86,31 @@ If you want all the benefits of TimescaleDB without the hassle of installing,
 maintaining, and administering the database itself, then Timescale Cloud is the
 best choice for you.
 
-Timescale Cloud manages all of the operational elements of your database so you can 
-focus on building your applications and not making sure the infrastructure works. We 
-ensure you have a secure, high availability environment where we manage the infrastructure 
-all the way down to setting up replications, point-in-time recovery, read replicas, 
+Timescale Cloud manages all of the operational elements of your database so you can
+focus on building your applications and not making sure the infrastructure works. We
+ensure you have a secure, high availability environment where we manage the infrastructure
+all the way down to setting up replications, point-in-time recovery, read replicas,
 backups, and more. [[Top]](#top)
 
 ### **Which cloud providers and regions are supported by Timescale Cloud?** [](which-cloud-regions)
 Timescale Cloud is available in the following Clouds and Regions:
 
-* **Amazon Web Services (AWS)**: N. Virginia (`us-east-1`), Ohio (`us-east-2`), 
-N. California (`us-west-1`), Oregon (`us-west-2`), São Paulo (`sa-east-1`), 
-Stockholm (`eu-north-1`), Ireland (`eu-west-1`), London (`eu-west-2`), Paris (`eu-west-3`), 
-Frankfurt (`eu-central-1`), Canada (`ca-central-1`), Singapore (`ap-southeast-1`), 
+* **Amazon Web Services (AWS)**: N. Virginia (`us-east-1`), Ohio (`us-east-2`),
+N. California (`us-west-1`), Oregon (`us-west-2`), São Paulo (`sa-east-1`),
+Stockholm (`eu-north-1`), Ireland (`eu-west-1`), London (`eu-west-2`), Paris (`eu-west-3`),
+Frankfurt (`eu-central-1`), Canada (`ca-central-1`), Singapore (`ap-southeast-1`),
 Sydney (`ap-southeast-2`), Tokyo (`ap-northeast-1`), Mumbai (`ap-south-1`), Seoul (`ap-northeast-2`)
 * **Microsoft Azure (Azure)**: East US, East US 2, West Europe, Southeast Asia
-* **Google Cloud Platform (GCP)**: Northern Virginia, Los Angeles, South Carolina, 
-Iowa, Oregon, São Paulo, Zürich, London, Frankfurt, Finland, Belgium, Netherlands, 
+* **Google Cloud Platform (GCP)**: Northern Virginia, Los Angeles, South Carolina,
+Iowa, Oregon, São Paulo, Zürich, London, Frankfurt, Finland, Belgium, Netherlands,
 Montréal, Sydney, Taiwan, Mumbai, Hong Kong, Tokyo, Singapore
 [[Top]](#top)
 
 ### **What is the difference between Timescale, TimescaleDB, and Timescale Cloud?** [](what-does-timescale-mean)
-**Timescale** is the company. Timescale builds a category-defining time-series database called **TimescaleDB**. 
+**Timescale** is the company. Timescale builds a category-defining time-series database called **TimescaleDB**.
 Timescale hosts and manages TimescaleDB on behalf of its customers via a product called **Timescale Cloud**. [[Top]](#top)
 
-### **Do you really support “all of SQL”?** [](sql-support)
+### **Do you really support "all of SQL"?** [](sql-support)
 Yes, all of SQL, including: secondary indexes, JOINs, window functions. In fact,
 to the outside world, TimescaleDB looks like a PostgreSQL database: You connect
 to the database as if it's PostgreSQL, and you can administer the database as if
@@ -137,10 +137,10 @@ to properly reason about time-series data, which in some cases leads to over
 10,000x improvement in query latency. [[Top]](#top)
 
 ### **How do I write data?** [](write)
-Just via normal SQL, but here are some [insert examples][INSERT]. [[Top]](#top)
+Using normal SQL, but here are some [insert examples][INSERT]. [[Top]](#top)
 
 ### **How do I read data?** [](read)
-Just via normal SQL, but here are some [query examples][SELECT]. [[Top]](#top)
+Using normal SQL, but here are some [query examples][SELECT]. [[Top]](#top)
 
 ### **What are my compression options?** [](compression)
 Since v1.5,
@@ -155,7 +155,7 @@ TimescaleDB ncompression, please see [our compression docs][compression-docs]
 or a longer technical deep-dive [on our blog ][compression-blog]. [[Top]](#top)
 
 ### **How far can TimescaleDB scale?** [](scaling)
-We've first focused on scaling TimescaleDB up on a single node. In our internal
+We first focused on scaling TimescaleDB up on a single node. In our internal
 benchmarks on standard cloud VMs we regularly test  TimescaleDB to 10+ billion
 rows, while sustaining insert rates of 100-200k rows / second (1-2 million metric
 inserts / second).
@@ -184,7 +184,7 @@ two-dimensional "chunks" (i.e., smaller PostgreSQL tables), performing
 operations and optimizing query planning across all chunks. This partitioning of the
 data into chunks ensures that recent tables' indexes are kept in memory as data is inserted
 into the database. Yet all this complexity is abstracted away from the user and
-they are exposed to a single table interface (a “hypertable”) that functions exactly as
+they are exposed to a single table interface (a "hypertable") that functions exactly as
 a normal table in PostgreSQL does. For more information, see this blog post:
 [Time-series data: Why (and how) to use a relational database instead of NoSQL][rdbms > nosql].
 [[Top]](#top)
@@ -192,6 +192,7 @@ a normal table in PostgreSQL does. For more information, see this blog post:
 ### **Is there a clustered version and how can I try it?** [](clustered)
 We often find that there may be a few different things people are looking for when they ask
 about support for "clustering":
+
 * High availability: As a PostgreSQL extension, hot standbys of TimescaleDB can be set
 up using streaming replication. This is done just as one would do setting up read replicas
 with vanilla PostgreSQL (although we do not recommend using logical replication).
@@ -238,6 +239,7 @@ Read our TimescaleDB-PostgreSQL benchmarks:
 * [Problems with PostgreSQL 10 for time-series data][PostgreSQL-problems-time-series]
 
 To summarize, TimescaleDB offers:
+
 * Ease-of-use: TimescaleDB is far easier to use because creating partitions (or what we call
 "chunks") is automatically performed for the user.  All of the complexity of automatic
 partitioning is abstracted away behind a "hypertable", which users interact with just as

@@ -36,7 +36,7 @@ SELECT create_hypertable('conditions', 'time');
 timestamp, date, or integer types, so you can use a parameter that is not
 explicitly time-based, as long as it can increment.  For example, a
 monotonically increasing id would work. You must specify a chunk time interval
-when creating a hypertable if you use a monotonically increasing id.  
+when creating a hypertable if you use a monotonically increasing id.
 
 >:TIP: If you want to use [distributed hypertables][create_distributed_hypertable] in a multinode
 TimescaleDB setup, refer to the [scaling out][scaling-out] section for more information.
@@ -55,7 +55,7 @@ SELECT * FROM conditions ORDER BY time DESC LIMIT 100;
 ```
 
 SQL `UPDATE` and `DELETE` commands also work as expected. For more
-examples of using TimescaleDB's standard SQL interface, please see our
+examples of using TimescaleDB's standard SQL interface, see our
 [use pages][].
 
 [installed]: /getting-started/installation
@@ -64,4 +64,3 @@ examples of using TimescaleDB's standard SQL interface, please see our
 [use pages]: /using-timescaledb
 [create_distributed_hypertable]: /api#create_distributed_hypertable
 [scaling-out]: /getting-started/scaling-out
-

@@ -13,7 +13,7 @@ This section will walk through the concepts and help you understand some of the
 benefits and limitations of native compression. We will also walk you through the
 basics of setting this up for use in your environment.
 
->:TIP: As with any type of data altering operation, we would suggest backing up
+>:TIP: As with any type of data altering operation, we suggest backing up
 your important data prior to implementing compression.
 
 
@@ -448,8 +448,8 @@ enough storage headroom to decompress some chunks if needed.
 
 ### Interactions with other TimescaleDB features
 
-Since compression performs an implicit reordering of data using `segmentby` and `orderby`, 
-it is not recommended to combine this feature with [reordering][]. 
+Since compression performs an implicit reordering of data using `segmentby` and `orderby`,
+it is not recommended to combine this feature with [reordering][].
 
 ### Schema modifications [](compression-schema-changes)
 
@@ -493,8 +493,8 @@ In other words, chunks are immutable in compressed form. Attempts to modify the
 chunks' data will either error or fail silently (as preferred by users). We
 plan to remove this limitation in future releases.
 
-If you still need to modify the schema for a hypertable, you will have to turn off 
-compression. First, [manually decompress compressed chunks and delete any compression policies on that table](#manual-decompression) 
+If you still need to modify the schema for a hypertable, you will have to turn off
+compression. First, [manually decompress compressed chunks and delete any compression policies on that table](#manual-decompression)
 After that, disable compression using `ALTER TABLE`.
 
 ``` sql
