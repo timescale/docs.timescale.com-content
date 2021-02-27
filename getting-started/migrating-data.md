@@ -168,7 +168,7 @@ Follow the [instructions below][csv-import] to insert data into your hypertable.
 If you have data stored in an external `.csv` file, you can import it into TimescaleDB:
 
 1. Create a new empty table with the same schema as the data file and convert the table to a hypertable.
-2.  Insert the data from the file.
+2. Insert the data from the file.
 
 ### 1. Creating the new Empty Table
 
