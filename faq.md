@@ -239,6 +239,7 @@ Read our TimescaleDB-PostgreSQL benchmarks:
 * [Problems with PostgreSQL 10 for time-series data][PostgreSQL-problems-time-series]
 
 To summarize, TimescaleDB offers:
+
 * Ease-of-use: TimescaleDB is far easier to use because creating partitions (or what we call
 "chunks") is automatically performed for the user.  All of the complexity of automatic
 partitioning is abstracted away behind a "hypertable", which users interact with just as
