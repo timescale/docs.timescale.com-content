@@ -155,7 +155,7 @@ TimescaleDB ncompression, please see [our compression docs][compression-docs]
 or a longer technical deep-dive [on our blog ][compression-blog]. [[Top]](#top)
 
 ### **How far can TimescaleDB scale?** [](scaling)
-We've first focused on scaling TimescaleDB up on a single node. In our internal
+We first focused on scaling TimescaleDB up on a single node. In our internal
 benchmarks on standard cloud VMs we regularly test  TimescaleDB to 10+ billion
 rows, while sustaining insert rates of 100-200k rows / second (1-2 million metric
 inserts / second).
