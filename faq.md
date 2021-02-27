@@ -192,6 +192,7 @@ a normal table in PostgreSQL does. For more information, see this blog post:
 ### **Is there a clustered version and how can I try it?** [](clustered)
 We often find that there may be a few different things people are looking for when they ask
 about support for "clustering":
+
 * High availability: As a PostgreSQL extension, hot standbys of TimescaleDB can be set
 up using streaming replication. This is done just as one would do setting up read replicas
 with vanilla PostgreSQL (although we do not recommend using logical replication).
