@@ -13,8 +13,7 @@ This section will walk through the concepts and help you understand some of the
 benefits and limitations of native compression. We will also walk you through the
 basics of setting this up for use in your environment.
 
->:TIP: As with any type of data altering operation, we
-suggest backing up
+>:TIP: As with any type of data altering operation, we suggest backing up
 your important data prior to implementing compression.
 
 
