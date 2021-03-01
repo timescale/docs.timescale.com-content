@@ -3574,6 +3574,13 @@ SELECT hypertable_size('devices') ;
 -----------------
            73728
 ```
+
+Get size information for all hypertables.
+```sql
+SELECT hypertable_name, hypertable_size(format('%I.%I', hypertable_schema, hypertable_name)::regclass)
+  FROM timescaledb_information.hypertables;
+```
+
 ---
 
 ## hypertable_index_size()  [](hypertable_index_size)
