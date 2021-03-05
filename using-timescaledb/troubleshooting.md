@@ -1,7 +1,7 @@
 # Troubleshooting
 
 If you run into problems when using TimescaleDB, there are a few things that you
-can do.  There are some solutions to common errors below as well as ways ot output
+can do.  There are some solutions to common errors below as well as ways to output
 diagnostic information about your setup.  If you need more guidance, you can join
 the support [slack group][slack] or post an issue on the TimescaleDB [github][].
 
