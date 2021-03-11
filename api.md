@@ -227,9 +227,6 @@ SELECT attach_tablespace('disk1', 'conditions');
 SELECT attach_tablespace('disk2', 'conditions', if_not_attached => true);
  ```
 
->:WARNING: The management of tablespaces on hypertables is currently an
-experimental feature.
-
 ---
 
 ## create_hypertable() [](create_hypertable)
