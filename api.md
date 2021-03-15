@@ -29,6 +29,7 @@
 > - [detach_tablespace](#detach_tablespace)
 > - [detach_tablespaces](#detach_tablespaces)
 > - [distributed_exec](#distributed_exec)
+> - [create_distributed_restore_point](#create_distributed_restore_point)
 > - [drop_chunks](#drop_chunks)
 > - [drop materialized view (continuous aggregate)](#continuous_aggregate-drop_view)
 > - [first](#first)
@@ -1029,6 +1030,61 @@ Create new databases `dist_database` on data nodes, which requires to set `trans
 
 ```sql
 CALL distributed_exec('CREATE DATABASE dist_database', transactional => FALSE);
+```
+
+---
+
+## create_distributed_restore_point() [](create_distributed_restore_point)
+
+Create a same-named marker record, i.e., "restore point", in the write-ahead logs of all nodes in a
+multi-node TimescaleDB cluster.
+
+The restore point can later be used as a recovery target on each node, ensuring the entire multi-node cluster
+can be restored to a consistent state. The function returns the write-ahead log locations for all
+nodes where the marker record was written.
+
+This function is an analogue of [`pg_create_restore_point`](https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADMIN-BACKUP-TABLE) designed
+to work with a distributed database.
+
+This function can only be run on the access node and requires superuser privileges.
+
+#### Required Arguments [](create_distributed_restore_point-required-arguments)
+
+|Name|Description|
+|---|---|
+| `name` | (TEXT) The restore point name. |
+
+#### Errors
+
+An error will be given if:
+- Restore point `name` is more than 64 chars.
+- Recovery is in progress.
+- Current WAL level is not set to `replica` or `logical`.
+- Current user is not a superuser.
+- Current server is not the access node.
+- TimescaleDB's 2PC transactions are disabled.
+
+#### Returns [](create_distributed_restore_point-returns)
+
+| Column          | Description                               |
+|-----------------|-------------------------------------------|
+| `node_name`     | (NAME) Node name (or `NULL` for access node).    |
+| `node_type`     | (TEXT) Node type name (`access_node` or `data_node`). |
+| `restore_point` | ([PG_LSN](https://www.postgresql.org/docs/current/datatype-pg-lsn.html)) Restore point log sequence number. |
+
+#### Sample Usage [](create_distributed_restore_point-examples)
+
+Create the restore point `pitr` across three data nodes and access node:
+
+```sql
+SELECT * FROM create_distributed_restore_point('pitr');
+ node_name |  node_type  | restore_point 
+-----------+-------------+---------------
+           | access_node | 0/3694A30
+ dn1       | data_node   | 0/3694A98
+ dn2       | data_node   | 0/3694B00
+ dn3       | data_node   | 0/3694B68
+(4 rows)
 ```
 
 ---
