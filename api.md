@@ -36,7 +36,7 @@
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
 > - [hypertable_compression_stats](#hypertable_compression_stats)
-> - [hypertable_detailed_size](#hypertable_size)
+> - [hypertable_detailed_size](#hypertable_detailed_size)
 > - [hypertable_index_size](#hypertable_index_size)
 > - [hypertable_size](#hypertable_size)
 > - [interpolate](#interpolate)
@@ -3531,7 +3531,7 @@ total | 48 kB
 ---
 ## chunk_compression_stats() :community_function: [](chunk_compression_stats)
 
-Get chunk specific statistics related to hypertable compression.
+Get chunk-specific statistics related to hypertable compression.
 All sizes are in bytes.
 
 #### Required Arguments [](chunk_compression_stats-required-arguments)
@@ -3603,11 +3603,12 @@ total | 48 kB
 
 ## hypertable_detailed_size()  [](hypertable_detailed_size)
 
-Get size of hypertable like `pg_relation_size(hypertable)`, returning 
-size information for the table itself, any indexes on the table, any 
-toast tables, and the total size of all. All sizes are reported in bytes.
-If this is a distributed hypertable, the function returns size
-information as a separate row per node. 
+Get detailed information about disk space used by a hypertable,
+returning size information for the table itself, any indexes on the
+table, any toast tables, and the total size of all. All sizes are
+reported in bytes. If the function is executed on a distributed
+hypertable, it returns size information as a separate row per node,
+including the access node.
 
 #### Required Arguments [](hypertable_detailed_size-required-arguments)
 
@@ -3618,35 +3619,46 @@ information as a separate row per node.
 #### Returns [](hypertable_detailed_size-returns)
 |Column|Description|
 |---|---|
-|table_bytes|(BIGINT) Disk space used by main_table (like pg_relation_size(main_table))|
-|index_bytes|(BIGINT) Disk space used by indexes|
-|toast_bytes|(BIGINT) Disk space of toast tables|
-|total_bytes|(BIGINT) Total disk space used by the specified table, including all indexes and TOAST data|
-|node_name| (NAME) Node for which size is reported, applicable only to distributed hypertables|
+|`table_bytes`|(BIGINT) Disk space used by main_table (like pg_relation_size(main_table))|
+|`index_bytes`|(BIGINT) Disk space used by indexes|
+|`toast_bytes`|(BIGINT) Disk space of toast tables|
+|`total_bytes`|(BIGINT) Total disk space used by the specified table, including all indexes and TOAST data|
+|`node_name`| (NAME) For distributed hypertables, this is the user-given name of the node for which the size is reported. `NULL` is returned for the access node and non-distributed hypertables.|
+
+If executed on a relation that is not a hypertable, the function
+returns `NULL`.
 
 #### Sample Usage [](hypertable_detailed_size-examples)
-Get size information for a hypertable.
+Get detailed information about disk usage for the distributed
+hypertable `disttable`, which has two associated data nodes:
+
 ```sql
 -- disttable is a distributed hypertable --
 SELECT * FROM hypertable_detailed_size('disttable') ORDER BY node_name;
-
  table_bytes | index_bytes | toast_bytes | total_bytes |  node_name
 -------------+-------------+-------------+-------------+-------------
-       16384 |       32768 |           0 |       49152 | data_node_1
-        8192 |       16384 |           0 |       24576 | data_node_2
+       16384 |       40960 |           0 |       57344 | data_node_1
+        8192 |       24576 |           0 |       32768 | data_node_2
+           0 |        8192 |           0 |        8192 |
 
 ```
+
+The access node is listed without a user-given node name. Normally,
+the access node holds no data, but still maintains, e.g., index
+information that occupies a small amount of disk space.
+
 ---
 
 ## chunks_detailed_size()   [](chunks_detailed_size)
 
-Get size information about the chunks belonging to a hypertable, returning 
-size information for each chunk table itself, any indexes on the chunk, any 
-toast tables, and the total size associated with the chunk. All sizes are 
-reported in bytes.
+Get information about the disk space used by the chunks belonging to a
+hypertable, returning size information for each chunk table, any
+indexes on the chunk, any toast tables, and the total size associated
+with the chunk. All sizes are reported in bytes.
 
-If this is a distributed hypertable, the function returns size
-information as a separate row per node.
+If the function is executed on a distributed hypertable, it returns
+disk space usage information as a separate row per node. The access
+node is not included since it doesn't have any local chunk data.
 
 Additional metadata associated with a chunk can be accessed 
 via the `timescaledb_information.chunks` view.
@@ -3660,32 +3672,37 @@ via the `timescaledb_information.chunks` view.
 #### Returns [](chunks_detailed_size-returns)
 |Column|Description|
 |---|---|
-|chunk_schema| (NAME) Schema name of the chunk |
-|chunk_name| (NAME) Name of the chunk|
-|table_bytes|(BIGINT) Disk space used by the chunk table|
-|index_bytes|(BIGINT) Disk space used by indexes|
-|toast_bytes|(BIGINT) Disk space of toast tables|
-|total_bytes|(BIGINT) Total disk space used by the chunk, including all indexes and TOAST data|
-|node_name| (NAME) Node for which size is reported, applicable only to distributed hypertables|
+|`chunk_schema`| (NAME) Schema name of the chunk |
+|`chunk_name`| (NAME) Name of the chunk|
+|`table_bytes`|(BIGINT) Disk space used by the chunk table|
+|`index_bytes`|(BIGINT) Disk space used by indexes|
+|`toast_bytes`|(BIGINT) Disk space of toast tables|
+|`total_bytes`|(BIGINT) Total disk space used by the chunk, including all indexes and TOAST data|
+|`node_name`| (NAME) Node for which size is reported, applicable only to distributed hypertables|
+
+
+If executed on a relation that is not a hypertable, the function
+returns `NULL`.
 
 #### Sample Usage [](chunks_detailed_size-examples)
 ```sql
-SELECT * FROM chunks_detailed_size('dist_table')
+SELECT * FROM chunks_detailed_size('disttable')
   ORDER BY chunk_name, node_name;
 
      chunk_schema      |      chunk_name       | table_bytes | index_bytes | toast_bytes | total_bytes |       node_name
 -----------------------+-----------------------+-------------+-------------+-------------+-------------+-----------------------
- _timescaledb_internal | _dist_hyper_1_1_chunk |        8192 |       32768 |           0 |       40960 | db_node1
- _timescaledb_internal | _dist_hyper_1_2_chunk |        8192 |       32768 |           0 |       40960 | db_node2
- _timescaledb_internal | _dist_hyper_1_3_chunk |        8192 |       32768 |           0 |       40960 | db_node3
+ _timescaledb_internal | _dist_hyper_1_1_chunk |        8192 |       32768 |           0 |       40960 | data_node_1
+ _timescaledb_internal | _dist_hyper_1_2_chunk |        8192 |       32768 |           0 |       40960 | data_node_2
+ _timescaledb_internal | _dist_hyper_1_3_chunk |        8192 |       32768 |           0 |       40960 | data_node_3
 ```
 ---
 
 ## hypertable_size()  [](hypertable_size)
 
-Get total size of hypertable i.e. the sum of the size for the table itself, 
-any indexes on the table, and any toast tables. The size is reported in bytes. 
-This is equivalent to computing the sum of `total_bytes` column from the 
+Get the total disk space used by a hypertable, i.e. the sum of the
+size for the table itself (including chunks), any indexes on the
+table, and any toast tables. The size is reported in bytes.  This is
+equivalent to computing the sum of `total_bytes` column from the
 output of `hypertable_detailed_size` function.
 
 #### Required Arguments [](hypertable_size-required-arguments)
@@ -3695,7 +3712,10 @@ output of `hypertable_detailed_size` function.
 | `hypertable` | (REGCLASS) Hypertable to show size of. |
 
 #### Returns [](hypertable_size-returns)
-(BIGINT) Total disk space used by the specified table, including all indexes and TOAST data|
+
+(BIGINT) Total disk space used by the specified hypertable, including
+all indexes and TOAST data. `NULL` is returned if the function is
+executed on a non-hypertable relation.
 
 #### Sample Usage [](hypertable_size-examples)
 Get size information for a hypertable.
@@ -3717,7 +3737,9 @@ SELECT hypertable_name, hypertable_size(format('%I.%I', hypertable_schema, hyper
 
 ## hypertable_index_size()  [](hypertable_index_size)
 
-Get size of an index on a hypertable. The size is reported in bytes.
+Get the disk space used by an index on a hypertable, including the
+disk space needed to provide the index on all chunks. The size is
+reported in bytes.
 
 #### Required Arguments [](hypertable_index_size-required-arguments)
 
@@ -3726,15 +3748,17 @@ Get size of an index on a hypertable. The size is reported in bytes.
 | `index_name` | (REGCLASS) Name of the index on a  hypertable |
 
 #### Returns [](hypertable_index_size-returns)
-(BIGINT) Returns disk space used by the index. 
+
+(BIGINT) Returns the disk space used by the index, or `NULL` if
+executed on a relation that is not a hypertable.
 
 #### Sample Usage [](hypertable_index_size-examples)
 
-Get size of a specific index on a hypertable.
+Get the size of a specific index on a hypertable.
 
 ```sql
 \d conditions_table
-                     Table "public.test_table"
+                     Table "public.conditions_table"
  Column |           Type           | Collation | Nullable | Default 
 --------+--------------------------+-----------+----------+---------
  time   | timestamp with time zone |           | not null | 
