@@ -10,7 +10,7 @@ Dataset: [:DOWNLOAD_LINK: `nyc_data.tar.gz`][nyc_data]
 Estimated time for completion: 25 minutes.
 
 ### Pre-requisites
-To complete this tutorial, you will need a cursory knowedge of the
+To complete this tutorial, you will need a cursory knowledge of the
 Structured Query Language (SQL). The tutorial will walk you through each
 SQL command, but it will be helpful if you've seen SQL before.ß
 
@@ -22,7 +22,7 @@ required. Once you confirm the account and get logged in, proceed to the **Backg
 
 If you would like to follow along with a local or on-prem install, you can follow the [install TimescaleDB][install-timescale]
 instructions. Once your installation is complete, you will need to create a tutorial database and 
-install the **Timescale** extention.
+install the **Timescale** extension.
 
 Using `psql` from the command line, create a database called `nyc_data` and install the extension:
 
@@ -275,7 +275,7 @@ SELECT * FROM rides LIMIT 5;
 If you see something similar to the following result, congrats
 you’ve successfully completed Mission 1!
 
->:TIP: You can toggle expanded display on or off by using the `\x` flag on the `psql` commmand line. The output below is what you'd see when expanded display is on.
+>:TIP: You can toggle expanded display on or off by using the `\x` flag on the `psql` command line. The output below is what you'd see when expanded display is on.
 
 ```sql
 -[ RECORD 1 ]---------+--------------------
