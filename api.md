@@ -36,7 +36,7 @@
 > - [get_telemetry_report](#get_telemetry_report)
 > - [histogram](#histogram)
 > - [hypertable_compression_stats](#hypertable_compression_stats)
-> - [hypertable_detailed_size](#hypertable_size)
+> - [hypertable_detailed_size](#hypertable_detailed_size)
 > - [hypertable_index_size](#hypertable_index_size)
 > - [hypertable_size](#hypertable_size)
 > - [interpolate](#interpolate)
