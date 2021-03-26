@@ -6,6 +6,10 @@
 > - [Why build another time-series database?](#why-build)
 > - [Why should I use TimescaleDB?](#why-use)
 > - [What can I use TimescaleDB for?](#what-for)
+> - [Why should I choose Timescale Cloud](#why-cloud)
+> - [Which regions and cloud providers are supported by Timescale Cloud?](#which-cloud-regions)
+> - [What is the difference between Timescale, TimescaleDB, and Timescale Cloud?](#what-does-timescale-mean)
+> - [What is the version of TimescaleDB offered by Microsoft Azure, Digital Ocean, or other cloud providers?](#timescale-other-clouds)
 > - [Do you really support "all of SQL"](#sql-support)
 > - [Why SQL?](#why-sql)
 > - [What SQL features are supported (JOIN)?](#sql-features)
@@ -78,7 +82,56 @@ and more. Use cases include complex monitoring and analytics; predicting the per
 behavior of applications, models, consumers and connected machines; powering operational
 analytical workflows and dashboards; for QA and performance testing. [[Top]](#top)
 
-### **Do you really support “all of SQL”?** [](sql-support)
+### **Why should I choose Timescale Cloud?** [](why-cloud)
+If you want all the benefits of TimescaleDB without the hassle of installing,
+maintaining, and administering the database itself, then Timescale Cloud is the
+best choice for you.
+
+Timescale Cloud manages all of the operational elements of your database so you can
+focus on building your applications and not making sure the infrastructure works. We
+ensure you have a secure, high availability environment where we manage the infrastructure
+all the way down to setting up replications, point-in-time recovery, read replicas,
+backups, and more. [[Top]](#top)
+
+### **Which cloud providers and regions are supported by Timescale Cloud?** [](which-cloud-regions)
+Timescale Cloud is available in the following Clouds and Regions:
+
+* **Amazon Web Services (AWS)**: N. Virginia (`us-east-1`), Ohio (`us-east-2`),
+N. California (`us-west-1`), Oregon (`us-west-2`), São Paulo (`sa-east-1`),
+Stockholm (`eu-north-1`), Ireland (`eu-west-1`), London (`eu-west-2`), Paris (`eu-west-3`),
+Frankfurt (`eu-central-1`), Canada (`ca-central-1`), Singapore (`ap-southeast-1`),
+Sydney (`ap-southeast-2`), Tokyo (`ap-northeast-1`), Mumbai (`ap-south-1`), Seoul (`ap-northeast-2`)
+* **Microsoft Azure (Azure)**: East US, East US 2, West Europe, Southeast Asia
+* **Google Cloud Platform (GCP)**: Northern Virginia, Los Angeles, South Carolina,
+Iowa, Oregon, São Paulo, Zürich, London, Frankfurt, Finland, Belgium, Netherlands,
+Montréal, Sydney, Taiwan, Mumbai, Hong Kong, Tokyo, Singapore
+[[Top]](#top)
+
+### **What is the difference between Timescale, TimescaleDB, and Timescale Cloud?** [](what-does-timescale-mean)
+**Timescale** is the company. Timescale builds a category-defining time-series database called **TimescaleDB**.
+Timescale hosts and manages TimescaleDB on behalf of its customers via a product called **Timescale Cloud**. [[Top]](#top)
+
+### **What is the version of TimescaleDB offered by Microsoft Azure, Digital Ocean, or other cloud providers?** [](timescale-other-clouds)
+TimescaleDB is a relational database for time-series, with some features 
+licensed under the Apache 2.0 License but many of the features you know 
+and love licensed via the [Timescale License][timescale-license] (including 
+continuous aggregates, compression, data retention policies, actions, 
+multi-node, and more). The "Apache 2.0" version of TimescaleDB offered by 
+Microsoft, Digital Ocean, and others includes only the features in the 
+Apache license. The Timescale License prohibits cloud providers from 
+offering the "community version" of TimescaleDB-as-a-service.
+
+Today, you can deploy the community version of TimescaleDB on-premises 
+or in your own cloud account, running the software on bare VMs or using 
+our [open-source k8s helm charts][timescale-k8s]. TimescaleDB acquired in this 
+manner is totally free to use, and free to even modify for your own use 
+or for services or products you build on TimescaleDB.
+
+Or, if you prefer, [you can let us run TimescaleDB for you][timescale-signup], 
+fully managed on AWS, Azure, or GCP in 75+ regions and with access to our 
+[top-rated support team][timescale-support].
+
+### **Do you really support "all of SQL"?** [](sql-support)
 Yes, all of SQL, including: secondary indexes, JOINs, window functions. In fact,
 to the outside world, TimescaleDB looks like a PostgreSQL database: You connect
 to the database as if it's PostgreSQL, and you can administer the database as if
@@ -319,6 +372,10 @@ See our [updating documentation][update]. [[Top]](#top)
 
 
 [api]: /api
+[timescale-license]: https://www.timescale.com/legal/licenses
+[timescale-k8s]: https://github.com/timescale/timescaledb-kubernetes
+[timescale-signup]: https://www.timescale.com/timescale-signup
+[timescale-support]: https://www.timescale.com/support
 [why-sql]: https://www.timescale.com/blog/why-sql-beating-nosql-what-this-means-for-future-of-data-time-series-database-348b777b847a
 [new-queries]: /using-timescaledb/reading-data#advanced-analytics
 [INSERT]: /using-timescaledb/writing-data#insert
