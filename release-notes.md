@@ -39,16 +39,17 @@ they have already compressed their hypertables.
 >we recommend reviewing the [Changes in TimescaleDB 2.0](https://docs.timescale.com/v2.0/release-notes/changes-in-timescaledb-2) for more information 
 >and links to installation instructions when upgrading from TimescaleDB 1.x.
 
-### What to expect from our next release
+### What to expect from our next releases
 
-For our next release, we plan to add:
+For our next releases, we plan to add:
 
 - Consistent distributed restore points for multi-node deployments, so our
   users can employ backup and restore across entire multi-node clusters, and
   ensure that restores can happen to a transactionally-consistent
   point-in-time.
-- Partially mutable compressed chunks to support INSERTs into a compressed hypertable.
+- Skipscan on single node as an optimization for `SELECT DISTINCT ON`.
 - Query performance improvements for distributed hypertables.
+- Partially mutable compressed chunks to support INSERTs into a compressed hypertable.
 - Various bug fixes.
 
 ## Release Notes [](release-notes)
