@@ -151,7 +151,7 @@ You can check whether or not the data nodes have been connected successfully by
 using our informational views:
 
 ```sql
-SELECT * FROM timescaledb_information.data_node;
+SELECT * FROM timescaledb_information.data_nodes;
 ```
 
 ### Create a new role
@@ -208,7 +208,7 @@ You can now check the configuration of the distributed hypertable and
 how many chunks it holds by running the following:
 
 ```sql
-SELECT * FROM timescaledb_information.hypertable;
+SELECT * FROM timescaledb_information.hypertables;
 ```
 
 You can also see how the data of a distributed hypertable is distributed
@@ -222,7 +222,7 @@ The data node view can also show how chunks are distributed across the
 nodes:
 
 ```sql
-SELECT * FROM timescaledb_information.data_node;
+SELECT * FROM timescaledb_information.data_nodes;
 ```
 
 You can query the distributed hypertable as normal to see the data it
