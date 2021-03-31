@@ -114,7 +114,7 @@ Timescale hosts and manages TimescaleDB on behalf of its customers via a product
 ### **What is the version of TimescaleDB offered by Microsoft Azure, Digital Ocean, or other cloud providers?** [](timescale-other-clouds)
 TimescaleDB is a relational database for time-series, with some features 
 licensed under the Apache 2.0 License but many of the features you know 
-and love licensed via the [Timescale License][timescale-license] (including 
+and love are licensed via the [Timescale License][timescale-license] (including 
 continuous aggregates, compression, data retention policies, actions, 
 multi-node, and more). The "Apache 2.0" version of TimescaleDB offered by 
 Microsoft, Digital Ocean, and others includes only the features in the 
