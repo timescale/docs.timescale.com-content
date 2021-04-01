@@ -77,7 +77,7 @@ Execute the following SQL to save current settings for Continuous Aggregates and
 
 **Continuous Aggregate Stats**
 ```SQL
-\COPY timescaledb_information.continuous_aggregates_stats TO ‘continuous_aggregates_stats.csv’ csv header
+\COPY timescaledb_information.continuous_aggregate_stats TO ‘continuous_aggregate_stats.csv’ csv header
 ```
 
 **Drop Chunk Policies**
