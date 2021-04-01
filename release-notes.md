@@ -1,37 +1,24 @@
-# TimescaleDB Release Notes & Future Plans
+# TimescaleDB Release Notes & Plans
 
-Interested in what's coming down the pipeline? Review our
-Future Plans section. Interested in learning more about
-what's already available? Jump down below to see what's
-been released.
+Interested in what's coming down the pipeline? Read about our
+[current plans](#current-plans). Interested in learning more about
+what's already available? Jump down below to review our
+[release notes](#release-notes).
 
-## Future Plans
+Want to learn more? We welcome you to visit our
+[Github repo][github] or join our [Slack community][slack].
 
-TimescaleDB is an open-source project with a vibrant community. 
-We are currently focusing on making our priorities known by that community; 
-we welcome you to visit our Github repo or join our [Slack community](https://slack.timescale.com).
+## Current Plans [](current-plans)
 
-### What to expect from our next release
-
-For our next release, we plan to add:
-
-- Consistent distributed restore points for multi-node deployments, so our users can employ backup and restore across entire multi-node clusters, and ensure that restores can happen to a transactionally-consistent point-in-time.
-- Partially mutable compressed chunks to support INSERTs into a compressed hypertable.
-- Query performance improvements for distributed hypertables.
-- Various bug fixes.
-
-We are currently in the Generally Available (GA) version 2.1.
-
+One of the most significant changes in TimescaleDB 2.0 is support for
+horizontally scale-out TimescaleDB running across many nodes.
 You can read more about our architecture and design for distributed hypertables
-[here](https://docs.timescale.com/v2.0/introduction/architecture#distributed-hypertables).
-To test out the beta version for yourself, join our #multinode channel on
-[community slack](https://slack.timescale.com/) for installation details and
-follow these [setup instructions](https://docs.timescale.com/v2.0/getting-started/setup-multi-node-basic).
+[here][multinode-intro], and follow [these instructions][multinode-setup] to
+setup your own multi-node TimescaleDB cluster.
 
-In addition to multi-node, we've also reassessed how some core
-functionality works, and, as a result, made APIs simpler and more consistent,
-while also empowering users with more control and flexibility to customize
-behaviors to suit your needs.  Some of these API updates are **breaking changes**.
+### Latest release
+
+Currently, the latest Generally Available (GA) release is TimescaleDB 2.1.
 
 What's new in TimescaleDB 2.1:
 
@@ -44,15 +31,28 @@ CVE-2021-20229 on PostgreSQL, we have waited for the release of PG13.2
 which simplifies the user journey if a user wants to change the schema and
 they have already compressed their hypertables. 
 
->:TIP: TimescaleDB 2.1 is currently GA, we encourage
+>:TIP: While TimescaleDB 2.1 is currently GA, we encourage
 >users to upgrade in testing environments to gain experience and provide feedback on 
->new and updated features.
+>new and updated features before upgrading production deployments.
 >
 >Especially because some API updates from TimescaleDB 1.x to 2.0 are breaking changes, 
 >we recommend reviewing the [Changes in TimescaleDB 2.0](https://docs.timescale.com/v2.0/release-notes/changes-in-timescaledb-2) for more information 
 >and links to installation instructions when upgrading from TimescaleDB 1.x.
 
-## Release Notes
+### What to expect from our next releases
+
+For our next releases, we plan to add:
+
+- Consistent distributed restore points for multi-node deployments, so our
+  users can employ backup and restore across entire multi-node clusters, and
+  ensure that restores can happen to a transactionally-consistent
+  point-in-time.
+- Skipscan on single node as an optimization for `SELECT DISTINCT ON`.
+- Query performance improvements for distributed hypertables.
+- Partially mutable compressed chunks to support INSERTs into a compressed hypertable.
+- Various bug fixes.
+
+## Release Notes [](release-notes)
 
 In this section, we will cover historical information on
 past releases and how you can learn more.
@@ -1188,3 +1188,9 @@ For more information on this release, read the [blog announcement](https://blog.
 
 
 **For releases prior to 1.0, please visit the [changelog](https://github.com/timescale/timescaledb/blob/master/CHANGELOG.md).**
+
+
+[github]: https://github.com/timescale/timescaledb
+[slack]: https://slack.timescale.com
+[multinode-intro]: /introduction/architecture#distributed-hypertables
+[multinode-setup]: /getting-started/setup-multi-node-basic
