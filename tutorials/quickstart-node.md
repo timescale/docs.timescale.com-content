@@ -357,7 +357,7 @@ all be executed on the hypertable.
 A hypertable is defined by a standard schema with column names and types, with at 
 least one column specifying a time value.
 
->:TIP: The TimescaleDB documentation on [schema management and indexing[indexing-api-guide] explains this in further detail. 
+>:TIP: The TimescaleDB documentation on [schema management and indexing][indexing-api-guide] explains this in further detail. 
 
 Let's create this migration to modify the `page_loads` table and create a
 hypertable by first running the following command:
