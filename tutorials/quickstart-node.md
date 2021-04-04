@@ -494,3 +494,4 @@ Node application, be sure to check out these advanced TimescaleDB tutorials:
 [hypertables]: /introduction/architecture
 [node-install]: https://nodejs.org
 [npm-install]: https://www.npmjs.com/get-npm
+[sequelize-info]: https://sequelize.org/
