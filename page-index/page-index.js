@@ -658,6 +658,11 @@ const pageIndex = [
             type: ANCHOR,
             href: "#docker-wale",
           },
+          {
+            Title: "Restore points",
+            type: ANCHOR,
+            href: "#restore_points",
+          },
         ],
       },
       {
