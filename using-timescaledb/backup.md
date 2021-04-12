@@ -6,8 +6,6 @@ physical backups with `pg_basebackup` or another tool, or logical backups with
 `pg_dump` and `pg_restore`. Physical backups may also be used with Write-Ahead Log
 (WAL) archiving to achieve an ongoing backup.
 
->:WARNING:TimescaleDB currently does not natively support a consistent restore point for multi-node environments. Care should be taken to ensure third-party solutions properly quiesce the environment before backing up, so that the backup point used across nodes does not have outstanding transactions.
-
 ## Performing Physical Backups [](physical-backups)
 
 For full instance physical backups (which are especially useful for starting up
@@ -17,7 +15,6 @@ external backup and restore managers such as [`pg_backrest`][pg-backrest],
 [`barman`][pg-barman], or [`wal-e`][wale official]. These allow you to take
 online, hot physical backups of your entire instance, and many offer incremental
 backups and other automation options.
-
 
 
 ## Using `pg_dump` and `pg_restore` [](pg_dump-pg_restore)
@@ -331,6 +328,26 @@ end as the recovery will be complete when no further files can be
 found in the archive. See the PostgreSQL documentation on
 [continuous archiving][pg archiving] for more information.
 
+### Restore points [](restore_points)
+
+TimescaleDB natively supports a restore point both for single-node and for
+multi-node environments. The restore point can later be used as a recovery target on
+single-node or on each node of the entire multi-node cluster, ensuring that it can be
+restored to a consistent state.
+
+To create a restore point on a single-node, the [`pg_create_restore_point`][pg_create_restore_point]
+function can be used.
+
+On a multi-node cluster, the [`create_distributed_restore_point`][create_distributed_restore_point] function must be used
+instead and executed on the access node. In order to achieve synchronization across the multi-node cluster, this function ensures
+that the restore point created on the access node is synchronized with each data node. Care should be taken to ensure
+that the data nodes have no locally-running user transactions executed without the access node's involvement when
+creating distributed restore point (i.e., by an external user connecting directly to a data node and executing a local
+transaction on that data node).
+
+Third-party backup and restore managers such as [`pg_backrest`][pg-backrest],
+[`barman`][pg-barman], or [`wal-e`][wale official] can be used and configured to use the restore points.
+
 [replication-tutorial]: /tutorials/replication
 [postgres-pg_basebackup]: https://www.postgresql.org/docs/current/app-pgbasebackup.html
 [pg-backrest]: https://pgbackrest.org/
@@ -342,3 +359,5 @@ found in the archive. See the PostgreSQL documentation on
 [parallel importer]: https://github.com/timescale/timescaledb-parallel-copy
 [pg archiving]: https://www.postgresql.org/docs/current/continuous-archiving.html#BACKUP-PITR-RECOVERY
 [wale image]: https://hub.docker.com/r/timescale/timescaledb-wale
+[pg_create_restore_point]: https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADMIN-BACKUP-TABLE
+[create_distributed_restore_point]: /api#create_distributed_restore_point
