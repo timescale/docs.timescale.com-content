@@ -156,7 +156,7 @@ version of our running example would look like:
 | [12:00:02, 12:00:01]| 1 |[88.2, 88.6]|[20, 25] |[0.8, 0.85]|
 | [12:00:02, 12:00:01]| 2 |[300.5, 299.1]|[30, 40] |[0.9, 0.95]|
 
-The above example shows the the `device_id` column is no longer an array,
+The above example shows that the `device_id` column is no longer an array,
 instead it defines the single value associated with all of the compressed data in the row.
 
 Because a single value is associated with a compressed row, no decompression
