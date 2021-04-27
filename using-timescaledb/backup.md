@@ -52,6 +52,20 @@ SELECT timescaledb_pre_restore();
 SELECT timescaledb_post_restore();
 ```
 
+>:WARNING: Using the flag `-j` with `pg_restore` to restore using
+>multiple workers is not supported and might generate errors. You can
+>use it if you first restore the entire schema and the
+>`_timescaledb_catalog` schema without the `-j` option, for example:
+>```
+>pg_restore -Fc -s -d tutorial tutorial.bak
+>pg_restore -Fc -a -n _timescaledb_catalog -d tutorial tutorial.bak
+>```
+>And then restore the rest of the database with the `-j` option using
+> the `-N` option, for example:
+>```
+>pg_restore -Fc -a -N _timescaledb_catalog -j4 -d tutorial tutorial.bak
+>```
+
 >:WARNING: PostgreSQL's `pg_dump` does not currently specify the *version* of
  the extension in its backup, which leads to problems if you are
  restoring into a database instance with a more recent extension
