@@ -159,7 +159,7 @@ version of our running example would look like:
 | [12:00:02, 12:00:01]| 1 |[88.2, 88.6]|[20, 25] |[0.8, 0.85]|
 | [12:00:02, 12:00:01]| 2 |[300.5, 299.1]|[30, 40] |[0.9, 0.95]|
 
-The above example shows the the `device_id` column is no longer an array,
+The above example shows that the `device_id` column is no longer an array,
 instead it defines the single value associated with all of the compressed data in the row.
 
 Because a single value is associated with a compressed row, no decompression
@@ -225,7 +225,7 @@ you will see that this will have good compression as well since
 ordering only matters within a segment and segmenting by device
 guarantees that each segment represents a series if only ordered by time.
 Thus, putting items in `orderby` and `segmentby` columns achieves similar
-results. This is why, if segmenting by a identifier causes segments to become too
+results. This is why, if segmenting by an identifier causes segments to become too
 small, we recommend moving the segmentby column into a prefix of the
 orderby list.
 
