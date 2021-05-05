@@ -1659,7 +1659,13 @@ suggest using the policy framework instead.
 
 |Name|Description|
 |---|---|
-| `if_not_compressed` | (BOOLEAN) Setting to true will skip chunks that are already compressed. Defaults to false.|
+| `if_not_compressed` | (BOOLEAN) Setting to true will skip chunks that are already compressed, but still succeed. Defaults to false.|
+
+#### Returns [](compress_chunk-returns)
+
+|Column|Description|
+|---|---|
+|`compress_chunk`| (REGCLASS) Name of the chunk that was compressed|
 
 #### Sample Usage [](compress_chunk-sample-usage)
 Compress a single chunk.
