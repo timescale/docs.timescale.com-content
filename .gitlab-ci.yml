@@ -1,0 +1,10 @@
+stages:
+  - npm
+
+build.dev:
+  stage: npm
+  variables:
+    UPSTREAM_BRANCH: $CI_COMMIT_REF_NAME
+  trigger:
+    project: timescale/web-documentation
+    branch: feature/v2
