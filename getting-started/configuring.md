@@ -310,6 +310,16 @@ command via a `-c` option, as in the following.
 docker run -i -t timescale/timescaledb:latest-pg10 postgres -cmax_wal_size=2GB
 ```
 
+For Docker Compose, you can pass extra config parameters in the `command` section.
+
+```yaml
+version: '3'
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest
+    command: -cmax_wal_size=2GB
+```    
+
 Additional examples of passing in arguments at boot can be found in our
 [discussion about using WAL-E][wale] for incremental backup.
 
