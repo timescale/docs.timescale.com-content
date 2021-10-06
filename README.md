@@ -1,5 +1,7 @@
 # README #
 
+***THIS REPOSITORY IS DEPRECATED. FOR DOCS CHANGES, USE https://github.com/timescale/docs INSTEAD***
+
 This is the source for content for docs.timescale.com.
 The docs site uses this repo as a submodule and converts the files directly into
 pages using a bash script and markdown parser.
