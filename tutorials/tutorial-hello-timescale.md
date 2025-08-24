@@ -812,7 +812,7 @@ Ready for more learning? Here’s a few suggestions:
 [install-timescale]: /getting-started/installation
 [setup-psql]: /getting-started/install-psql-tutorial
 [NYCTLC]: https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
-[nyc_data]: https://timescaledata.blob.core.windows.net/datasets/nyc_data.tar.gz
+[nyc_data]: https://assets.timescale.com/docs/downloads/nyc_data.tar.gz
 [postgis]: http://postgis.net/documentation
 [time-series-forecasting]: /tutorials/tutorial-forecasting
 [continuous-aggregates]: /tutorials/continuous-aggs-tutorial
